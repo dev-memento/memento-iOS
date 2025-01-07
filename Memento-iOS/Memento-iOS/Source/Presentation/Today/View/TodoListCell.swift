@@ -40,8 +40,9 @@ struct TodoListCell: View {
             Spacer()
             
             PriorityLabel(priority: .high)
+                .padding(.trailing, 12)
         }
-        .padding()
+        .frame(height: 70)
         .background(Color.black)
     }
 }
