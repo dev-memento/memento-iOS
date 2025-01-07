@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		839405562D2D041300F3A2CF /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 839405552D2D041300F3A2CF /* Moya */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		830F3C562D2A73BD00254FDE /* Memento-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Memento-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				839405562D2D041300F3A2CF /* Moya in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = "Memento-iOS";
 			packageProductDependencies = (
+				839405552D2D041300F3A2CF /* Moya */,
 			);
 			productName = "Memento-iOS";
 			productReference = 830F3C562D2A73BD00254FDE /* Memento-iOS.app */;
@@ -94,6 +100,9 @@
 			);
 			mainGroup = 830F3C4D2D2A73BD00254FDE;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				839405542D2D041200F3A2CF /* XCRemoteSwiftPackageReference "Moya" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 830F3C572D2A73BD00254FDE /* Products */;
 			projectDirPath = "";
@@ -324,6 +333,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		839405542D2D041200F3A2CF /* XCRemoteSwiftPackageReference "Moya" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Moya/Moya";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 15.0.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		839405552D2D041300F3A2CF /* Moya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 839405542D2D041200F3A2CF /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = Moya;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 830F3C4E2D2A73BD00254FDE /* Project object */;
 }
