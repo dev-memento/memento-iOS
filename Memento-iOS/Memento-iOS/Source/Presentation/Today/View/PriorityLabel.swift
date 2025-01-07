@@ -8,11 +8,7 @@
 import SwiftUI
 
 enum Priority: String {
-    case immediate = "Immediate"
-    case high = "High"
-    case medium = "Medium"
-    case low = "Low"
-    case none = "None"
+    case immediate, high, medium, low, none
     
     var color: Color {
         switch self {
@@ -23,13 +19,24 @@ enum Priority: String {
         case .none: return .gray
         }
     }
+    
+    var title: String {
+        switch self {
+        case .immediate: return "Immediate"
+        case .high: return "High"
+        case .medium: return "Medium"
+        case .low: return "Low"
+        case .none: return "None"
+        }
+    }
 }
 
 struct PriorityLabel: View {
+    
     var priority: Priority
     
     var body: some View {
-        Text(priority.rawValue)
+        Text(priority.title)
             .font(.subheadline)
             .foregroundColor(priority.color)
             .padding(.horizontal, 3)

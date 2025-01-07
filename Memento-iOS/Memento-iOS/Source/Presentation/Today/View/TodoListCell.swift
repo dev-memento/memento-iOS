@@ -14,8 +14,6 @@ struct TodoListCell: View {
     var colorType: String = "red"
     var todoTitle: String = "UXUI 과제"
     var dueDate: String = "Today"
-    var priority: String = "Low"
-    var priorityColor: Color = .blue
     
     var body: some View {
         HStack(spacing: 12) {
@@ -41,7 +39,7 @@ struct TodoListCell: View {
             
             Spacer()
             
-            PriorityLabel(priority: priority, color: priorityColor)
+            PriorityLabel(priority: .high)
         }
         .padding()
         .background(Color.black)
@@ -63,25 +61,5 @@ struct CheckBoxView: View {
         .onTapGesture {
             isChecked.toggle()
         }
-    }
-}
-
-struct PriorityLabel: View {
-    
-    var priority: String
-    var color: Color
-    
-    var body: some View {
-        Text(priority)
-            .font(.subheadline)
-            .foregroundColor(color)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(color.opacity(0.2))
-            .cornerRadius(4)
-            .overlay(
-                RoundedRectangle(cornerRadius: 4)
-                    .stroke(color, lineWidth: 1)
-            )
     }
 }
