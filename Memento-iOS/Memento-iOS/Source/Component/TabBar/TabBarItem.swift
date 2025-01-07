@@ -47,5 +47,4 @@ enum TabBarItem: CaseIterable {
                 return AnyView(TodayView())
             }
         }
-    
 }
