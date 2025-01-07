@@ -1,5 +1,5 @@
 //
-//  TabBar.swift
+//  TabBarItem.swift
 //  Memento-iOS
 //
 //  Created by Gahyun Kim on 1/7/25.
