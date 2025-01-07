@@ -31,15 +31,6 @@ struct ScheduleListCell: View {
     }
 }
 
-struct ColorTagView: View {
-    var colorType: String
-    
-    var body: some View {
-        Rectangle()
-            .fill(Color.distinguishColorType(colorType))
-            .frame(width: 3)
-    }
-}
 
 struct IconView: View {
     var systemName: String
