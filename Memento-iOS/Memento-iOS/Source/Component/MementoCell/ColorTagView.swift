@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// 일정  카테고리에 따른 좌측 색상 태그 View
 struct ColorTagView: View {
     var colorType: String
     

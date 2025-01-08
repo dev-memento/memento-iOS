@@ -52,7 +52,6 @@ struct CheckBoxView: View {
     @Binding var isChecked: Bool
     
     var body: some View {
-        // TODO: - asset 나오면 변경
         ZStack {
             RoundedRectangle(cornerRadius: 4)
                 .stroke(Color.gray, lineWidth: 2)
