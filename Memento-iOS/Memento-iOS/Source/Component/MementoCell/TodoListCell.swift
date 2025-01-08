@@ -9,7 +9,7 @@ import SwiftUI
 
 struct TodoListCell: View {
     
-    @State private var isChecked: Bool = false
+    @Binding var isChecked: Bool
     
     var colorType: String = "red"
     var todoTitle: String = "UXUI 과제"
@@ -44,6 +44,9 @@ struct TodoListCell: View {
         }
         .frame(height: 70)
         .background(Color.black)
+        .onChange(of: isChecked) { _ in
+            print("todo box is checked")
+        }
     }
 }
 
