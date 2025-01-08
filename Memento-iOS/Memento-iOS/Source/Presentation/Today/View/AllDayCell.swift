@@ -15,10 +15,7 @@ struct AllDayCell: View {
                 .fill(Color.distinguishColorType("red"))
                 .frame(width: 3)
             
-            Text("박익범 가정방문 어쩌고")
-                .font(.headline)
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            AllDayTitleLabel(title: "박익범 가정방문 어쩌고")
             
             Spacer()
         }
@@ -27,6 +24,17 @@ struct AllDayCell: View {
     }
 }
 
+struct AllDayTitleLabel: View {
+    
+    var title: String
+    
+    var body: some View {
+        Text(title)
+            .font(.headline)
+            .foregroundColor(.white)
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
 
 struct ScheduleCellData {
     let colorType: String
