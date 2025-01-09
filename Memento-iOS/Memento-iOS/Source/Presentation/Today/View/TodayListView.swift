@@ -23,8 +23,8 @@ struct TodayListView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 8) {
-                ForEach(items) { item in
-                    TodayListItemView(item: item)
+                ForEach(items.indices, id: \.self) { index in
+                    TodayListItemView(item: $items[index])
                         .padding(.horizontal)
                 }
             }
@@ -35,13 +35,13 @@ struct TodayListView: View {
 
 struct TodayListItemView: View {
     
-    let item: TodayItem
+    @Binding var item: TodayItem
     
     var body: some View {
         switch item {
         case .todo(let todo):
             TodoListCell(
-                isChecked: .constant(todo.isChecked),
+                isChecked: $item.todoBinding.isChecked,
                 todoTitle: todo.title,
                 colorType: todo.tagColor,
                 dueDate: todo.dueDate,
@@ -68,6 +68,23 @@ enum TodayItem: Identifiable {
             return todo.id
         case .schedule(let schedule):
             return schedule.id
+        }
+    }
+}
+
+extension TodayItem {
+    var todoBinding: TodoDataModel {
+        get {
+            if case .todo(let todo) = self {
+                return todo
+            } else {
+                fatalError("Todo 케이스가 아닙니다")
+            }
+        }
+        set {
+            if case .todo = self {
+                self = .todo(newValue)
+            }
         }
     }
 }
