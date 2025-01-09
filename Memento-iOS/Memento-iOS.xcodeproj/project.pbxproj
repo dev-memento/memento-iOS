@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		839405562D2D041300F3A2CF /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 839405552D2D041300F3A2CF /* Moya */; };
+		839B7CC52D302252003A4044 /* MDSKit in Frameworks */ = {isa = PBXBuildFile; productRef = 839B7CC42D302252003A4044 /* MDSKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				839B7CC52D302252003A4044 /* MDSKit in Frameworks */,
 				839405562D2D041300F3A2CF /* Moya in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -71,6 +73,7 @@
 			name = "Memento-iOS";
 			packageProductDependencies = (
 				839405552D2D041300F3A2CF /* Moya */,
+				839B7CC42D302252003A4044 /* MDSKit */,
 			);
 			productName = "Memento-iOS";
 			productReference = 830F3C562D2A73BD00254FDE /* Memento-iOS.app */;
@@ -102,6 +105,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				839405542D2D041200F3A2CF /* XCRemoteSwiftPackageReference "Moya" */,
+				839B7CC32D302252003A4044 /* XCLocalSwiftPackageReference "../../memento-design-system-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 830F3C572D2A73BD00254FDE /* Products */;
@@ -334,6 +338,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		839B7CC32D302252003A4044 /* XCLocalSwiftPackageReference "../../memento-design-system-iOS" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../memento-design-system-iOS";
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		839405542D2D041200F3A2CF /* XCRemoteSwiftPackageReference "Moya" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -350,6 +361,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 839405542D2D041200F3A2CF /* XCRemoteSwiftPackageReference "Moya" */;
 			productName = Moya;
+		};
+		839B7CC42D302252003A4044 /* MDSKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MDSKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
