@@ -20,16 +20,36 @@ struct TodayListView: View {
         .todo(TodoDataModel(title: "맥너겟어쩌고저쩌고", dueDate: "Today", priority: .low, isChecked: false, tagColor: "orange"))
     ]
     
+    @State var draggedItem: TodayItem?
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 8) {
                 ForEach(items.indices, id: \.self) { index in
-                    TodayListItemView(item: $items[index])
+                    renderItem(at: index)
                         .padding(.horizontal)
                 }
             }
             .padding(.vertical)
         }
+    }
+    
+    private func renderItem(at index: Int) -> some View {
+        TodayListItemView(item: $items[index])
+        // 드래그 시작 시 draggedItem 업데이트
+            .onDrag {
+                self.draggedItem = items[index]
+                return NSItemProvider()
+            }
+        // 드롭 액션 처리 (text type)
+            .onDrop(
+                of: [.text],
+                delegate: DropViewDelegate(
+                    item: $items[index],
+                    items: $items,
+                    draggedItem: $draggedItem
+                )
+            )
     }
 }
 
@@ -103,4 +123,30 @@ struct ScheduleDataModel: Identifiable {
     var title: String
     var time: String
     var tagColor: String
+}
+
+struct DropViewDelegate: DropDelegate {
+    @Binding var item: TodayItem
+    @Binding var items: [TodayItem]
+    @Binding var draggedItem: TodayItem?
+    
+    func dropUpdated(info: DropInfo) -> DropProposal? {
+        DropProposal(operation: .move)
+    }
+    
+    func performDrop(info: DropInfo) -> Bool {
+        draggedItem = nil
+        return true
+    }
+    
+    func dropEntered(info: DropInfo) {
+        guard let draggedItem,
+              draggedItem.id != item.id,
+              let toIndex = items.firstIndex(where: { $0.id == item.id }),
+              let fromIndex = items.firstIndex(where: { $0.id == draggedItem.id }) else { return }
+        
+        withAnimation {
+            items.move(fromOffsets: IndexSet(integer: fromIndex), toOffset: toIndex > fromIndex ? toIndex + 1 : toIndex)
+        }
+    }
 }
