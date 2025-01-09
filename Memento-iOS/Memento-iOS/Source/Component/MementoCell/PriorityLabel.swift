@@ -23,11 +23,11 @@ enum Priority: String {
     
     var title: String {
         switch self {
-        case .immediate: return "Immediate"
-        case .high: return "High"
-        case .medium: return "Medium"
-        case .low: return "Low"
-        case .none: return "None"
+        case .immediate: return StringLiteral.Priority.immediate
+        case .high: return StringLiteral.Priority.high
+        case .medium: return StringLiteral.Priority.medium
+        case .low: return StringLiteral.Priority.low
+        case .none: return StringLiteral.Priority.none
         }
     }
 }
