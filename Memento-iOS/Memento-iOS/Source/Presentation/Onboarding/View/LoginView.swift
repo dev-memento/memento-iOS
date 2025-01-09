@@ -36,7 +36,7 @@ struct LoginView: View {
 }
 
 // MARK: - Header View
-struct HeaderView: View {
+private struct HeaderView: View {
     var body: some View {
         VStack(alignment: .center) {
             Text("Less Noise,")
@@ -56,7 +56,7 @@ struct HeaderView: View {
 }
 
 // MARK: - Logo View
-struct LogoView: View {
+private struct LogoView: View {
     var body: some View {
         Image("MainLogo")
             .resizable()
@@ -66,7 +66,7 @@ struct LogoView: View {
 }
 
 // MARK: - Login Buttons
-struct LoginButtons: View {
+private struct LoginButtons: View {
     @Binding var path: [String] // Navigation 경로를 관리하는 바인딩 변수
 
     var body: some View {

@@ -59,7 +59,7 @@ struct SleepCycleSettingView: View {
 }
 
 // MARK: - Header and Title View
-struct HeaderAndTitleView: View {
+private struct HeaderAndTitleView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .top) {
@@ -90,7 +90,7 @@ struct HeaderAndTitleView: View {
 }
 
 // MARK: - Time Selection View
-struct TimeSelectionView: View {
+private struct TimeSelectionView: View {
     @Binding var wakeUpTime: Date?
     @Binding var windDownTime: Date?
     @Binding var isPickerPresented: Bool
@@ -145,7 +145,7 @@ struct TimeSelectionView: View {
 }
 
 // MARK: - Next Button
-struct NextButton: View {
+private struct NextButton: View {
     @Binding var wakeUpTime: Date?
     @Binding var windDownTime: Date?
     
@@ -159,12 +159,13 @@ struct NextButton: View {
                 .padding(EdgeInsets(top: 13, leading: 0, bottom: 13, trailing: 0))
                 .frame(maxWidth: .infinity)
         }
+        .cornerRadius(2)
         .background((wakeUpTime != nil && windDownTime != nil) ? Color.green : Color("gray10"))
     }
 }
 
 // MARK: - Time Picker View
-struct TimePickerView: View {
+private struct TimePickerView: View {
     @Binding var isPickerPresented: Bool
     @Binding var selectedTimeType: SleepCycleSettingView.TimeType
     @Binding var wakeUpTime: Date?
