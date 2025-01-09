@@ -7,8 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8351D78B2D305724008336BE /* MDSKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8351D78A2D305724008336BE /* MDSKit */; };
+		8351D78E2D30575E008336BE /* MDSKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8351D78D2D30575E008336BE /* MDSKit */; };
 		839405562D2D041300F3A2CF /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 839405552D2D041300F3A2CF /* Moya */; };
-		839B7CC52D302252003A4044 /* MDSKit in Frameworks */ = {isa = PBXBuildFile; productRef = 839B7CC42D302252003A4044 /* MDSKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,7 +29,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				839B7CC52D302252003A4044 /* MDSKit in Frameworks */,
+				8351D78E2D30575E008336BE /* MDSKit in Frameworks */,
+				8351D78B2D305724008336BE /* MDSKit in Frameworks */,
 				839405562D2D041300F3A2CF /* Moya in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -73,7 +75,8 @@
 			name = "Memento-iOS";
 			packageProductDependencies = (
 				839405552D2D041300F3A2CF /* Moya */,
-				839B7CC42D302252003A4044 /* MDSKit */,
+				8351D78A2D305724008336BE /* MDSKit */,
+				8351D78D2D30575E008336BE /* MDSKit */,
 			);
 			productName = "Memento-iOS";
 			productReference = 830F3C562D2A73BD00254FDE /* Memento-iOS.app */;
@@ -105,7 +108,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				839405542D2D041200F3A2CF /* XCRemoteSwiftPackageReference "Moya" */,
-				839B7CC32D302252003A4044 /* XCLocalSwiftPackageReference "../../memento-design-system-iOS" */,
+				8351D78C2D30575E008336BE /* XCRemoteSwiftPackageReference "memento-design-system-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 830F3C572D2A73BD00254FDE /* Products */;
@@ -338,14 +341,15 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		839B7CC32D302252003A4044 /* XCLocalSwiftPackageReference "../../memento-design-system-iOS" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = "../../memento-design-system-iOS";
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
+		8351D78C2D30575E008336BE /* XCRemoteSwiftPackageReference "memento-design-system-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/dev-memento/memento-design-system-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.1;
+			};
+		};
 		839405542D2D041200F3A2CF /* XCRemoteSwiftPackageReference "Moya" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Moya/Moya";
@@ -357,14 +361,19 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		8351D78A2D305724008336BE /* MDSKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MDSKit;
+		};
+		8351D78D2D30575E008336BE /* MDSKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8351D78C2D30575E008336BE /* XCRemoteSwiftPackageReference "memento-design-system-iOS" */;
+			productName = MDSKit;
+		};
 		839405552D2D041300F3A2CF /* Moya */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 839405542D2D041200F3A2CF /* XCRemoteSwiftPackageReference "Moya" */;
 			productName = Moya;
-		};
-		839B7CC42D302252003A4044 /* MDSKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = MDSKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
