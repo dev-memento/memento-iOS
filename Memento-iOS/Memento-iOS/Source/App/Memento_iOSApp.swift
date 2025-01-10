@@ -11,7 +11,7 @@ import SwiftUI
 struct Memento_iOSApp: App {
     var body: some Scene {
         WindowGroup {
-            TodayView()
+            LoginView()
         }
     }
 }

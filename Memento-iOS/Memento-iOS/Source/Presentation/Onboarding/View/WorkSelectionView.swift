@@ -15,6 +15,8 @@ struct WorkSelectionView: View {
     // TextField 포커스 상태 관리
     @FocusState private var isTextFieldFocused: Bool
     
+    @Binding var path: [String] // Navigation 경로를 관리하는 바인딩 변수
+
     // Next 버튼 활성화 조건
     private var isNextButtonEnabled: Bool {
         (selectedCategory != nil && selectedCategory != "Other") || !customCategory.isEmpty
@@ -24,12 +26,16 @@ struct WorkSelectionView: View {
         ZStack {
             BackgroundView()
             
-            VStack(alignment: .leading, spacing: 28) {
+            VStack(alignment: .leading) {
+                CustomNavigationBar(path: $path)
+                    .padding(.horizontal)
+                    .padding(.top, 16)
+                
                 StepProgressBar(currentStep: 2, totalSteps: 4)
                     .padding(.horizontal, 16)
-                    .padding(.top, 8)
+                    .padding(.top, 24)
                 
-                HeaderAndTitleView()
+                HeaderTitleView()
                     .padding(.horizontal)
                 
                 ScrollView {
@@ -58,6 +64,51 @@ struct WorkSelectionView: View {
     }
 }
 
+// MARK: - CustomNavigationBar
+private struct CustomNavigationBar: View {
+    @Binding var path: [String]
+
+    var body: some View {
+        HStack(alignment: .top) {
+            Button {
+                path.removeLast() // 이전 화면으로 이동
+            } label: {
+                Image("back")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 7.5, height: 16.5)
+                    .foregroundColor(Color("gray06"))
+            }
+            
+            Spacer()
+            
+            Button {
+                path.append("WorkSelectionView") // 다음 화면으로 이동
+            } label: {
+                Text("Skip")
+                    .font(.system(size: 14))
+                    .foregroundColor(Color("gray06"))
+            }
+        }
+    }
+}
+
+// MARK: - Header and Title View
+private struct HeaderTitleView: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            Text("2")
+                .font(.system(size: 40))
+                .foregroundColor(Color("gray07"))
+            
+            Text("What do you do for work?")
+                .font(.system(size: 24))
+                .foregroundColor(Color.white)
+        }
+    }
+}
+
+// MARK: - CategoryListView
 private struct CategoryListView: View {
     @Binding var selectedCategory: String?
     @Binding var customCategory: String
@@ -90,6 +141,7 @@ private struct CategoryListView: View {
     }
 }
 
+// MARK: - CustomCategoryInputView
 private struct CustomCategoryInputView: View {
     @Binding var selectedCategory: String?
     @Binding var customCategory: String
@@ -146,26 +198,6 @@ private struct SelectionIndicator: View {
     }
 }
 
-// MARK: - Header and Title View
-private struct HeaderAndTitleView: View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            HStack(alignment: .top) {
-                Text("2")
-                    .font(.system(size: 40))
-                    .foregroundColor(Color("gray07"))
-                Spacer()
-                Text("Skip")
-                    .font(.system(size: 14))
-                    .foregroundColor(Color("gray07"))
-            }
-            Text("What do you do for work?")
-                .font(.system(size: 24))
-                .foregroundColor(Color.white)
-        }
-    }
-}
-
 // MARK: - Next Button
 private struct NextButton: View {
     var isEnabled: Bool
@@ -189,5 +221,5 @@ private struct NextButton: View {
 }
 
 #Preview {
-    WorkSelectionView()
+    WorkSelectionView(path: .constant([]))
 }

@@ -22,12 +22,18 @@ struct LoginView: View {
                     LoginButtons(path: $path)
                         .padding(.top, 103.2)
                     
+                    TermsOfUseView()
+                        .padding(.top, 18)
+                    
                     Spacer()
                 }
             }
             .navigationDestination(for: String.self) { destination in
                 if destination == "SleepCycleSettingView" {
-                    SleepCycleSettingView()
+                    SleepCycleSettingView(path: $path) 
+                        .navigationBarBackButtonHidden()
+                } else if destination == "WorkSelectionView" {
+                    WorkSelectionView(path: $path)
                         .navigationBarBackButtonHidden()
                 }
             }
@@ -92,6 +98,21 @@ private struct LoginButtons: View {
                     .padding(EdgeInsets(top: 11, leading: 76, bottom: 11, trailing: 84))
                     .background(Color("ButtonBackColor"))
             }
+        }
+    }
+}
+
+// MARK: - Terms Of Use View
+private struct TermsOfUseView: View {
+    var body: some View {
+        HStack(spacing: 5) {
+            Text("by continuing, you agree to memento's")
+                .font(.system(size: 11))
+                .foregroundColor(Color("gray07"))
+            
+            Link("Terms of Use", destination: URL(string: "https://www.naver.com")!)
+                .font(.system(size: 11))
+                .foregroundColor(Color("gray04"))
         }
     }
 }
