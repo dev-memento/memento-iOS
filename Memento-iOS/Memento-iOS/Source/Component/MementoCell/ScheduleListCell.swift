@@ -9,9 +9,9 @@ import SwiftUI
 
 struct ScheduleListCell: View {
     
-    var colorType: String = "red"
-    var title: String = "세미나"
-    var time: String = "12PM - 4PM"
+    var colorType: String
+    var title: String
+    var time: String
     
     var body: some View {
         HStack(spacing: 12) {

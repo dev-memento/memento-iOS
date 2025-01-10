@@ -11,9 +11,10 @@ struct TodoListCell: View {
     
     @Binding var isChecked: Bool
     
-    var colorType: String = "red"
-    var todoTitle: String = "UXUI 과제"
-    var dueDate: String = "Today"
+    var todoTitle: String
+    var colorType: String
+    var dueDate: String
+    var priorityType: Priority
     
     var body: some View {
         HStack(spacing: 12) {
@@ -39,7 +40,7 @@ struct TodoListCell: View {
             
             Spacer()
             
-            PriorityLabel(priority: .high)
+            PriorityLabel(priority: priorityType)
                 .padding(.trailing, 12)
         }
         .frame(height: 70)
