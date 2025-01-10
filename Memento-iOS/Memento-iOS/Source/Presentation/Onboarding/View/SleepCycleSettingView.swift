@@ -4,14 +4,16 @@
 //
 //  Created by 정정욱 on 1/9/25.
 //
+
 import SwiftUI
+import MDSKit
 
 struct SleepCycleSettingView: View {
     @State private var wakeUpTime: Date? = nil
     @State private var windDownTime: Date? = nil
-    @State private var isPickerPresented: Bool = false // DatePicker 표시 여부
+    @State private var isPickerPresented: Bool = false 
     @State private var selectedTimeType: TimeType = .wakeUp
-    @Binding var path: [String] // Navigation 경로를 관리하는 바인딩 변수
+    @Binding var path: [String]
 
     enum TimeType {
         case wakeUp
@@ -43,12 +45,13 @@ struct SleepCycleSettingView: View {
                 )
                 .padding(.horizontal, 16)
                 .padding(.top, 80)
+              
+                Spacer()
                 
                 NextButton(wakeUpTime: $wakeUpTime, windDownTime: $windDownTime, path: $path)
                     .padding(.horizontal, 16)
-                    .padding(.top, 289)
-                
-                Spacer()
+                    .padding(.bottom, 10)
+              
             }
         }
         .sheet(isPresented: $isPickerPresented) {
@@ -69,13 +72,13 @@ private struct CustomNavigationBar: View {
     var body: some View {
         HStack(alignment: .top) {
             Button {
-                path.removeLast() // 이전 화면으로 이동
+                path.removeLast()
             } label: {
-                Image("back")
+                Image(systemName: "chevron.backward")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 7.5, height: 16.5)
-                    .foregroundColor(Color("gray06"))
+                    .foregroundColor(.gray06)
             }
             
             Spacer()
@@ -84,8 +87,8 @@ private struct CustomNavigationBar: View {
                 path.append("WorkSelectionView") // 다음 화면으로 이동
             } label: {
                 Text("Skip")
-                    .font(.system(size: 14))
-                    .foregroundColor(Color("gray06"))
+                    .applyFont(.body_b_14)
+                    .foregroundColor(.gray06)
             }
         }
     }
@@ -97,21 +100,22 @@ private struct HeaderTitleView: View {
         VStack(alignment: .leading, spacing: 10) {
             
             Text("1")
-                .font(.system(size: 40))
-                .foregroundColor(Color("gray07"))
+                .applyFont(.head_b_40)
+                .foregroundColor(.gray07)
             
             
             Text("Set your")
-                .font(.system(size: 24))
-                .foregroundColor(Color.white)
+                .applyFont(.title_b_24)
+                .foregroundColor(.white)
+                .padding(.top, 18)
             
             Text("wake-up and")
-                .font(.system(size: 24))
-                .foregroundColor(Color.white)
+                .applyFont(.title_b_24)
+                .foregroundColor(.white)
             
             Text("wind-down hours")
-                .font(.system(size: 24))
-                .foregroundColor(Color.white)
+                .applyFont(.title_b_24)
+                .foregroundColor(.white)
         }
     }
 }
@@ -126,7 +130,7 @@ private struct TimeSelectionView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 29) {
             timeSelectionRow(
-                icon: "mingcute_sun-line",
+                icon: "mingcute_sun-line", // 디자인 시스템에 맞게 수정 필요
                 title: "Wake-up",
                 time: wakeUpTime,
                 action: {
@@ -149,24 +153,28 @@ private struct TimeSelectionView: View {
     
     private func timeSelectionRow(icon: String, title: String, time: Date?, action: @escaping () -> Void) -> some View {
         HStack {
-            Image(icon)
+            //Image(icon)
+            Image(systemName: "apple.logo")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 33, height: 33)
+                .foregroundColor(.white)
             
             Text(title)
-                .font(.system(size: 22))
-                .foregroundColor(Color.white)
+                .applyFont(.title_b_22)
+                .foregroundColor(.white)
             
             Spacer()
             
             Button(action: action) {
                 Text(time.map { timeFormatter.string(from: $0) } ?? "00:00 AM")
-                    .font(.system(size: 14))
-                    .foregroundColor(Color.white)
+                    .applyFont(.body_r_14)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity, alignment: .center)
                     .padding(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
-                    .background(Color("gray09"))
+                    .background(Color.gray09)
             }
+            .frame(width: 94, height: 36)
         }
     }
 }
@@ -184,14 +192,14 @@ private struct NextButton: View {
             }
         } label: {
             Text("Next")
-                .font(.system(size: 16))
-                .foregroundColor((wakeUpTime != nil && windDownTime != nil) ? .black : Color("gray08"))
+                .applyFont(.body_b_16)
+                .foregroundColor((wakeUpTime != nil && windDownTime != nil) ? .black : .gray08)
                 .padding(EdgeInsets(top: 13, leading: 0, bottom: 13, trailing: 0))
                 .frame(maxWidth: .infinity)
         }
         .cornerRadius(2)
-        .background((wakeUpTime != nil && windDownTime != nil) ? Color.green : Color("gray10"))
-        .padding(.bottom, 10) // 버튼 아래쪽 여백 추가
+        .frame(height: 50) 
+        .background((wakeUpTime != nil && windDownTime != nil) ? Color.green : Color.gray10)
     }
 }
 
@@ -207,7 +215,6 @@ private struct TimePickerView: View {
             VStack {
                 Spacer()
                 
-                // DatePicker
                 DatePicker(
                     "",
                     selection: Binding(
@@ -225,15 +232,15 @@ private struct TimePickerView: View {
                 .labelsHidden()
             }
             .presentationDetents([.fraction(0.3)]) // 시트 높이 설정
-            .presentationBackground(Color("gray09"))
+            .presentationBackground(Color.gray09)
             
             // Done 버튼
             Button(action: {
-                isPickerPresented = false // 시트 닫기
+                isPickerPresented = false
             }) {
                 Text("Done")
                     .foregroundColor(Color.white)
-                    .font(.system(size: 14))
+                    .applyFont(.body_b_14)
             }
             .padding(.top, 14)
             .padding(.trailing, 16)
@@ -249,6 +256,6 @@ private var timeFormatter: DateFormatter {
 }
 
 #Preview {
-    SleepCycleSettingView(path: .constant([])) // 프리뷰용 바인딩 전달
+    SleepCycleSettingView(path: .constant([]))
 }
 

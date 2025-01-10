@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import MDSKit
 
 struct LoginView: View {
     @State private var path: [String] = [] // Navigation 경로를 관리하는 배열
@@ -46,17 +47,19 @@ private struct HeaderView: View {
     var body: some View {
         VStack(alignment: .center) {
             Text("Less Noise,")
-                .font(.system(size: 24)) // 추후 디자인 시스템으로 수정 할 것임
-                .foregroundColor(.white) // Text 색상을 흰색으로 변경
-            Text("More Progress,")
-                .font(.system(size: 24))
+                .applyFont(.title_b_24)
                 .foregroundColor(.white)
             
-            Image("MainLogo")
+            Text("More Progress,")
+                .applyFont(.title_b_24)
+                .foregroundColor(.white)
+            
+            Image(systemName: "apple.logo")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 49.38, height: 43.16)
                 .padding(.top, 98.64)
+                .foregroundColor(.white)
         }
     }
 }
@@ -78,25 +81,25 @@ private struct LoginButtons: View {
     var body: some View {
         VStack(alignment: .center, spacing: 18) {
             Button {
-                path.append("SleepCycleSettingView") // 경로에 추가
+                path.append("SleepCycleSettingView")
             } label: {
-                Image("GoogleLogin")
+                Image(systemName: "apple.logo")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 183, height: 24)
                     .padding(EdgeInsets(top: 11, leading: 76, bottom: 11, trailing: 84))
-                    .background(Color("ButtonBackColor"))
+                    .background(Color.gray10)
             }
             
             Button {
-                path.append("SleepCycleSettingView") // 경로에 추가
+                path.append("SleepCycleSettingView")
             } label: {
-                Image("AppleLogin")
+                Image(systemName: "apple.logo")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 183, height: 24)
                     .padding(EdgeInsets(top: 11, leading: 76, bottom: 11, trailing: 84))
-                    .background(Color("ButtonBackColor"))
+                    .background(Color.gray10)
             }
         }
     }
@@ -107,12 +110,12 @@ private struct TermsOfUseView: View {
     var body: some View {
         HStack(spacing: 5) {
             Text("by continuing, you agree to memento's")
-                .font(.system(size: 11))
-                .foregroundColor(Color("gray07"))
+                .applyFont(.detail_r_12)
+                .foregroundColor(Color.gray07)
             
             Link("Terms of Use", destination: URL(string: "https://www.naver.com")!)
-                .font(.system(size: 11))
-                .foregroundColor(Color("gray04"))
+                .applyFont(.detail_r_12)
+                .foregroundColor(Color.gray04)
         }
     }
 }

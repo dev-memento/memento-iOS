@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import MDSKit
 
 struct StepProgressBar: View {
     var currentStep: Int
@@ -13,9 +14,11 @@ struct StepProgressBar: View {
     
     var body: some View {
         ProgressView(value: Double(currentStep), total: Double(totalSteps))
-            .progressViewStyle(LinearProgressViewStyle(tint: Color("Progress_bar")))
+            .progressViewStyle(LinearProgressViewStyle(
+                tint: Color.gray08)
+            )
             .frame(height: 6)
-            .background(Color("Progress_box"))
+            .background(Color.gray10)
             .cornerRadius(10)
     }
 }

@@ -6,18 +6,16 @@
 //
 
 import SwiftUI
+import MDSKit
 
 struct WorkSelectionView: View {
-    // 선택된 카테고리
+  
     @State private var selectedCategory: String? = nil
-    // 사용자 정의 카테고리
     @State private var customCategory: String = ""
     // TextField 포커스 상태 관리
     @FocusState private var isTextFieldFocused: Bool
+    @Binding var path: [String]
     
-    @Binding var path: [String] // Navigation 경로를 관리하는 바인딩 변수
-
-    // Next 버튼 활성화 조건
     private var isNextButtonEnabled: Bool {
         (selectedCategory != nil && selectedCategory != "Other") || !customCategory.isEmpty
     }
@@ -54,11 +52,13 @@ struct WorkSelectionView: View {
                     }
                 }
                 .padding(.top, 28)
-                .background(Color.black)
+                .background(.black)
+                
+                Spacer()
                 
                 NextButton(isEnabled: isNextButtonEnabled)
                     .padding(.horizontal, 16)
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 10)
             }
         }
     }
@@ -71,23 +71,23 @@ private struct CustomNavigationBar: View {
     var body: some View {
         HStack(alignment: .top) {
             Button {
-                path.removeLast() // 이전 화면으로 이동
+                path.removeLast()
             } label: {
-                Image("back")
+                Image(systemName: "chevron.backward")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 7.5, height: 16.5)
-                    .foregroundColor(Color("gray06"))
+                    .foregroundColor(.gray06)
             }
             
             Spacer()
             
             Button {
-                path.append("WorkSelectionView") // 다음 화면으로 이동
+                path.append("WorkSelectionView") 
             } label: {
                 Text("Skip")
-                    .font(.system(size: 14))
-                    .foregroundColor(Color("gray06"))
+                    .applyFont(.body_b_14)
+                    .foregroundColor(.gray06)
             }
         }
     }
@@ -98,12 +98,12 @@ private struct HeaderTitleView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
             Text("2")
-                .font(.system(size: 40))
-                .foregroundColor(Color("gray07"))
+                .applyFont(.head_b_40)
+                .foregroundColor(.gray07)
             
             Text("What do you do for work?")
-                .font(.system(size: 24))
-                .foregroundColor(Color.white)
+                .applyFont(.title_b_24)
+                .foregroundColor(.white)
         }
     }
 }
@@ -119,14 +119,14 @@ private struct CategoryListView: View {
             HStack {
                 SelectionIndicator(isSelected: selectedCategory == category.name)
                 Text(category.name)
-                    .foregroundColor(Color("gray06"))
-                    .font(.system(size: 14))
+                    .applyFont(.body_b_14)
+                    .foregroundColor(Color.gray06)
                     .padding(.leading, 14)
                 Spacer()
             }
             .frame(height: 44)
             .padding(.horizontal)
-            .background(Color.black)
+            .background(.black)
             .contentShape(Rectangle())
             .onTapGesture {
                 selectCategory(category.name)
@@ -162,13 +162,13 @@ private struct CustomCategoryInputView: View {
                         selectedCategory = "Other"
                     }
                 }
-                .foregroundColor((isTextFieldFocused || !customCategory.isEmpty) ? .white : Color("gray08"))
-                .font(.system(size: 14))
+                .foregroundColor((isTextFieldFocused || !customCategory.isEmpty) ? .white : .gray08)
+                .applyFont(.body_b_14)
                 .padding(EdgeInsets(top: 12, leading: 14, bottom: 12, trailing: 0))
 
                 Rectangle()
                     .frame(width: 240, height: 1)
-                    .foregroundColor((isTextFieldFocused || !customCategory.isEmpty) ? .white : Color("gray08"))
+                    .foregroundColor((isTextFieldFocused || !customCategory.isEmpty) ? .white : Color.gray08)
                     .padding(.leading, 14)
                     .offset(y: -10)
             }
@@ -177,7 +177,7 @@ private struct CustomCategoryInputView: View {
         }
         .frame(height: 44)
         .padding(.horizontal)
-        .background(Color.black)
+        .background(.black)
         .contentShape(Rectangle())
         .onTapGesture {
             selectedCategory = "Other"
@@ -191,10 +191,11 @@ private struct SelectionIndicator: View {
     var isSelected: Bool
 
     var body: some View {
-        Image(isSelected ? "check_selected" : "check_unselected")
+        Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
             .resizable()
             .scaledToFit()
             .frame(width: 20, height: 20)
+            .foregroundColor(isSelected ? .white : .gray) // 색상 선택
     }
 }
 
@@ -209,12 +210,13 @@ private struct NextButton: View {
             }
         } label: {
             Text("Next")
-                .font(.system(size: 16))
-                .foregroundColor(isEnabled ? .black : Color("gray08"))
+                .applyFont(.body_b_16)
+                .foregroundColor(isEnabled ? Color.black : Color.gray08)
                 .padding(.vertical, 13)
                 .frame(maxWidth: .infinity)
         }
-        .background(isEnabled ? Color.green : Color("gray10"))
+        .background(isEnabled ? Color.mainGreen : Color.gray10)
+        .frame(height: 50)
         .cornerRadius(2)
         .disabled(!isEnabled)
     }
