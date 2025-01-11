@@ -12,8 +12,8 @@ struct ToDoListView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            HeaderView(title: "Navigation", height: 56)
-            HeaderView(title: "Weekly Calendar", height: 61)
+            ToDoListHeaderView(title: "Navigation", height: 56)
+            ToDoListHeaderView(title: "Weekly Calendar", height: 61)
             
             VStack(spacing: 8) {
                 DateSectionView(date: "Jan 3", content: [
@@ -34,7 +34,7 @@ struct ToDoListView: View {
     }
 }
 
-struct HeaderView: View {
+struct ToDoListHeaderView: View {
     let title: String
     var height: CGFloat
     
