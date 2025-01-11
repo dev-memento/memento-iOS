@@ -8,9 +8,15 @@
 import SwiftUI
 import MDSKit
 
-struct LoginView: View {
-    @State private var path: [String] = [] // Navigation 경로를 관리하는 배열
+// 추후 ViewModel에 넣기
+enum OnBoardingNavigationDestination: String, Hashable {
+    case sleepCycleSetting = "SleepCycleSettingView"
+    case workSelection = "WorkSelectionView"
+}
 
+struct LoginView: View {
+    @State private var path: [OnBoardingNavigationDestination] = [] // Navigation 경로를 관리하는 배열
+    
     var body: some View {
         NavigationStack(path: $path) {
             ZStack {
@@ -29,11 +35,12 @@ struct LoginView: View {
                     Spacer()
                 }
             }
-            .navigationDestination(for: String.self) { destination in
-                if destination == "SleepCycleSettingView" {
-                    SleepCycleSettingView(path: $path) 
+            .navigationDestination(for: OnBoardingNavigationDestination.self) { destination in
+                switch destination {
+                case .sleepCycleSetting:
+                    SleepCycleSettingView(path: $path)
                         .navigationBarBackButtonHidden()
-                } else if destination == "WorkSelectionView" {
+                case .workSelection:
                     WorkSelectionView(path: $path)
                         .navigationBarBackButtonHidden()
                 }
@@ -76,12 +83,12 @@ private struct LogoView: View {
 
 // MARK: - Login Buttons
 private struct LoginButtons: View {
-    @Binding var path: [String] // Navigation 경로를 관리하는 바인딩 변수
-
+    @Binding var path: [OnBoardingNavigationDestination] // Navigation 경로를 관리하는 바인딩 변수
+    
     var body: some View {
         VStack(alignment: .center, spacing: 18) {
             Button {
-                path.append("SleepCycleSettingView")
+                path.append(.sleepCycleSetting)
             } label: {
                 Image(systemName: "apple.logo")
                     .resizable()
@@ -92,7 +99,7 @@ private struct LoginButtons: View {
             }
             
             Button {
-                path.append("SleepCycleSettingView")
+                path.append(.sleepCycleSetting)
             } label: {
                 Image(systemName: "apple.logo")
                     .resizable()

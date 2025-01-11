@@ -14,7 +14,7 @@ struct WorkSelectionView: View {
     @State private var customCategory: String = ""
     // TextField 포커스 상태 관리
     @FocusState private var isTextFieldFocused: Bool
-    @Binding var path: [String]
+    @Binding var path: [OnBoardingNavigationDestination]
     
     private var isNextButtonEnabled: Bool {
         (selectedCategory != nil && selectedCategory != "Other") || !customCategory.isEmpty
@@ -66,7 +66,7 @@ struct WorkSelectionView: View {
 
 // MARK: - CustomNavigationBar
 private struct CustomNavigationBar: View {
-    @Binding var path: [String]
+    @Binding var path: [OnBoardingNavigationDestination]
 
     var body: some View {
         HStack(alignment: .top) {
@@ -83,7 +83,7 @@ private struct CustomNavigationBar: View {
             Spacer()
             
             Button {
-                path.append("WorkSelectionView") 
+                path.append(.workSelection)
             } label: {
                 Text("Skip")
                     .applyFont(.body_b_14)
