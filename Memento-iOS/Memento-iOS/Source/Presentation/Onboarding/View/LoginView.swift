@@ -12,6 +12,8 @@ import MDSKit
 enum OnBoardingNavigationDestination: String, Hashable {
     case sleepCycleSetting = "SleepCycleSettingView"
     case workSelection = "WorkSelectionView"
+    case workPreference = "WorkPreferenceView"
+    case calendarConnectView = "CalendarConnectView"
 }
 
 struct LoginView: View {
@@ -43,11 +45,18 @@ struct LoginView: View {
                 case .workSelection:
                     WorkSelectionView(path: $path)
                         .navigationBarBackButtonHidden()
+                case .workPreference:
+                    WorkPreferenceView(path: $path)
+                        .navigationBarBackButtonHidden()
+                case .calendarConnectView:
+                    CalendarConnectView(path: $path)
+                        .navigationBarBackButtonHidden()
                 }
             }
         }
     }
 }
+
 
 // MARK: - Header View
 private struct HeaderView: View {
@@ -60,6 +69,7 @@ private struct HeaderView: View {
             Text("More Progress,")
                 .applyFont(.title_b_24)
                 .foregroundColor(.white)
+                .padding(.top, 2)
             
             Image(systemName: "apple.logo")
                 .resizable()
@@ -90,24 +100,43 @@ private struct LoginButtons: View {
             Button {
                 path.append(.sleepCycleSetting)
             } label: {
-                Image(systemName: "apple.logo")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 183, height: 24)
-                    .padding(EdgeInsets(top: 11, leading: 76, bottom: 11, trailing: 84))
-                    .background(Color.gray10)
+                HStack(spacing: 8) {
+                    Image(.img_google)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 24, height: 24)
+                    
+                    Text("Continue with Google")
+                        .font(.system(size: 16))
+                        .foregroundColor(.white)
+                }
+                .frame(maxWidth: .infinity)
             }
+            .frame(maxWidth: 343)
+            .frame(height: 46)
+            .padding(.horizontal, 16)
+            .background(Color.gray10) // 배경 색상
             
             Button {
                 path.append(.sleepCycleSetting)
             } label: {
-                Image(systemName: "apple.logo")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 183, height: 24)
-                    .padding(EdgeInsets(top: 11, leading: 76, bottom: 11, trailing: 84))
-                    .background(Color.gray10)
+                HStack(spacing: 8) {
+                    Image(.img_apple)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 24, height: 24)
+                    
+                    Text("Continue with Apple")
+                        .font(.system(size: 16))
+                        .foregroundColor(.white)
+                }
+                .frame(maxWidth: .infinity)
             }
+            .frame(maxWidth: 343)
+            .frame(height: 46)
+            .padding(.horizontal, 16)
+            .background(Color.gray10) // 배경 색상
+            
         }
     }
 }

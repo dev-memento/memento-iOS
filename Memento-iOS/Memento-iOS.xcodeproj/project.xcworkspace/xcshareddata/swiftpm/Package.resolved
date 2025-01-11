@@ -11,6 +11,15 @@
       }
     },
     {
+      "identity" : "memento-design-system-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/dev-memento/memento-design-system-iOS",
+      "state" : {
+        "revision" : "07bf40430333b9491b4be99cc42459563735e790",
+        "version" : "1.0.6"
+      }
+    },
+    {
       "identity" : "moya",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Moya/Moya",

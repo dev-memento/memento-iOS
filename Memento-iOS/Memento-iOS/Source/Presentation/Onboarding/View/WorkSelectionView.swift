@@ -56,7 +56,7 @@ struct WorkSelectionView: View {
                 
                 Spacer()
                 
-                NextButton(isEnabled: isNextButtonEnabled)
+                NextButton(path: $path, isEnabled: isNextButtonEnabled)
                     .padding(.horizontal, 16)
                     .padding(.bottom, 10)
             }
@@ -83,7 +83,7 @@ private struct CustomNavigationBar: View {
             Spacer()
             
             Button {
-                path.append(.workSelection)
+                path.append(.calendarConnectView)
             } label: {
                 Text("Skip")
                     .applyFont(.body_b_14)
@@ -191,7 +191,7 @@ private struct SelectionIndicator: View {
     var isSelected: Bool
 
     var body: some View {
-        Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+        Image(isSelected ? .btn_check_selected : .btn_check_unselected)
             .resizable()
             .scaledToFit()
             .frame(width: 20, height: 20)
@@ -201,12 +201,13 @@ private struct SelectionIndicator: View {
 
 // MARK: - Next Button
 private struct NextButton: View {
+    @Binding var path: [OnBoardingNavigationDestination]
     var isEnabled: Bool
-
+    
     var body: some View {
         Button {
             if isEnabled {
-                // Next action
+                path.append(.workPreference)
             }
         } label: {
             Text("Next")

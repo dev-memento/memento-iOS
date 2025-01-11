@@ -79,7 +79,7 @@ private struct CustomNavigationBar: View {
             Spacer()
             
             Button {
-                path.append(.workSelection) // 다음 화면으로 이동
+                path.append(.calendarConnectView) // 다음 화면으로 이동
             } label: {
                 Text("Skip")
                     .applyFont(.body_b_14)

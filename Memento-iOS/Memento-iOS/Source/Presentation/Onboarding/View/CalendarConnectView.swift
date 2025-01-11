@@ -92,7 +92,7 @@ private struct CalendarConnectButtons: View {
     var body: some View {
         VStack(alignment: .center, spacing: 18) {
             Button {
-                path.append(.sleepCycleSetting)
+                //path.append(.sleepCycleSetting)
             } label: {
                 HStack(spacing: 8) {
                     Image(.img_google)
@@ -112,7 +112,7 @@ private struct CalendarConnectButtons: View {
             .background(Color.gray10) // 배경 색상
             
             Button {
-                path.append(.sleepCycleSetting)
+                //path.append(.sleepCycleSetting)
             } label: {
                 HStack(spacing: 8) {
                     Image(.img_apple)

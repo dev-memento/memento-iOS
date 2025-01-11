@@ -79,7 +79,7 @@ private struct CustomNavigationBar: View {
             Spacer()
             
             Button {
-                path.append(.workSelection)
+                path.append(.calendarConnectView)
             } label: {
                 Text("Skip")
                     .applyFont(.body_b_14)
@@ -153,7 +153,7 @@ private struct NextButton: View {
     var body: some View {
         Button {
             if isEnabled {
-                path.append(.workSelection)
+                path.append(.calendarConnectView)
             }
         } label: {
             Text("Next")
