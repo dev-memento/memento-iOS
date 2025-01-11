@@ -16,13 +16,13 @@ struct ToDoListView: View {
             HeaderView(title: "Weekly Calendar", height: 61)
             
             VStack(spacing: 8) {
-                SectionView(date: "Jan 3", content: [
+                DateSectionView(date: "Jan 3", content: [
                     TodoListCell(isChecked: $isChecked, colorType: "blue", todoTitle: "밥 먹기", dueDate: "Today"),
                     TodoListCell(isChecked: $isChecked, colorType: "green", todoTitle: "Swift 공부", dueDate: "Today"),
                     TodoListCell(isChecked: $isChecked, colorType: "red", todoTitle: "디자인 검토", dueDate: "Today")
                 ])
-                SectionView(date: "Jan 4", content: [])
-                SectionView(date: "Jan 5", content: [
+                DateSectionView(date: "Jan 4", content: [])
+                DateSectionView(date: "Jan 5", content: [
                     TodoListCell(isChecked: $isChecked, colorType: "orange", todoTitle: "코드 리뷰", dueDate: "Today")
                 ])
             }
@@ -49,7 +49,7 @@ struct HeaderView: View {
     }
 }
 
-struct SectionView: View {
+struct DateSectionView: View {
     let date: String
     let content: [TodoListCell]
     
