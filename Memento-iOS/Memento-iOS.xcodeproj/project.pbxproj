@@ -78,6 +78,14 @@
 		830F3C562D2A73BD00254FDE /* Memento-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Memento-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		2F7FCD232D32D94400F35456 /* ViewModel */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		830F3C532D2A73BD00254FDE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -227,6 +235,7 @@
 			children = (
 				2F7FCCEF2D328C3F00F35456 /* Model */,
 				2F7FCCF72D328C3F00F35456 /* View */,
+				2F7FCD232D32D94400F35456 /* ViewModel */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -320,6 +329,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				2F7FCD232D32D94400F35456 /* ViewModel */,
 			);
 			name = "Memento-iOS";
 			packageProductDependencies = (

@@ -8,14 +8,6 @@
 import SwiftUI
 import MDSKit
 
-// 추후 ViewModel에 넣기
-enum OnBoardingNavigationDestination: String, Hashable {
-    case sleepCycleSetting = "SleepCycleSettingView"
-    case workSelection = "WorkSelectionView"
-    case workPreference = "WorkPreferenceView"
-    case calendarConnectView = "CalendarConnectView"
-}
-
 struct LoginView: View {
     @State private var path: [OnBoardingNavigationDestination] = [] // Navigation 경로를 관리하는 배열
     
