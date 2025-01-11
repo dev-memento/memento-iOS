@@ -17,33 +17,51 @@ struct TodoListCell: View {
     var priorityType: Priority
     
     var body: some View {
-        HStack(spacing: 12) {
-            
+        HStack {
             ColorTagView(colorType: colorType)
-            CheckBoxView(isChecked: $isChecked)
             
-            VStack(alignment: .leading, spacing: 4) {
+            VStack{
+                CheckBoxView(isChecked: $isChecked)
+                Spacer()
+            }
+            .padding(.top, 11)
+            .padding(.leading, 10)
+            
+            VStack(alignment: .leading, spacing: 8){
                 Text(todoTitle)
                     .font(.headline)
                     .foregroundColor(.white)
                 
-                HStack(spacing: 4) {
+                HStack {
+                    Image(systemName: "circle.square")
+                        .resizable()
+                        .frame(width: 12, height: 12)
+                        .foregroundColor(.gray)
+                    
                     Image(systemName: "flag.fill")
                         .resizable()
                         .frame(width: 12, height: 12)
                         .foregroundColor(.gray)
+                        .padding(.leading, 10)
                     Text(dueDate)
                         .font(.subheadline)
                         .foregroundColor(.gray)
+                        .padding(.leading, 1)
                 }
             }
+            .padding(.leading, 10)
             
             Spacer()
             
-            PriorityLabel(priority: priorityType)
-                .padding(.trailing, 12)
+            VStack{
+                PriorityLabel(priority: priorityType)
+                Spacer()
+            }
+            .padding(.top, 10)
+            .padding(.trailing, 8)
         }
-        .frame(height: 70)
+        .padding(.top, 8)
+        .frame(width: 343, height: 68)
         .background(Color.black)
         .onChange(of: isChecked) { _ in
             print("todo box is checked")
@@ -56,14 +74,13 @@ struct CheckBoxView: View {
     @Binding var isChecked: Bool
     
     var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 4)
-                .stroke(Color.gray, lineWidth: 2)
-                .background(isChecked ? Color.gray : Color.clear)
-                .frame(width: 16, height: 16)
-        }
-        .onTapGesture {
-            isChecked.toggle()
-        }
+        RoundedRectangle(cornerRadius: 2)
+            .stroke(Color.gray, lineWidth: 1.5)
+            .background(isChecked ? Color.gray : Color.clear)
+            .frame(width: 16, height: 16)
+        
+            .onTapGesture {
+                isChecked.toggle()
+            }
     }
 }
