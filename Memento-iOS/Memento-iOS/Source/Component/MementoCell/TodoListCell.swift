@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import MDSKit
 
 struct TodoListCell: View {
     
@@ -29,7 +30,7 @@ struct TodoListCell: View {
             
             VStack(alignment: .leading, spacing: 8){
                 Text(todoTitle)
-                    .font(.headline)
+                    .applyFont(.body_b_16)
                     .foregroundColor(.white)
                 
                 HStack {
@@ -44,7 +45,7 @@ struct TodoListCell: View {
                         .foregroundColor(.gray)
                         .padding(.leading, 10)
                     Text(dueDate)
-                        .font(.subheadline)
+                        .applyFont(.detail_r_12)
                         .foregroundColor(.gray)
                         .padding(.leading, 1)
                 }

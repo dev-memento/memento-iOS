@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import MDSKit
 
 struct ToDoListView: View {
     @State private var isChecked = false
@@ -57,14 +58,14 @@ struct DateSectionView: View {
         VStack(spacing: 0) {
             Divider()
                 .frame(height: 1)
-                .background(Color(red: 0.66, green: 0.68, blue: 0.73))
+                .background(Color.gray07)
                 .frame(maxHeight: 10)
                 .padding(.bottom, 2)
             
             HStack {
                 Text(date)
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(Color(red: 0.66, green: 0.68, blue: 0.73))
+                    .applyFont(.body_b_14)
+                    .foregroundColor(Color.gray05)
                     .padding(.leading, 22)
                 Spacer()
             }
