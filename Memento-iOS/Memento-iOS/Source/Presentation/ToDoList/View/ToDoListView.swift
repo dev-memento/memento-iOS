@@ -17,13 +17,13 @@ struct ToDoListView: View {
             
             VStack(spacing: 8) {
                 DateSectionView(date: "Jan 3", content: [
-                    TodoListCell(isChecked: $isChecked, colorType: "blue", todoTitle: "밥 먹기", dueDate: "Today"),
-                    TodoListCell(isChecked: $isChecked, colorType: "green", todoTitle: "Swift 공부", dueDate: "Today"),
-                    TodoListCell(isChecked: $isChecked, colorType: "red", todoTitle: "디자인 검토", dueDate: "Today")
+                    TodoListCell(isChecked: $isChecked, todoTitle: "밥 먹기", colorType: "blue", dueDate: "Today", priorityType: .immediate),
+                    TodoListCell(isChecked: $isChecked, todoTitle: "Swift 공부", colorType: "green", dueDate: "Today", priorityType: .high),
+                    TodoListCell(isChecked: $isChecked, todoTitle: "디자인 검토", colorType: "red", dueDate: "Today", priorityType: .low)
                 ])
                 DateSectionView(date: "Jan 4", content: [])
                 DateSectionView(date: "Jan 5", content: [
-                    TodoListCell(isChecked: $isChecked, colorType: "orange", todoTitle: "코드 리뷰", dueDate: "Today")
+                    TodoListCell(isChecked: $isChecked, todoTitle: "코드 리뷰", colorType: "orange", dueDate: "Today", priorityType: .high)
                 ])
             }
             .padding(.top, 4)
@@ -79,4 +79,8 @@ struct DateSectionView: View {
         }
         .frame(height: content.isEmpty ? 36 : nil)
     }
+}
+
+#Preview {
+    ToDoListView()
 }
