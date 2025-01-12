@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TodayListView: View {
-    @State private var items: [TodayItem] = [
+    @State private var items: [TodayItemDataModel] = [
         .todo(TodoDataModel(title: "UXUI 과제", dueDate: "Today", priority: .immediate, isChecked: false, tagColor: "red")),
         .schedule(ScheduleDataModel(title: "지금은새벽5시다", time: "12 PM - 4 PM", tagColor: "green")),
         .todo(TodoDataModel(title: "독감조심하세요다들", dueDate: "Today", priority: .medium, isChecked: false, tagColor: "blue")),
@@ -20,7 +20,7 @@ struct TodayListView: View {
         .todo(TodoDataModel(title: "맥너겟어쩌고저쩌고", dueDate: "Today", priority: .low, isChecked: false, tagColor: "orange"))
     ]
     
-    @State private var draggedItem: TodayItem?
+    @State private var draggedItem: TodayItemDataModel?
     @State private var dropIndex: Int?
 
     var body: some View {
@@ -57,7 +57,7 @@ struct TodayListView: View {
 
 struct TodayListItemView: View {
     
-    @Binding var item: TodayItem
+    @Binding var item: TodayItemDataModel
     
     var body: some View {
         switch item {
@@ -79,58 +79,10 @@ struct TodayListItemView: View {
     }
 }
 
-enum TodayItem: Identifiable {
-    
-    case todo(TodoDataModel)
-    case schedule(ScheduleDataModel)
-    
-    var id: UUID {
-        switch self {
-        case .todo(let todo):
-            return todo.id
-        case .schedule(let schedule):
-            return schedule.id
-        }
-    }
-}
-
-extension TodayItem {
-    var todoBinding: TodoDataModel {
-        get {
-            if case .todo(let todo) = self {
-                return todo
-            } else {
-                fatalError("Todo 케이스가 아닙니다")
-            }
-        }
-        set {
-            if case .todo = self {
-                self = .todo(newValue)
-            }
-        }
-    }
-}
-
-struct TodoDataModel: Identifiable {
-    var id = UUID()
-    var title: String
-    var dueDate: String
-    var priority: Priority
-    var isChecked: Bool
-    var tagColor: String
-}
-
-struct ScheduleDataModel: Identifiable {
-    var id = UUID()
-    var title: String
-    var time: String
-    var tagColor: String
-}
-
 struct DropViewDelegate: DropDelegate {
-    @Binding var item: TodayItem
-    @Binding var items: [TodayItem]
-    @Binding var draggedItem: TodayItem?
+    @Binding var item: TodayItemDataModel
+    @Binding var items: [TodayItemDataModel]
+    @Binding var draggedItem: TodayItemDataModel?
     @Binding var dropIndex: Int?
 
     func dropUpdated(info: DropInfo) -> DropProposal? {
