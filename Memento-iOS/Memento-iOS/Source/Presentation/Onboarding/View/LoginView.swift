@@ -17,7 +17,7 @@ struct LoginView: View {
                 BackgroundView()
                 
                 VStack(alignment: .center) {
-                    HeaderView()
+                    LoginHeaderView()
                         .padding(.top, 115)
                     
                     LoginButtons(path: $path)
@@ -43,7 +43,7 @@ struct LoginView: View {
 }
 
 // MARK: - Header View
-private struct HeaderView: View {
+private struct LoginHeaderView: View {
     var body: some View {
         VStack(alignment: .center) {
             Text("Less Noise,")
