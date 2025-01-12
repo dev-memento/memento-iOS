@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import MDSKit
 
 /// Todo 관리에 필요한 중요도 표시 라벨
 enum Priority: String {
@@ -13,10 +14,10 @@ enum Priority: String {
     
     var color: Color {
         switch self {
-        case .immediate: return .red
-        case .high: return .yellow
-        case .medium: return .green
-        case .low: return .blue
+        case .immediate: return Color.labelImmediate
+        case .high: return Color.labelHigh
+        case .medium: return Color.labelMedium
+        case .low: return Color.labelLow
         case .none: return .gray
         }
     }
@@ -38,15 +39,18 @@ struct PriorityLabel: View {
     
     var body: some View {
         Text(priority.title)
-            .font(.subheadline)
-            .foregroundColor(priority.color)
-            .padding(.horizontal, 3)
-            .padding(.vertical, 1)
-            .background(priority.color.opacity(0.1))
+            .applyFont(.detail_b_12)
+            .foregroundColor(Color.gray04)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background(priority.color.opacity(0.15))
             .overlay(
-                Rectangle()
-                    .stroke(priority.color, lineWidth: 0.4)
+                RoundedRectangle(cornerRadius: 2)
+                    .stroke(priority.color, lineWidth: 0.3)
             )
     }
 }
 
+#Preview {
+    ToDoListView()
+}
