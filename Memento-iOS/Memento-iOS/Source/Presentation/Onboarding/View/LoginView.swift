@@ -9,7 +9,7 @@ import SwiftUI
 import MDSKit
 
 struct LoginView: View {
-    @State private var path: [OnBoardingNavigationDestination] = [] // Navigation 경로를 관리하는 배열
+    @State private var path: [OnBoardingNavigationDestination] = [] 
     
     var body: some View {
         NavigationStack(path: $path) {
@@ -73,19 +73,9 @@ private struct HeaderView: View {
     }
 }
 
-// MARK: - Logo View
-private struct LogoView: View {
-    var body: some View {
-        Image("MainLogo")
-            .resizable()
-            .scaledToFit()
-            .frame(width: 49.38, height: 43.16)
-    }
-}
-
 // MARK: - Login Buttons
 private struct LoginButtons: View {
-    @Binding var path: [OnBoardingNavigationDestination] // Navigation 경로를 관리하는 바인딩 변수
+    @Binding var path: [OnBoardingNavigationDestination]
     
     var body: some View {
         VStack(alignment: .center, spacing: 18) {
@@ -107,7 +97,7 @@ private struct LoginButtons: View {
             .frame(maxWidth: 343)
             .frame(height: 46)
             .padding(.horizontal, 16)
-            .background(Color.gray10) // 배경 색상
+            .background(Color.gray10)
             
             Button {
                 path.append(.sleepCycleSetting)
@@ -127,8 +117,7 @@ private struct LoginButtons: View {
             .frame(maxWidth: 343)
             .frame(height: 46)
             .padding(.horizontal, 16)
-            .background(Color.gray10) // 배경 색상
-            
+            .background(Color.gray10)
         }
     }
 }

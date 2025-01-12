@@ -19,7 +19,7 @@ struct CalendarConnectView: View {
             
             VStack(alignment: .center) {
                 CustomNavigationBar(path: $path)
-                    .padding(.horizontal)
+                    .padding(.trailing, 16)
                     .padding(.top, 16)
                 
                 HeaderTitleView()
@@ -30,7 +30,7 @@ struct CalendarConnectView: View {
                 
                 Spacer()
                 
-                NextButton()
+                AppStartButton()
                     .padding(.horizontal, 16)
                     .padding(.bottom, 10)
             }
@@ -47,10 +47,10 @@ private struct CustomNavigationBar: View {
             Button {
                 path.removeLast()
             } label: {
-                Image(systemName: "chevron.backward")
+                Image(.btn_back)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 7.5, height: 16.5)
+                    .frame(width: 48, height: 48)
                     .foregroundColor(.gray06)
             }
             Spacer()
@@ -62,14 +62,13 @@ private struct CustomNavigationBar: View {
 private struct HeaderTitleView: View {
     var body: some View {
         ZStack {
-            // 이미지가 배경으로
-            Image(systemName: "calendar")
+            Image(.img_calendar)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 90, height: 80)
                 .foregroundColor(Color.gray09)
                 .opacity(0.5)
-                .offset(x:120, y: 40)
+                .offset(x: 110, y: 35)
             
             VStack(alignment: .center, spacing: 10) {
                 Text("Connect your calendar")
@@ -87,7 +86,7 @@ private struct HeaderTitleView: View {
 
 // MARK: - CalendarConnectButtons
 private struct CalendarConnectButtons: View {
-    @Binding var path: [OnBoardingNavigationDestination] // Navigation 경로를 관리하는 바인딩 변수
+    @Binding var path: [OnBoardingNavigationDestination]
     
     var body: some View {
         VStack(alignment: .center, spacing: 18) {
@@ -109,7 +108,7 @@ private struct CalendarConnectButtons: View {
             .frame(maxWidth: 343)
             .frame(height: 46)
             .padding(.horizontal, 16)
-            .background(Color.gray10) // 배경 색상
+            .background(Color.gray10)
             
             Button {
                 //path.append(.sleepCycleSetting)
@@ -129,15 +128,13 @@ private struct CalendarConnectButtons: View {
             .frame(maxWidth: 343)
             .frame(height: 46)
             .padding(.horizontal, 16)
-            .background(Color.gray10) // 배경 색상
-            
+            .background(Color.gray10)
         }
     }
 }
 
 // MARK: - Next Button
-private struct NextButton: View {
-    
+private struct AppStartButton: View {
     var body: some View {
         Button {
           

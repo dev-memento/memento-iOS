@@ -23,12 +23,12 @@ struct WorkPreferenceView: View {
 
             VStack(alignment: .leading) {
                 CustomNavigationBar(path: $path)
-                    .padding(.horizontal)
+                    .padding(.trailing, 16)
                     .padding(.top, 16)
-
+                
                 StepProgressBar(currentStep: 3, totalSteps: 4)
                     .padding(.horizontal, 16)
-                    .padding(.top, 24)
+                    .padding(.top, 10)
 
                 HeaderTitleView()
                     .padding(.horizontal)
@@ -69,10 +69,10 @@ private struct CustomNavigationBar: View {
             Button {
                 path.removeLast()
             } label: {
-                Image(systemName: "chevron.backward")
+                Image(.btn_back)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 7.5, height: 16.5)
+                    .frame(width: 48, height: 48)
                     .foregroundColor(.gray06)
             }
             

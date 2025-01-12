@@ -12,7 +12,6 @@ struct WorkSelectionView: View {
   
     @State private var selectedCategory: String? = nil
     @State private var customCategory: String = ""
-    // TextField 포커스 상태 관리
     @FocusState private var isTextFieldFocused: Bool
     @Binding var path: [OnBoardingNavigationDestination]
     
@@ -26,12 +25,12 @@ struct WorkSelectionView: View {
             
             VStack(alignment: .leading) {
                 CustomNavigationBar(path: $path)
-                    .padding(.horizontal)
+                    .padding(.trailing, 16)
                     .padding(.top, 16)
                 
                 StepProgressBar(currentStep: 2, totalSteps: 4)
                     .padding(.horizontal, 16)
-                    .padding(.top, 24)
+                    .padding(.top, 10)
                 
                 HeaderTitleView()
                     .padding(.horizontal)
@@ -73,10 +72,10 @@ private struct CustomNavigationBar: View {
             Button {
                 path.removeLast()
             } label: {
-                Image(systemName: "chevron.backward")
+                Image(.btn_back)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 7.5, height: 16.5)
+                    .frame(width: 48, height: 48)
                     .foregroundColor(.gray06)
             }
             
@@ -191,7 +190,7 @@ private struct SelectionIndicator: View {
     var isSelected: Bool
 
     var body: some View {
-        Image(isSelected ? .btn_check_selected : .btn_check_unselected)
+        Image(isSelected ? .btn_check_selected_circle : .btn_check_unselected_circle)
             .resizable()
             .scaledToFit()
             .frame(width: 20, height: 20)

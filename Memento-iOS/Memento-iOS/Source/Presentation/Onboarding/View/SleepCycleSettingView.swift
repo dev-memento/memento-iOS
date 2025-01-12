@@ -21,12 +21,12 @@ struct SleepCycleSettingView: View {
             
             VStack(alignment: .leading) {
                 CustomNavigationBar(path: $path)
-                    .padding(.horizontal)
+                    .padding(.trailing, 16)
                     .padding(.top, 16)
                 
                 StepProgressBar(currentStep: 1, totalSteps: 4)
                     .padding(.horizontal, 16)
-                    .padding(.top, 24)
+                    .padding(.top, 10)
                 
                 HeaderTitleView()
                     .padding(.horizontal)
@@ -65,21 +65,21 @@ private struct CustomNavigationBar: View {
     @Binding var path: [OnBoardingNavigationDestination]
     
     var body: some View {
-        HStack(alignment: .top) {
+        HStack(alignment: .center) {
             Button {
                 path.removeLast()
             } label: {
-                Image(systemName: "chevron.backward")
+                Image(.btn_back)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 7.5, height: 16.5)
+                    .frame(width: 48, height: 48)
                     .foregroundColor(.gray06)
             }
             
             Spacer()
             
             Button {
-                path.append(.calendarConnectView) // 다음 화면으로 이동
+                path.append(.calendarConnectView)
             } label: {
                 Text("Skip")
                     .applyFont(.body_b_14)
@@ -97,7 +97,6 @@ private struct HeaderTitleView: View {
             Text("1")
                 .applyFont(.head_b_40)
                 .foregroundColor(.gray07)
-            
             
             Text("Set your")
                 .applyFont(.title_b_24)
@@ -125,17 +124,17 @@ private struct TimeSelectionView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 29) {
             timeSelectionRow(
-                icon: "mingcute_sun-line", // 디자인 시스템에 맞게 수정 필요
+                icon: .ic_sun_line,
                 title: "Wake-up",
                 time: wakeUpTime,
                 action: {
                     selectedTimeType = .wakeUp
-                    isPickerPresented = true // TimePickerView 작동
+                    isPickerPresented = true
                 }
             )
             
             timeSelectionRow(
-                icon: "mingcute_bed-line",
+                icon: .ic_bad,
                 title: "Wind-down",
                 time: windDownTime,
                 action: {
@@ -146,10 +145,9 @@ private struct TimeSelectionView: View {
         }
     }
     
-    private func timeSelectionRow(icon: String, title: String, time: Date?, action: @escaping () -> Void) -> some View {
+    private func timeSelectionRow(icon: MDSImageName, title: String, time: Date?, action: @escaping () -> Void) -> some View {
         HStack {
-            //Image(icon)
-            Image(systemName: "apple.logo")
+            Image(icon)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 33, height: 33)
@@ -170,7 +168,7 @@ private struct TimeSelectionView: View {
                     .background(Color.gray09)
             }
             .frame(width: 94, height: 36)
-
+            
         }
     }
 }
