@@ -8,25 +8,12 @@
 import SwiftUI
 
 struct TodayListView: View {
-    @State private var items: [TodayItemDataModel] = [
-        .todo(TodoDataModel(title: "UXUI 과제", dueDate: "Today", priority: .immediate, isChecked: false, tagColor: "red")),
-        .schedule(ScheduleDataModel(title: "지금은새벽5시다", time: "12 PM - 4 PM", tagColor: "green")),
-        .todo(TodoDataModel(title: "독감조심하세요다들", dueDate: "Today", priority: .medium, isChecked: false, tagColor: "blue")),
-        .schedule(ScheduleDataModel(title: "회의어쩌고저쩌고메멘토회의", time: "2 PM - 3 PM", tagColor: "orange")),
-        .schedule(ScheduleDataModel(title: "나는지금배고프다", time: "2 PM - 3 PM", tagColor: "yellow")),
-        .todo(TodoDataModel(title: "공차가너무먹고싶어요", dueDate: "Today", priority: .none, isChecked: false, tagColor: "blue")),
-        .schedule(ScheduleDataModel(title: "하다보니깐6시다", time: "12 PM - 4 PM", tagColor: "red")),
-        .todo(TodoDataModel(title: "이것만하고자야징", dueDate: "Today", priority: .high, isChecked: false, tagColor: "green")),
-        .todo(TodoDataModel(title: "맥너겟어쩌고저쩌고", dueDate: "Today", priority: .low, isChecked: false, tagColor: "orange"))
-    ]
-    
-    @State private var draggedItem: TodayItemDataModel?
-    @State private var dropIndex: Int?
+    @StateObject private var viewModel = TodayListViewModel()
 
     var body: some View {
         ScrollView {
             VStack(spacing: 8) {
-                ForEach(items.indices, id: \.self) { index in
+                ForEach(viewModel.items.indices, id: \.self) { index in
                     renderItem(at: index)
                         .padding(.horizontal)
                 }
@@ -34,22 +21,28 @@ struct TodayListView: View {
             .padding(.vertical)
         }
     }
-    
-    private func renderItem(at index: Int) -> some View {
-        let isDragging = items[index].id == draggedItem?.id
-        
-        return TodayListItemView(item: $items[index])
+}
+
+private extension TodayListView {
+    func renderItem(at index: Int) -> some View {
+        let item = viewModel.items[index]
+        let isDragging = item.id == viewModel.dragItem?.id
+
+        return TodayListItemView(item: $viewModel.items[index])
+            // 드래그 시작
             .onDrag {
-                self.draggedItem = items[index]
+                viewModel.dragItem = item
                 return NSItemProvider()
             }
+            // 드롭 시작
             .onDrop(
                 of: [.text],
                 delegate: DropViewDelegate(
-                    item: $items[index],
-                    items: $items,
-                    draggedItem: $draggedItem,
-                    dropIndex: $dropIndex
+                    item: $viewModel.items[index],
+                    items: $viewModel.items,
+                    draggedItem: $viewModel.dragItem,
+                    dropIndex: $viewModel.dropIndex,
+                    onDrop: viewModel.dropAction
                 )
             )
     }
@@ -79,16 +72,22 @@ struct TodayListItemView: View {
     }
 }
 
+// MARK: - DropViewDelegate
+
 struct DropViewDelegate: DropDelegate {
+    
     @Binding var item: TodayItemDataModel
     @Binding var items: [TodayItemDataModel]
     @Binding var draggedItem: TodayItemDataModel?
     @Binding var dropIndex: Int?
+    
+    let onDrop: (TodayItemDataModel?, TodayItemDataModel) -> Void
 
     func dropUpdated(info: DropInfo) -> DropProposal? {
         DropProposal(operation: .move)
     }
 
+    // 드롭 완료
     func performDrop(info: DropInfo) -> Bool {
         withAnimation {
             draggedItem = nil
@@ -96,19 +95,15 @@ struct DropViewDelegate: DropDelegate {
         }
         return true
     }
-    
+
+    // 드롭 대상에 진입
     func dropEntered(info: DropInfo) {
-        guard let draggedItem,
-              draggedItem.id != item.id,
-              let toIndex = items.firstIndex(where: { $0.id == item.id }),
-              let fromIndex = items.firstIndex(where: { $0.id == draggedItem.id }) else { return }
-        
-        withAnimation {
-            items.move(fromOffsets: IndexSet(integer: fromIndex), toOffset: toIndex > fromIndex ? toIndex + 1 : toIndex)
-        }
-        dropIndex = toIndex
+        guard let draggedItem else { return }
+        onDrop(draggedItem, item)
+        dropIndex = items.firstIndex { $0.id == item.id }
     }
 
+    // 드롭 대상에서 벗어났을 때
     func dropExited(info: DropInfo) {
         withAnimation {
             dropIndex = nil
