@@ -44,7 +44,6 @@ struct TodoListCell: View {
                         .padding(.leading, 1)
                 }
             }
-            .padding(.top, 9)
             
             Spacer()
             
@@ -55,8 +54,7 @@ struct TodoListCell: View {
             .padding(.top, 10)
             .padding(.trailing, 8)
         }
-        .padding(.top, 8)
-        .frame(width: 343, height: 68)
+        .frame(height: 68)
         .background(Color.grayBlack)
         .onChange(of: isChecked) { _ in
             print("todo box is checked")
