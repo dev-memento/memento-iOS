@@ -18,39 +18,33 @@ struct TodoListCell: View {
     var priorityType: Priority
     
     var body: some View {
-        HStack {
+        HStack(spacing: 10) {
             ColorTagView(colorType: colorType)
             
             VStack{
                 CheckBoxView(isChecked: $isChecked)
+                
                 Spacer()
             }
             .padding(.top, 11)
-            .padding(.leading, 10)
             
-            VStack(alignment: .leading, spacing: 8){
+            VStack(alignment: .leading){
                 Text(todoTitle)
                     .applyFont(.body_b_16)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.grayWhite)
                 
-                HStack {
-                    Image(systemName: "circle.square")
-                        .resizable()
-                        .frame(width: 12, height: 12)
-                        .foregroundColor(.gray)
+                HStack(spacing: 0) {
+                    Image(.img_notion)
                     
-                    Image(systemName: "flag.fill")
-                        .resizable()
-                        .frame(width: 12, height: 12)
-                        .foregroundColor(.gray)
+                    Image(.ic_deadline)
                         .padding(.leading, 10)
                     Text(dueDate)
                         .applyFont(.detail_r_12)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.gray05)
                         .padding(.leading, 1)
                 }
             }
-            .padding(.leading, 10)
+            .padding(.top, 9)
             
             Spacer()
             
@@ -63,7 +57,7 @@ struct TodoListCell: View {
         }
         .padding(.top, 8)
         .frame(width: 343, height: 68)
-        .background(Color.black)
+        .background(Color.grayBlack)
         .onChange(of: isChecked) { _ in
             print("todo box is checked")
         }
@@ -75,11 +69,7 @@ struct CheckBoxView: View {
     @Binding var isChecked: Bool
     
     var body: some View {
-        RoundedRectangle(cornerRadius: 2)
-            .stroke(Color.gray, lineWidth: 1.5)
-            .background(isChecked ? Color.gray : Color.clear)
-            .frame(width: 16, height: 16)
-        
+        Image(isChecked ? .btn_check_selected_square : .btn_check_unselected_square)
             .onTapGesture {
                 isChecked.toggle()
             }

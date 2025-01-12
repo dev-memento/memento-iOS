@@ -50,7 +50,3 @@ struct PriorityLabel: View {
             )
     }
 }
-
-#Preview {
-    ToDoListView()
-}
