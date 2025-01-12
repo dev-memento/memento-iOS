@@ -20,8 +20,9 @@ struct TodayListView: View {
         .todo(TodoDataModel(title: "맥너겟어쩌고저쩌고", dueDate: "Today", priority: .low, isChecked: false, tagColor: "orange"))
     ]
     
-    @State var draggedItem: TodayItem?
-    
+    @State private var draggedItem: TodayItem?
+    @State private var dropIndex: Int?
+
     var body: some View {
         ScrollView {
             VStack(spacing: 8) {
@@ -35,19 +36,20 @@ struct TodayListView: View {
     }
     
     private func renderItem(at index: Int) -> some View {
-        TodayListItemView(item: $items[index])
-        // 드래그 시작 시 draggedItem 업데이트
+        let isDragging = items[index].id == draggedItem?.id
+        
+        return TodayListItemView(item: $items[index])
             .onDrag {
                 self.draggedItem = items[index]
                 return NSItemProvider()
             }
-        // 드롭 액션 처리 (text type)
             .onDrop(
                 of: [.text],
                 delegate: DropViewDelegate(
                     item: $items[index],
                     items: $items,
-                    draggedItem: $draggedItem
+                    draggedItem: $draggedItem,
+                    dropIndex: $dropIndex
                 )
             )
     }
@@ -129,13 +131,17 @@ struct DropViewDelegate: DropDelegate {
     @Binding var item: TodayItem
     @Binding var items: [TodayItem]
     @Binding var draggedItem: TodayItem?
-    
+    @Binding var dropIndex: Int?
+
     func dropUpdated(info: DropInfo) -> DropProposal? {
         DropProposal(operation: .move)
     }
-    
+
     func performDrop(info: DropInfo) -> Bool {
-        draggedItem = nil
+        withAnimation {
+            draggedItem = nil
+            dropIndex = nil
+        }
         return true
     }
     
@@ -147,6 +153,13 @@ struct DropViewDelegate: DropDelegate {
         
         withAnimation {
             items.move(fromOffsets: IndexSet(integer: fromIndex), toOffset: toIndex > fromIndex ? toIndex + 1 : toIndex)
+        }
+        dropIndex = toIndex
+    }
+
+    func dropExited(info: DropInfo) {
+        withAnimation {
+            dropIndex = nil
         }
     }
 }
