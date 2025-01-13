@@ -9,12 +9,11 @@ import SwiftUI
 import MDSKit
 
 struct WorkPreferenceView: View {
-    @State private var selectedAnswers: [UUID: Bool?] = [:] // 각 질문에 대한 선택 상태 저장 (초기값은 선택 안 됨)
-    @Binding var path: [OnBoardingNavigationDestination]
+    @EnvironmentObject var viewModel: OnboardingViewModel // 뷰모델 주입
 
     private var isNextButtonEnabled: Bool {
-        // allSatisfy는 클로저(조건)로 전달된 코드가 컬렉션의 모든 요소에 대해 true를 반환해야만 최종적으로 true를 반환
-        SurveyQuestion.mockData.allSatisfy { selectedAnswers[$0.id] != nil }
+        // 모든 질문이 선택되었는지 확인
+        SurveyQuestion.mockData.allSatisfy { viewModel.workPreferenceData.selectedAnswers[$0.id] != nil }
     }
 
     var body: some View {
@@ -22,10 +21,10 @@ struct WorkPreferenceView: View {
             BackgroundView()
 
             VStack(alignment: .leading) {
-                CustomNavigationBar(path: $path)
+                CustomNavigationBar()
                     .padding(.trailing, 16)
                     .padding(.top, 16)
-                
+
                 StepProgressBar(currentStep: 3, totalSteps: 4)
                     .padding(.horizontal, 16)
                     .padding(.top, 10)
@@ -39,9 +38,9 @@ struct WorkPreferenceView: View {
                         ForEach(SurveyQuestion.mockData) { question in
                             QuestionRow(
                                 question: question,
-                                selectedAnswer: selectedAnswers[question.id] ?? nil,
+                                selectedAnswer: viewModel.workPreferenceData.selectedAnswers[question.id] ?? nil,
                                 onSelection: { selectedAnswer in
-                                    selectedAnswers[question.id] = selectedAnswer
+                                    viewModel.workPreferenceData.selectedAnswers[question.id] = selectedAnswer
                                 }
                             )
                         }
@@ -52,7 +51,7 @@ struct WorkPreferenceView: View {
 
                 Spacer()
 
-                NextButton(isEnabled: isNextButtonEnabled, path: $path)
+                NextButton(isEnabled: isNextButtonEnabled)
                     .padding(.horizontal, 16)
                     .padding(.bottom, 10)
             }
@@ -62,12 +61,12 @@ struct WorkPreferenceView: View {
 
 // MARK: - CustomNavigationBar
 private struct CustomNavigationBar: View {
-    @Binding var path: [OnBoardingNavigationDestination]
-    
+    @EnvironmentObject var viewModel: OnboardingViewModel
+
     var body: some View {
         HStack(alignment: .top) {
             Button {
-                path.removeLast()
+                viewModel.navigateBack()
             } label: {
                 Image(.btn_back)
                     .resizable()
@@ -75,11 +74,11 @@ private struct CustomNavigationBar: View {
                     .frame(width: 48, height: 48)
                     .foregroundColor(.gray06)
             }
-            
+
             Spacer()
-            
+
             Button {
-                path.append(.calendarConnectView)
+                viewModel.navigateToNext(.calendarConnectView)
             } label: {
                 Text("Skip")
                     .applyFont(.body_b_14)
@@ -93,11 +92,10 @@ private struct CustomNavigationBar: View {
 private struct HeaderTitleView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            
             Text("3")
                 .applyFont(.head_b_40)
                 .foregroundColor(.gray07)
-            
+
             Text("Discover how you work best.")
                 .applyFont(.title_b_24)
                 .foregroundColor(.white)
@@ -117,7 +115,7 @@ struct QuestionRow: View {
             Text(question.question)
                 .applyFont(.body_r_16)
                 .foregroundColor(.white)
-            
+
             HStack(spacing: 11) {
                 Button(action: { onSelection(true) }) {
                     Text("Yes")
@@ -128,7 +126,7 @@ struct QuestionRow: View {
                         .background(selectedAnswer == true ? .gray08 : Color.mainNavy)
                         .cornerRadius(8)
                 }
-                
+
                 Button(action: { onSelection(false) }) {
                     Text("No")
                         .applyFont(.body_b_14)
@@ -147,13 +145,13 @@ struct QuestionRow: View {
 
 // MARK: - Next Button
 private struct NextButton: View {
+    @EnvironmentObject var viewModel: OnboardingViewModel
     var isEnabled: Bool
-    @Binding var path: [OnBoardingNavigationDestination]
-    
+
     var body: some View {
         Button {
             if isEnabled {
-                path.append(.calendarConnectView)
+                viewModel.navigateToNext(.calendarConnectView)
             }
         } label: {
             Text("Next")
@@ -170,6 +168,5 @@ private struct NextButton: View {
 }
 
 #Preview {
-    WorkPreferenceView(path: .constant([]))
+    WorkPreferenceView().environmentObject(OnboardingViewModel())
 }
-

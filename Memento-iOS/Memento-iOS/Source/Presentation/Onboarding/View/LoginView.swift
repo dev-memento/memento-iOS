@@ -9,46 +9,45 @@ import SwiftUI
 import MDSKit
 
 struct LoginView: View {
-    @State private var path: [OnBoardingNavigationDestination] = [] 
-    
+    @EnvironmentObject var viewModel: OnboardingViewModel // 뷰모델을 주입받음
+
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack(path: $viewModel.navigationPath) {
             ZStack {
                 BackgroundView()
-                
+
                 VStack(alignment: .center) {
                     HeaderView()
                         .padding(.top, 115)
-                    
-                    LoginButtons(path: $path)
+
+                    LoginButtons()
                         .padding(.top, 103.2)
-                    
+
                     TermsOfUseView()
                         .padding(.top, 18)
-                    
+
                     Spacer()
                 }
             }
             .navigationDestination(for: OnBoardingNavigationDestination.self) { destination in
                 switch destination {
                 case .sleepCycleSetting:
-                    SleepCycleSettingView(path: $path)
+                    SleepCycleSettingView()
                         .navigationBarBackButtonHidden()
                 case .workSelection:
-                    WorkSelectionView(path: $path)
+                    WorkSelectionView()
                         .navigationBarBackButtonHidden()
                 case .workPreference:
-                    WorkPreferenceView(path: $path)
+                    WorkPreferenceView()
                         .navigationBarBackButtonHidden()
                 case .calendarConnectView:
-                    CalendarConnectView(path: $path)
+                    CalendarConnectView()
                         .navigationBarBackButtonHidden()
                 }
             }
         }
     }
 }
-
 
 // MARK: - Header View
 private struct HeaderView: View {
@@ -57,12 +56,12 @@ private struct HeaderView: View {
             Text("Less Noise,")
                 .applyFont(.title_b_24)
                 .foregroundColor(.white)
-            
+
             Text("More Progress,")
                 .applyFont(.title_b_24)
                 .foregroundColor(.white)
                 .padding(.top, 2)
-            
+
             Image(systemName: "apple.logo")
                 .resizable()
                 .scaledToFit()
@@ -75,19 +74,21 @@ private struct HeaderView: View {
 
 // MARK: - Login Buttons
 private struct LoginButtons: View {
-    @Binding var path: [OnBoardingNavigationDestination]
-    
+    @EnvironmentObject var viewModel: OnboardingViewModel
+
     var body: some View {
         VStack(alignment: .center, spacing: 18) {
             Button {
-                path.append(.sleepCycleSetting)
+                Task {
+                    await viewModel.signInWithGoogle()
+                }
             } label: {
                 HStack(spacing: 8) {
                     Image(.img_google)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 24, height: 24)
-                    
+
                     Text("Continue with Google")
                         .font(.system(size: 16))
                         .foregroundColor(.white)
@@ -98,16 +99,18 @@ private struct LoginButtons: View {
             .frame(height: 46)
             .padding(.horizontal, 16)
             .background(Color.gray10)
-            
+
             Button {
-                path.append(.sleepCycleSetting)
+                Task {
+                    await viewModel.signInWithApple()
+                }
             } label: {
                 HStack(spacing: 8) {
                     Image(.img_apple)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 24, height: 24)
-                    
+
                     Text("Continue with Apple")
                         .font(.system(size: 16))
                         .foregroundColor(.white)
@@ -129,7 +132,7 @@ private struct TermsOfUseView: View {
             Text("by continuing, you agree to memento's")
                 .applyFont(.detail_r_12)
                 .foregroundColor(Color.gray07)
-            
+
             Link("Terms of Use", destination: URL(string: "https://www.naver.com")!)
                 .applyFont(.detail_r_12)
                 .foregroundColor(Color.gray04)
@@ -139,4 +142,5 @@ private struct TermsOfUseView: View {
 
 #Preview {
     LoginView()
+        .environmentObject(OnboardingViewModel())
 }

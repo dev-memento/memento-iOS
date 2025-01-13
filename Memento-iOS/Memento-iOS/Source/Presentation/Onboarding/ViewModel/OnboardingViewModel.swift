@@ -38,12 +38,12 @@ final class OnboardingViewModel: ObservableObject {
     @Published var errorMessage: String?
     
     // MARK: - Dependencies
-//    private let authService: AuthServiceProtocol
-//    private var cancellables = Set<AnyCancellable>()
-//    
-//    init(authService: AuthServiceProtocol) {
-//        self.authService = authService
-//    }
+    //    private let authService: AuthServiceProtocol
+    //    private var cancellables = Set<AnyCancellable>()
+    //
+    //    init(authService: AuthServiceProtocol) {
+    //        self.authService = authService
+    //    }
     
     // MARK: - Navigation Methods
     func navigateToNext(_ destination: OnBoardingNavigationDestination) {
@@ -79,18 +79,21 @@ final class OnboardingViewModel: ObservableObject {
     
     // MARK: - Onboarding Data Models
     struct SleepCycleData {
-        var wakeUpTime: Date = Date()
-        var sleepTime: Date = Date()
+        var wakeUpTime: Date? = nil
+        var sleepTime: Date? = nil
     }
     
     struct WorkSelectionData {
-        var selectedWorks: Set<String> = []
+        var selectedCategory: String? = nil
+        var customCategory: String = ""
+        var selectedWorks: Set<String> = [] 
     }
     
+    // MARK: - Onboarding Data Models
     struct WorkPreferenceData {
-        var preferences: [String: Int] = [:]
+        var selectedAnswers: [UUID: Bool?] = [:] // 각 질문에 대한 선택 상태 저장
     }
-    
+
     // MARK: - Business logic : 최종 데이터 제출
     func submitOnboardingData() async throws {
         isLoading = true

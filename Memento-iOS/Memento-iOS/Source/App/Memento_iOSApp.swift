@@ -8,10 +8,13 @@
 import SwiftUI
 
 @main
-struct Memento_iOSApp: App {
+struct MementoApp: App {
+    @StateObject private var onboardingViewModel = OnboardingViewModel()
+    
     var body: some Scene {
         WindowGroup {
             LoginView()
+                .environmentObject(onboardingViewModel)
         }
     }
 }
