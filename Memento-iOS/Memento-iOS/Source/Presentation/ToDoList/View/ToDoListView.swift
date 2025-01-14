@@ -9,7 +9,18 @@ import SwiftUI
 import MDSKit
 
 struct ToDoListView: View {
-    @State private var isChecked = false
+    @State private var todoItems: [String: [TodoItem]] = [
+        "Jan 3": [
+            TodoItem(id: UUID(), title: "밥 먹기", colorType: "blue", dueDate: "Today", priority: .immediate, isChecked: false),
+            TodoItem(id: UUID(), title: "Swift 공부", colorType: "green", dueDate: "Today", priority: .high, isChecked: false),
+            TodoItem(id: UUID(), title: "디자인 검토", colorType: "red", dueDate: "Today", priority: .low, isChecked: false),
+            TodoItem(id: UUID(), title: "코드 리뷰", colorType: "orange", dueDate: "Today", priority: .high, isChecked: false)
+        ],
+        "Jan 4": [],
+        "Jan 5": [
+            TodoItem(id: UUID(), title: "청소하기", colorType: "orange", dueDate: "Today", priority: .low, isChecked: false)
+        ]
+    ]
     
     var body: some View {
         VStack(spacing: 0) {
@@ -17,15 +28,9 @@ struct ToDoListView: View {
             TodoHeaderView(title: "Weekly Calendar", height: 61)
             
             VStack(spacing: 8) {
-                DateSectionView(date: "Jan 3", content: [
-                    TodoListCell(isChecked: $isChecked, todoTitle: "밥 먹기", colorType: "blue", dueDate: "Today", priorityType: .immediate),
-                    TodoListCell(isChecked: $isChecked, todoTitle: "Swift 공부", colorType: "green", dueDate: "Today", priorityType: .high),
-                    TodoListCell(isChecked: $isChecked, todoTitle: "디자인 검토", colorType: "red", dueDate: "Today", priorityType: .low)
-                ])
-                DateSectionView(date: "Jan 4", content: [])
-                DateSectionView(date: "Jan 5", content: [
-                    TodoListCell(isChecked: $isChecked, todoTitle: "코드 리뷰", colorType: "orange", dueDate: "Today", priorityType: .high)
-                ])
+                DateSectionView(todoItems: $todoItems, date: "Jan 3")
+                DateSectionView(todoItems: $todoItems, date: "Jan 4")
+                DateSectionView(todoItems: $todoItems, date: "Jan 5")
             }
             .padding(.top, 4)
             
@@ -51,8 +56,8 @@ struct TodoHeaderView: View {
 }
 
 struct DateSectionView: View {
+    @Binding var todoItems: [String: [TodoItem]]
     let date: String
-    let content: [TodoListCell]
     
     var body: some View {
         VStack(spacing: 0) {
@@ -72,14 +77,36 @@ struct DateSectionView: View {
             .frame(height: 24)
             
             VStack(spacing: 10) {
-                ForEach(0..<content.count, id: \.self) { index in
-                    content[index]
+                ForEach(todoItems[date] ?? [], id: \.id) { item in
+                    TodoListCell(
+                        isChecked: Binding(
+                            get: { item.isChecked },
+                            set: { isChecked in
+                                if let index = todoItems[date]?.firstIndex(where: { $0.id == item.id }) {
+                                    todoItems[date]?[index].isChecked = isChecked
+                                }
+                            }
+                        ),
+                        todoTitle: item.title,
+                        colorType: item.colorType,
+                        dueDate: item.dueDate,
+                        priorityType: item.priority
+                    )
                 }
             }
             .padding(.bottom, 8)
         }
-        .frame(height: content.isEmpty ? 36 : nil)
+        .frame(height: todoItems[date]?.isEmpty ?? true ? 36 : nil)
     }
+}
+
+struct TodoItem: Identifiable {
+    let id: UUID
+    let title: String
+    let colorType: String
+    let dueDate: String
+    let priority: Priority
+    var isChecked: Bool
 }
 
 #Preview {
