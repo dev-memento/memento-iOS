@@ -25,26 +25,33 @@ struct TodayListView: View {
 
 private extension TodayListView {
     func renderItem(at index: Int) -> some View {
-        let item = viewModel.items[index]
-        let isDragging = item.id == viewModel.dragItem?.id
-
-        return TodayListItemView(item: $viewModel.items[index])
-            // 드래그 시작
-            .onDrag {
-                viewModel.dragItem = item
-                return NSItemProvider()
+        let currentItem = viewModel.items[index]
+        let isDragging = currentItem.id == viewModel.dragItem?.id
+        
+        return Group {
+            switch currentItem {
+            case .todo(let todo):
+                TodayListItemView(item: $viewModel.items[index])
+                // 드래그 시작
+                    .onDrag {
+                        viewModel.dragItem = currentItem
+                        return NSItemProvider()
+                    }
+                // 드롭 시작
+                    .onDrop(
+                        of: [.text],
+                        delegate: DropViewDelegate(
+                            item: $viewModel.items[index],
+                            items: $viewModel.items,
+                            draggedItem: $viewModel.dragItem,
+                            dropIndex: $viewModel.dropIndex,
+                            onDrop: viewModel.dropAction
+                        )
+                    )
+            case .schedule(let schedule):
+                TodayListItemView(item: $viewModel.items[index])
             }
-            // 드롭 시작
-            .onDrop(
-                of: [.text],
-                delegate: DropViewDelegate(
-                    item: $viewModel.items[index],
-                    items: $viewModel.items,
-                    draggedItem: $viewModel.dragItem,
-                    dropIndex: $viewModel.dropIndex,
-                    onDrop: viewModel.dropAction
-                )
-            )
+        }
     }
 }
 
