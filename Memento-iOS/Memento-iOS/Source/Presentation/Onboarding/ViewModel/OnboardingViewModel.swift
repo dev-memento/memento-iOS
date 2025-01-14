@@ -8,7 +8,8 @@
 import Foundation
 import Combine
 
-// Mark: - OnBoardingNavigationDestination
+// MARK: - OnBoardingNavigationDestination
+
 enum OnBoardingNavigationDestination: String, Hashable {
     case sleepCycleSetting = "SleepCycleSettingView"
     case workSelection = "WorkSelectionView"
@@ -17,6 +18,7 @@ enum OnBoardingNavigationDestination: String, Hashable {
 }
 
 // MARK: - Data Transfer Object
+
 struct OnboardingData {
     let sleepCycle: OnboardingViewModel.SleepCycleData
     let workSelection: OnboardingViewModel.WorkSelectionData
@@ -25,15 +27,19 @@ struct OnboardingData {
 
 @MainActor
 final class OnboardingViewModel: ObservableObject {
+    
     // MARK: - Navigation
+    
     @Published var navigationPath: [OnBoardingNavigationDestination] = []
     
     // MARK: - User Input Data
+    
     @Published var sleepCycleData: SleepCycleData = SleepCycleData()
     @Published var workSelectionData: WorkSelectionData = WorkSelectionData()
     @Published var workPreferenceData: WorkPreferenceData = WorkPreferenceData()
     
     // MARK: - States
+    
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     
@@ -46,6 +52,7 @@ final class OnboardingViewModel: ObservableObject {
     //    }
     
     // MARK: - Navigation Methods
+    
     func navigateToNext(_ destination: OnBoardingNavigationDestination) {
         navigationPath.append(destination)
     }
@@ -55,6 +62,7 @@ final class OnboardingViewModel: ObservableObject {
     }
     
     // MARK: - Business logic : Auth Methods
+    
     func signInWithGoogle() async {
         isLoading = true
         do {
@@ -78,6 +86,7 @@ final class OnboardingViewModel: ObservableObject {
     }
     
     // MARK: - Onboarding Data Models
+    
     struct SleepCycleData {
         var wakeUpTime: Date? = nil
         var sleepTime: Date? = nil
@@ -90,11 +99,13 @@ final class OnboardingViewModel: ObservableObject {
     }
     
     // MARK: - Onboarding Data Models
+    
     struct WorkPreferenceData {
         var selectedAnswers: [UUID: Bool?] = [:] // 각 질문에 대한 선택 상태 저장
     }
 
     // MARK: - Business logic : 최종 데이터 제출
+    
     func submitOnboardingData() async throws {
         isLoading = true
         defer { isLoading = false }

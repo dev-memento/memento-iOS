@@ -10,7 +10,7 @@ import MDSKit
 
 struct WorkPreferenceView: View {
     @EnvironmentObject var viewModel: OnboardingViewModel // 뷰모델 주입
-
+    
     private var isNextButtonEnabled: Bool {
         // 모든 질문이 선택되었는지 확인
         SurveyQuestion.mockData.allSatisfy { viewModel.workPreferenceData.selectedAnswers[$0.id] != nil }
@@ -68,6 +68,7 @@ struct WorkPreferenceView: View {
 }
 
 // MARK: - Header and Title View
+
 private struct WorkPreferenceHeaderView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -84,6 +85,7 @@ private struct WorkPreferenceHeaderView: View {
 }
 
 // MARK: - QuestionRow
+
 struct QuestionRow: View {
     let question: SurveyQuestion
     let selectedAnswer: Bool?
@@ -123,6 +125,7 @@ struct QuestionRow: View {
 }
 
 // MARK: - Next Button
+
 private struct NextButton: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
     var isEnabled: Bool

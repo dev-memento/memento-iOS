@@ -66,6 +66,7 @@ struct SleepCycleSettingView: View {
 }
 
 // MARK: - Header and Title View
+
 private struct SleepCycleSettingHeaderView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -90,6 +91,7 @@ private struct SleepCycleSettingHeaderView: View {
 }
 
 // MARK: - Time Selection View
+
 private struct TimeSelectionView: View {
     @Binding var wakeUpTime: Date?
     @Binding var windDownTime: Date?
@@ -148,6 +150,7 @@ private struct TimeSelectionView: View {
 }
 
 // MARK: - Next Button
+
 private struct NextButton: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
 

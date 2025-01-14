@@ -61,6 +61,7 @@ struct WorkSelectionView: View {
 }
 
 // MARK: - Header and Title View
+
 private struct WorkSelectionHeaderView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
@@ -76,6 +77,7 @@ private struct WorkSelectionHeaderView: View {
 }
 
 // MARK: - CategoryListView
+
 private struct CategoryListView: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
     @FocusState var isTextFieldFocused: Bool
@@ -108,6 +110,7 @@ private struct CategoryListView: View {
 }
 
 // MARK: - CustomCategoryInputView
+
 private struct CustomCategoryInputView: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
     @FocusState var isTextFieldFocused: Bool
@@ -152,6 +155,7 @@ private struct CustomCategoryInputView: View {
 }
 
 // MARK: - 선택 표시 뷰
+
 private struct SelectionIndicator: View {
     var isSelected: Bool
 
@@ -165,6 +169,7 @@ private struct SelectionIndicator: View {
 }
 
 // MARK: - Next Button
+
 private struct NextButton: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
     var isEnabled: Bool

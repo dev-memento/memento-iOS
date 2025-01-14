@@ -42,6 +42,7 @@ struct CalendarConnectView: View {
 }
 
 // MARK: - Header and Title View
+
 private struct CalendarConnectHeaderView: View {
     var body: some View {
         ZStack {
@@ -68,6 +69,7 @@ private struct CalendarConnectHeaderView: View {
 }
 
 // MARK: - CalendarConnectButtons
+
 private struct CalendarConnectButtons: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
 
@@ -121,6 +123,7 @@ private struct CalendarConnectButtons: View {
 }
 
 // MARK: - AppStartButton
+
 private struct AppStartButton: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
 

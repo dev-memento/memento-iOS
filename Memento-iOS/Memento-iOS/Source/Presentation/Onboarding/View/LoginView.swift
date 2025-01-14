@@ -50,6 +50,7 @@ struct LoginView: View {
 }
 
 // MARK: - Header View
+
 private struct LoginHeaderView: View {
     var body: some View {
         VStack(alignment: .center) {
@@ -73,6 +74,7 @@ private struct LoginHeaderView: View {
 }
 
 // MARK: - Login Buttons
+
 private struct LoginButtons: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
 
@@ -126,6 +128,7 @@ private struct LoginButtons: View {
 }
 
 // MARK: - Terms Of Use View
+
 private struct TermsOfUseView: View {
     var body: some View {
         HStack(spacing: 5) {
