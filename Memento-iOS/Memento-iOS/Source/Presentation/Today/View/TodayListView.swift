@@ -36,7 +36,17 @@ struct TodayListView: View {
     }
     
     private func renderItem(at index: Int) -> some View {
-        TodayListItemView(item: $items[index])
+        let isHighlighted: Bool
+        
+        
+        if case .todo(let todo) = items[index], !todo.isChecked {
+            
+            isHighlighted = items.prefix(index + 1).filter { if case .todo(let todo) = $0, !todo.isChecked { return true } else { return false } }.count == 1
+        } else {
+            isHighlighted = false
+        }
+        
+        return TodayListItemView(item: $items[index], isHighlighted: isHighlighted)
         // 드래그 시작 시 draggedItem 업데이트
             .onDrag {
                 self.draggedItem = items[index]
@@ -57,6 +67,7 @@ struct TodayListView: View {
 struct TodayListItemView: View {
     
     @Binding var item: TodayItem
+    var isHighlighted: Bool
     
     var body: some View {
         switch item {
@@ -66,7 +77,8 @@ struct TodayListItemView: View {
                 todoTitle: todo.title,
                 colorType: todo.tagColor,
                 dueDate: todo.dueDate,
-                priorityType: todo.priority
+                priorityType: todo.priority,
+                isHighlighted: isHighlighted
             )
         case .schedule(let schedule):
             ScheduleListCell(

@@ -9,33 +9,31 @@ import SwiftUI
 import MDSKit
 
 struct TodoListCell: View {
-    
     @Binding var isChecked: Bool
     
     var todoTitle: String
     var colorType: String
     var dueDate: String
     var priorityType: Priority
+    var isHighlighted: Bool
     
     var body: some View {
         HStack(spacing: 10) {
             ColorTagView(colorType: colorType)
             
-            VStack{
+            VStack {
                 CheckBoxView(isChecked: $isChecked)
-                
                 Spacer()
             }
             .padding(.top, 11)
             
-            VStack(alignment: .leading){
+            VStack(alignment: .leading) {
                 Text(todoTitle)
                     .applyFont(.body_b_16)
                     .foregroundColor(Color.grayWhite)
                 
                 HStack(spacing: 0) {
                     Image(.img_notion)
-                    
                     Image(.ic_deadline)
                         .padding(.leading, 10)
                     Text(dueDate)
@@ -47,7 +45,7 @@ struct TodoListCell: View {
             
             Spacer()
             
-            VStack{
+            VStack {
                 PriorityLabel(priority: priorityType)
                 Spacer()
             }
@@ -56,19 +54,18 @@ struct TodoListCell: View {
         }
         .frame(height: 68)
         .background(
-            priorityType == .immediate ?
-            AnyView(
+            isHighlighted
+            ? AnyView(
                 LinearGradient(
                     stops: [
                         Gradient.Stop(color: Color(red: 0.09, green: 0.1, blue: 0.15), location: 0.00),
                         Gradient.Stop(color: Color(red: 0.26, green: 0.27, blue: 0.4), location: 1.00),
                     ],
-                    startPoint: UnitPoint(x: 0, y: 0),
-                    endPoint: UnitPoint(x: 1, y: 1)
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
                 )
-            ) : AnyView(
-                Color.grayBlack
             )
+            : AnyView(Color.grayBlack)
         )
         .opacity(isChecked ? 0.5 : 1.0)
         .onChange(of: isChecked) { _ in
@@ -78,7 +75,6 @@ struct TodoListCell: View {
 }
 
 struct CheckBoxView: View {
-    
     @Binding var isChecked: Bool
     
     var body: some View {

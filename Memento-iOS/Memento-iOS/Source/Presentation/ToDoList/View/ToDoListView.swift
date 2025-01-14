@@ -31,7 +31,6 @@ struct ToDoListView: View {
                 DateSectionView(todoItems: $todoItems, date: date)
             }
             .padding(.top, 4)
-            .padding(.top, 4)
             
             Spacer()
         }
@@ -77,22 +76,24 @@ struct DateSectionView: View {
             
             VStack(spacing: 10) {
                 let sortedItems = (todoItems[date] ?? []).sorted { !$0.isChecked && $1.isChecked }
-                
-                ForEach(sortedItems, id: \.id) { item in
+                ForEach(sortedItems.indices, id: \.self) { index in
+                    let isHighlighted = index == 0 && !sortedItems[index].isChecked
+                    
                     TodoListCell(
                         isChecked: Binding(
-                            get: { item.isChecked },
+                            get: { sortedItems[index].isChecked },
                             set: { isChecked in
-                                if let index = todoItems[date]?.firstIndex(where: { $0.id == item.id }) {
-                                    todoItems[date]?[index].isChecked = isChecked
-                                    todoItems[date]?.sort { $0.isChecked && !$1.isChecked }
+                                if let realIndex = todoItems[date]?.firstIndex(where: { $0.id == sortedItems[index].id }) {
+                                    todoItems[date]?[realIndex].isChecked = isChecked
+                                    todoItems[date]?.sort { !$0.isChecked && $1.isChecked }
                                 }
                             }
                         ),
-                        todoTitle: item.title,
-                        colorType: item.colorType,
-                        dueDate: item.dueDate,
-                        priorityType: item.priority
+                        todoTitle: sortedItems[index].title,
+                        colorType: sortedItems[index].colorType,
+                        dueDate: sortedItems[index].dueDate,
+                        priorityType: sortedItems[index].priority,
+                        isHighlighted: isHighlighted
                     )
                 }
             }
@@ -101,6 +102,7 @@ struct DateSectionView: View {
         .frame(height: todoItems[date]?.isEmpty ?? true ? 36 : nil)
     }
 }
+
 
 struct TodoItem: Identifiable {
     let id: UUID
@@ -114,3 +116,4 @@ struct TodoItem: Identifiable {
 #Preview {
     ToDoListView()
 }
+

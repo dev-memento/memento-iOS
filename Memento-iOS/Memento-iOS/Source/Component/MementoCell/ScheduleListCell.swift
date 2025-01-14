@@ -69,7 +69,3 @@ struct TimeInfoView: View {
         }
     }
 }
-
-#Preview {
-    TodayListView()
-}
