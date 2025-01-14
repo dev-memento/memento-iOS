@@ -59,11 +59,11 @@ private struct LoginHeaderView: View {
                 .multilineTextAlignment(.center)
                 .foregroundColor(.white)
             
-            Image(systemName: "apple.logo")
+            Image(.img_main_logo)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 49.38, height: 43.16)
-                .padding(.top, 98.64)
+                .frame(width: 100, height: 100)
+                .padding(.top, 72)
                 .foregroundColor(.white)
         }
     }
