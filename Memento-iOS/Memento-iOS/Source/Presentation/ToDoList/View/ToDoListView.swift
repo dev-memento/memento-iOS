@@ -27,11 +27,10 @@ struct ToDoListView: View {
             TodoHeaderView(title: "Navigation", height: 56)
             TodoHeaderView(title: "Weekly Calendar", height: 61)
             
-            VStack(spacing: 8) {
-                DateSectionView(todoItems: $todoItems, date: "Jan 3")
-                DateSectionView(todoItems: $todoItems, date: "Jan 4")
-                DateSectionView(todoItems: $todoItems, date: "Jan 5")
+            ForEach(todoItems.keys.sorted(), id: \.self) { date in
+                DateSectionView(todoItems: $todoItems, date: date)
             }
+            .padding(.top, 4)
             .padding(.top, 4)
             
             Spacer()
@@ -77,13 +76,16 @@ struct DateSectionView: View {
             .frame(height: 24)
             
             VStack(spacing: 10) {
-                ForEach(todoItems[date] ?? [], id: \.id) { item in
+                let sortedItems = (todoItems[date] ?? []).sorted { !$0.isChecked && $1.isChecked }
+                
+                ForEach(sortedItems, id: \.id) { item in
                     TodoListCell(
                         isChecked: Binding(
                             get: { item.isChecked },
                             set: { isChecked in
                                 if let index = todoItems[date]?.firstIndex(where: { $0.id == item.id }) {
                                     todoItems[date]?[index].isChecked = isChecked
+                                    todoItems[date]?.sort { $0.isChecked && !$1.isChecked }
                                 }
                             }
                         ),
