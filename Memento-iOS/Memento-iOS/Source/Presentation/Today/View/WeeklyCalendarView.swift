@@ -18,7 +18,6 @@ struct WeeklyCalendarView: View {
     @State private var scrollTarget: Int? = nil
     @State private var userInteractionFlag: Bool = false
 
-    
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
@@ -27,7 +26,6 @@ struct WeeklyCalendarView: View {
                         .foregroundStyle(.white)
                         .applyFont(.suiteExtraBold(size: 32),
                                    lineHeight: 36)
-        
                         .onTapGesture {
                             let date = Date()
                             viewModel.mCallendarDataSource.moveOtherWeekday(targetDate: date)
@@ -45,7 +43,6 @@ struct WeeklyCalendarView: View {
                             .padding(.top, 11)
                         Spacer()
                     }
-                    
                     .padding(.trailing, 17)
                     Image(.ic_settings)
                         .resizable()
@@ -58,6 +55,9 @@ struct WeeklyCalendarView: View {
             calendarView()
                 .background(Color.grayBlack)
                 .allowsHitTesting(userInteractionFlag)
+            
+            AllDayListView(items: viewModel.allDayItems)
+                .padding(.vertical, 4)
             
             ScrollViewReader { proxy in
                 OffsetObservableScrollView(.horizontal,
@@ -89,7 +89,6 @@ struct WeeklyCalendarView: View {
             }
         }
         .onAppear {
-            //make event
             viewModel.makeDummyEvent()
             makeIndex()
         }
@@ -134,10 +133,11 @@ struct WeeklyCalendarView: View {
     @ViewBuilder
     private func todoItem(item: MCalendarEventList) -> some View {
         ScrollView(.vertical) {
-            TodayListView()
+            TodayListView(viewModel: viewModel)
         }
         .scrollContentBackground(.hidden)
     }
+
     
     private func makeIndex() {
         self.scrollTarget = (viewModel.mCallendarDataSource.currentIndex * 7) + viewModel.selectedDate.weekday.index
