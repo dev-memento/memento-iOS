@@ -28,7 +28,7 @@ struct WorkSelectionView: View {
                         viewModel.navigateBack()
                     },
                     skipButtonAction: {
-                        viewModel.navigateToNext(.calendarConnectView)
+                        viewModel.navigateToNext(.calendarConnect)
                     }
                 )
                 .padding([.trailing, .top], 16)
@@ -42,8 +42,7 @@ struct WorkSelectionView: View {
                 
                 ScrollView {
                     VStack(spacing: 0) {
-                        CategoryListView(isTextFieldFocused: _isTextFieldFocused) // 체크하기
-                        
+                        CategoryListView(isTextFieldFocused: _isTextFieldFocused)
                         CustomCategoryInputView(isTextFieldFocused: _isTextFieldFocused)
                     }
                 }
@@ -65,11 +64,11 @@ struct WorkSelectionView: View {
 private struct WorkSelectionHeaderView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            Text(StringLiteral.Onboarding.twoStepTitle)
+            Text(OnboardingWorkSelectionText.twoStepTitle)
                 .applyFont(.head_b_40)
                 .foregroundColor(.gray07)
             
-            Text(StringLiteral.Onboarding.workSelectionHeaderTitle)
+            Text(OnboardingWorkSelectionText.workSelectionHeaderTitle)
                 .applyFont(.title_b_24)
                 .foregroundColor(.white)
         }
@@ -180,7 +179,7 @@ private struct NextButton: View {
                 viewModel.navigateToNext(.workPreference)
             }
         } label: {
-            Text(StringLiteral.Onboarding.nextButton)
+            Text(OnboardingPublicText.nextButton)
                 .applyFont(.body_b_16)
                 .foregroundColor(isEnabled ? Color.black : Color.gray08)
                 .padding(.vertical, 13)

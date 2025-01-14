@@ -29,7 +29,7 @@ struct LoginView: View {
                     Spacer()
                 }
             }
-            .navigationDestination(for: OnBoardingNavigationDestination.self) { destination in
+            .navigationDestination(for: OnboardingNavigationDestination.self) { destination in
                 switch destination {
                 case .sleepCycleSetting:
                     SleepCycleSettingView()
@@ -40,7 +40,7 @@ struct LoginView: View {
                 case .workPreference:
                     WorkPreferenceView()
                         .navigationBarBackButtonHidden()
-                case .calendarConnectView:
+                case .calendarConnect:
                     CalendarConnectView()
                         .navigationBarBackButtonHidden()
                 }
@@ -54,7 +54,7 @@ struct LoginView: View {
 private struct LoginHeaderView: View {
     var body: some View {
         VStack(alignment: .center) {
-            Text(StringLiteral.Onboarding.loginHeaderTitle)
+            Text(OnboardingLoginText.loginHeaderTitle)
                 .applyFont(.title_b_24)
                 .multilineTextAlignment(.center)
                 .foregroundColor(.white)
@@ -87,7 +87,7 @@ private struct LoginButtons: View {
                         .scaledToFit()
                         .frame(width: 24, height: 24)
                     
-                    Text(StringLiteral.Onboarding.googleButton)
+                    Text(OnboardingLoginText.googleButton)
                         .font(.system(size: 16))
                         .foregroundColor(.white)
                 }
@@ -109,7 +109,7 @@ private struct LoginButtons: View {
                         .scaledToFit()
                         .frame(width: 24, height: 24)
                     
-                    Text(StringLiteral.Onboarding.appleButton)
+                    Text(OnboardingLoginText.appleButton)
                         .font(.system(size: 16))
                         .foregroundColor(.white)
                 }
@@ -128,11 +128,11 @@ private struct LoginButtons: View {
 private struct TermsOfUseView: View {
     var body: some View {
         HStack(spacing: 5) {
-            Text(StringLiteral.Onboarding.agreeToMemento)
+            Text(OnboardingLoginText.agreeToMemento)
                 .applyFont(.detail_r_12)
                 .foregroundColor(Color.gray07)
             
-            Link(StringLiteral.Onboarding.termsOfUse, destination: URL(string: "https://www.naver.com")!)
+            Link(OnboardingLoginText.termsOfUse, destination: URL(string: "https://www.naver.com")!)
                 .applyFont(.detail_r_12)
                 .foregroundColor(Color.gray04)
         }

@@ -28,7 +28,7 @@ struct WorkPreferenceView: View {
                         viewModel.navigateBack()
                     },
                     skipButtonAction: {
-                        viewModel.navigateToNext(.calendarConnectView)
+                        viewModel.navigateToNext(.calendarConnect)
                     }
                 )
                 .padding([.trailing, .top], 16)
@@ -72,11 +72,11 @@ struct WorkPreferenceView: View {
 private struct WorkPreferenceHeaderView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            Text(StringLiteral.Onboarding.threeStepTitle)
+            Text(OnboardingWorkPreferenceText.threeStepTitle)
                 .applyFont(.head_b_40)
                 .foregroundColor(.gray07)
 
-            Text(StringLiteral.Onboarding.WorkPreferenceHederTitle)
+            Text(OnboardingWorkPreferenceText.workPreferenceHeaderTitle)
                 .applyFont(.title_b_24)
                 .foregroundColor(.white)
         }
@@ -98,7 +98,7 @@ struct QuestionRow: View {
 
             HStack(spacing: 11) {
                 Button(action: { onSelection(true) }) {
-                    Text(StringLiteral.Onboarding.yes)
+                    Text(OnboardingWorkPreferenceText.yes)
                         .applyFont(.body_b_14)
                         .foregroundColor(selectedAnswer == true ? .white : .gray06)
                         .frame(maxWidth: .infinity)
@@ -108,7 +108,7 @@ struct QuestionRow: View {
                 }
 
                 Button(action: { onSelection(false) }) {
-                    Text(StringLiteral.Onboarding.no)
+                    Text(OnboardingWorkPreferenceText.no)
                         .applyFont(.body_b_14)
                         .foregroundColor(selectedAnswer == false ? .white : .gray06)
                         .frame(maxWidth: .infinity)
@@ -132,10 +132,10 @@ private struct NextButton: View {
     var body: some View {
         Button {
             if isEnabled {
-                viewModel.navigateToNext(.calendarConnectView)
+                viewModel.navigateToNext(.calendarConnect)
             }
         } label: {
-            Text(StringLiteral.Onboarding.nextButton)
+            Text(OnboardingPublicText.nextButton)
                 .applyFont(.body_b_16)
                 .foregroundColor(isEnabled ? .black : .gray08)
                 .padding(EdgeInsets(top: 13, leading: 0, bottom: 13, trailing: 0))

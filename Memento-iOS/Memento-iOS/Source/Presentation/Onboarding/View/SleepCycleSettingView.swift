@@ -25,7 +25,7 @@ struct SleepCycleSettingView: View {
                         viewModel.navigateBack()
                     },
                     skipButtonAction: {
-                        viewModel.navigateToNext(.calendarConnectView)
+                        viewModel.navigateToNext(.calendarConnect)
                     }
                 )
                 .padding([.trailing, .top], 16)
@@ -70,11 +70,11 @@ struct SleepCycleSettingView: View {
 private struct SleepCycleSettingHeaderView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            Text(StringLiteral.Onboarding.oneStepTitle)
+            Text(OnboardingSleepCycleText.oneStepTitle)
                 .applyFont(.head_b_40)
                 .foregroundColor(.gray07)
             
-            Text(StringLiteral.Onboarding.sleepCycleSettingHeaderTitle)
+            Text(OnboardingSleepCycleText.sleepCycleSettingHeaderTitle)
                 .applyFont(.title_b_24)
                 .foregroundColor(.white)
         }
@@ -93,7 +93,7 @@ private struct TimeSelectionView: View {
         VStack(alignment: .leading, spacing: 29) {
             timeSelectionRow(
                 icon: .ic_sun_line,
-                title: StringLiteral.Onboarding.wakeUpTitle,
+                title: OnboardingSleepCycleText.wakeUpTitle,
                 time: wakeUpTime,
                 action: {
                     selectedTimeType = .wakeUp
@@ -103,7 +103,7 @@ private struct TimeSelectionView: View {
             
             timeSelectionRow(
                 icon: .ic_bad,
-                title: StringLiteral.Onboarding.windDownTitle,
+                title: OnboardingSleepCycleText.windDownTitle,
                 time: windDownTime,
                 action: {
                     selectedTimeType = .windDown
@@ -128,7 +128,7 @@ private struct TimeSelectionView: View {
             Spacer()
             
             Button(action: action) {
-                Text(time.map { $0.formattedDate(with: "hh:mm a") } ?? StringLiteral.Onboarding.defaultTime)
+                Text(time.map { $0.formattedDate(with: "hh:mm a") } ?? OnboardingSleepCycleText.defaultTime)
                     .applyFont(.body_r_14)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, alignment: .center)
@@ -151,7 +151,7 @@ private struct NextButton: View {
                 viewModel.navigateToNext(.workSelection)
             }
         } label: {
-            Text(StringLiteral.Onboarding.nextButton)
+            Text(OnboardingPublicText.nextButton)
                 .applyFont(.body_b_16)
                 .foregroundColor((viewModel.sleepCycleData.wakeUpTime != nil && viewModel.sleepCycleData.sleepTime != nil) ? .black : .gray08)
                 .padding(EdgeInsets(top: 13, leading: 0, bottom: 13, trailing: 0))

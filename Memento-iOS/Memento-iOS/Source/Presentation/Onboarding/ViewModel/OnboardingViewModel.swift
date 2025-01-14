@@ -10,11 +10,11 @@ import Combine
 
 // MARK: - OnBoardingNavigationDestination
 
-enum OnBoardingNavigationDestination: String, Hashable {
+enum OnboardingNavigationDestination: String, Hashable {
     case sleepCycleSetting = "SleepCycleSettingView"
     case workSelection = "WorkSelectionView"
     case workPreference = "WorkPreferenceView"
-    case calendarConnectView = "CalendarConnectView"
+    case calendarConnect = "CalendarConnectView"
 }
 
 // MARK: - Data Transfer Object
@@ -30,7 +30,7 @@ final class OnboardingViewModel: ObservableObject {
     
     // MARK: - Navigation
     
-    @Published var navigationPath: [OnBoardingNavigationDestination] = []
+    @Published var navigationPath: [OnboardingNavigationDestination] = []
     
     // MARK: - User Input Data
     
@@ -53,7 +53,7 @@ final class OnboardingViewModel: ObservableObject {
     
     // MARK: - Navigation Methods
     
-    func navigateToNext(_ destination: OnBoardingNavigationDestination) {
+    func navigateToNext(_ destination: OnboardingNavigationDestination) {
         navigationPath.append(destination)
     }
     

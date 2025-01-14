@@ -55,7 +55,7 @@ private struct CalendarConnectHeaderView: View {
                 .offset(x: 110, y: 35)
 
             VStack(alignment: .center) {
-                Text(StringLiteral.Onboarding.CalendarConnectHeaderTitle)
+                Text(OnboardingCalendarConnectText.calendarConnectHeaderTitle)
                     .applyFont(.title_b_24)
                     .multilineTextAlignment(.center)
                     .foregroundColor(.white)
@@ -83,7 +83,7 @@ private struct CalendarConnectButtons: View {
                         .scaledToFit()
                         .frame(width: 24, height: 24)
 
-                    Text(StringLiteral.Onboarding.connectGoogleCalendar)
+                    Text(OnboardingCalendarConnectText.connectGoogleCalendar)
                         .font(.system(size: 16))
                         .foregroundColor(.white)
                 }
@@ -105,7 +105,7 @@ private struct CalendarConnectButtons: View {
                         .scaledToFit()
                         .frame(width: 24, height: 24)
 
-                    Text(StringLiteral.Onboarding.connectAppleCalendar)
+                    Text(OnboardingCalendarConnectText.connectAppleCalendar)
                         .font(.system(size: 16))
                         .foregroundColor(.white)
                 }
@@ -126,9 +126,9 @@ private struct AppStartButton: View {
 
     var body: some View {
         Button {
-            viewModel.navigateToNext(.calendarConnectView) 
+            viewModel.navigateToNext(.calendarConnect)
         } label: {
-            Text(StringLiteral.Onboarding.startMementoButton)
+            Text(OnboardingCalendarConnectText.startMementoButton)
                 .applyFont(.body_b_16)
                 .foregroundColor(Color.black)
                 .padding(.vertical, 13)
