@@ -11,27 +11,22 @@ import MDSKit
 struct SleepCycleSettingView: View {
     @State private var wakeUpTime: Date? = nil
     @State private var windDownTime: Date? = nil
-    @State private var isPickerPresented: Bool = false 
+    @State private var isPickerPresented: Bool = false
     @State private var selectedTimeType: TimeType = .wakeUp
-    @Binding var path: [String]
-
-    enum TimeType {
-        case wakeUp
-        case windDown
-    }
-
+    @Binding var path: [OnBoardingNavigationDestination]
+    
     var body: some View {
         ZStack {
             BackgroundView()
             
             VStack(alignment: .leading) {
                 CustomNavigationBar(path: $path)
-                    .padding(.horizontal)
+                    .padding(.trailing, 16)
                     .padding(.top, 16)
                 
                 StepProgressBar(currentStep: 1, totalSteps: 4)
                     .padding(.horizontal, 16)
-                    .padding(.top, 24)
+                    .padding(.top, 10)
                 
                 HeaderTitleView()
                     .padding(.horizontal)
@@ -45,13 +40,13 @@ struct SleepCycleSettingView: View {
                 )
                 .padding(.horizontal, 16)
                 .padding(.top, 80)
-              
+                
                 Spacer()
                 
                 NextButton(wakeUpTime: $wakeUpTime, windDownTime: $windDownTime, path: $path)
                     .padding(.horizontal, 16)
                     .padding(.bottom, 10)
-              
+                
             }
         }
         .sheet(isPresented: $isPickerPresented) {
@@ -67,24 +62,24 @@ struct SleepCycleSettingView: View {
 
 // MARK: - CustomNavigationBar
 private struct CustomNavigationBar: View {
-    @Binding var path: [String]
-
+    @Binding var path: [OnBoardingNavigationDestination]
+    
     var body: some View {
-        HStack(alignment: .top) {
+        HStack(alignment: .center) {
             Button {
                 path.removeLast()
             } label: {
-                Image(systemName: "chevron.backward")
+                Image(.btn_back)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 7.5, height: 16.5)
+                    .frame(width: 48, height: 48)
                     .foregroundColor(.gray06)
             }
             
             Spacer()
             
             Button {
-                path.append("WorkSelectionView") // 다음 화면으로 이동
+                path.append(.calendarConnectView)
             } label: {
                 Text("Skip")
                     .applyFont(.body_b_14)
@@ -102,7 +97,6 @@ private struct HeaderTitleView: View {
             Text("1")
                 .applyFont(.head_b_40)
                 .foregroundColor(.gray07)
-            
             
             Text("Set your")
                 .applyFont(.title_b_24)
@@ -125,22 +119,22 @@ private struct TimeSelectionView: View {
     @Binding var wakeUpTime: Date?
     @Binding var windDownTime: Date?
     @Binding var isPickerPresented: Bool
-    @Binding var selectedTimeType: SleepCycleSettingView.TimeType
+    @Binding var selectedTimeType: TimeType
     
     var body: some View {
         VStack(alignment: .leading, spacing: 29) {
             timeSelectionRow(
-                icon: "mingcute_sun-line", // 디자인 시스템에 맞게 수정 필요
+                icon: .ic_sun_line,
                 title: "Wake-up",
                 time: wakeUpTime,
                 action: {
                     selectedTimeType = .wakeUp
-                    isPickerPresented = true // TimePickerView 작동
+                    isPickerPresented = true
                 }
             )
             
             timeSelectionRow(
-                icon: "mingcute_bed-line",
+                icon: .ic_bad,
                 title: "Wind-down",
                 time: windDownTime,
                 action: {
@@ -151,10 +145,9 @@ private struct TimeSelectionView: View {
         }
     }
     
-    private func timeSelectionRow(icon: String, title: String, time: Date?, action: @escaping () -> Void) -> some View {
+    private func timeSelectionRow(icon: MDSImageName, title: String, time: Date?, action: @escaping () -> Void) -> some View {
         HStack {
-            //Image(icon)
-            Image(systemName: "apple.logo")
+            Image(icon)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 33, height: 33)
@@ -167,7 +160,7 @@ private struct TimeSelectionView: View {
             Spacer()
             
             Button(action: action) {
-                Text(time.map { timeFormatter.string(from: $0) } ?? "00:00 AM")
+                Text(time.map { $0.formattedDate(with: "hh:mm a") } ?? "00:00 AM")
                     .applyFont(.body_r_14)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, alignment: .center)
@@ -175,6 +168,7 @@ private struct TimeSelectionView: View {
                     .background(Color.gray09)
             }
             .frame(width: 94, height: 36)
+            
         }
     }
 }
@@ -183,12 +177,12 @@ private struct TimeSelectionView: View {
 private struct NextButton: View {
     @Binding var wakeUpTime: Date?
     @Binding var windDownTime: Date?
-    @Binding var path: [String]
-
+    @Binding var path: [OnBoardingNavigationDestination]
+    
     var body: some View {
         Button {
             if wakeUpTime != nil && windDownTime != nil {
-                path.append("WorkSelectionView")
+                path.append(.workSelection)
             }
         } label: {
             Text("Next")
@@ -198,61 +192,9 @@ private struct NextButton: View {
                 .frame(maxWidth: .infinity)
         }
         .cornerRadius(2)
-        .frame(height: 50) 
+        .frame(height: 50)
         .background((wakeUpTime != nil && windDownTime != nil) ? Color.green : Color.gray10)
     }
-}
-
-// MARK: - Time Picker View
-private struct TimePickerView: View {
-    @Binding var isPickerPresented: Bool
-    @Binding var selectedTimeType: SleepCycleSettingView.TimeType
-    @Binding var wakeUpTime: Date?
-    @Binding var windDownTime: Date?
-    
-    var body: some View {
-        ZStack(alignment: .topTrailing) {
-            VStack {
-                Spacer()
-                
-                DatePicker(
-                    "",
-                    selection: Binding(
-                        get: {
-                            selectedTimeType == .wakeUp ? (wakeUpTime ?? Date()) : (windDownTime ?? Date())
-                        },
-                        set: { newValue in
-                            selectedTimeType == .wakeUp ? (wakeUpTime = newValue) : (windDownTime = newValue)
-                        }
-                    ),
-                    displayedComponents: .hourAndMinute
-                )
-                .datePickerStyle(WheelDatePickerStyle())
-                .colorScheme(.dark) // 다크 모드 강제 적용
-                .labelsHidden()
-            }
-            .presentationDetents([.fraction(0.3)]) // 시트 높이 설정
-            .presentationBackground(Color.gray09)
-            
-            // Done 버튼
-            Button(action: {
-                isPickerPresented = false
-            }) {
-                Text("Done")
-                    .foregroundColor(Color.white)
-                    .applyFont(.body_b_14)
-            }
-            .padding(.top, 14)
-            .padding(.trailing, 16)
-        }
-    }
-}
-
-// MARK: - Time Formatter
-private var timeFormatter: DateFormatter {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "hh:mm a" // 00:00 PM 형식
-    return formatter
 }
 
 #Preview {
