@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+import MCalendar
+
 enum TabBarItem: CaseIterable {
     
     case today, todo, addition
@@ -40,11 +42,20 @@ enum TabBarItem: CaseIterable {
     var targetView: AnyView {
             switch self {
             case .today:
-                return AnyView(TodayView())
+                return AnyView(WeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
+                            mCalendarDataSource: MCalendarDataSource(),
+                            mEventDataSource: MEventDatasource()
+                        )))
             case .todo:
-                return AnyView(TodayView())
+                return AnyView(WeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
+                            mCalendarDataSource: MCalendarDataSource(),
+                            mEventDataSource: MEventDatasource()
+                        )))
             case .addition:
-                return AnyView(TodayView())
+                return AnyView(WeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
+                            mCalendarDataSource: MCalendarDataSource(),
+                            mEventDataSource: MEventDatasource()
+                        )))
             }
         }
 }
