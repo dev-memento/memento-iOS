@@ -29,7 +29,7 @@ struct WorkSelectionView: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 10)
 
-                HeaderTitleView()
+                WorkSelectionHeaderView()
                     .padding(.horizontal)
 
                 ScrollView {
@@ -82,7 +82,7 @@ private struct CustomNavigationBar: View {
 }
 
 // MARK: - Header and Title View
-private struct HeaderTitleView: View {
+private struct WorkSelectionHeaderView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
             Text("2")

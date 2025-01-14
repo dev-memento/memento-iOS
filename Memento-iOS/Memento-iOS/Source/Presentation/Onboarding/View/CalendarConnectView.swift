@@ -20,7 +20,7 @@ struct CalendarConnectView: View {
                     .padding(.trailing, 16)
                     .padding(.top, 16)
 
-                HeaderTitleView()
+                CalendarConnectHeaderView()
                     .padding(.horizontal)
 
                 CalendarConnectButtons()
@@ -57,7 +57,7 @@ private struct CustomNavigationBar: View {
 }
 
 // MARK: - Header and Title View
-private struct HeaderTitleView: View {
+private struct CalendarConnectHeaderView: View {
     var body: some View {
         ZStack {
             Image(.img_calendar)

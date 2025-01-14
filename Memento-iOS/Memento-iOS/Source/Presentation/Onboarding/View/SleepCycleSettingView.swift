@@ -26,7 +26,7 @@ struct SleepCycleSettingView: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 10)
 
-                HeaderTitleView()
+                SleepCycleSettingHeaderView()
                     .padding(.horizontal)
                     .padding(.top, 8)
 
@@ -87,7 +87,7 @@ private struct CustomNavigationBar: View {
 }
 
 // MARK: - Header and Title View
-private struct HeaderTitleView: View {
+private struct SleepCycleSettingHeaderView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("1")
