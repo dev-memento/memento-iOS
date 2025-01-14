@@ -56,6 +56,7 @@ struct TodoListCell: View {
         }
         .frame(height: 68)
         .background(Color.grayBlack)
+        .opacity(isChecked ? 0.5 : 1.0)
         .onChange(of: isChecked) { _ in
             print("todo box is checked")
         }
