@@ -45,6 +45,11 @@
 		9DB3625C2D363FF100905A0A /* TodayItemDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DAE37752D363FA3008B603B /* TodayItemDataModel.swift */; };
 		9DB3625D2D363FF400905A0A /* TodoDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DAE37762D363FA3008B603B /* TodoDataModel.swift */; };
 		9DBC14972D36434200A022A9 /* MCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 9DBC14962D36434200A022A9 /* MCalendar */; };
+		9DBC149B2D3644FC00A022A9 /* WeeklyCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBC149A2D3644F600A022A9 /* WeeklyCalendarView.swift */; };
+		9DBC149D2D36451300A022A9 /* WeeklyCalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBC149C2D36450D00A022A9 /* WeeklyCalendarViewModel.swift */; };
+		9DBC149F2D36459E00A022A9 /* OffsetObservableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBC149E2D36458F00A022A9 /* OffsetObservableScrollView.swift */; };
+		9DBC14A22D36467900A022A9 /* MCalendarEventList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBC14A12D36466A00A022A9 /* MCalendarEventList.swift */; };
+		9DBC14A62D3646A500A022A9 /* MEventDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBC14A52D3646A100A022A9 /* MEventDataSource.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -83,6 +88,11 @@
 		9DAE37742D363FA3008B603B /* ScheduleDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleDataModel.swift; sourceTree = "<group>"; };
 		9DAE37752D363FA3008B603B /* TodayItemDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayItemDataModel.swift; sourceTree = "<group>"; };
 		9DAE37762D363FA3008B603B /* TodoDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoDataModel.swift; sourceTree = "<group>"; };
+		9DBC149A2D3644F600A022A9 /* WeeklyCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyCalendarView.swift; sourceTree = "<group>"; };
+		9DBC149C2D36450D00A022A9 /* WeeklyCalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyCalendarViewModel.swift; sourceTree = "<group>"; };
+		9DBC149E2D36458F00A022A9 /* OffsetObservableScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OffsetObservableScrollView.swift; sourceTree = "<group>"; };
+		9DBC14A12D36466A00A022A9 /* MCalendarEventList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCalendarEventList.swift; sourceTree = "<group>"; };
+		9DBC14A52D3646A100A022A9 /* MEventDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MEventDataSource.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -251,6 +261,8 @@
 		2F7FCCFC2D328C3F00F35456 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				9DBC149E2D36458F00A022A9 /* OffsetObservableScrollView.swift */,
+				9DBC149A2D3644F600A022A9 /* WeeklyCalendarView.swift */,
 				2F7FCCF92D328C3F00F35456 /* AllDayCell.swift */,
 				2F7FCCFA2D328C3F00F35456 /* TodayListView.swift */,
 				2F7FCCFB2D328C3F00F35456 /* TodayView.swift */,
@@ -261,6 +273,7 @@
 		2F7FCCFE2D328C3F00F35456 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
+				9DBC149C2D36450D00A022A9 /* WeeklyCalendarViewModel.swift */,
 				2F7FCCFD2D328C3F00F35456 /* TodayViewModel.swift */,
 			);
 			path = ViewModel;
@@ -288,6 +301,7 @@
 		2F7FCD012D328C3F00F35456 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				9DBC14A02D36466600A022A9 /* Data */,
 				2F7FCCD52D328C3F00F35456 /* App */,
 				2F7FCCE12D328C3F00F35456 /* Component */,
 				2F7FCCE32D328C3F00F35456 /* Const */,
@@ -332,6 +346,15 @@
 				9DAE37762D363FA3008B603B /* TodoDataModel.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		9DBC14A02D36466600A022A9 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				9DBC14A52D3646A100A022A9 /* MEventDataSource.swift */,
+				9DBC14A12D36466A00A022A9 /* MCalendarEventList.swift */,
+			);
+			path = Data;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -425,17 +448,21 @@
 				2F7FCD052D328C3F00F35456 /* Config.swift in Sources */,
 				2F7FCD062D328C3F00F35456 /* Memento_iOSApp.swift in Sources */,
 				2F7FCD072D328C3F00F35456 /* ColorTagView.swift in Sources */,
+				9DBC149F2D36459E00A022A9 /* OffsetObservableScrollView.swift in Sources */,
 				2F7FCD082D328C3F00F35456 /* PriorityLabel.swift in Sources */,
+				9DBC149D2D36451300A022A9 /* WeeklyCalendarViewModel.swift in Sources */,
 				2F7FCD092D328C3F00F35456 /* ScheduleListCell.swift in Sources */,
 				2F7FCD0A2D328C3F00F35456 /* TodoListCell.swift in Sources */,
 				2F7FCD0B2D328C3F00F35456 /* TabBarItem.swift in Sources */,
 				2F7FCD0C2D328C3F00F35456 /* TabBarView.swift in Sources */,
+				9DBC149B2D3644FC00A022A9 /* WeeklyCalendarView.swift in Sources */,
 				2F7FCD0D2D328C3F00F35456 /* TimePickerView.swift in Sources */,
 				2F7FCD0E2D328C3F00F35456 /* BackgroundView.swift in Sources */,
 				2F7FCD0F2D328C3F00F35456 /* StringLiteral.swift in Sources */,
 				2F7FCD102D328C3F00F35456 /* Color+.swift in Sources */,
 				2F7FCD112D328C3F00F35456 /* Date+.swift in Sources */,
 				2F7FCD122D328C3F00F35456 /* View+.swift in Sources */,
+				9DBC14A22D36467900A022A9 /* MCalendarEventList.swift in Sources */,
 				2F7FCD132D328C3F00F35456 /* BaseAPIService.swift in Sources */,
 				2F7FCD142D328C3F00F35456 /* BaseDTO.swift in Sources */,
 				2F7FCD152D328C3F00F35456 /* NetworkService.swift in Sources */,
@@ -445,6 +472,7 @@
 				2F7FCD192D328C3F00F35456 /* CalendarConnectView.swift in Sources */,
 				2F7FCD1A2D328C3F00F35456 /* LoginView.swift in Sources */,
 				2F7FCD1B2D328C3F00F35456 /* SleepCycleSettingView.swift in Sources */,
+				9DBC14A62D3646A500A022A9 /* MEventDataSource.swift in Sources */,
 				2F7FCD1C2D328C3F00F35456 /* WorkPreferenceView.swift in Sources */,
 				2F7FCD1D2D328C3F00F35456 /* WorkSelectionView.swift in Sources */,
 				2F7FCD1E2D328C3F00F35456 /* AllDayCell.swift in Sources */,
