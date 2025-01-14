@@ -11,7 +11,7 @@ import SwiftUI
 import MDSKit
 import MCalendar
 
-final class WeekluCalendarViewModel: ObservableObject {
+final class WeeklyCalendarViewModel: ObservableObject {
     @Published var mCallendarDataSource: MCalendarDataSource
     @Published var mEventDataSource: MEventDatasource
     
