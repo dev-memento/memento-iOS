@@ -21,9 +21,17 @@ struct WorkSelectionView: View {
             BackgroundView()
 
             VStack(alignment: .leading) {
-                CustomNavigationBar()
-                    .padding(.horizontal, 16)
-                    .padding(.top, 16)
+                CustomNavigationBar(
+                    showBackButton: true,
+                    showSkipButton: true,
+                    backButtonAction: {
+                        viewModel.navigateBack()
+                    },
+                    skipButtonAction: {
+                        viewModel.navigateToNext(.calendarConnectView)
+                    }
+                )
+                .padding([.trailing, .top], 16)
 
                 StepProgressBar(currentStep: 2, totalSteps: 4)
                     .padding(.horizontal, 16)
@@ -47,35 +55,6 @@ struct WorkSelectionView: View {
                 NextButton(isEnabled: isNextButtonEnabled)
                     .padding(.horizontal, 16)
                     .padding(.bottom, 10)
-            }
-        }
-    }
-}
-
-// MARK: - CustomNavigationBar
-private struct CustomNavigationBar: View {
-    @EnvironmentObject var viewModel: OnboardingViewModel
-
-    var body: some View {
-        HStack(alignment: .top) {
-            Button {
-                viewModel.navigateBack()
-            } label: {
-                Image(.btn_back)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 48, height: 48)
-                    .foregroundColor(.gray06)
-            }
-
-            Spacer()
-
-            Button {
-                viewModel.navigateToNext(.calendarConnectView)
-            } label: {
-                Text("Skip")
-                    .applyFont(.body_b_14)
-                    .foregroundColor(.gray06)
             }
         }
     }

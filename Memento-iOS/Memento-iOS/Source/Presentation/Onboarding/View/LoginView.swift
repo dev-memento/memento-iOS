@@ -9,7 +9,7 @@ import SwiftUI
 import MDSKit
 
 struct LoginView: View {
-    @EnvironmentObject var viewModel: OnboardingViewModel // 뷰모델을 주입받음
+    @EnvironmentObject var viewModel: OnboardingViewModel
 
     var body: some View {
         NavigationStack(path: $viewModel.navigationPath) {

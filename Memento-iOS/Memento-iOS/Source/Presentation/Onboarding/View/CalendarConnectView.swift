@@ -16,9 +16,14 @@ struct CalendarConnectView: View {
             BackgroundView()
 
             VStack(alignment: .center) {
-                CustomNavigationBar()
-                    .padding(.trailing, 16)
-                    .padding(.top, 16)
+                CustomNavigationBar(
+                    showBackButton: true,
+                    showSkipButton: false,
+                    backButtonAction: {
+                        viewModel.navigateBack()
+                    }
+                )
+                .padding([.trailing, .top], 16)
 
                 CalendarConnectHeaderView()
                     .padding(.horizontal)
@@ -32,26 +37,6 @@ struct CalendarConnectView: View {
                     .padding(.horizontal, 16)
                     .padding(.bottom, 10)
             }
-        }
-    }
-}
-
-// MARK: - CustomNavigationBar
-private struct CustomNavigationBar: View {
-    @EnvironmentObject var viewModel: OnboardingViewModel
-
-    var body: some View {
-        HStack(alignment: .top) {
-            Button {
-                viewModel.navigateBack()
-            } label: {
-                Image(.btn_back)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 48, height: 48)
-                    .foregroundColor(.gray06)
-            }
-            Spacer()
         }
     }
 }
