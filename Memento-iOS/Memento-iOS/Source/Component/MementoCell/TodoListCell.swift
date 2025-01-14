@@ -55,7 +55,21 @@ struct TodoListCell: View {
             .padding(.trailing, 8)
         }
         .frame(height: 68)
-        .background(Color.grayBlack)
+        .background(
+            priorityType == .immediate ?
+            AnyView(
+                LinearGradient(
+                    stops: [
+                        Gradient.Stop(color: Color(red: 0.09, green: 0.1, blue: 0.15), location: 0.00),
+                        Gradient.Stop(color: Color(red: 0.26, green: 0.27, blue: 0.4), location: 1.00),
+                    ],
+                    startPoint: UnitPoint(x: 0, y: 0),
+                    endPoint: UnitPoint(x: 1, y: 1)
+                )
+            ) : AnyView(
+                Color.grayBlack
+            )
+        )
         .opacity(isChecked ? 0.5 : 1.0)
         .onChange(of: isChecked) { _ in
             print("todo box is checked")
