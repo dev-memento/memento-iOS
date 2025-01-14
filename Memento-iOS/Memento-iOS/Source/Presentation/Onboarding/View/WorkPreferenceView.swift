@@ -11,15 +11,10 @@ import MDSKit
 struct WorkPreferenceView: View {
     @EnvironmentObject var viewModel: OnboardingViewModel // 뷰모델 주입
     
-    private var isNextButtonEnabled: Bool {
-        // 모든 질문이 선택되었는지 확인
-        SurveyQuestion.mockData.allSatisfy { viewModel.workPreferenceData.selectedAnswers[$0.id] != nil }
-    }
-
     var body: some View {
         ZStack {
             BackgroundView()
-
+            
             VStack(alignment: .leading) {
                 CustomNavigationBar(
                     showBackButton: true,
@@ -32,15 +27,15 @@ struct WorkPreferenceView: View {
                     }
                 )
                 .padding([.trailing, .top], 16)
-
+                
                 StepProgressBar(currentStep: 3, totalSteps: 4)
                     .padding(.horizontal, 16)
                     .padding(.top, 10)
-
+                
                 WorkPreferenceHeaderView()
                     .padding(.horizontal)
                     .padding(.top, 8)
-
+                
                 ScrollView {
                     LazyVStack(spacing: 16) {
                         ForEach(SurveyQuestion.mockData) { question in
@@ -56,10 +51,10 @@ struct WorkPreferenceView: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 24)
                 }
-
+                
                 Spacer()
-
-                NextButton(isEnabled: isNextButtonEnabled)
+                
+                NextButton()
                     .padding(.horizontal, 16)
                     .padding(.bottom, 10)
             }
@@ -75,7 +70,7 @@ private struct WorkPreferenceHeaderView: View {
             Text(OnboardingWorkPreferenceText.threeStepTitle)
                 .applyFont(.head_b_40)
                 .foregroundColor(.gray07)
-
+            
             Text(OnboardingWorkPreferenceText.workPreferenceHeaderTitle)
                 .applyFont(.title_b_24)
                 .foregroundColor(.white)
@@ -89,13 +84,13 @@ struct QuestionRow: View {
     let question: SurveyQuestion
     let selectedAnswer: Bool?
     let onSelection: (Bool?) -> Void
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             Text(question.question)
                 .applyFont(.body_r_16)
                 .foregroundColor(.white)
-
+            
             HStack(spacing: 11) {
                 Button(action: { onSelection(true) }) {
                     Text(OnboardingWorkPreferenceText.yes)
@@ -106,7 +101,7 @@ struct QuestionRow: View {
                         .background(selectedAnswer == true ? .gray08 : Color.mainNavy)
                         .cornerRadius(8)
                 }
-
+                
                 Button(action: { onSelection(false) }) {
                     Text(OnboardingWorkPreferenceText.no)
                         .applyFont(.body_b_14)
@@ -127,24 +122,23 @@ struct QuestionRow: View {
 
 private struct NextButton: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
-    var isEnabled: Bool
-
+    
     var body: some View {
         Button {
-            if isEnabled {
+            if viewModel.isNextButtonEnabledForWorkPreference {
                 viewModel.navigateToNext(.calendarConnect)
             }
         } label: {
             Text(OnboardingPublicText.nextButton)
                 .applyFont(.body_b_16)
-                .foregroundColor(isEnabled ? .black : .gray08)
+                .foregroundColor(viewModel.isNextButtonEnabledForWorkPreference ? .black : .gray08)
                 .padding(EdgeInsets(top: 13, leading: 0, bottom: 13, trailing: 0))
                 .frame(maxWidth: .infinity)
         }
         .cornerRadius(2)
         .frame(height: 50)
-        .background(isEnabled ? Color.green : Color.gray10)
-        .disabled(!isEnabled)
+        .background(viewModel.isNextButtonEnabledForWorkPreference ? Color.mainGreen : Color.gray10)
+        .disabled(!viewModel.isNextButtonEnabledForWorkPreference)
     }
 }
 

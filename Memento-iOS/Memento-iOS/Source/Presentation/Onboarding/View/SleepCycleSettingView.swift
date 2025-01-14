@@ -147,19 +147,19 @@ private struct NextButton: View {
     
     var body: some View {
         Button {
-            if viewModel.sleepCycleData.wakeUpTime != nil && viewModel.sleepCycleData.sleepTime != nil {
+            if viewModel.isNextButtonEnabledForSleepCycle {
                 viewModel.navigateToNext(.workSelection)
             }
         } label: {
             Text(OnboardingPublicText.nextButton)
                 .applyFont(.body_b_16)
-                .foregroundColor((viewModel.sleepCycleData.wakeUpTime != nil && viewModel.sleepCycleData.sleepTime != nil) ? .black : .gray08)
+                .foregroundColor(viewModel.isNextButtonEnabledForSleepCycle ? .black : .gray08)
                 .padding(EdgeInsets(top: 13, leading: 0, bottom: 13, trailing: 0))
                 .frame(maxWidth: .infinity)
         }
         .cornerRadius(2)
         .frame(height: 50)
-        .background((viewModel.sleepCycleData.wakeUpTime != nil && viewModel.sleepCycleData.sleepTime != nil) ? Color.green : Color.gray10)
+        .background(viewModel.isNextButtonEnabledForSleepCycle ? Color.mainGreen : Color.gray10)
     }
 }
 
