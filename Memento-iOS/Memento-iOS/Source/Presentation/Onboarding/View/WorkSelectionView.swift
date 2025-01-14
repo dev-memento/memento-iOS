@@ -12,9 +12,8 @@ struct WorkSelectionView: View {
   
     @State private var selectedCategory: String? = nil
     @State private var customCategory: String = ""
-    // TextField 포커스 상태 관리
     @FocusState private var isTextFieldFocused: Bool
-    @Binding var path: [String]
+    @Binding var path: [OnBoardingNavigationDestination]
     
     private var isNextButtonEnabled: Bool {
         (selectedCategory != nil && selectedCategory != "Other") || !customCategory.isEmpty
@@ -26,12 +25,12 @@ struct WorkSelectionView: View {
             
             VStack(alignment: .leading) {
                 CustomNavigationBar(path: $path)
-                    .padding(.horizontal)
+                    .padding(.trailing, 16)
                     .padding(.top, 16)
                 
                 StepProgressBar(currentStep: 2, totalSteps: 4)
                     .padding(.horizontal, 16)
-                    .padding(.top, 24)
+                    .padding(.top, 10)
                 
                 HeaderTitleView()
                     .padding(.horizontal)
@@ -56,7 +55,7 @@ struct WorkSelectionView: View {
                 
                 Spacer()
                 
-                NextButton(isEnabled: isNextButtonEnabled)
+                NextButton(path: $path, isEnabled: isNextButtonEnabled)
                     .padding(.horizontal, 16)
                     .padding(.bottom, 10)
             }
@@ -66,24 +65,24 @@ struct WorkSelectionView: View {
 
 // MARK: - CustomNavigationBar
 private struct CustomNavigationBar: View {
-    @Binding var path: [String]
+    @Binding var path: [OnBoardingNavigationDestination]
 
     var body: some View {
         HStack(alignment: .top) {
             Button {
                 path.removeLast()
             } label: {
-                Image(systemName: "chevron.backward")
+                Image(.btn_back)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 7.5, height: 16.5)
+                    .frame(width: 48, height: 48)
                     .foregroundColor(.gray06)
             }
             
             Spacer()
             
             Button {
-                path.append("WorkSelectionView") 
+                path.append(.calendarConnectView)
             } label: {
                 Text("Skip")
                     .applyFont(.body_b_14)
@@ -191,7 +190,7 @@ private struct SelectionIndicator: View {
     var isSelected: Bool
 
     var body: some View {
-        Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+        Image(isSelected ? .btn_check_selected_circle : .btn_check_unselected_circle)
             .resizable()
             .scaledToFit()
             .frame(width: 20, height: 20)
@@ -201,12 +200,13 @@ private struct SelectionIndicator: View {
 
 // MARK: - Next Button
 private struct NextButton: View {
+    @Binding var path: [OnBoardingNavigationDestination]
     var isEnabled: Bool
-
+    
     var body: some View {
         Button {
             if isEnabled {
-                // Next action
+                path.append(.workPreference)
             }
         } label: {
             Text("Next")

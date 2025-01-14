@@ -8,13 +8,16 @@
 import Foundation
 
 extension Date {
-    
-    /// 현재 날짜와 시간을 특정 형식의 문자열로 반환하는 메소드
-    /// 사용법: Date().makeCurrentDate()
-    func makeCurrentDate() -> String {
+    /// 특정 포맷의 날짜 문자열 반환
+    func formattedDate(with format: String, timeZone: TimeZone = .current) -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX"
-        dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
+        dateFormatter.dateFormat = format
+        dateFormatter.timeZone = timeZone
         return dateFormatter.string(from: self)
+    }
+
+    /// ISO 8601 포맷 반환
+    func makeCurrentDate() -> String {
+        return self.formattedDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX", timeZone: TimeZone(abbreviation: "UTC")!)
     }
 }

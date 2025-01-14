@@ -9,15 +9,15 @@ import SwiftUI
 import MDSKit
 
 struct LoginView: View {
-    @State private var path: [String] = [] // Navigation 경로를 관리하는 배열
-
+    @State private var path: [OnBoardingNavigationDestination] = [] 
+    
     var body: some View {
         NavigationStack(path: $path) {
             ZStack {
                 BackgroundView()
                 
                 VStack(alignment: .center) {
-                    HeaderView()
+                    LoginHeaderView()
                         .padding(.top, 115)
                     
                     LoginButtons(path: $path)
@@ -29,12 +29,19 @@ struct LoginView: View {
                     Spacer()
                 }
             }
-            .navigationDestination(for: String.self) { destination in
-                if destination == "SleepCycleSettingView" {
-                    SleepCycleSettingView(path: $path) 
+            .navigationDestination(for: OnBoardingNavigationDestination.self) { destination in
+                switch destination {
+                case .sleepCycleSetting:
+                    SleepCycleSettingView(path: $path)
                         .navigationBarBackButtonHidden()
-                } else if destination == "WorkSelectionView" {
+                case .workSelection:
                     WorkSelectionView(path: $path)
+                        .navigationBarBackButtonHidden()
+                case .workPreference:
+                    WorkPreferenceView(path: $path)
+                        .navigationBarBackButtonHidden()
+                case .calendarConnectView:
+                    CalendarConnectView(path: $path)
                         .navigationBarBackButtonHidden()
                 }
             }
@@ -42,8 +49,9 @@ struct LoginView: View {
     }
 }
 
+
 // MARK: - Header View
-private struct HeaderView: View {
+private struct LoginHeaderView: View {
     var body: some View {
         VStack(alignment: .center) {
             Text("Less Noise,")
@@ -53,6 +61,7 @@ private struct HeaderView: View {
             Text("More Progress,")
                 .applyFont(.title_b_24)
                 .foregroundColor(.white)
+                .padding(.top, 2)
             
             Image(systemName: "apple.logo")
                 .resizable()
@@ -64,43 +73,51 @@ private struct HeaderView: View {
     }
 }
 
-// MARK: - Logo View
-private struct LogoView: View {
-    var body: some View {
-        Image("MainLogo")
-            .resizable()
-            .scaledToFit()
-            .frame(width: 49.38, height: 43.16)
-    }
-}
-
 // MARK: - Login Buttons
 private struct LoginButtons: View {
-    @Binding var path: [String] // Navigation 경로를 관리하는 바인딩 변수
-
+    @Binding var path: [OnBoardingNavigationDestination]
+    
     var body: some View {
         VStack(alignment: .center, spacing: 18) {
             Button {
-                path.append("SleepCycleSettingView")
+                path.append(.sleepCycleSetting)
             } label: {
-                Image(systemName: "apple.logo")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 183, height: 24)
-                    .padding(EdgeInsets(top: 11, leading: 76, bottom: 11, trailing: 84))
-                    .background(Color.gray10)
+                HStack(spacing: 8) {
+                    Image(.img_google)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 24, height: 24)
+                    
+                    Text("Continue with Google")
+                        .font(.system(size: 16))
+                        .foregroundColor(.white)
+                }
+                .frame(maxWidth: .infinity)
             }
+            .frame(maxWidth: 343)
+            .frame(height: 46)
+            .padding(.horizontal, 16)
+            .background(Color.gray10)
             
             Button {
-                path.append("SleepCycleSettingView")
+                path.append(.sleepCycleSetting)
             } label: {
-                Image(systemName: "apple.logo")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 183, height: 24)
-                    .padding(EdgeInsets(top: 11, leading: 76, bottom: 11, trailing: 84))
-                    .background(Color.gray10)
+                HStack(spacing: 8) {
+                    Image(.img_apple)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 24, height: 24)
+                    
+                    Text("Continue with Apple")
+                        .font(.system(size: 16))
+                        .foregroundColor(.white)
+                }
+                .frame(maxWidth: .infinity)
             }
+            .frame(maxWidth: 343)
+            .frame(height: 46)
+            .padding(.horizontal, 16)
+            .background(Color.gray10)
         }
     }
 }
