@@ -42,6 +42,9 @@
 		8351D78B2D305724008336BE /* MDSKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8351D78A2D305724008336BE /* MDSKit */; };
 		8351D78E2D30575E008336BE /* MDSKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8351D78D2D30575E008336BE /* MDSKit */; };
 		839405562D2D041300F3A2CF /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 839405552D2D041300F3A2CF /* Moya */; };
+		9DB3625B2D363FE300905A0A /* ScheduleDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DAE37742D363FA3008B603B /* ScheduleDataModel.swift */; };
+		9DB3625C2D363FF100905A0A /* TodayItemDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DAE37752D363FA3008B603B /* TodayItemDataModel.swift */; };
+		9DB3625D2D363FF400905A0A /* TodoDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DAE37762D363FA3008B603B /* TodoDataModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -78,6 +81,9 @@
 		2F7FCCFD2D328C3F00F35456 /* TodayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewModel.swift; sourceTree = "<group>"; };
 		2F7FCD6E2D363A7A00F35456 /* CustomNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationBar.swift; sourceTree = "<group>"; };
 		830F3C562D2A73BD00254FDE /* Memento-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Memento-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9DAE37742D363FA3008B603B /* ScheduleDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleDataModel.swift; sourceTree = "<group>"; };
+		9DAE37752D363FA3008B603B /* TodayItemDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayItemDataModel.swift; sourceTree = "<group>"; };
+		9DAE37762D363FA3008B603B /* TodoDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoDataModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -264,6 +270,7 @@
 		2F7FCCFF2D328C3F00F35456 /* Today */ = {
 			isa = PBXGroup;
 			children = (
+				9DAE37772D363FA3008B603B /* Model */,
 				2F7FCCFC2D328C3F00F35456 /* View */,
 				2F7FCCFE2D328C3F00F35456 /* ViewModel */,
 			);
@@ -316,6 +323,16 @@
 				830F3C562D2A73BD00254FDE /* Memento-iOS.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		9DAE37772D363FA3008B603B /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				9DAE37742D363FA3008B603B /* ScheduleDataModel.swift */,
+				9DAE37752D363FA3008B603B /* TodayItemDataModel.swift */,
+				9DAE37762D363FA3008B603B /* TodoDataModel.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -401,6 +418,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9DB3625D2D363FF400905A0A /* TodoDataModel.swift in Sources */,
+				9DB3625C2D363FF100905A0A /* TodayItemDataModel.swift in Sources */,
+				9DB3625B2D363FE300905A0A /* ScheduleDataModel.swift in Sources */,
 				2F7FCD052D328C3F00F35456 /* Config.swift in Sources */,
 				2F7FCD062D328C3F00F35456 /* Memento_iOSApp.swift in Sources */,
 				2F7FCD072D328C3F00F35456 /* ColorTagView.swift in Sources */,
