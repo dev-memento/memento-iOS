@@ -9,27 +9,30 @@ import SwiftUI
 import MDSKit
 
 struct CalendarConnectView: View {
-    
-    @FocusState private var isTextFieldFocused: Bool
-    @Binding var path: [OnBoardingNavigationDestination]
-    
+    @EnvironmentObject var viewModel: OnboardingViewModel 
+
     var body: some View {
         ZStack {
             BackgroundView()
-            
+
             VStack(alignment: .center) {
-                CustomNavigationBar(path: $path)
-                    .padding(.trailing, 16)
-                    .padding(.top, 16)
-                
-                HeaderTitleView()
+                CustomNavigationBar(
+                    showBackButton: true,
+                    showSkipButton: false,
+                    backButtonAction: {
+                        viewModel.navigateBack()
+                    }
+                )
+                .padding([.trailing, .top], 16)
+
+                CalendarConnectHeaderView()
                     .padding(.horizontal)
-                
-                CalendarConnectButtons(path: $path)
+
+                CalendarConnectButtons()
                     .padding(.top, 133)
-                
+
                 Spacer()
-                
+
                 AppStartButton()
                     .padding(.horizontal, 16)
                     .padding(.bottom, 10)
@@ -38,28 +41,9 @@ struct CalendarConnectView: View {
     }
 }
 
-// MARK: - CustomNavigationBar
-private struct CustomNavigationBar: View {
-    @Binding var path: [OnBoardingNavigationDestination]
-    
-    var body: some View {
-        HStack(alignment: .top) {
-            Button {
-                path.removeLast()
-            } label: {
-                Image(.btn_back)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 48, height: 48)
-                    .foregroundColor(.gray06)
-            }
-            Spacer()
-        }
-    }
-}
-
 // MARK: - Header and Title View
-private struct HeaderTitleView: View {
+
+private struct CalendarConnectHeaderView: View {
     var body: some View {
         ZStack {
             Image(.img_calendar)
@@ -69,14 +53,11 @@ private struct HeaderTitleView: View {
                 .foregroundColor(Color.gray09)
                 .opacity(0.5)
                 .offset(x: 110, y: 35)
-            
-            VStack(alignment: .center, spacing: 10) {
-                Text("Connect your calendar")
+
+            VStack(alignment: .center) {
+                Text(OnboardingCalendarConnectText.calendarConnectHeaderTitle)
                     .applyFont(.title_b_24)
-                    .foregroundColor(.white)
-                
-                Text("for seamless scheduling.")
-                    .applyFont(.title_b_24)
+                    .multilineTextAlignment(.center)
                     .foregroundColor(.white)
             }
         }
@@ -85,21 +66,24 @@ private struct HeaderTitleView: View {
 }
 
 // MARK: - CalendarConnectButtons
+
 private struct CalendarConnectButtons: View {
-    @Binding var path: [OnBoardingNavigationDestination]
-    
+    @EnvironmentObject var viewModel: OnboardingViewModel
+
     var body: some View {
         VStack(alignment: .center, spacing: 18) {
             Button {
-                //path.append(.sleepCycleSetting)
+                Task {
+                    await viewModel.signInWithGoogle()
+                }
             } label: {
                 HStack(spacing: 8) {
                     Image(.img_google)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 24, height: 24)
-                    
-                    Text("Connect Google Calendar")
+
+                    Text(OnboardingCalendarConnectText.connectGoogleCalendar)
                         .font(.system(size: 16))
                         .foregroundColor(.white)
                 }
@@ -109,17 +93,19 @@ private struct CalendarConnectButtons: View {
             .frame(height: 46)
             .padding(.horizontal, 16)
             .background(Color.gray10)
-            
+
             Button {
-                //path.append(.sleepCycleSetting)
+                Task {
+                    await viewModel.signInWithApple()
+                }
             } label: {
                 HStack(spacing: 8) {
                     Image(.img_apple)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 24, height: 24)
-                    
-                    Text("Connect Apple Calendar")
+
+                    Text(OnboardingCalendarConnectText.connectAppleCalendar)
                         .font(.system(size: 16))
                         .foregroundColor(.white)
                 }
@@ -133,13 +119,16 @@ private struct CalendarConnectButtons: View {
     }
 }
 
-// MARK: - Next Button
+// MARK: - AppStartButton
+
 private struct AppStartButton: View {
+    @EnvironmentObject var viewModel: OnboardingViewModel
+
     var body: some View {
         Button {
-          
+            viewModel.navigateToNext(.calendarConnect)
         } label: {
-            Text("Start MEMENTO")
+            Text(OnboardingCalendarConnectText.startMementoButton)
                 .applyFont(.body_b_16)
                 .foregroundColor(Color.black)
                 .padding(.vertical, 13)
@@ -152,5 +141,5 @@ private struct AppStartButton: View {
 }
 
 #Preview {
-    CalendarConnectView(path: .constant([]))
+    CalendarConnectView().environmentObject(OnboardingViewModel())
 }
