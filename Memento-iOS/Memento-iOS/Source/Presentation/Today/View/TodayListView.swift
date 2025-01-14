@@ -32,6 +32,7 @@ struct TodayListView: View {
             }
             .padding(.vertical)
         }
+        .background(Color.black)
     }
     
     private func renderItem(at index: Int) -> some View {
