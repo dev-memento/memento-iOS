@@ -10,12 +10,12 @@ import SwiftUI
 struct TodayListView: View {
     @State private var items: [TodayItem] = [
         .todo(TodoDataModel(title: "UXUI 과제", dueDate: "Today", priority: .immediate, isChecked: false, tagColor: "red")),
-        .schedule(ScheduleDataModel(title: "지금은새벽5시다", time: "12 PM - 4 PM", tagColor: "green")),
+        .schedule(ScheduleDataModel(title: "지금은새벽5시다", time: "12 PM - 4 PM", tagColor: "green", isCompleted: true)),
         .todo(TodoDataModel(title: "독감조심하세요다들", dueDate: "Today", priority: .medium, isChecked: false, tagColor: "blue")),
-        .schedule(ScheduleDataModel(title: "회의어쩌고저쩌고메멘토회의", time: "2 PM - 3 PM", tagColor: "orange")),
-        .schedule(ScheduleDataModel(title: "나는지금배고프다", time: "2 PM - 3 PM", tagColor: "yellow")),
+        .schedule(ScheduleDataModel(title: "회의어쩌고저쩌고메멘토회의", time: "2 PM - 3 PM", tagColor: "orange", isCompleted: false)),
+        .schedule(ScheduleDataModel(title: "나는지금배고프다", time: "2 PM - 3 PM", tagColor: "yellow", isCompleted: false)),
         .todo(TodoDataModel(title: "공차가너무먹고싶어요", dueDate: "Today", priority: .none, isChecked: false, tagColor: "blue")),
-        .schedule(ScheduleDataModel(title: "하다보니깐6시다", time: "12 PM - 4 PM", tagColor: "red")),
+        .schedule(ScheduleDataModel(title: "하다보니깐6시다", time: "12 PM - 4 PM", tagColor: "red", isCompleted: false)),
         .todo(TodoDataModel(title: "이것만하고자야징", dueDate: "Today", priority: .high, isChecked: false, tagColor: "green")),
         .todo(TodoDataModel(title: "맥너겟어쩌고저쩌고", dueDate: "Today", priority: .low, isChecked: false, tagColor: "orange"))
     ]
@@ -72,7 +72,8 @@ struct TodayListItemView: View {
             ScheduleListCell(
                 colorType: schedule.tagColor,
                 title: schedule.title,
-                time: schedule.time
+                time: schedule.time,
+                isCompleted: schedule.isCompleted
             )
         }
     }
@@ -124,6 +125,7 @@ struct ScheduleDataModel: Identifiable {
     var title: String
     var time: String
     var tagColor: String
+    var isCompleted: Bool
 }
 
 struct DropViewDelegate: DropDelegate {

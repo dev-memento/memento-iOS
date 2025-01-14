@@ -13,6 +13,7 @@ struct ScheduleListCell: View {
     var colorType: String
     var title: String
     var time: String
+    var isCompleted: Bool
     
     var body: some View {
         HStack(spacing: 10) {
@@ -28,6 +29,7 @@ struct ScheduleListCell: View {
             Spacer()
         }
         .frame(height: 68)
+        .opacity(isCompleted ? 0.5 : 1.0)
         .background(Color.grayBlack)
     }
 }
