@@ -10,22 +10,22 @@ import MDSKit
 
 struct LoginView: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
-
+    
     var body: some View {
         NavigationStack(path: $viewModel.navigationPath) {
             ZStack {
                 BackgroundView()
-
+                
                 VStack(alignment: .center) {
                     LoginHeaderView()
                         .padding(.top, 115)
-
+                    
                     LoginButtons()
                         .padding(.top, 103.2)
-
+                    
                     TermsOfUseView()
                         .padding(.top, 18)
-
+                    
                     Spacer()
                 }
             }
@@ -54,15 +54,11 @@ struct LoginView: View {
 private struct LoginHeaderView: View {
     var body: some View {
         VStack(alignment: .center) {
-            Text("Less Noise,")
+            Text(StringLiteral.Onboarding.loginHeaderTitle)
                 .applyFont(.title_b_24)
+                .multilineTextAlignment(.center)
                 .foregroundColor(.white)
-
-            Text("More Progress,")
-                .applyFont(.title_b_24)
-                .foregroundColor(.white)
-                .padding(.top, 2)
-
+            
             Image(systemName: "apple.logo")
                 .resizable()
                 .scaledToFit()
@@ -77,7 +73,7 @@ private struct LoginHeaderView: View {
 
 private struct LoginButtons: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
-
+    
     var body: some View {
         VStack(alignment: .center, spacing: 18) {
             Button {
@@ -90,8 +86,8 @@ private struct LoginButtons: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 24, height: 24)
-
-                    Text("Continue with Google")
+                    
+                    Text(StringLiteral.Onboarding.googleButton)
                         .font(.system(size: 16))
                         .foregroundColor(.white)
                 }
@@ -101,7 +97,7 @@ private struct LoginButtons: View {
             .frame(height: 46)
             .padding(.horizontal, 16)
             .background(Color.gray10)
-
+            
             Button {
                 Task {
                     await viewModel.signInWithApple()
@@ -112,8 +108,8 @@ private struct LoginButtons: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 24, height: 24)
-
-                    Text("Continue with Apple")
+                    
+                    Text(StringLiteral.Onboarding.appleButton)
                         .font(.system(size: 16))
                         .foregroundColor(.white)
                 }
@@ -132,11 +128,11 @@ private struct LoginButtons: View {
 private struct TermsOfUseView: View {
     var body: some View {
         HStack(spacing: 5) {
-            Text("by continuing, you agree to memento's")
+            Text(StringLiteral.Onboarding.agreeToMemento)
                 .applyFont(.detail_r_12)
                 .foregroundColor(Color.gray07)
-
-            Link("Terms of Use", destination: URL(string: "https://www.naver.com")!)
+            
+            Link(StringLiteral.Onboarding.termsOfUse, destination: URL(string: "https://www.naver.com")!)
                 .applyFont(.detail_r_12)
                 .foregroundColor(Color.gray04)
         }

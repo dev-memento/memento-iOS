@@ -12,11 +12,11 @@ struct SleepCycleSettingView: View {
     @EnvironmentObject var viewModel: OnboardingViewModel // 뷰모델 주입
     @State private var isPickerPresented: Bool = false
     @State private var selectedTimeType: TimeType = .wakeUp
-
+    
     var body: some View {
         ZStack {
             BackgroundView()
-
+            
             VStack(alignment: .leading) {
                 CustomNavigationBar(
                     showBackButton: true,
@@ -29,15 +29,15 @@ struct SleepCycleSettingView: View {
                     }
                 )
                 .padding([.trailing, .top], 16)
-
+                
                 StepProgressBar(currentStep: 1, totalSteps: 4)
                     .padding(.horizontal, 16)
                     .padding(.top, 10)
-
+                
                 SleepCycleSettingHeaderView()
                     .padding(.horizontal)
-                    .padding(.top, 8)
-
+                    .padding(.top, 14)
+                
                 TimeSelectionView(
                     wakeUpTime: $viewModel.sleepCycleData.wakeUpTime,
                     windDownTime: $viewModel.sleepCycleData.sleepTime,
@@ -46,9 +46,9 @@ struct SleepCycleSettingView: View {
                 )
                 .padding(.horizontal, 16)
                 .padding(.top, 80)
-
+                
                 Spacer()
-
+                
                 NextButton()
                     .padding(.horizontal, 16)
                     .padding(.bottom, 10)
@@ -69,21 +69,12 @@ struct SleepCycleSettingView: View {
 
 private struct SleepCycleSettingHeaderView: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("1")
+        VStack(alignment: .leading, spacing: 18) {
+            Text(StringLiteral.Onboarding.oneStepTitle)
                 .applyFont(.head_b_40)
                 .foregroundColor(.gray07)
-
-            Text("Set your")
-                .applyFont(.title_b_24)
-                .foregroundColor(.white)
-                .padding(.top, 18)
-
-            Text("wake-up and")
-                .applyFont(.title_b_24)
-                .foregroundColor(.white)
-
-            Text("wind-down hours")
+            
+            Text(StringLiteral.Onboarding.sleepCycleSettingHeaderTitle)
                 .applyFont(.title_b_24)
                 .foregroundColor(.white)
         }
@@ -97,22 +88,22 @@ private struct TimeSelectionView: View {
     @Binding var windDownTime: Date?
     @Binding var isPickerPresented: Bool
     @Binding var selectedTimeType: TimeType
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 29) {
             timeSelectionRow(
                 icon: .ic_sun_line,
-                title: "Wake-up",
+                title: StringLiteral.Onboarding.wakeUpTitle,
                 time: wakeUpTime,
                 action: {
                     selectedTimeType = .wakeUp
                     isPickerPresented = true
                 }
             )
-
+            
             timeSelectionRow(
                 icon: .ic_bad,
-                title: "Wind-down",
+                title: StringLiteral.Onboarding.windDownTitle,
                 time: windDownTime,
                 action: {
                     selectedTimeType = .windDown
@@ -121,7 +112,7 @@ private struct TimeSelectionView: View {
             )
         }
     }
-
+    
     private func timeSelectionRow(icon: MDSImageName, title: String, time: Date?, action: @escaping () -> Void) -> some View {
         HStack {
             Image(icon)
@@ -129,15 +120,15 @@ private struct TimeSelectionView: View {
                 .scaledToFit()
                 .frame(width: 33, height: 33)
                 .foregroundColor(.white)
-
+            
             Text(title)
                 .applyFont(.title_b_22)
                 .foregroundColor(.white)
-
+            
             Spacer()
-
+            
             Button(action: action) {
-                Text(time.map { $0.formattedDate(with: "hh:mm a") } ?? "00:00 AM")
+                Text(time.map { $0.formattedDate(with: "hh:mm a") } ?? StringLiteral.Onboarding.defaultTime)
                     .applyFont(.body_r_14)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, alignment: .center)
@@ -153,14 +144,14 @@ private struct TimeSelectionView: View {
 
 private struct NextButton: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
-
+    
     var body: some View {
         Button {
             if viewModel.sleepCycleData.wakeUpTime != nil && viewModel.sleepCycleData.sleepTime != nil {
                 viewModel.navigateToNext(.workSelection)
             }
         } label: {
-            Text("Next")
+            Text(StringLiteral.Onboarding.nextButton)
                 .applyFont(.body_b_16)
                 .foregroundColor((viewModel.sleepCycleData.wakeUpTime != nil && viewModel.sleepCycleData.sleepTime != nil) ? .black : .gray08)
                 .padding(EdgeInsets(top: 13, leading: 0, bottom: 13, trailing: 0))

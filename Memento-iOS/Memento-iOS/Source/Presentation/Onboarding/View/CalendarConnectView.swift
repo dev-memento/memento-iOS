@@ -54,13 +54,10 @@ private struct CalendarConnectHeaderView: View {
                 .opacity(0.5)
                 .offset(x: 110, y: 35)
 
-            VStack(alignment: .center, spacing: 10) {
-                Text("Connect your calendar")
+            VStack(alignment: .center) {
+                Text(StringLiteral.Onboarding.CalendarConnectHeaderTitle)
                     .applyFont(.title_b_24)
-                    .foregroundColor(.white)
-
-                Text("for seamless scheduling.")
-                    .applyFont(.title_b_24)
+                    .multilineTextAlignment(.center)
                     .foregroundColor(.white)
             }
         }
@@ -86,7 +83,7 @@ private struct CalendarConnectButtons: View {
                         .scaledToFit()
                         .frame(width: 24, height: 24)
 
-                    Text("Connect Google Calendar")
+                    Text(StringLiteral.Onboarding.connectGoogleCalendar)
                         .font(.system(size: 16))
                         .foregroundColor(.white)
                 }
@@ -108,7 +105,7 @@ private struct CalendarConnectButtons: View {
                         .scaledToFit()
                         .frame(width: 24, height: 24)
 
-                    Text("Connect Apple Calendar")
+                    Text(StringLiteral.Onboarding.connectAppleCalendar)
                         .font(.system(size: 16))
                         .foregroundColor(.white)
                 }
@@ -129,9 +126,9 @@ private struct AppStartButton: View {
 
     var body: some View {
         Button {
-            viewModel.navigateToNext(.calendarConnectView) // Adjust if needed
+            viewModel.navigateToNext(.calendarConnectView) 
         } label: {
-            Text("Start MEMENTO")
+            Text(StringLiteral.Onboarding.startMementoButton)
                 .applyFont(.body_b_16)
                 .foregroundColor(Color.black)
                 .padding(.vertical, 13)

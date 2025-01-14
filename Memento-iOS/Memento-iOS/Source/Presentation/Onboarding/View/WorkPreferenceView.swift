@@ -71,15 +71,14 @@ struct WorkPreferenceView: View {
 
 private struct WorkPreferenceHeaderView: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("3")
+        VStack(alignment: .leading, spacing: 18) {
+            Text(StringLiteral.Onboarding.threeStepTitle)
                 .applyFont(.head_b_40)
                 .foregroundColor(.gray07)
 
-            Text("Discover how you work best.")
+            Text(StringLiteral.Onboarding.WorkPreferenceHederTitle)
                 .applyFont(.title_b_24)
                 .foregroundColor(.white)
-                .padding(.top, 18)
         }
     }
 }
@@ -99,7 +98,7 @@ struct QuestionRow: View {
 
             HStack(spacing: 11) {
                 Button(action: { onSelection(true) }) {
-                    Text("Yes")
+                    Text(StringLiteral.Onboarding.yes)
                         .applyFont(.body_b_14)
                         .foregroundColor(selectedAnswer == true ? .white : .gray06)
                         .frame(maxWidth: .infinity)
@@ -109,7 +108,7 @@ struct QuestionRow: View {
                 }
 
                 Button(action: { onSelection(false) }) {
-                    Text("No")
+                    Text(StringLiteral.Onboarding.no)
                         .applyFont(.body_b_14)
                         .foregroundColor(selectedAnswer == false ? .white : .gray06)
                         .frame(maxWidth: .infinity)
@@ -136,7 +135,7 @@ private struct NextButton: View {
                 viewModel.navigateToNext(.calendarConnectView)
             }
         } label: {
-            Text("Next")
+            Text(StringLiteral.Onboarding.nextButton)
                 .applyFont(.body_b_16)
                 .foregroundColor(isEnabled ? .black : .gray08)
                 .padding(EdgeInsets(top: 13, leading: 0, bottom: 13, trailing: 0))
