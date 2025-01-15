@@ -67,7 +67,7 @@ struct WeeklyCalendarView: View {
                     LazyHStack(spacing: 0) {
                         ForEach(viewModel.mEventDataSource.eventList.indices, id: \.self) { index in
                             let item = viewModel.mEventDataSource.eventList[index]
-                            todoItem(item: item)
+                            todayList(item: item)
                                 .frame(width: UIScreen.main.bounds.width)
                                 .id(index)
                         }
@@ -131,11 +131,9 @@ struct WeeklyCalendarView: View {
     }
     
     @ViewBuilder
-    private func todoItem(item: MCalendarEventList) -> some View {
-        ScrollView(.vertical) {
-            TodayListView(viewModel: viewModel)
-        }
-        .scrollContentBackground(.hidden)
+    private func todayList(item: MCalendarEventList) -> some View {
+        TodayListView(viewModel: viewModel)
+            .scrollContentBackground(.hidden)
     }
 
     
