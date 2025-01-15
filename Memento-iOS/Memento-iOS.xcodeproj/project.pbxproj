@@ -14,46 +14,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		2F7FCCD32D328C3F00F35456 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
-		2F7FCCD42D328C3F00F35456 /* Memento_iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Memento_iOSApp.swift; sourceTree = "<group>"; };
-		2F7FCCD62D328C3F00F35456 /* ColorTagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorTagView.swift; sourceTree = "<group>"; };
-		2F7FCCD72D328C3F00F35456 /* PriorityLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriorityLabel.swift; sourceTree = "<group>"; };
-		2F7FCCD82D328C3F00F35456 /* ScheduleListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleListCell.swift; sourceTree = "<group>"; };
-		2F7FCCD92D328C3F00F35456 /* TodoListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListCell.swift; sourceTree = "<group>"; };
-		2F7FCCDB2D328C3F00F35456 /* TabBarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarItem.swift; sourceTree = "<group>"; };
-		2F7FCCDC2D328C3F00F35456 /* TabBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarView.swift; sourceTree = "<group>"; };
-		2F7FCCDE2D328C3F00F35456 /* TimePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimePickerView.swift; sourceTree = "<group>"; };
-		2F7FCCE02D328C3F00F35456 /* BackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundView.swift; sourceTree = "<group>"; };
-		2F7FCCE22D328C3F00F35456 /* StringLiteral.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringLiteral.swift; sourceTree = "<group>"; };
-		2F7FCCE42D328C3F00F35456 /* Color+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+.swift"; sourceTree = "<group>"; };
-		2F7FCCE52D328C3F00F35456 /* Date+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+.swift"; sourceTree = "<group>"; };
-		2F7FCCE62D328C3F00F35456 /* View+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+.swift"; sourceTree = "<group>"; };
-		2F7FCCE82D328C3F00F35456 /* BaseAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseAPIService.swift; sourceTree = "<group>"; };
-		2F7FCCE92D328C3F00F35456 /* BaseDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseDTO.swift; sourceTree = "<group>"; };
-		2F7FCCEA2D328C3F00F35456 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
-		2F7FCCED2D328C3F00F35456 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
-		2F7FCCEE2D328C3F00F35456 /* SurveyQuestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyQuestion.swift; sourceTree = "<group>"; };
-		2F7FCCF02D328C3F00F35456 /* StepProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepProgressBar.swift; sourceTree = "<group>"; };
-		2F7FCCF22D328C3F00F35456 /* CalendarConnectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarConnectView.swift; sourceTree = "<group>"; };
-		2F7FCCF32D328C3F00F35456 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
-		2F7FCCF42D328C3F00F35456 /* SleepCycleSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepCycleSettingView.swift; sourceTree = "<group>"; };
-		2F7FCCF52D328C3F00F35456 /* WorkPreferenceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkPreferenceView.swift; sourceTree = "<group>"; };
-		2F7FCCF62D328C3F00F35456 /* WorkSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkSelectionView.swift; sourceTree = "<group>"; };
-		2F7FCCF92D328C3F00F35456 /* AllDayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllDayCell.swift; sourceTree = "<group>"; };
-		2F7FCCFA2D328C3F00F35456 /* TodayListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayListView.swift; sourceTree = "<group>"; };
-		2F7FCD6E2D363A7A00F35456 /* CustomNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationBar.swift; sourceTree = "<group>"; };
-		2F7FCD742D36D00800F35456 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		830F3C562D2A73BD00254FDE /* Memento-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Memento-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		9DAE37742D363FA3008B603B /* ScheduleDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleDataModel.swift; sourceTree = "<group>"; };
-		9DAE37752D363FA3008B603B /* TodayItemDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayItemDataModel.swift; sourceTree = "<group>"; };
-		9DAE37762D363FA3008B603B /* TodoDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoDataModel.swift; sourceTree = "<group>"; };
-		9DBC149A2D3644F600A022A9 /* WeeklyCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyCalendarView.swift; sourceTree = "<group>"; };
-		9DBC149C2D36450D00A022A9 /* WeeklyCalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyCalendarViewModel.swift; sourceTree = "<group>"; };
-		9DBC149E2D36458F00A022A9 /* OffsetObservableScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OffsetObservableScrollView.swift; sourceTree = "<group>"; };
-		9DBC14A12D36466A00A022A9 /* MCalendarEventList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCalendarEventList.swift; sourceTree = "<group>"; };
-		9DBC14A52D3646A100A022A9 /* MEventDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MEventDataSource.swift; sourceTree = "<group>"; };
-		9DBC14BF2D36E16D00A022A9 /* AllDayListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllDayListView.swift; sourceTree = "<group>"; };
-		9DBC14C32D36E92C00A022A9 /* AllDayDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllDayDataModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -92,47 +53,11 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		76E28A282D36E6F600EB19F3 /* View */ = {
-			isa = PBXGroup;
-			children = (
-				2F7FCCD32D328C3F00F35456 /* Config.swift */,
-				2F7FCCD42D328C3F00F35456 /* Memento_iOSApp.swift */,
-				2F7FCCD62D328C3F00F35456 /* ColorTagView.swift */,
-				2F7FCCD72D328C3F00F35456 /* PriorityLabel.swift */,
-				2F7FCCD82D328C3F00F35456 /* ScheduleListCell.swift */,
-				2F7FCD6E2D363A7A00F35456 /* CustomNavigationBar.swift */,
-				2F7FCCD92D328C3F00F35456 /* TodoListCell.swift */,
-				2F7FCCDB2D328C3F00F35456 /* TabBarItem.swift */,
-				2F7FCCDC2D328C3F00F35456 /* TabBarView.swift */,
-				2F7FCCDE2D328C3F00F35456 /* TimePickerView.swift */,
-				2F7FCCE02D328C3F00F35456 /* BackgroundView.swift */,
-				2F7FCCE22D328C3F00F35456 /* StringLiteral.swift */,
-				2F7FCCE42D328C3F00F35456 /* Color+.swift */,
-				2F7FCCE52D328C3F00F35456 /* Date+.swift */,
-				2F7FCCE62D328C3F00F35456 /* View+.swift */,
-				2F7FCCE82D328C3F00F35456 /* BaseAPIService.swift */,
-				2F7FCCE92D328C3F00F35456 /* BaseDTO.swift */,
-				2F7FCCEA2D328C3F00F35456 /* NetworkService.swift */,
-				2F7FCCED2D328C3F00F35456 /* Category.swift */,
-				2F7FCCEE2D328C3F00F35456 /* SurveyQuestion.swift */,
-				2F7FCCF02D328C3F00F35456 /* StepProgressBar.swift */,
-				2F7FCCF32D328C3F00F35456 /* LoginView.swift */,
-				2F7FCCF42D328C3F00F35456 /* SleepCycleSettingView.swift */,
-				2F7FCCF52D328C3F00F35456 /* WorkPreferenceView.swift */,
-				2F7FCCF62D328C3F00F35456 /* WorkSelectionView.swift */,
-				2F7FCCF22D328C3F00F35456 /* CalendarConnectView.swift */,
-				2F7FCD742D36D00800F35456 /* Launch Screen.storyboard */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
 		830F3C4D2D2A73BD00254FDE = {
 			isa = PBXGroup;
 			children = (
 				830F3C582D2A73BD00254FDE /* Memento-iOS */,
 				830F3C572D2A73BD00254FDE /* Products */,
-				76E28A282D36E6F600EB19F3 /* View */,
-				9D3F7C482D38090800EBD1B9 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -142,25 +67,6 @@
 				830F3C562D2A73BD00254FDE /* Memento-iOS.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		9D3F7C482D38090800EBD1B9 /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				9DAE37762D363FA3008B603B /* TodoDataModel.swift */,
-				9DAE37752D363FA3008B603B /* TodayItemDataModel.swift */,
-				9DAE37742D363FA3008B603B /* ScheduleDataModel.swift */,
-				9DBC149E2D36458F00A022A9 /* OffsetObservableScrollView.swift */,
-				9DBC149C2D36450D00A022A9 /* WeeklyCalendarViewModel.swift */,
-				9DBC149A2D3644F600A022A9 /* WeeklyCalendarView.swift */,
-				9DBC14C32D36E92C00A022A9 /* AllDayDataModel.swift */,
-				9DBC14A12D36466A00A022A9 /* MCalendarEventList.swift */,
-				9DBC14BF2D36E16D00A022A9 /* AllDayListView.swift */,
-				9DBC14A52D3646A100A022A9 /* MEventDataSource.swift */,
-				2F7FCCF92D328C3F00F35456 /* AllDayCell.swift */,
-				2F7FCCFA2D328C3F00F35456 /* TodayListView.swift */,
-			);
-			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
