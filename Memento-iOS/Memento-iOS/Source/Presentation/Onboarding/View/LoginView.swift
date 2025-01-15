@@ -7,10 +7,12 @@
 
 import SwiftUI
 import MDSKit
+import _AuthenticationServices_SwiftUI
 
 struct LoginView: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
-    
+    @StateObject private var authViewModel = AuthViewModel()
+      
     var body: some View {
         NavigationStack(path: $viewModel.navigationPath) {
             ZStack {
@@ -20,7 +22,7 @@ struct LoginView: View {
                     LoginHeaderView()
                         .padding(.top, 115)
                     
-                    LoginButtons()
+                    LoginButtons(authViewModel: authViewModel) // 전달
                         .padding(.top, 103.2)
                     
                     TermsOfUseView()
@@ -73,6 +75,7 @@ private struct LoginHeaderView: View {
 
 private struct LoginButtons: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
+    @ObservedObject var authViewModel: AuthViewModel
     
     var body: some View {
         VStack(alignment: .center, spacing: 18) {
@@ -98,27 +101,34 @@ private struct LoginButtons: View {
             .padding(.horizontal, 16)
             .background(Color.gray10)
             
-            Button {
-                Task {
-                    await viewModel.signInWithApple()
-                }
-            } label: {
-                HStack(spacing: 8) {
-                    Image(.img_apple)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 24, height: 24)
-                    
-                    Text(OnboardingLoginText.appleButton)
-                        .font(.system(size: 16))
-                        .foregroundColor(.white)
-                }
-                .frame(maxWidth: .infinity)
+            
+            HStack(spacing: 8) {
+                Image(.img_apple)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
+                
+                Text(OnboardingLoginText.appleButton)
+                    .font(.system(size: 16))
+                    .foregroundColor(.white)
             }
+            .frame(maxWidth: .infinity)
             .frame(maxWidth: 343)
             .frame(height: 46)
             .padding(.horizontal, 16)
             .background(Color.gray10)
+            .overlay {
+                SignInWithAppleButton(
+                    onRequest: { request in
+                        authViewModel.send(action: .appleLogin(request))
+                    },
+                    onCompletion: { result in
+                        authViewModel.send(action: .appleLoginCompletion(result))
+                    }
+                )
+                .blendMode(.overlay)
+            }
+            
         }
     }
 }
