@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct TodayListView: View {
-    @StateObject private var viewModel = TodayListViewModel()
+    
+    @ObservedObject var viewModel: WeeklyCalendarViewModel
 
     var body: some View {
         ScrollView {

@@ -1,5 +1,5 @@
 {
-  "originHash" : "6b7db56d27d969aedbe802ad9733251a93eb34c47e5cf75d6a066675f3f4e591",
+  "originHash" : "4ac82a1a531c9e64c5e439ea4fd4baf06bcc93d30d0720f3f5363c4588c9291b",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "513364f870f6bfc468f9d2ff0a95caccc10044c5",
         "version" : "5.10.2"
+      }
+    },
+    {
+      "identity" : "memento-calendar",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/dev-memento/memento-calendar.git",
+      "state" : {
+        "revision" : "4504eccfe0672ca6a3226c76a6222479abb4afde",
+        "version" : "1.0.4"
       }
     },
     {

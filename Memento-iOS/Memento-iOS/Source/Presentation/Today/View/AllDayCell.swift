@@ -8,14 +8,17 @@
 import SwiftUI
 
 struct AllDayCell: View {
-
+    
+    var colorType: String
+    var title: String
+    
     var body: some View {
         HStack(spacing: 26) {
             Rectangle()
-                .fill(Color.distinguishColorType("red"))
+                .fill(Color.distinguishColorType(colorType))
                 .frame(width: 3)
             
-            AllDayTitleLabel(title: "박익범 가정방문 어쩌고")
+            AllDayTitleLabel(title: title)
             
             Spacer()
         }
@@ -34,9 +37,4 @@ struct AllDayTitleLabel: View {
             .foregroundColor(.white)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
-}
-
-struct ScheduleCellData {
-    let colorType: String
-    let text: String
 }
