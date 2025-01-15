@@ -56,9 +56,6 @@ struct WeeklyCalendarView: View {
                 .background(Color.grayBlack)
                 .allowsHitTesting(userInteractionFlag)
             
-            AllDayListView(items: viewModel.allDayItems)
-                .padding(.vertical, 4)
-            
             ScrollViewReader { proxy in
                 OffsetObservableScrollView(.horizontal,
                                            showsIndicators: false,
@@ -67,7 +64,7 @@ struct WeeklyCalendarView: View {
                     LazyHStack(spacing: 0) {
                         ForEach(viewModel.mEventDataSource.eventList.indices, id: \.self) { index in
                             let item = viewModel.mEventDataSource.eventList[index]
-                            todayList(item: item)
+                            pageView(for: item)
                                 .frame(width: UIScreen.main.bounds.width)
                                 .id(index)
                         }
@@ -135,6 +132,17 @@ struct WeeklyCalendarView: View {
         TodayListView(viewModel: viewModel)
             .scrollContentBackground(.hidden)
     }
+    
+    @ViewBuilder
+    private func pageView(for item: MCalendarEventList) -> some View {
+        VStack(spacing: 8) {
+            AllDayListView(items: viewModel.allDayItems)
+                .padding(.vertical, 4)
+
+            todayList(item: item)
+        }
+    }
+
 
     
     private func makeIndex() {
