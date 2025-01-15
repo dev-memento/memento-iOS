@@ -21,7 +21,7 @@ struct MCalendarEventDataModel: Hashable, Identifiable {
     let eventStart: Date
     let eventFinish: Date
     let externalEventType: MCalendarExternalEventType
-    let priority: MCalendarPirotity
+    let priority: MCalendarPriotity
     let isCompleted: Bool?
 }
 
@@ -38,7 +38,7 @@ enum MCalendarExternalEventType {
     case none
 }
 
-enum MCalendarPirotity {
+enum MCalendarPriotity {
     case immediate
     case high
     case medium
