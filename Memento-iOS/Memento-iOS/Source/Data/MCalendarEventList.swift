@@ -19,7 +19,7 @@ struct MCalendarEventDataModel: Hashable, Identifiable {
     let eventTitle: String
     let eventType: MCalendarEventType
     let eventStart: Date
-    let envetFinish: Date
+    let eventFinish: Date
     let externalEventType: MCalendarExternalEventType
     let priority: MCalendarPirotity
     let isCompleted: Bool?

@@ -24,7 +24,7 @@ final class MEventDatasource: ObservableObject {
                                        eventList: [.init(eventTitle: $0.year + "년" + $0.month + "월" + $0.day + "일" + "이벤트",
                                                          eventType: .schedule,
                                                          eventStart: now,
-                                                         envetFinish: now.addingTimeInterval(60 * 60),
+                                                         eventFinish: now.addingTimeInterval(60 * 60),
                                                          externalEventType: .notion,
                                                          priority: .immediate,
                                                          isCompleted: false)]))
