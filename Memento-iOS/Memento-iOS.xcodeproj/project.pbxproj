@@ -7,6 +7,39 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2F7FCD032D328C3F00F35456 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F7FCCCF2D328C3F00F35456 /* Preview Assets.xcassets */; };
+		2F7FCD042D328C3F00F35456 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F7FCCD12D328C3F00F35456 /* Assets.xcassets */; };
+		2F7FCD052D328C3F00F35456 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCD32D328C3F00F35456 /* Config.swift */; };
+		2F7FCD062D328C3F00F35456 /* Memento_iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCD42D328C3F00F35456 /* Memento_iOSApp.swift */; };
+		2F7FCD072D328C3F00F35456 /* ColorTagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCD62D328C3F00F35456 /* ColorTagView.swift */; };
+		2F7FCD082D328C3F00F35456 /* PriorityLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCD72D328C3F00F35456 /* PriorityLabel.swift */; };
+		2F7FCD092D328C3F00F35456 /* ScheduleListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCD82D328C3F00F35456 /* ScheduleListCell.swift */; };
+		2F7FCD0A2D328C3F00F35456 /* TodoListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCD92D328C3F00F35456 /* TodoListCell.swift */; };
+		2F7FCD0B2D328C3F00F35456 /* TabBarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCDB2D328C3F00F35456 /* TabBarItem.swift */; };
+		2F7FCD0C2D328C3F00F35456 /* TabBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCDC2D328C3F00F35456 /* TabBarView.swift */; };
+		2F7FCD0D2D328C3F00F35456 /* TimePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCDE2D328C3F00F35456 /* TimePickerView.swift */; };
+		2F7FCD0E2D328C3F00F35456 /* BackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCE02D328C3F00F35456 /* BackgroundView.swift */; };
+		2F7FCD0F2D328C3F00F35456 /* StringLiteral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCE22D328C3F00F35456 /* StringLiteral.swift */; };
+		2F7FCD102D328C3F00F35456 /* Color+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCE42D328C3F00F35456 /* Color+.swift */; };
+		2F7FCD112D328C3F00F35456 /* Date+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCE52D328C3F00F35456 /* Date+.swift */; };
+		2F7FCD122D328C3F00F35456 /* View+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCE62D328C3F00F35456 /* View+.swift */; };
+		2F7FCD132D328C3F00F35456 /* BaseAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCE82D328C3F00F35456 /* BaseAPIService.swift */; };
+		2F7FCD142D328C3F00F35456 /* BaseDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCE92D328C3F00F35456 /* BaseDTO.swift */; };
+		2F7FCD152D328C3F00F35456 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCEA2D328C3F00F35456 /* NetworkService.swift */; };
+		2F7FCD162D328C3F00F35456 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCED2D328C3F00F35456 /* Category.swift */; };
+		2F7FCD172D328C3F00F35456 /* SurveyQuestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCEE2D328C3F00F35456 /* SurveyQuestion.swift */; };
+		2F7FCD182D328C3F00F35456 /* StepProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCF02D328C3F00F35456 /* StepProgressBar.swift */; };
+		2F7FCD192D328C3F00F35456 /* CalendarConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCF22D328C3F00F35456 /* CalendarConnectView.swift */; };
+		2F7FCD1A2D328C3F00F35456 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCF32D328C3F00F35456 /* LoginView.swift */; };
+		2F7FCD1B2D328C3F00F35456 /* SleepCycleSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCF42D328C3F00F35456 /* SleepCycleSettingView.swift */; };
+		2F7FCD1C2D328C3F00F35456 /* WorkPreferenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCF52D328C3F00F35456 /* WorkPreferenceView.swift */; };
+		2F7FCD1D2D328C3F00F35456 /* WorkSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCF62D328C3F00F35456 /* WorkSelectionView.swift */; };
+		2F7FCD1E2D328C3F00F35456 /* AllDayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCF92D328C3F00F35456 /* AllDayCell.swift */; };
+		2F7FCD1F2D328C3F00F35456 /* TodayListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCFA2D328C3F00F35456 /* TodayListView.swift */; };
+		2F7FCD202D328C3F00F35456 /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCFB2D328C3F00F35456 /* TodayView.swift */; };
+		2F7FCD212D328C3F00F35456 /* TodayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCCFD2D328C3F00F35456 /* TodayViewModel.swift */; };
+		2F7FCD6F2D363A7A00F35456 /* CustomNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7FCD6E2D363A7A00F35456 /* CustomNavigationBar.swift */; };
+		2F7FCD752D36D00800F35456 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2F7FCD742D36D00800F35456 /* Launch Screen.storyboard */; };
 		8351D78B2D305724008336BE /* MDSKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8351D78A2D305724008336BE /* MDSKit */; };
 		8351D78E2D30575E008336BE /* MDSKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8351D78D2D30575E008336BE /* MDSKit */; };
 		839405562D2D041300F3A2CF /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 839405552D2D041300F3A2CF /* Moya */; };
@@ -43,6 +76,8 @@
 		2F7FCCFB2D328C3F00F35456 /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
 		2F7FCCFD2D328C3F00F35456 /* TodayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewModel.swift; sourceTree = "<group>"; };
 		2F7FCD6E2D363A7A00F35456 /* CustomNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationBar.swift; sourceTree = "<group>"; };
+		2F7FCD742D36D00800F35456 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		2F7FCD782D36D50300F35456 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		830F3C562D2A73BD00254FDE /* Memento-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Memento-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -97,6 +132,25 @@
 				2F7FCCF42D328C3F00F35456 /* SleepCycleSettingView.swift */,
 				2F7FCCF52D328C3F00F35456 /* WorkPreferenceView.swift */,
 				2F7FCCF62D328C3F00F35456 /* WorkSelectionView.swift */,
+				2F7FCCF22D328C3F00F35456 /* CalendarConnectView.swift */,
+				2F7FCD742D36D00800F35456 /* Launch Screen.storyboard */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		2F7FCCF82D328C3F00F35456 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				2F7FCCEF2D328C3F00F35456 /* Model */,
+				2F7FCCF72D328C3F00F35456 /* View */,
+				2F7FCD232D32D94400F35456 /* ViewModel */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		2F7FCCFC2D328C3F00F35456 /* View */ = {
+			isa = PBXGroup;
+			children = (
 				2F7FCCF92D328C3F00F35456 /* AllDayCell.swift */,
 				2F7FCCFA2D328C3F00F35456 /* TodayListView.swift */,
 				2F7FCCFB2D328C3F00F35456 /* TodayView.swift */,
@@ -193,6 +247,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F7FCD752D36D00800F35456 /* Launch Screen.storyboard in Resources */,
+				2F7FCD032D328C3F00F35456 /* Preview Assets.xcassets in Resources */,
+				2F7FCD042D328C3F00F35456 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -261,6 +318,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -318,6 +377,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -333,15 +394,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Memento-iOS/Preview Content\"";
 				DEVELOPMENT_TEAM = 5KA6J79S24;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Memento-iOS/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
@@ -363,15 +426,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Memento-iOS/Preview Content\"";
 				DEVELOPMENT_TEAM = 5KA6J79S24;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Memento-iOS/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
