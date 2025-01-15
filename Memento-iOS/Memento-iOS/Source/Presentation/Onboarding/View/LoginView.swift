@@ -9,10 +9,10 @@ import SwiftUI
 import MDSKit
 
 struct LoginView: View {
-    @State private var path: [OnBoardingNavigationDestination] = [] 
+    @EnvironmentObject var viewModel: OnboardingViewModel
     
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack(path: $viewModel.navigationPath) {
             ZStack {
                 BackgroundView()
                 
@@ -20,7 +20,7 @@ struct LoginView: View {
                     LoginHeaderView()
                         .padding(.top, 115)
                     
-                    LoginButtons(path: $path)
+                    LoginButtons()
                         .padding(.top, 103.2)
                     
                     TermsOfUseView()
@@ -29,19 +29,19 @@ struct LoginView: View {
                     Spacer()
                 }
             }
-            .navigationDestination(for: OnBoardingNavigationDestination.self) { destination in
+            .navigationDestination(for: OnboardingNavigationDestination.self) { destination in
                 switch destination {
                 case .sleepCycleSetting:
-                    SleepCycleSettingView(path: $path)
+                    SleepCycleSettingView()
                         .navigationBarBackButtonHidden()
                 case .workSelection:
-                    WorkSelectionView(path: $path)
+                    WorkSelectionView()
                         .navigationBarBackButtonHidden()
                 case .workPreference:
-                    WorkPreferenceView(path: $path)
+                    WorkPreferenceView()
                         .navigationBarBackButtonHidden()
-                case .calendarConnectView:
-                    CalendarConnectView(path: $path)
+                case .calendarConnect:
+                    CalendarConnectView()
                         .navigationBarBackButtonHidden()
                 }
             }
@@ -49,38 +49,37 @@ struct LoginView: View {
     }
 }
 
-
 // MARK: - Header View
+
 private struct LoginHeaderView: View {
     var body: some View {
         VStack(alignment: .center) {
-            Text("Less Noise,")
+            Text(OnboardingLoginText.loginHeaderTitle)
                 .applyFont(.title_b_24)
+                .multilineTextAlignment(.center)
                 .foregroundColor(.white)
             
-            Text("More Progress,")
-                .applyFont(.title_b_24)
-                .foregroundColor(.white)
-                .padding(.top, 2)
-            
-            Image(systemName: "apple.logo")
+            Image(.img_main_logo)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 49.38, height: 43.16)
-                .padding(.top, 98.64)
+                .frame(width: 100, height: 100)
+                .padding(.top, 72)
                 .foregroundColor(.white)
         }
     }
 }
 
 // MARK: - Login Buttons
+
 private struct LoginButtons: View {
-    @Binding var path: [OnBoardingNavigationDestination]
+    @EnvironmentObject var viewModel: OnboardingViewModel
     
     var body: some View {
         VStack(alignment: .center, spacing: 18) {
             Button {
-                path.append(.sleepCycleSetting)
+                Task {
+                    await viewModel.signInWithGoogle()
+                }
             } label: {
                 HStack(spacing: 8) {
                     Image(.img_google)
@@ -88,7 +87,7 @@ private struct LoginButtons: View {
                         .scaledToFit()
                         .frame(width: 24, height: 24)
                     
-                    Text("Continue with Google")
+                    Text(OnboardingLoginText.googleButton)
                         .font(.system(size: 16))
                         .foregroundColor(.white)
                 }
@@ -100,7 +99,9 @@ private struct LoginButtons: View {
             .background(Color.gray10)
             
             Button {
-                path.append(.sleepCycleSetting)
+                Task {
+                    await viewModel.signInWithApple()
+                }
             } label: {
                 HStack(spacing: 8) {
                     Image(.img_apple)
@@ -108,7 +109,7 @@ private struct LoginButtons: View {
                         .scaledToFit()
                         .frame(width: 24, height: 24)
                     
-                    Text("Continue with Apple")
+                    Text(OnboardingLoginText.appleButton)
                         .font(.system(size: 16))
                         .foregroundColor(.white)
                 }
@@ -123,14 +124,15 @@ private struct LoginButtons: View {
 }
 
 // MARK: - Terms Of Use View
+
 private struct TermsOfUseView: View {
     var body: some View {
         HStack(spacing: 5) {
-            Text("by continuing, you agree to memento's")
+            Text(OnboardingLoginText.agreeToMemento)
                 .applyFont(.detail_r_12)
                 .foregroundColor(Color.gray07)
             
-            Link("Terms of Use", destination: URL(string: "https://www.naver.com")!)
+            Link(OnboardingLoginText.termsOfUse, destination: URL(string: "https://www.naver.com")!)
                 .applyFont(.detail_r_12)
                 .foregroundColor(Color.gray04)
         }
@@ -139,4 +141,5 @@ private struct TermsOfUseView: View {
 
 #Preview {
     LoginView()
+        .environmentObject(OnboardingViewModel())
 }

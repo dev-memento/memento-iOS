@@ -6,12 +6,29 @@
 //
 
 import SwiftUI
+import MDSKit
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        registerFonts()
+        Thread.sleep(forTimeInterval: 2)
+        return true
+    }
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        return UIInterfaceOrientationMask.portrait
+    }
+}
 
 @main
-struct Memento_iOSApp: App {
+struct MementoApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject private var onboardingViewModel = OnboardingViewModel()
+    
     var body: some Scene {
         WindowGroup {
             LoginView()
+                .environmentObject(onboardingViewModel)
         }
     }
 }

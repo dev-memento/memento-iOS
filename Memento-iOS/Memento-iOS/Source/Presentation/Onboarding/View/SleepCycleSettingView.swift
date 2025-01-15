@@ -9,32 +9,38 @@ import SwiftUI
 import MDSKit
 
 struct SleepCycleSettingView: View {
-    @State private var wakeUpTime: Date? = nil
-    @State private var windDownTime: Date? = nil
+    @EnvironmentObject var viewModel: OnboardingViewModel // 뷰모델 주입
     @State private var isPickerPresented: Bool = false
     @State private var selectedTimeType: TimeType = .wakeUp
-    @Binding var path: [OnBoardingNavigationDestination]
     
     var body: some View {
         ZStack {
             BackgroundView()
             
             VStack(alignment: .leading) {
-                CustomNavigationBar(path: $path)
-                    .padding(.trailing, 16)
-                    .padding(.top, 16)
+                CustomNavigationBar(
+                    showBackButton: true,
+                    showSkipButton: true,
+                    backButtonAction: {
+                        viewModel.navigateBack()
+                    },
+                    skipButtonAction: {
+                        viewModel.navigateToNext(.calendarConnect)
+                    }
+                )
+                .padding([.trailing, .top], 16)
                 
                 StepProgressBar(currentStep: 1, totalSteps: 4)
                     .padding(.horizontal, 16)
                     .padding(.top, 10)
                 
-                HeaderTitleView()
+                SleepCycleSettingHeaderView()
                     .padding(.horizontal)
-                    .padding(.top, 8)
+                    .padding(.top, 14)
                 
                 TimeSelectionView(
-                    wakeUpTime: $wakeUpTime,
-                    windDownTime: $windDownTime,
+                    wakeUpTime: $viewModel.sleepCycleData.wakeUpTime,
+                    windDownTime: $viewModel.sleepCycleData.sleepTime,
                     isPickerPresented: $isPickerPresented,
                     selectedTimeType: $selectedTimeType
                 )
@@ -43,71 +49,32 @@ struct SleepCycleSettingView: View {
                 
                 Spacer()
                 
-                NextButton(wakeUpTime: $wakeUpTime, windDownTime: $windDownTime, path: $path)
+                NextButton()
                     .padding(.horizontal, 16)
                     .padding(.bottom, 10)
-                
             }
         }
         .sheet(isPresented: $isPickerPresented) {
             TimePickerView(
                 isPickerPresented: $isPickerPresented,
                 selectedTimeType: $selectedTimeType,
-                wakeUpTime: $wakeUpTime,
-                windDownTime: $windDownTime
+                wakeUpTime: $viewModel.sleepCycleData.wakeUpTime,
+                windDownTime: $viewModel.sleepCycleData.sleepTime
             )
         }
     }
 }
 
-// MARK: - CustomNavigationBar
-private struct CustomNavigationBar: View {
-    @Binding var path: [OnBoardingNavigationDestination]
-    
-    var body: some View {
-        HStack(alignment: .center) {
-            Button {
-                path.removeLast()
-            } label: {
-                Image(.btn_back)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 48, height: 48)
-                    .foregroundColor(.gray06)
-            }
-            
-            Spacer()
-            
-            Button {
-                path.append(.calendarConnectView)
-            } label: {
-                Text("Skip")
-                    .applyFont(.body_b_14)
-                    .foregroundColor(.gray06)
-            }
-        }
-    }
-}
-
 // MARK: - Header and Title View
-private struct HeaderTitleView: View {
+
+private struct SleepCycleSettingHeaderView: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            
-            Text("1")
+        VStack(alignment: .leading, spacing: 18) {
+            Text(OnboardingSleepCycleText.oneStepTitle)
                 .applyFont(.head_b_40)
                 .foregroundColor(.gray07)
             
-            Text("Set your")
-                .applyFont(.title_b_24)
-                .foregroundColor(.white)
-                .padding(.top, 18)
-            
-            Text("wake-up and")
-                .applyFont(.title_b_24)
-                .foregroundColor(.white)
-            
-            Text("wind-down hours")
+            Text(OnboardingSleepCycleText.sleepCycleSettingHeaderTitle)
                 .applyFont(.title_b_24)
                 .foregroundColor(.white)
         }
@@ -115,6 +82,7 @@ private struct HeaderTitleView: View {
 }
 
 // MARK: - Time Selection View
+
 private struct TimeSelectionView: View {
     @Binding var wakeUpTime: Date?
     @Binding var windDownTime: Date?
@@ -125,7 +93,7 @@ private struct TimeSelectionView: View {
         VStack(alignment: .leading, spacing: 29) {
             timeSelectionRow(
                 icon: .ic_sun_line,
-                title: "Wake-up",
+                title: OnboardingSleepCycleText.wakeUpTitle,
                 time: wakeUpTime,
                 action: {
                     selectedTimeType = .wakeUp
@@ -135,7 +103,7 @@ private struct TimeSelectionView: View {
             
             timeSelectionRow(
                 icon: .ic_bad,
-                title: "Wind-down",
+                title: OnboardingSleepCycleText.windDownTitle,
                 time: windDownTime,
                 action: {
                     selectedTimeType = .windDown
@@ -160,7 +128,7 @@ private struct TimeSelectionView: View {
             Spacer()
             
             Button(action: action) {
-                Text(time.map { $0.formattedDate(with: "hh:mm a") } ?? "00:00 AM")
+                Text(time.map { $0.formattedDate(with: "hh:mm a") } ?? OnboardingSleepCycleText.defaultTime)
                     .applyFont(.body_r_14)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, alignment: .center)
@@ -168,36 +136,33 @@ private struct TimeSelectionView: View {
                     .background(Color.gray09)
             }
             .frame(width: 94, height: 36)
-            
         }
     }
 }
 
 // MARK: - Next Button
+
 private struct NextButton: View {
-    @Binding var wakeUpTime: Date?
-    @Binding var windDownTime: Date?
-    @Binding var path: [OnBoardingNavigationDestination]
+    @EnvironmentObject var viewModel: OnboardingViewModel
     
     var body: some View {
         Button {
-            if wakeUpTime != nil && windDownTime != nil {
-                path.append(.workSelection)
+            if viewModel.isNextButtonEnabledForSleepCycle {
+                viewModel.navigateToNext(.workSelection)
             }
         } label: {
-            Text("Next")
+            Text(OnboardingPublicText.nextButton)
                 .applyFont(.body_b_16)
-                .foregroundColor((wakeUpTime != nil && windDownTime != nil) ? .black : .gray08)
+                .foregroundColor(viewModel.isNextButtonEnabledForSleepCycle ? .black : .gray08)
                 .padding(EdgeInsets(top: 13, leading: 0, bottom: 13, trailing: 0))
                 .frame(maxWidth: .infinity)
         }
         .cornerRadius(2)
         .frame(height: 50)
-        .background((wakeUpTime != nil && windDownTime != nil) ? Color.green : Color.gray10)
+        .background(viewModel.isNextButtonEnabledForSleepCycle ? Color.mainGreen : Color.gray10)
     }
 }
 
 #Preview {
-    SleepCycleSettingView(path: .constant([]))
+    SleepCycleSettingView().environmentObject(OnboardingViewModel())
 }
-

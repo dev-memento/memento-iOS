@@ -9,14 +9,11 @@ import SwiftUI
 import MDSKit
 
 struct WorkSelectionView: View {
-  
-    @State private var selectedCategory: String? = nil
-    @State private var customCategory: String = ""
+    @EnvironmentObject var viewModel: OnboardingViewModel
     @FocusState private var isTextFieldFocused: Bool
-    @Binding var path: [OnBoardingNavigationDestination]
     
     private var isNextButtonEnabled: Bool {
-        (selectedCategory != nil && selectedCategory != "Other") || !customCategory.isEmpty
+        (viewModel.workSelectionData.selectedCategory != nil && viewModel.workSelectionData.selectedCategory != "Other") || !viewModel.workSelectionData.customCategory.isEmpty
     }
     
     var body: some View {
@@ -24,30 +21,29 @@ struct WorkSelectionView: View {
             BackgroundView()
             
             VStack(alignment: .leading) {
-                CustomNavigationBar(path: $path)
-                    .padding(.trailing, 16)
-                    .padding(.top, 16)
+                CustomNavigationBar(
+                    showBackButton: true,
+                    showSkipButton: true,
+                    backButtonAction: {
+                        viewModel.navigateBack()
+                    },
+                    skipButtonAction: {
+                        viewModel.navigateToNext(.calendarConnect)
+                    }
+                )
+                .padding([.trailing, .top], 16)
                 
                 StepProgressBar(currentStep: 2, totalSteps: 4)
                     .padding(.horizontal, 16)
                     .padding(.top, 10)
                 
-                HeaderTitleView()
+                WorkSelectionHeaderView()
                     .padding(.horizontal)
                 
                 ScrollView {
                     VStack(spacing: 0) {
-                        CategoryListView(
-                            selectedCategory: $selectedCategory,
-                            customCategory: $customCategory,
-                            isTextFieldFocused: _isTextFieldFocused
-                        )
-                        
-                        CustomCategoryInputView(
-                            selectedCategory: $selectedCategory,
-                            customCategory: $customCategory,
-                            isTextFieldFocused: _isTextFieldFocused
-                        )
+                        CategoryListView(isTextFieldFocused: _isTextFieldFocused)
+                        CustomCategoryInputView(isTextFieldFocused: _isTextFieldFocused)
                     }
                 }
                 .padding(.top, 28)
@@ -55,7 +51,7 @@ struct WorkSelectionView: View {
                 
                 Spacer()
                 
-                NextButton(path: $path, isEnabled: isNextButtonEnabled)
+                NextButton(isEnabled: isNextButtonEnabled)
                     .padding(.horizontal, 16)
                     .padding(.bottom, 10)
             }
@@ -63,44 +59,16 @@ struct WorkSelectionView: View {
     }
 }
 
-// MARK: - CustomNavigationBar
-private struct CustomNavigationBar: View {
-    @Binding var path: [OnBoardingNavigationDestination]
-
-    var body: some View {
-        HStack(alignment: .top) {
-            Button {
-                path.removeLast()
-            } label: {
-                Image(.btn_back)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 48, height: 48)
-                    .foregroundColor(.gray06)
-            }
-            
-            Spacer()
-            
-            Button {
-                path.append(.calendarConnectView)
-            } label: {
-                Text("Skip")
-                    .applyFont(.body_b_14)
-                    .foregroundColor(.gray06)
-            }
-        }
-    }
-}
-
 // MARK: - Header and Title View
-private struct HeaderTitleView: View {
+
+private struct WorkSelectionHeaderView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            Text("2")
+            Text(OnboardingWorkSelectionText.twoStepTitle)
                 .applyFont(.head_b_40)
                 .foregroundColor(.gray07)
             
-            Text("What do you do for work?")
+            Text(OnboardingWorkSelectionText.workSelectionHeaderTitle)
                 .applyFont(.title_b_24)
                 .foregroundColor(.white)
         }
@@ -108,15 +76,15 @@ private struct HeaderTitleView: View {
 }
 
 // MARK: - CategoryListView
-private struct CategoryListView: View {
-    @Binding var selectedCategory: String?
-    @Binding var customCategory: String
-    @FocusState var isTextFieldFocused: Bool
 
+private struct CategoryListView: View {
+    @EnvironmentObject var viewModel: OnboardingViewModel
+    @FocusState var isTextFieldFocused: Bool
+    
     var body: some View {
         ForEach(Category.mockData) { category in
             HStack {
-                SelectionIndicator(isSelected: selectedCategory == category.name)
+                SelectionIndicator(isSelected: viewModel.workSelectionData.selectedCategory == category.name)
                 Text(category.name)
                     .applyFont(.body_b_14)
                     .foregroundColor(Color.gray06)
@@ -132,46 +100,46 @@ private struct CategoryListView: View {
             }
         }
     }
-
+    
     private func selectCategory(_ name: String) {
-        selectedCategory = name
-        customCategory = ""
+        viewModel.workSelectionData.selectedCategory = name
+        viewModel.workSelectionData.customCategory = ""
         isTextFieldFocused = false
     }
 }
 
 // MARK: - CustomCategoryInputView
-private struct CustomCategoryInputView: View {
-    @Binding var selectedCategory: String?
-    @Binding var customCategory: String
-    @FocusState var isTextFieldFocused: Bool
 
+private struct CustomCategoryInputView: View {
+    @EnvironmentObject var viewModel: OnboardingViewModel
+    @FocusState var isTextFieldFocused: Bool
+    
     var body: some View {
         HStack {
-            SelectionIndicator(isSelected: selectedCategory == "Other" || !customCategory.isEmpty)
-
+            SelectionIndicator(isSelected: viewModel.workSelectionData.selectedCategory == "Other" || !viewModel.workSelectionData.customCategory.isEmpty)
+            
             VStack(alignment: .leading, spacing: 0) {
                 TextField(
-                    customCategory.isEmpty ? "Other" : "",
-                    text: $customCategory
+                    viewModel.workSelectionData.customCategory.isEmpty ? "Other" : "",
+                    text: $viewModel.workSelectionData.customCategory
                 )
-                .focused($isTextFieldFocused) // FocusState 바인딩
+                .focused($isTextFieldFocused)
                 .onChange(of: isTextFieldFocused) { newValue in
                     if newValue {
-                        selectedCategory = "Other"
+                        viewModel.workSelectionData.selectedCategory = "Other"
                     }
                 }
-                .foregroundColor((isTextFieldFocused || !customCategory.isEmpty) ? .white : .gray08)
+                .foregroundColor((isTextFieldFocused || !viewModel.workSelectionData.customCategory.isEmpty) ? .white : .gray08)
                 .applyFont(.body_b_14)
                 .padding(EdgeInsets(top: 12, leading: 14, bottom: 12, trailing: 0))
-
+                
                 Rectangle()
                     .frame(width: 240, height: 1)
-                    .foregroundColor((isTextFieldFocused || !customCategory.isEmpty) ? .white : Color.gray08)
+                    .foregroundColor((isTextFieldFocused || !viewModel.workSelectionData.customCategory.isEmpty) ? .white : Color.gray08)
                     .padding(.leading, 14)
                     .offset(y: -10)
             }
-
+            
             Spacer()
         }
         .frame(height: 44)
@@ -179,37 +147,39 @@ private struct CustomCategoryInputView: View {
         .background(.black)
         .contentShape(Rectangle())
         .onTapGesture {
-            selectedCategory = "Other"
+            viewModel.workSelectionData.selectedCategory = "Other"
             isTextFieldFocused = true
         }
     }
 }
 
 // MARK: - 선택 표시 뷰
+
 private struct SelectionIndicator: View {
     var isSelected: Bool
-
+    
     var body: some View {
         Image(isSelected ? .btn_check_selected_circle : .btn_check_unselected_circle)
             .resizable()
             .scaledToFit()
             .frame(width: 20, height: 20)
-            .foregroundColor(isSelected ? .white : .gray) // 색상 선택
+            .foregroundColor(isSelected ? .white : .gray)
     }
 }
 
 // MARK: - Next Button
+
 private struct NextButton: View {
-    @Binding var path: [OnBoardingNavigationDestination]
+    @EnvironmentObject var viewModel: OnboardingViewModel
     var isEnabled: Bool
     
     var body: some View {
         Button {
             if isEnabled {
-                path.append(.workPreference)
+                viewModel.navigateToNext(.workPreference)
             }
         } label: {
-            Text("Next")
+            Text(OnboardingPublicText.nextButton)
                 .applyFont(.body_b_16)
                 .foregroundColor(isEnabled ? Color.black : Color.gray08)
                 .padding(.vertical, 13)
@@ -223,5 +193,5 @@ private struct NextButton: View {
 }
 
 #Preview {
-    WorkSelectionView(path: .constant([]))
+    WorkSelectionView().environmentObject(OnboardingViewModel())
 }
