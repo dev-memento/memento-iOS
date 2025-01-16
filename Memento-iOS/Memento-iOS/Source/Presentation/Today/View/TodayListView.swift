@@ -73,7 +73,7 @@ struct TodayListItemView: View {
         case .schedule(let schedule):
             ScheduleListCell(
                 colorType: schedule.tagColor,
-                title: schedule.title,
+                scheduleTitle: schedule.title,
                 time: schedule.time,
                 isCompleted: schedule.isCompleted
             )
