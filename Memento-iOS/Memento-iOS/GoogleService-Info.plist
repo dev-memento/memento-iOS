@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>301410211395-grq5ib85rqcn55nji3mmd4kg35a3c23m.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.301410211395-grq5ib85rqcn55nji3mmd4kg35a3c23m</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAhacnNGeQD1tADswJ3bcu6rkoqYZUyvQY</string>
+	<key>GCM_SENDER_ID</key>
+	<string>301410211395</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.memento.lifeManager</string>
+	<key>PROJECT_ID</key>
+	<string>memento-ae9aa</string>
+	<key>STORAGE_BUCKET</key>
+	<string>memento-ae9aa.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:301410211395:ios:486431880fd527fc99a6f6</string>
+</dict>
+</plist>
