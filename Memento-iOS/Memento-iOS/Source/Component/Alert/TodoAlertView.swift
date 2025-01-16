@@ -92,7 +92,7 @@ struct TodoAlertView: View {
 
             Spacer()
 
-            HStack {
+            HStack(spacing: 15) {
                 Button(action: {
                     onDelete()
                 }) {
@@ -101,7 +101,7 @@ struct TodoAlertView: View {
                             .foregroundColor(.mementoRed)
                         Text(StringLiteral.Alert.delete)
                     }
-                    .applyFont(.body_b_16)
+                    .applyFont(.body_r_16)
                     .foregroundColor(.mementoRed)
                     .padding()
                     .frame(width: 140, height: 74)
@@ -116,7 +116,7 @@ struct TodoAlertView: View {
                         Image(.ic_edit)
                         Text(StringLiteral.Alert.edit)
                     }
-                    .applyFont(.body_b_16)
+                    .applyFont(.body_r_16)
                     .foregroundColor(.grayWhite)
                     .padding()
                     .frame(width: 140, height: 74)
