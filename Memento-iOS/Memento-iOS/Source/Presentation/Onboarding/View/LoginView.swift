@@ -84,7 +84,7 @@ private struct LoginButtons: View {
     var body: some View {
         VStack(alignment: .center, spacing: 18) {
             Button {
-               authViewModel.send(action: .googleLogin)
+                authViewModel.send(action: .googleLogin)
             } label: {
                 HStack(spacing: 8) {
                     Image(.img_google)

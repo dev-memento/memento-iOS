@@ -17,6 +17,7 @@ enum AuthAction {
     case appleLogin(ASAuthorizationAppleIDRequest)
     case appleLoginCompletion(Result<ASAuthorization, Error>)
     case googleLogin
+    case googleLogOut
 }
 
 @MainActor
@@ -33,6 +34,8 @@ class AuthViewModel: ObservableObject {
             signInWithAppleCompletion(result)
         case .googleLogin:
             signInWithGoogle()
+        case .googleLogOut:
+            signOutWithGoogle()
         }
     }
     
@@ -74,6 +77,16 @@ class AuthViewModel: ObservableObject {
             } else {
                 print("Google 로그인 성공")
             }
+        }
+    }
+    
+    func signOutWithGoogle() {
+        GIDSignIn.sharedInstance.signOut()
+        do {
+            try Auth.auth().signOut()
+            print("Google 로그아웃 성공")
+        } catch {
+            print(error.localizedDescription)
         }
     }
     
