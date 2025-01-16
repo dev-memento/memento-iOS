@@ -18,23 +18,21 @@ struct AllDayCell: View {
                 .fill(Color.distinguishColorType(colorType))
                 .frame(width: 3)
             
-            AllDayTitleLabel(title: title)
+            AllDayTitleView(title: title)
             
             Spacer()
         }
         .frame(height: 32)
-        .background(Color.black)
+        .background(Color.mainNavy)
     }
 }
 
-struct AllDayTitleLabel: View {
-    
+struct AllDayTitleView: View {
     var title: String
     
     var body: some View {
         Text(title)
-            .font(.headline)
-            .foregroundColor(.white)
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .applyFont(.body_r_14)
+            .foregroundColor(.gray05)
     }
 }
