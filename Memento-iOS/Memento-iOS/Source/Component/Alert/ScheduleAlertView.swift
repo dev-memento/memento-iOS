@@ -29,11 +29,11 @@ struct ScheduleAlertView: View {
                     .foregroundColor(.grayWhite)
                 Spacer()
             }
-            .padding(.top, 22)
+            .padding(.top, 20)
             .padding(.leading, 16)
 
             HStack {
-                Text("Starts")
+                Text(StringLiteral.Alert.start)
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
                     .padding(.trailing, 20)
@@ -48,7 +48,7 @@ struct ScheduleAlertView: View {
             .padding(.leading, 46)
 
             HStack {
-                Text("Ends")
+                Text(StringLiteral.Alert.end)
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
                     .padding(.trailing, 27)
@@ -63,7 +63,7 @@ struct ScheduleAlertView: View {
             .padding(.leading, 46)
 
             HStack {
-                Text("Tag")
+                Text(StringLiteral.Alert.tag)
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
                     .padding(.trailing, 57)
@@ -83,7 +83,7 @@ struct ScheduleAlertView: View {
             .padding(.leading, 46)
 
             HStack {
-                Text("From")
+                Text(StringLiteral.Alert.from)
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
                     .padding(.trailing, 42)
@@ -91,7 +91,7 @@ struct ScheduleAlertView: View {
                 HStack(spacing: 3) {
                     Image(.img_notion)
                         .resizable()
-                        .frame(width: 16, height: 16)
+                        .frame(width: 17, height: 17)
                     Text(source)
                         .applyFont(.detail_r_12)
                         .foregroundColor(.grayWhite)
@@ -111,7 +111,7 @@ struct ScheduleAlertView: View {
                     VStack {
                         Image(.ic_delete)
                             .foregroundColor(.mementoRed)
-                        Text("Delete")
+                        Text(StringLiteral.Alert.delete)
                     }
                     .applyFont(.body_b_16)
                     .foregroundColor(.mementoRed)
@@ -126,7 +126,7 @@ struct ScheduleAlertView: View {
                 }) {
                     VStack {
                         Image(.ic_edit)
-                        Text("Edit")
+                        Text(StringLiteral.Alert.edit)
                     }
                     .applyFont(.body_b_16)
                     .foregroundColor(.grayWhite)
