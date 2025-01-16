@@ -64,6 +64,9 @@ enum StringLiteral {
         static let priority = "Priority"
         static let delete = "Delete"
         static let edit = "Edit"
+        static let start = "Starts"
+        static let end = "Ends"
+        static let from = "From"
     }
 }
 
