@@ -1,5 +1,5 @@
 {
-  "originHash" : "4ac82a1a531c9e64c5e439ea4fd4baf06bcc93d30d0720f3f5363c4588c9291b",
+  "originHash" : "0fe680bde4c79d0ffd9fa15c69f1878768ed6ac95f2ba4d210481089a52eddc6",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/dev-memento/memento-design-system-iOS",
       "state" : {
-        "revision" : "b272964390601e062112745ffe24861baa824642",
-        "version" : "1.0.9"
+        "revision" : "577d973dc8064f3eefa57ed5881ad2896ecd47ad",
+        "version" : "1.0.10"
       }
     },
     {
