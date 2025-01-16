@@ -111,7 +111,7 @@ final class OnboardingViewModel: ObservableObject {
 
         do {
             // Apple 로그인 로직 구현
-            
+
             navigateToNext(.sleepCycleSetting)
         } catch {
             errorMessage = error.localizedDescription
