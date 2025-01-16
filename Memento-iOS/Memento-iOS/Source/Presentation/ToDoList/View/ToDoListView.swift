@@ -89,8 +89,8 @@ struct DateSectionView: View {
                                 }
                             }
                         ),
-                        colorType: sortedItems[index].title,
-                        toDoTitle: sortedItems[index].colorType,
+                        colorType: sortedItems[index].colorType,
+                        toDoTitle: sortedItems[index].title,
                         dueDate: sortedItems[index].dueDate,
                         priorityType: sortedItems[index].priority,
                         isHighlighted: isHighlighted
