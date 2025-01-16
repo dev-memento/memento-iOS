@@ -29,7 +29,7 @@ struct ScheduleListCell: View {
             Spacer()
         }
         .frame(height: 68)
-        .background(Color.grayBlack)
+        .background(Color.mainNavy)
         .opacity(isCompleted ? 0.5 : 1.0)
     }
 }

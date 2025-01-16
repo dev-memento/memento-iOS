@@ -108,7 +108,7 @@ struct ToDoBackgroundView: View {
                 endPoint: .bottomTrailing
             )
         } else {
-            Color.grayBlack
+            Color.mainNavy
         }
     }
 }
