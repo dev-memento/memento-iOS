@@ -12,4 +12,5 @@ struct ScheduleDataModel: Identifiable {
     var title: String
     var time: String
     var tagColor: String
+    var isCompleted: Bool
 }
