@@ -36,7 +36,7 @@ struct ScheduleAlertView: View {
                 Text(StringLiteral.Alert.start)
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
-                    .padding(.trailing, 20)
+                    .padding(.trailing, 42)
 
                 Text(startDate)
                     .applyFont(.detail_r_12)
@@ -51,7 +51,7 @@ struct ScheduleAlertView: View {
                 Text(StringLiteral.Alert.end)
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
-                    .padding(.trailing, 27)
+                    .padding(.trailing, 48)
 
                 Text(endDate)
                     .applyFont(.detail_r_12)
@@ -66,7 +66,7 @@ struct ScheduleAlertView: View {
                 Text(StringLiteral.Alert.tag)
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
-                    .padding(.trailing, 57)
+                    .padding(.trailing, 54)
 
                 HStack(spacing: 3) {
                     Circle()
@@ -86,7 +86,7 @@ struct ScheduleAlertView: View {
                 Text(StringLiteral.Alert.from)
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
-                    .padding(.trailing, 42)
+                    .padding(.trailing, 47)
 
                 HStack(spacing: 3) {
                     Image(.img_notion)
@@ -136,7 +136,8 @@ struct ScheduleAlertView: View {
                     .cornerRadius(2)
                 }
             }
-            .padding(.bottom, 26)
+//            .padding(.bottom, 26)
+            .padding(.bottom, 16)
             .padding(.horizontal, 24)
         }
         .frame(width: 343, height: 332)
