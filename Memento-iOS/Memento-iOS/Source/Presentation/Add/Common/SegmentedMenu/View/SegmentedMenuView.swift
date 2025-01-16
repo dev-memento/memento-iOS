@@ -18,8 +18,16 @@ struct SegmentedMenuView: View {
     // MARK: - Body
 
     var body: some View {
-        VStack {
-            menuButtonsView
+        ZStack {
+            Color.gray10
+                .ignoresSafeArea()
+
+            VStack {
+                menuButtonsView
+                Spacer()
+                contentView
+            }
+            .padding(.top)
         }
     }
 }
@@ -89,15 +97,5 @@ private extension SegmentedMenuView {
 // MARK: - Preview
 
 #Preview {
-    ZStack {
-        Color.gray10
-            .ignoresSafeArea()
-
-        VStack {
-            SegmentedMenuView()
-
-            Spacer()
-        }
-        .padding()
-    }
+    SegmentedMenuView()
 }
