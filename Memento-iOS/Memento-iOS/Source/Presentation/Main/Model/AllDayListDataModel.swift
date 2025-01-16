@@ -1,5 +1,5 @@
 //
-//  AllDayDataModel.swift
+//  AllDayListDataModel.swift
 //  Memento-iOS
 //
 //  Created by Kimgahyun on 1/15/25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct AllDayDataModel {
+struct AllDayListDataModel {
     let colorType: String
-    let text: String
+    let allDayTitle: String
 }

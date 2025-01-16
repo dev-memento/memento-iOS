@@ -9,28 +9,17 @@ import SwiftUI
 import MDSKit
 
 struct ToDoListView: View {
-    @State private var todoItems: [String: [TodoItem]] = [
-        "Jan 3": [
-            TodoItem(id: UUID(), title: "밥 먹기", colorType: "blue", dueDate: "Today", priority: .immediate, isChecked: false),
-            TodoItem(id: UUID(), title: "Swift 공부", colorType: "green", dueDate: "Today", priority: .high, isChecked: false),
-            TodoItem(id: UUID(), title: "디자인 검토", colorType: "red", dueDate: "Today", priority: .low, isChecked: false),
-            TodoItem(id: UUID(), title: "코드 리뷰", colorType: "orange", dueDate: "Today", priority: .high, isChecked: false)
-        ],
-        "Jan 4": [],
-        "Jan 5": [
-            TodoItem(id: UUID(), title: "청소하기", colorType: "orange", dueDate: "Today", priority: .low, isChecked: false)
-        ]
-    ]
+    @ObservedObject var viewModel = ToDoListViewModel()
     
     var body: some View {
         VStack(spacing: 0) {
             TodoHeaderView(title: "Navigation", height: 56)
             TodoHeaderView(title: "Weekly Calendar", height: 61)
             
-            ForEach(todoItems.keys.sorted(), id: \.self) { date in
-                DateSectionView(todoItems: $todoItems, date: date)
-            }
-            .padding(.top, 4)
+            ForEach(viewModel.items.keys.sorted(), id: \.self) { date in
+                            DateSectionView(items: $viewModel.items[date], date: date)
+                        }
+                        .padding(.top, 4)
             
             Spacer()
         }
@@ -54,28 +43,28 @@ struct TodoHeaderView: View {
 }
 
 struct DateSectionView: View {
-    @Binding var todoItems: [String: [TodoItem]]
+    @Binding var items: [ToDoListDataModel]?
     let date: String
     
     var body: some View {
         VStack(spacing: 0) {
             Divider()
                 .frame(height: 1)
-                .background(Color.gray07)
+                .background(Color.gray.opacity(0.07))
                 .frame(maxHeight: 10)
                 .padding(.bottom, 2)
             
             HStack {
                 Text(date)
                     .applyFont(.body_b_14)
-                    .foregroundColor(Color.gray05)
+                    .foregroundColor(Color.gray.opacity(0.5))
                     .padding(.leading, 22)
                 Spacer()
             }
             .frame(height: 24)
             
             VStack(spacing: 10) {
-                let sortedItems = (todoItems[date] ?? []).sorted { !$0.isChecked && $1.isChecked }
+                let sortedItems = (items ?? []).sorted { !$0.isChecked && $1.isChecked }
                 ForEach(sortedItems.indices, id: \.self) { index in
                     let isHighlighted = index == 0 && !sortedItems[index].isChecked
                     
@@ -83,34 +72,24 @@ struct DateSectionView: View {
                         isChecked: Binding(
                             get: { sortedItems[index].isChecked },
                             set: { isChecked in
-                                if let realIndex = todoItems[date]?.firstIndex(where: { $0.id == sortedItems[index].id }) {
-                                    todoItems[date]?[realIndex].isChecked = isChecked
-                                    todoItems[date]?.sort { !$0.isChecked && $1.isChecked }
+                                if let realIndex = items?.firstIndex(where: { $0.id == sortedItems[index].id }) {
+                                    items?[realIndex].isChecked = isChecked
+                                    items?.sort { !$0.isChecked && $1.isChecked }
                                 }
                             }
                         ),
                         colorType: sortedItems[index].colorType,
-                        toDoTitle: sortedItems[index].title,
+                        toDoTitle: sortedItems[index].toDoTitle,
                         dueDate: sortedItems[index].dueDate,
-                        priorityType: sortedItems[index].priority,
+                        priorityType: sortedItems[index].priorityType,
                         isHighlighted: isHighlighted
                     )
                 }
             }
             .padding(.bottom, 8)
         }
-        .frame(height: todoItems[date]?.isEmpty ?? true ? 36 : nil)
+        .frame(height: items?.isEmpty ?? true ? 36 : nil)
     }
-}
-
-
-struct TodoItem: Identifiable {
-    let id: UUID
-    let title: String
-    let colorType: String
-    let dueDate: String
-    let priority: Priority
-    var isChecked: Bool
 }
 
 #Preview {

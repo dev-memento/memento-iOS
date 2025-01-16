@@ -1,5 +1,5 @@
 //
-//  AllDayCell.swift
+//  AllDayListCell.swift
 //  Memento-iOS
 //
 //  Created by 이세민 on 1/17/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct AllDayCell: View {
+struct AllDayListCell: View {
     var colorType: String
     var allDayTitle: String
     

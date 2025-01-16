@@ -7,10 +7,10 @@
 
 import Foundation
 
-struct ScheduleDataModel: Identifiable {
+struct ScheduleListDataModel: Identifiable {
     var id = UUID()
-    var title: String
+    var colorType: String
+    var scheduleTitle: String
     var time: String
-    var tagColor: String
     var isCompleted: Bool
 }

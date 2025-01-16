@@ -1,13 +1,13 @@
 //
-//  TodayListView.swift
+//  TodayView.swift
 //  Memento-iOS
 //
-//  Created by Gahyun Kim on 1/9/25.
+//  Created by 이세민 on 1/17/25.
 //
 
 import SwiftUI
 
-struct TodayListView: View {
+struct TodayView: View {
     @ObservedObject var viewModel: WeeklyCalendarViewModel
 
     var body: some View {
@@ -54,7 +54,7 @@ struct TodayListView: View {
     }
 }
 
-struct TodayListItemView: View {
+struct TodayItemView: View {
     @Binding var item: TodayDataModel
     var isHighlighted: Bool
 
@@ -77,5 +77,29 @@ struct TodayListItemView: View {
                 isCompleted: schedule.isCompleted
             )
         }
+    }
+}
+
+struct DropViewDelegate: DropDelegate {
+    @Binding var item: TodayDataModel
+    @Binding var items: [TodayDataModel]
+    @Binding var draggedItem: TodayDataModel?
+
+    let onDrop: (TodayDataModel?, TodayDataModel) -> Void
+
+    func dropUpdated(info: DropInfo) -> DropProposal? {
+        DropProposal(operation: .move)
+    }
+
+    func performDrop(info: DropInfo) -> Bool {
+        withAnimation {
+            draggedItem = nil
+        }
+        return true
+    }
+
+    func dropEntered(info: DropInfo) {
+        guard let draggedItem else { return }
+        onDrop(draggedItem, item)
     }
 }
