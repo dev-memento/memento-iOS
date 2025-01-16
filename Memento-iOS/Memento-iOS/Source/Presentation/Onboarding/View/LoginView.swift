@@ -98,9 +98,7 @@ private struct LoginButtons: View {
                 }
                 .frame(maxWidth: .infinity)
             }
-            .frame(maxWidth: 343)
-            .frame(height: 46)
-            .padding(.horizontal, 16)
+            .frame(width: UIScreen.main.bounds.width * 0.95, height: 46)
             .background(Color.gray10)
             
             SignInWithAppleButton(
@@ -111,8 +109,7 @@ private struct LoginButtons: View {
                     authViewModel.send(action: .appleLoginCompletion(result))
                 }
             )
-            .frame(maxWidth: .infinity)
-            .frame(height: 46)
+            .frame(width: UIScreen.main.bounds.width * 0.95, height: 46)
             .background(Color.clear) // Apple 버튼 투명 처리
             .overlay(
                 HStack(spacing: 8) {
@@ -130,8 +127,6 @@ private struct LoginButtons: View {
                     .background(Color.gray10)
                     .allowsHitTesting(false) // 오버레이는 터치 이벤트를 차단
             )
-            .padding(.horizontal, 16)
-            
         }
     }
 }
