@@ -30,7 +30,7 @@ struct TodoAlertView: View {
             .padding(.leading, 16)
 
             HStack {
-                Text("Deadline")
+                Text(StringLiteral.Alert.deadline)
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
                     .padding(.trailing, 27)
@@ -49,7 +49,7 @@ struct TodoAlertView: View {
 
     
             HStack {
-                Text("Tag")
+                Text(StringLiteral.Alert.tag)
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
                     .padding(.trailing, 54)
@@ -70,7 +70,7 @@ struct TodoAlertView: View {
 
             
             HStack {
-                Text("Priority")
+                Text(StringLiteral.Alert.priority)
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
                     .padding(.trailing, 36)
@@ -83,19 +83,19 @@ struct TodoAlertView: View {
 
             Spacer()
 
-            
             HStack {
                 Button(action: {
                     onDelete()
                 }) {
-                    HStack {
+                    VStack {
                         Image(.ic_delete)
-                        Text("Delete")
+                            .foregroundColor(.mementoRed)
+                        Text(StringLiteral.Alert.delete)
                     }
                     .applyFont(.body_b_16)
-                    .foregroundColor(.grayWhite)
+                    .foregroundColor(.mementoRed)
                     .padding()
-                    .frame(maxWidth: .infinity)
+                    .frame(width: 140, height: 74)
                     .background(Color.labelImmediate15)
                     .cornerRadius(2)
                 }
@@ -103,14 +103,14 @@ struct TodoAlertView: View {
                 Button(action: {
                     onEdit()
                 }) {
-                    HStack {
+                    VStack {
                         Image(.ic_edit)
-                        Text("Edit")
+                        Text(StringLiteral.Alert.edit)
                     }
                     .applyFont(.body_b_16)
                     .foregroundColor(.grayWhite)
                     .padding()
-                    .frame(maxWidth: .infinity)
+                    .frame(width: 140, height: 74)
                     .background(Color.gray09)
                     .cornerRadius(2)
                 }
@@ -125,26 +125,14 @@ struct TodoAlertView: View {
     }
 }
 
-struct ContentView: View {
-    var body: some View {
-        TodoAlertView(
-            todoTitle: "UXUI 과제",
-            deadline: "Today",
-            tag: "SOPT",
-            priority: .high,
-            onDelete: {
-                print("Delete action triggered")
-            },
-            onEdit: {
-                print("Edit action triggered")
-            }
-        )
-        .preferredColorScheme(.dark)
-    }
-}
 
-struct TodoAlertView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
+#Preview {
+    TodoAlertView(todoTitle: "UXUI 과제", deadline: "Today", tag: "SOPT", priority: .high,
+        onDelete: {
+            print("Delete button tapped")
+        },
+        onEdit: {
+            print("Edit button tapped")
+        }
+    )
 }
