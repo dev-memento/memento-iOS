@@ -12,7 +12,6 @@ import GoogleSignInSwift
 import MDSKit
 import _AuthenticationServices_SwiftUI
 
-
 struct LoginView: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
     @StateObject private var authViewModel = AuthViewModel()

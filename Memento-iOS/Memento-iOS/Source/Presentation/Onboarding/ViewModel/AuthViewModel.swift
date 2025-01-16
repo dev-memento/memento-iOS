@@ -14,10 +14,10 @@ import FirebaseAuth
 import GoogleSignIn
 
 enum AuthAction {
-    case appleLogin(ASAuthorizationAppleIDRequest)
-    case appleLoginCompletion(Result<ASAuthorization, Error>)
     case googleLogin
     case googleLogOut
+    case appleLogin(ASAuthorizationAppleIDRequest)
+    case appleLoginCompletion(Result<ASAuthorization, Error>)
 }
 
 @MainActor
@@ -28,14 +28,14 @@ class AuthViewModel: ObservableObject {
     
     func send(action: AuthAction){
         switch action {
-        case .appleLogin(let request):
-            signInWithApple(request)
-        case .appleLoginCompletion(let result):
-            signInWithAppleCompletion(result)
         case .googleLogin:
             signInWithGoogle()
         case .googleLogOut:
             signOutWithGoogle()
+        case .appleLogin(let request):
+            signInWithApple(request)
+        case .appleLoginCompletion(let result):
+            signInWithAppleCompletion(result)
         }
     }
     
