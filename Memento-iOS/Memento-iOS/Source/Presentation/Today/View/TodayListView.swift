@@ -64,8 +64,8 @@ struct TodayListItemView: View {
         case .todo(let todo):
             ToDoListCell(
                 isChecked: $item.todoBinding.isChecked,
-                colorType: todo.title,
-                toDoTitle: todo.tagColor,
+                colorType: todo.tagColor,
+                toDoTitle: todo.title,
                 dueDate: todo.dueDate,
                 priorityType: todo.priority,
                 isHighlighted: isHighlighted
