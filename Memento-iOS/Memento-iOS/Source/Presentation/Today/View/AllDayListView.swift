@@ -17,7 +17,7 @@ struct AllDayListView: View {
         ScrollView(isScroll ? .vertical : .init(), showsIndicators: isScroll) {
             VStack(spacing: 3) {
                 ForEach(items, id: \.text) { item in
-                    AllDayCell(colorType: item.colorType, title: item.text)
+                    AllDayCell(colorType: item.colorType, allDayTitle: item.text)
                 }
             }
             .frame(maxHeight: isScroll ? .infinity : CGFloat(items.count) * 35)

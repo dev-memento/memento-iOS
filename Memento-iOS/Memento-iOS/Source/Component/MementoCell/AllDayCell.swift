@@ -2,23 +2,20 @@
 //  AllDayCell.swift
 //  Memento-iOS
 //
-//  Created by Gahyun Kim on 1/8/25.
+//  Created by 이세민 on 1/17/25.
 //
 
 import SwiftUI
 
 struct AllDayCell: View {
-    
     var colorType: String
-    var title: String
+    var allDayTitle: String
     
     var body: some View {
-        HStack(spacing: 26) {
-            Rectangle()
-                .fill(Color.distinguishColorType(colorType))
-                .frame(width: 3)
+        HStack(spacing: 21) {
+            ColorTagView(colorType: colorType)
             
-            AllDayTitleView(title: title)
+            AllDayTitleView(title: allDayTitle)
             
             Spacer()
         }
@@ -34,5 +31,6 @@ struct AllDayTitleView: View {
         Text(title)
             .applyFont(.body_r_14)
             .foregroundColor(.gray05)
+            .frame(width: 300, alignment: .leading)
     }
 }
