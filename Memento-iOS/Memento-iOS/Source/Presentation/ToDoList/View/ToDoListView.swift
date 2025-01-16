@@ -79,7 +79,7 @@ struct DateSectionView: View {
                 ForEach(sortedItems.indices, id: \.self) { index in
                     let isHighlighted = index == 0 && !sortedItems[index].isChecked
                     
-                    TodoListCell(
+                    ToDoListCell(
                         isChecked: Binding(
                             get: { sortedItems[index].isChecked },
                             set: { isChecked in
@@ -89,8 +89,8 @@ struct DateSectionView: View {
                                 }
                             }
                         ),
-                        todoTitle: sortedItems[index].title,
-                        colorType: sortedItems[index].colorType,
+                        colorType: sortedItems[index].title,
+                        toDoTitle: sortedItems[index].colorType,
                         dueDate: sortedItems[index].dueDate,
                         priorityType: sortedItems[index].priority,
                         isHighlighted: isHighlighted

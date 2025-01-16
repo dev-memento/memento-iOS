@@ -62,10 +62,10 @@ struct TodayListItemView: View {
     var body: some View {
         switch item {
         case .todo(let todo):
-            TodoListCell(
+            ToDoListCell(
                 isChecked: $item.todoBinding.isChecked,
-                todoTitle: todo.title,
-                colorType: todo.tagColor,
+                colorType: todo.title,
+                toDoTitle: todo.tagColor,
                 dueDate: todo.dueDate,
                 priorityType: todo.priority,
                 isHighlighted: isHighlighted

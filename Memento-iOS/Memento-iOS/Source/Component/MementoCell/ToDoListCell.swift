@@ -1,18 +1,18 @@
 //
-//  TodoListCell.swift
+//  ToDoListCell.swift
 //  Memento-iOS
 //
-//  Created by Gahyun Kim on 1/8/25.
+//  Created by 이세민 on 1/16/25.
 //
 
 import SwiftUI
 import MDSKit
 
-struct TodoListCell: View {
+struct ToDoListCell: View {
     @Binding var isChecked: Bool
     
-    var todoTitle: String
     var colorType: String
+    var toDoTitle: String
     var dueDate: String
     var priorityType: Priority
     var isHighlighted: Bool
@@ -28,7 +28,7 @@ struct TodoListCell: View {
             .padding(.top, 11)
             
             VStack(alignment: .leading) {
-                Text(todoTitle)
+                Text(toDoTitle)
                     .applyFont(.body_b_16)
                     .foregroundColor(Color.grayWhite)
                 
