@@ -128,6 +128,15 @@
       }
     },
     {
+      "identity" : "memento-calendar",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/dev-memento/memento-calendar.git",
+      "state" : {
+        "revision" : "4504eccfe0672ca6a3226c76a6222479abb4afde",
+        "version" : "1.0.4"
+      }
+    },
+    {
       "identity" : "memento-design-system-ios",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/dev-memento/memento-design-system-iOS",
