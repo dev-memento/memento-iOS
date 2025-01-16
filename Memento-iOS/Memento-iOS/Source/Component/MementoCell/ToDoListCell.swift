@@ -34,25 +34,10 @@ struct ToDoListCell: View {
             PriorityLabelView(priority: priorityType)
         }
         .frame(height: 68)
-        .background(
-            isHighlighted
-            ? AnyView(
-                LinearGradient(
-                    stops: [
-                        Gradient.Stop(color: Color(red: 0.09, green: 0.1, blue: 0.15), location: 0.00),
-                        Gradient.Stop(color: Color(red: 0.26, green: 0.27, blue: 0.4), location: 1.00),
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-            )
-            : AnyView(Color.grayBlack)
-        )
+        .background(ToDoBackgroundView(isHighlighted: isHighlighted))
         .opacity(isChecked ? 0.5 : 1.0)
-        .onChange(of: isChecked) { _ in
-            print("todo box is checked")
-        }
     }
+    
 }
 
 struct CheckBoxView: View {
@@ -106,5 +91,24 @@ struct PriorityLabelView: View {
         }
         .padding(.top, 10)
         .padding(.trailing, 8)
+    }
+}
+
+struct ToDoBackgroundView: View {
+    var isHighlighted: Bool
+    
+    var body: some View {
+        if isHighlighted {
+            LinearGradient(
+                stops: [
+                    Gradient.Stop(color: Color(red: 0.09, green: 0.1, blue: 0.15), location: 0.00),
+                    Gradient.Stop(color: Color(red: 0.26, green: 0.27, blue: 0.4), location: 1.00),
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        } else {
+            Color.grayBlack
+        }
     }
 }
