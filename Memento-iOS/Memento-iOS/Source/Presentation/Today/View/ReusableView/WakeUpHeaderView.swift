@@ -8,9 +8,12 @@
 import SwiftUI
 
 struct WakeUpHeaderView: View {
+    
+    let wakeUpTime: String
+    
     var body: some View {
         HStack {
-            Text("8 AM")
+            Text(wakeUpTime)
                 .applyFont(.detail_b_12)
                 .foregroundColor(.gray07)
             Text("Wake up")
@@ -23,5 +26,5 @@ struct WakeUpHeaderView: View {
 }
 
 #Preview {
-    WakeUpHeaderView()
+    WakeUpHeaderView(wakeUpTime: "8 AM")
 }

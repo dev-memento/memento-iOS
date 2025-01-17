@@ -8,9 +8,12 @@
 import SwiftUI
 
 struct WindDownFooterView: View {
+    
+    let windDownTime: String
+    
     var body: some View {
         HStack {
-            Text("11 PM")
+            Text(windDownTime)
                 .applyFont(.detail_b_12)
                 .foregroundColor(.gray07)
                 .padding(.trailing, 10)
@@ -25,5 +28,5 @@ struct WindDownFooterView: View {
 }
 
 #Preview {
-    WindDownFooterView()
+    WindDownFooterView(windDownTime: "11 PM")
 }
