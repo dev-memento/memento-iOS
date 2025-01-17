@@ -33,7 +33,7 @@ struct AllDayTitleLabel: View {
     
     var body: some View {
         Text(title)
-            .font(.headline)
+            .applyFont(.body_r_14)
             .foregroundColor(.white)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
