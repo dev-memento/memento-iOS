@@ -12,6 +12,7 @@
 		2F459C402D37C88600EDD537 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 2F459C3F2D37C88600EDD537 /* GoogleSignInSwift */; };
 		2F459C432D37C91B00EDD537 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 2F459C422D37C91B00EDD537 /* FirebaseCore */; };
 		2F45A0382D390CD700EDD537 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2F45A0372D390CD700EDD537 /* GoogleService-Info.plist */; };
+		2F48DF5B2D3A51EF00B58633 /* NeonAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F48DF5A2D3A51EF00B58633 /* NeonAnimationView.swift */; };
 		2F7FCD032D328C3F00F35456 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F7FCCCF2D328C3F00F35456 /* Preview Assets.xcassets */; };
 		2F7FCD042D328C3F00F35456 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F7FCCD12D328C3F00F35456 /* Assets.xcassets */; };
 		2F7FCD752D36D00800F35456 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2F7FCD742D36D00800F35456 /* Launch Screen.storyboard */; };
@@ -39,6 +40,7 @@
 
 /* Begin PBXFileReference section */
 		2F45A0372D390CD700EDD537 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		2F48DF5A2D3A51EF00B58633 /* NeonAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonAnimationView.swift; sourceTree = "<group>"; };
 		2F7FCCCF2D328C3F00F35456 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2F7FCCD12D328C3F00F35456 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2F7FCCD32D328C3F00F35456 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
@@ -210,6 +212,7 @@
 				2F7FCCDF2D328C3F00F35456 /* TimePickerView */,
 				2F7FCCE02D328C3F00F35456 /* BackgroundView.swift */,
 				2F7FCD6E2D363A7A00F35456 /* CustomNavigationBar.swift */,
+				2F48DF5A2D3A51EF00B58633 /* NeonAnimationView.swift */,
 			);
 			path = Component;
 			sourceTree = "<group>";
@@ -531,6 +534,7 @@
 				9D53206E2D39C9F90029044A /* MEventDataSource.swift in Sources */,
 				9D5320492D39C6F50029044A /* OnboardingViewModel.swift in Sources */,
 				9D53204A2D39C6F50029044A /* AuthViewModel.swift in Sources */,
+				2F48DF5B2D3A51EF00B58633 /* NeonAnimationView.swift in Sources */,
 				9D53204F2D39C76A0029044A /* AllDayListView.swift in Sources */,
 				9D5320532D39C7840029044A /* OffsetObservableScrollView.swift in Sources */,
 				9D5320682D39C9CA0029044A /* TodoAlertView.swift in Sources */,
