@@ -35,6 +35,8 @@
 		9D53206D2D39C9F90029044A /* MCalendarEventList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D53206A2D39C9F90029044A /* MCalendarEventList.swift */; };
 		9D53206E2D39C9F90029044A /* MEventDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D53206B2D39C9F90029044A /* MEventDataSource.swift */; };
 		9DBC14972D36434200A022A9 /* MCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 9DBC14962D36434200A022A9 /* MCalendar */; };
+		9DC3AE162D3A4FD6008C7A26 /* WakeUpHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC3AE152D3A4FCD008C7A26 /* WakeUpHeaderView.swift */; };
+		9DC3AE1C2D3A4FE0008C7A26 /* WindDownFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC3AE1B2D3A4FDC008C7A26 /* WindDownFooterView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -91,6 +93,8 @@
 		9D5320662D39C9CA0029044A /* TodoAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoAlertView.swift; sourceTree = "<group>"; };
 		9D53206A2D39C9F90029044A /* MCalendarEventList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCalendarEventList.swift; sourceTree = "<group>"; };
 		9D53206B2D39C9F90029044A /* MEventDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MEventDataSource.swift; sourceTree = "<group>"; };
+		9DC3AE152D3A4FCD008C7A26 /* WakeUpHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakeUpHeaderView.swift; sourceTree = "<group>"; };
+		9DC3AE1B2D3A4FDC008C7A26 /* WindDownFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindDownFooterView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -294,6 +298,7 @@
 		2F7FCCFC2D328C3F00F35456 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				9DC3AE112D3A4FC5008C7A26 /* ReusableView */,
 				9D5320542D39C78B0029044A /* WeeklyCalendarView.swift */,
 				2F7FCCF92D328C3F00F35456 /* AllDayCell.swift */,
 				2F7FCCFA2D328C3F00F35456 /* TodayListView.swift */,
@@ -433,6 +438,15 @@
 			path = Data;
 			sourceTree = "<group>";
 		};
+		9DC3AE112D3A4FC5008C7A26 /* ReusableView */ = {
+			isa = PBXGroup;
+			children = (
+				9DC3AE1B2D3A4FDC008C7A26 /* WindDownFooterView.swift */,
+				9DC3AE152D3A4FCD008C7A26 /* WakeUpHeaderView.swift */,
+			);
+			path = ReusableView;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -531,6 +545,8 @@
 				9D53206E2D39C9F90029044A /* MEventDataSource.swift in Sources */,
 				9D5320492D39C6F50029044A /* OnboardingViewModel.swift in Sources */,
 				9D53204A2D39C6F50029044A /* AuthViewModel.swift in Sources */,
+				9DC3AE162D3A4FD6008C7A26 /* WakeUpHeaderView.swift in Sources */,
+				9DC3AE1C2D3A4FE0008C7A26 /* WindDownFooterView.swift in Sources */,
 				9D53204F2D39C76A0029044A /* AllDayListView.swift in Sources */,
 				9D5320532D39C7840029044A /* OffsetObservableScrollView.swift in Sources */,
 				9D5320682D39C9CA0029044A /* TodoAlertView.swift in Sources */,
