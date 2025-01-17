@@ -14,10 +14,15 @@ struct TodayListView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 8) {
+                
+                WakeUpHeaderView(wakeUpTime: "8 AM")
+                
                 ForEach(viewModel.items.indices, id: \.self) { index in
                     renderItem(at: index)
                         .padding(.horizontal)
                 }
+                
+                WindDownFooterView(windDownTime: "11 PM")
             }
             .padding(.vertical)
         }
@@ -25,6 +30,7 @@ struct TodayListView: View {
     }
 
     private func renderItem(at index: Int) -> some View {
+        let isArrow = index == 0
         let currentItem = viewModel.items[index]
         let isHighlighted: Bool = {
             if case .todo(let todo) = currentItem, !todo.isChecked {
@@ -37,8 +43,8 @@ struct TodayListView: View {
             }
             return false
         }()
-
-        return TodayListItemView(item: $viewModel.items[index], isHighlighted: isHighlighted)
+        
+        return TodayListItemView(item: $viewModel.items[index], isHighlighted: isHighlighted, isArrow: isArrow)
             .onDrag {
                 viewModel.dragItem = currentItem
                 return NSItemProvider()
@@ -57,26 +63,42 @@ struct TodayListView: View {
 
 struct TodayListItemView: View {
     @Binding var item: TodayItemDataModel
+    
     var isHighlighted: Bool
-
+    var isArrow: Bool
+    
     var body: some View {
-        switch item {
-        case .todo(let todo):
-            TodoListCell(
-                isChecked: $item.todoBinding.isChecked,
-                todoTitle: todo.title,
-                colorType: todo.tagColor,
-                dueDate: todo.dueDate,
-                priorityType: todo.priority,
-                isHighlighted: isHighlighted
-            )
-        case .schedule(let schedule):
-            ScheduleListCell(
-                colorType: schedule.tagColor,
-                title: schedule.title,
-                time: schedule.time,
-                isCompleted: schedule.isCompleted
-            )
+        HStack {
+            Group {
+                if isArrow {
+                    Image(systemName: "chevron.down") // TODO: image 변경
+                        .foregroundColor(.white)
+                        .padding(.trailing, 8)
+                } else {
+                    Spacer()
+                        .frame(width: 20)
+                        .padding(.trailing, 8)
+                }
+            }
+            
+            switch item {
+            case .todo(let todo):
+                TodoListCell(
+                    isChecked: $item.todoBinding.isChecked,
+                    todoTitle: todo.title,
+                    colorType: todo.tagColor,
+                    dueDate: todo.dueDate,
+                    priorityType: todo.priority,
+                    isHighlighted: isHighlighted
+                )
+            case .schedule(let schedule):
+                ScheduleListCell(
+                    colorType: schedule.tagColor,
+                    title: schedule.title,
+                    time: schedule.time,
+                    isCompleted: schedule.isCompleted
+                )
+            }
         }
     }
 }

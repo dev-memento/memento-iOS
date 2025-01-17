@@ -18,7 +18,7 @@ struct ArrowListCell<Content: View>: View {
             if !isArrowHidden {
                 Image(systemName: "chevron.down")
                     .foregroundColor(.white)
-                    .padding(.trailing, 8)
+                    .padding(.trailing, 9)
             }
 
             content()
