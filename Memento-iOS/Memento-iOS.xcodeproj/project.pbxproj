@@ -34,7 +34,13 @@
 		9D5320692D39C9CA0029044A /* ScheduleAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5320652D39C9CA0029044A /* ScheduleAlertView.swift */; };
 		9D53206D2D39C9F90029044A /* MCalendarEventList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D53206A2D39C9F90029044A /* MCalendarEventList.swift */; };
 		9D53206E2D39C9F90029044A /* MEventDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D53206B2D39C9F90029044A /* MEventDataSource.swift */; };
+		9DBB9D5C2D3A93900095C1E6 /* SegmentedMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBB9D552D3A93900095C1E6 /* SegmentedMenuView.swift */; };
+		9DBB9D5D2D3A93900095C1E6 /* SegmentedMenuViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBB9D572D3A93900095C1E6 /* SegmentedMenuViewModel.swift */; };
+		9DBB9D5E2D3A93900095C1E6 /* SegmentedMenuType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBB9D532D3A93900095C1E6 /* SegmentedMenuType.swift */; };
 		9DBC14972D36434200A022A9 /* MCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 9DBC14962D36434200A022A9 /* MCalendar */; };
+		9DC3AE162D3A4FD6008C7A26 /* WakeUpHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC3AE152D3A4FCD008C7A26 /* WakeUpHeaderView.swift */; };
+		9DC3AE1C2D3A4FE0008C7A26 /* WindDownFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC3AE1B2D3A4FDC008C7A26 /* WindDownFooterView.swift */; };
+		9DC3AE242D3A56E9008C7A26 /* ArrowListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC3AE212D3A56DB008C7A26 /* ArrowListCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -91,6 +97,12 @@
 		9D5320662D39C9CA0029044A /* TodoAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoAlertView.swift; sourceTree = "<group>"; };
 		9D53206A2D39C9F90029044A /* MCalendarEventList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCalendarEventList.swift; sourceTree = "<group>"; };
 		9D53206B2D39C9F90029044A /* MEventDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MEventDataSource.swift; sourceTree = "<group>"; };
+		9DBB9D532D3A93900095C1E6 /* SegmentedMenuType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedMenuType.swift; sourceTree = "<group>"; };
+		9DBB9D552D3A93900095C1E6 /* SegmentedMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedMenuView.swift; sourceTree = "<group>"; };
+		9DBB9D572D3A93900095C1E6 /* SegmentedMenuViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedMenuViewModel.swift; sourceTree = "<group>"; };
+		9DC3AE152D3A4FCD008C7A26 /* WakeUpHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakeUpHeaderView.swift; sourceTree = "<group>"; };
+		9DC3AE1B2D3A4FDC008C7A26 /* WindDownFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindDownFooterView.swift; sourceTree = "<group>"; };
+		9DC3AE212D3A56DB008C7A26 /* ArrowListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrowListCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -294,6 +306,8 @@
 		2F7FCCFC2D328C3F00F35456 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				9DC3AE212D3A56DB008C7A26 /* ArrowListCell.swift */,
+				9DC3AE112D3A4FC5008C7A26 /* ReusableView */,
 				9D5320542D39C78B0029044A /* WeeklyCalendarView.swift */,
 				2F7FCCF92D328C3F00F35456 /* AllDayCell.swift */,
 				2F7FCCFA2D328C3F00F35456 /* TodayListView.swift */,
@@ -329,6 +343,7 @@
 				2F7FCCF82D328C3F00F35456 /* Onboarding */,
 				2F7FCCFF2D328C3F00F35456 /* Today */,
 				9D5320632D39C7D80029044A /* ToDoList */,
+				9DBB9D5B2D3A93900095C1E6 /* Add */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -433,6 +448,65 @@
 			path = Data;
 			sourceTree = "<group>";
 		};
+		9DBB9D542D3A93900095C1E6 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				9DBB9D532D3A93900095C1E6 /* SegmentedMenuType.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		9DBB9D562D3A93900095C1E6 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				9DBB9D552D3A93900095C1E6 /* SegmentedMenuView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		9DBB9D582D3A93900095C1E6 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				9DBB9D572D3A93900095C1E6 /* SegmentedMenuViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		9DBB9D592D3A93900095C1E6 /* SegmentedMenu */ = {
+			isa = PBXGroup;
+			children = (
+				9DBB9D542D3A93900095C1E6 /* Model */,
+				9DBB9D562D3A93900095C1E6 /* View */,
+				9DBB9D582D3A93900095C1E6 /* ViewModel */,
+			);
+			path = SegmentedMenu;
+			sourceTree = "<group>";
+		};
+		9DBB9D5A2D3A93900095C1E6 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				9DBB9D592D3A93900095C1E6 /* SegmentedMenu */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		9DBB9D5B2D3A93900095C1E6 /* Add */ = {
+			isa = PBXGroup;
+			children = (
+				9DBB9D5A2D3A93900095C1E6 /* Common */,
+			);
+			path = Add;
+			sourceTree = "<group>";
+		};
+		9DC3AE112D3A4FC5008C7A26 /* ReusableView */ = {
+			isa = PBXGroup;
+			children = (
+				9DC3AE1B2D3A4FDC008C7A26 /* WindDownFooterView.swift */,
+				9DC3AE152D3A4FCD008C7A26 /* WakeUpHeaderView.swift */,
+			);
+			path = ReusableView;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -531,6 +605,9 @@
 				9D53206E2D39C9F90029044A /* MEventDataSource.swift in Sources */,
 				9D5320492D39C6F50029044A /* OnboardingViewModel.swift in Sources */,
 				9D53204A2D39C6F50029044A /* AuthViewModel.swift in Sources */,
+				9DC3AE162D3A4FD6008C7A26 /* WakeUpHeaderView.swift in Sources */,
+				9DC3AE242D3A56E9008C7A26 /* ArrowListCell.swift in Sources */,
+				9DC3AE1C2D3A4FE0008C7A26 /* WindDownFooterView.swift in Sources */,
 				9D53204F2D39C76A0029044A /* AllDayListView.swift in Sources */,
 				9D5320532D39C7840029044A /* OffsetObservableScrollView.swift in Sources */,
 				9D5320682D39C9CA0029044A /* TodoAlertView.swift in Sources */,
@@ -541,6 +618,9 @@
 				9D53205E2D39C7C30029044A /* ScheduleDataModel.swift in Sources */,
 				9D53205F2D39C7C30029044A /* TodoDataModel.swift in Sources */,
 				9D5320602D39C7C30029044A /* AllDayDataModel.swift in Sources */,
+				9DBB9D5C2D3A93900095C1E6 /* SegmentedMenuView.swift in Sources */,
+				9DBB9D5D2D3A93900095C1E6 /* SegmentedMenuViewModel.swift in Sources */,
+				9DBB9D5E2D3A93900095C1E6 /* SegmentedMenuType.swift in Sources */,
 				9D5320552D39C78B0029044A /* WeeklyCalendarView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
