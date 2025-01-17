@@ -14,12 +14,11 @@ struct NeonAnimationView: View {
     
     let width: CGFloat
     let height: CGFloat
-
+    
     var body: some View {
         ZStack {
             Color.black.edgesIgnoringSafeArea(.all)
-
-            // 네온 효과 사각형
+            
             Rectangle()
                 .strokeBorder(
                     LinearGradient(
@@ -43,12 +42,10 @@ struct NeonAnimationView: View {
                 }
         }
     }
-
+    
     private func startColorAnimation() {
-        // 타이머로 색상을 일정 시간마다 변경
         Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             withAnimation(.easeInOut(duration: 0.5)) {
-                // 색상을 랜덤하게 섞음
                 let shuffledColors = gradientColors.shuffled()
                 gradientColors = shuffledColors
             }
