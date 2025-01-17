@@ -14,15 +14,13 @@ struct WindDownFooterView: View {
     var body: some View {
         HStack {
             Text(windDownTime)
-                .applyFont(.detail_b_12)
-                .foregroundColor(.gray07)
                 .padding(.trailing, 10)
-            Text("Wind down")
-                .applyFont(.detail_b_12)
-                .foregroundColor(.gray07)
+            Text(StringLiteral.Today.windDown)
             
             Spacer()
         }
+        .applyFont(.detail_b_12)
+        .foregroundColor(.gray07)
         .padding()
     }
 }

@@ -14,13 +14,12 @@ struct WakeUpHeaderView: View {
     var body: some View {
         HStack {
             Text(wakeUpTime)
-                .applyFont(.detail_b_12)
-                .foregroundColor(.gray07)
-            Text("Wake up")
-                .applyFont(.detail_b_12)
-                .foregroundColor(.gray07)
+                .padding(.trailing, 10)
+            Text(StringLiteral.Today.wakeUp)
             Spacer()
         }
+        .applyFont(.detail_b_12)
+        .foregroundColor(.gray07)
         .padding()
     }
 }

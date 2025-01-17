@@ -68,6 +68,11 @@ enum StringLiteral {
         static let end = "Ends"
         static let from = "From"
     }
+    
+    enum Today {
+        static let wakeUp = "Wake up"
+        static let windDown = "Wind down"
+    }
 }
 
 //MARK: typealias
