@@ -57,6 +57,22 @@ enum StringLiteral {
 
         static let nextButton = "Next"
     }
+    
+    enum Alert {
+        static let deadline = "Deadline"
+        static let tag = "Tag"
+        static let priority = "Priority"
+        static let delete = "Delete"
+        static let edit = "Edit"
+        static let start = "Starts"
+        static let end = "Ends"
+        static let from = "From"
+    }
+    
+    enum Today {
+        static let wakeUp = "Wake up"
+        static let windDown = "Wind down"
+    }
 }
 
 //MARK: typealias

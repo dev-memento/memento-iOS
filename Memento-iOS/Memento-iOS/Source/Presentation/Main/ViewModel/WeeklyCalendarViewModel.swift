@@ -21,27 +21,27 @@ final class WeeklyCalendarViewModel: ObservableObject {
     ]
     
     @Published var todayItems: [TodayItemDataModel] = [
-        .todo(ToDoListDataModel(colorType: "mementoRed", toDoTitle: "와앙", dueDate: "Today", priorityType: .immediate, isChecked: false)),
-        .schedule(ScheduleListDataModel(colorType: "mementoPurple", scheduleTitle: "허걱", time: "12 PM - 4 PM", isCompleted: true)),
-        .todo(ToDoListDataModel(colorType: "mementoBlue", toDoTitle: "메멘토", dueDate: "Today", priorityType: .medium, isChecked: false)),
-        .schedule(ScheduleListDataModel(colorType: "mementoCyan", scheduleTitle: "헐", time: "2 PM - 3 PM", isCompleted: false)),
-        .schedule(ScheduleListDataModel(colorType: "mementoOrange", scheduleTitle: "어쩌라고", time: "2 PM - 3 PM", isCompleted: false)),
-        .todo(ToDoListDataModel(colorType: "mementoYellow", toDoTitle: "냐냐냥", dueDate: "Today", priorityType: .high, isChecked: false)),
-        .schedule(ScheduleListDataModel(colorType: "mementoBlue", scheduleTitle: "호호", time: "12 PM - 4 PM", isCompleted: false)),
-        .todo(ToDoListDataModel(colorType: "mementoLightGreen", toDoTitle: "우웩", dueDate: "Today", priorityType: .none, isChecked: false)),
-        .todo(ToDoListDataModel(colorType: "mementoMint", toDoTitle: "반갑습니다", dueDate: "Today", priorityType: .low, isChecked: false))
+        .todo(ToDoListDataModel(colorType: "mementoRed", toDoTitle: "투두1", dueDate: "Today", priorityType: .immediate, isChecked: false)),
+        .schedule(ScheduleListDataModel(colorType: "mementoPurple", scheduleTitle: "스케줄1", time: "12 PM - 4 PM", isCompleted: true)),
+        .todo(ToDoListDataModel(colorType: "mementoBlue", toDoTitle: "투두2", dueDate: "Today", priorityType: .medium, isChecked: false)),
+        .schedule(ScheduleListDataModel(colorType: "mementoCyan", scheduleTitle: "스케줄2", time: "2 PM - 3 PM", isCompleted: false)),
+        .schedule(ScheduleListDataModel(colorType: "mementoOrange", scheduleTitle: "스케줄3", time: "2 PM - 3 PM", isCompleted: false)),
+        .todo(ToDoListDataModel(colorType: "mementoYellow", toDoTitle: "투두3", dueDate: "Today", priorityType: .high, isChecked: false)),
+        .schedule(ScheduleListDataModel(colorType: "mementoBlue", scheduleTitle: "스케줄4", time: "12 PM - 4 PM", isCompleted: false)),
+        .todo(ToDoListDataModel(colorType: "mementoLightGreen", toDoTitle: "투두4", dueDate: "Today", priorityType: .none, isChecked: false)),
+        .todo(ToDoListDataModel(colorType: "mementoMint", toDoTitle: "투두5", dueDate: "Today", priorityType: .low, isChecked: false))
     ]
     
     @Published var toDoListItems: [String: [ToDoListDataModel]] = [
         "Jan 3": [
-            ToDoListDataModel(colorType: "mementoRed", toDoTitle: "와앙", dueDate: "Today", priorityType: .immediate, isChecked: false),
-            ToDoListDataModel(colorType: "mementoBlue", toDoTitle: "메멘토", dueDate: "Today", priorityType: .medium, isChecked: false),
-            ToDoListDataModel(colorType: "mementoYellow", toDoTitle: "냐냐냥", dueDate: "Today", priorityType: .high, isChecked: false),
-            ToDoListDataModel(colorType: "mementoLightGreen", toDoTitle: "우웩", dueDate: "Today", priorityType: .none, isChecked: false)
+            ToDoListDataModel(colorType: "mementoRed", toDoTitle: "투두1", dueDate: "Today", priorityType: .immediate, isChecked: false),
+            ToDoListDataModel(colorType: "mementoBlue", toDoTitle: "투두2", dueDate: "Today", priorityType: .medium, isChecked: false),
+            ToDoListDataModel(colorType: "mementoYellow", toDoTitle: "투두3", dueDate: "Today", priorityType: .high, isChecked: false),
+            ToDoListDataModel(colorType: "mementoLightGreen", toDoTitle: "투두4", dueDate: "Today", priorityType: .none, isChecked: false)
         ],
         "Jan 4": [],
         "Jan 5": [
-            ToDoListDataModel(colorType: "mementoPink", toDoTitle: "안녕하세요", dueDate: "Today", priorityType: .immediate, isChecked: false)
+            ToDoListDataModel(colorType: "mementoPink", toDoTitle: "투두5", dueDate: "Today", priorityType: .immediate, isChecked: false)
         ]
     ]
     

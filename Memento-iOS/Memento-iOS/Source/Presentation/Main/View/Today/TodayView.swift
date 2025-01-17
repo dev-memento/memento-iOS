@@ -16,10 +16,15 @@ struct TodayView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 8) {
+                WakeUpHeaderView(wakeUpTime: "8 AM")
+                
                 ForEach(viewModel.todayItems.indices, id: \.self) { index in
+                    let isArrow = index == 0
+                    
                     TodayListItemView(
                         item: $viewModel.todayItems[index],
-                        isHighlighted: isTopPriorityItem(at: index)
+                        isHighlighted: isTopPriorityItem(at: index),
+                        isArrow: isArrow
                     )
                     .padding(.horizontal)
                     .onDrag {
@@ -36,6 +41,8 @@ struct TodayView: View {
                         )
                     )
                 }
+                
+                WindDownFooterView(windDownTime: "11 PM")
             }
             .padding(.vertical)
         }
@@ -53,26 +60,41 @@ struct TodayView: View {
 
 struct TodayListItemView: View {
     @Binding var item: TodayItemDataModel
+    
     var isHighlighted: Bool
+    var isArrow: Bool
     
     var body: some View {
-        switch item {
-        case .todo(let todo):
-            ToDoListCell(
-                isChecked: $item.toDoBinding.isChecked,
-                colorType: todo.colorType,
-                toDoTitle: todo.toDoTitle,
-                dueDate: todo.dueDate,
-                priorityType: todo.priorityType,
-                isHighlighted: isHighlighted
-            )
-        case .schedule(let schedule):
-            ScheduleListCell(
-                colorType: schedule.colorType,
-                scheduleTitle: schedule.scheduleTitle,
-                time: schedule.time,
-                isCompleted: schedule.isCompleted
-            )
+        HStack {
+            Group {
+                if isArrow {
+                    Image(systemName: "chevron.down") // TODO: image 변경
+                        .foregroundColor(.white)
+                        .padding(.trailing, 8)
+                } else {
+                    Spacer()
+                        .frame(width: 20)
+                        .padding(.trailing, 8)
+                }
+            }
+            switch item {
+            case .todo(let todo):
+                ToDoListCell(
+                    isChecked: $item.toDoBinding.isChecked,
+                    colorType: todo.colorType,
+                    toDoTitle: todo.toDoTitle,
+                    dueDate: todo.dueDate,
+                    priorityType: todo.priorityType,
+                    isHighlighted: isHighlighted
+                )
+            case .schedule(let schedule):
+                ScheduleListCell(
+                    colorType: schedule.colorType,
+                    scheduleTitle: schedule.scheduleTitle,
+                    time: schedule.time,
+                    isCompleted: schedule.isCompleted
+                )
+            }
         }
     }
 }

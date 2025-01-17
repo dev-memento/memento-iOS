@@ -6,10 +6,15 @@
 //
 
 import SwiftUI
+
+import GoogleSignIn
+import GoogleSignInSwift
 import MDSKit
+import _AuthenticationServices_SwiftUI
 
 struct LoginView: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
+    @StateObject private var authViewModel = AuthViewModel()
     
     var body: some View {
         NavigationStack(path: $viewModel.navigationPath) {
@@ -20,7 +25,7 @@ struct LoginView: View {
                     LoginHeaderView()
                         .padding(.top, 115)
                     
-                    LoginButtons()
+                    LoginButtons(authViewModel: authViewModel)
                         .padding(.top, 103.2)
                     
                     TermsOfUseView()
@@ -73,13 +78,12 @@ private struct LoginHeaderView: View {
 
 private struct LoginButtons: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
+    @ObservedObject var authViewModel: AuthViewModel
     
     var body: some View {
         VStack(alignment: .center, spacing: 18) {
             Button {
-                Task {
-                    await viewModel.signInWithGoogle()
-                }
+                authViewModel.send(action: .googleLogin)
             } label: {
                 HStack(spacing: 8) {
                     Image(.img_google)
@@ -93,16 +97,20 @@ private struct LoginButtons: View {
                 }
                 .frame(maxWidth: .infinity)
             }
-            .frame(maxWidth: 343)
-            .frame(height: 46)
-            .padding(.horizontal, 16)
+            .frame(width: UIScreen.main.bounds.width * 0.95, height: 46)
             .background(Color.gray10)
             
-            Button {
-                Task {
-                    await viewModel.signInWithApple()
+            SignInWithAppleButton(
+                onRequest: { request in
+                    authViewModel.send(action: .appleLogin(request))
+                },
+                onCompletion: { result in
+                    authViewModel.send(action: .appleLoginCompletion(result))
                 }
-            } label: {
+            )
+            .frame(width: UIScreen.main.bounds.width * 0.95, height: 46)
+            .background(Color.clear) // Apple 버튼 투명 처리
+            .overlay(
                 HStack(spacing: 8) {
                     Image(.img_apple)
                         .resizable()
@@ -113,12 +121,11 @@ private struct LoginButtons: View {
                         .font(.system(size: 16))
                         .foregroundColor(.white)
                 }
-                .frame(maxWidth: .infinity)
-            }
-            .frame(maxWidth: 343)
-            .frame(height: 46)
-            .padding(.horizontal, 16)
-            .background(Color.gray10)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 46)
+                    .background(Color.gray10)
+                    .allowsHitTesting(false) // 오버레이는 터치 이벤트를 차단
+            )
         }
     }
 }
