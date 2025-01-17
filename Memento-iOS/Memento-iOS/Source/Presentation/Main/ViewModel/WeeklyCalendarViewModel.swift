@@ -13,11 +13,11 @@ import MCalendar
 
 final class WeeklyCalendarViewModel: ObservableObject {
     @Published var allDayItems: [AllDayListDataModel] = [
-        .init(colorType: "red", allDayTitle: "박익범 가정방문 어쩌고저쩌고어쩌라고"),
-        .init(colorType: "blue", allDayTitle: "지금은수요일새벽5시반"),
-        .init(colorType: "green", allDayTitle: "마라샹궈먹었능데마싯다.."),
-        .init(colorType: "orange", allDayTitle: "오늘커피6샷마심레전드"),
-        .init(colorType: "red", allDayTitle: "보라매공원보라매공원보라매공원")
+        .init(colorType: "mementoRed", allDayTitle: "박익범 가정방문 어쩌고저쩌고어쩌라고"),
+        .init(colorType: "mementoOrange", allDayTitle: "지금은수요일새벽5시반"),
+        .init(colorType: "mementoLightGreen", allDayTitle: "마라샹궈먹었능데마싯다.."),
+        .init(colorType: "mementoOrange", allDayTitle: "오늘커피6샷마심레전드"),
+        .init(colorType: "mementoMint", allDayTitle: "보라매공원보라매공원보라매공원")
     ]
     
     @Published var todayItems: [TodayDataModel] = [
