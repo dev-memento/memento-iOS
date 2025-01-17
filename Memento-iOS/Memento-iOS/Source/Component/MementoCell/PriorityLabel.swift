@@ -8,6 +8,7 @@
 import SwiftUI
 import MDSKit
 
+/// Todo 관리에 필요한 중요도 표시 라벨
 enum Priority: String {
     case immediate, high, medium, low, none
     

@@ -1,5 +1,5 @@
 //
-//  TodayDataModel.swift
+//  TodayItemDataModel.swift
 //  Memento-iOS
 //
 //  Created by 이세민 on 1/17/25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum TodayDataModel: Identifiable {
+enum TodayItemDataModel: Identifiable {
     case todo(ToDoListDataModel)
     case schedule(ScheduleListDataModel)
     
@@ -21,7 +21,7 @@ enum TodayDataModel: Identifiable {
     }
 }
 
-extension TodayDataModel {
+extension TodayItemDataModel {
     var toDoBinding: ToDoListDataModel {
         get {
             if case .todo(let todo) = self {

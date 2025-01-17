@@ -52,7 +52,7 @@ struct TodayView: View {
 }
 
 struct TodayListItemView: View {
-    @Binding var item: TodayDataModel
+    @Binding var item: TodayItemDataModel
     var isHighlighted: Bool
     
     var body: some View {
@@ -78,11 +78,11 @@ struct TodayListItemView: View {
 }
 
 struct DropViewDelegate: DropDelegate {
-    @Binding var item: TodayDataModel
-    @Binding var items: [TodayDataModel]
-    @Binding var draggedItem: TodayDataModel?
+    @Binding var item: TodayItemDataModel
+    @Binding var items: [TodayItemDataModel]
+    @Binding var draggedItem: TodayItemDataModel?
     
-    let onDrop: (TodayDataModel?, TodayDataModel) -> Void
+    let onDrop: (TodayItemDataModel?, TodayItemDataModel) -> Void
     
     func dropUpdated(info: DropInfo) -> DropProposal? {
         DropProposal(operation: .move)

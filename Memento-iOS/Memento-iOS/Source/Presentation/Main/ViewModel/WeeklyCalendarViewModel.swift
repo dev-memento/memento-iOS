@@ -20,7 +20,7 @@ final class WeeklyCalendarViewModel: ObservableObject {
         .init(colorType: "mementoMint", allDayTitle: "보라매공원보라매공원보라매공원")
     ]
     
-    @Published var todayItems: [TodayDataModel] = [
+    @Published var todayItems: [TodayItemDataModel] = [
         .todo(ToDoListDataModel(colorType: "mementoRed", toDoTitle: "와앙", dueDate: "Today", priorityType: .immediate, isChecked: false)),
         .schedule(ScheduleListDataModel(colorType: "mementoPurple", scheduleTitle: "허걱", time: "12 PM - 4 PM", isCompleted: true)),
         .todo(ToDoListDataModel(colorType: "mementoBlue", toDoTitle: "메멘토", dueDate: "Today", priorityType: .medium, isChecked: false)),
@@ -45,7 +45,7 @@ final class WeeklyCalendarViewModel: ObservableObject {
         ]
     ]
     
-    @Published var dragItem: TodayDataModel?
+    @Published var dragItem: TodayItemDataModel?
     @Published var dropIndex: Int?
     
     @Published var mCallendarDataSource: MCalendarDataSource
@@ -70,7 +70,7 @@ final class WeeklyCalendarViewModel: ObservableObject {
 }
 
 extension WeeklyCalendarViewModel {
-    func dropAction(dragItem: TodayDataModel?, dropItem: TodayDataModel) {
+    func dropAction(dragItem: TodayItemDataModel?, dropItem: TodayItemDataModel) {
         guard let dragItem,
               let toIndex = todayItems.firstIndex(where: { $0.id == dropItem.id }),
               let fromIndex = todayItems.firstIndex(where: { $0.id == dragItem.id }) else { return }
