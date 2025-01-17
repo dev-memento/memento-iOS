@@ -12,19 +12,6 @@ import MDSKit
 import MCalendar
 
 final class WeeklyCalendarViewModel: ObservableObject {
-
-    @Published var items: [TodayDataModel] = [
-        .todo(ToDoListDataModel(colorType: "red", toDoTitle: "UXUI 과제", dueDate: "Today", priorityType: .immediate, isChecked: false)),
-        .schedule(ScheduleListDataModel(colorType: "green", scheduleTitle: "지금은새벽5시다", time: "12 PM - 4 PM", isCompleted: true)),
-        .todo(ToDoListDataModel(colorType: "blue", toDoTitle: "독감조심하세요다들", dueDate: "Today", priorityType: .medium, isChecked: false)),
-        .schedule(ScheduleListDataModel(colorType: "orange", scheduleTitle: "회의어쩌고저쩌고메멘토회의", time: "2 PM - 3 PM", isCompleted: false)),
-        .schedule(ScheduleListDataModel(colorType: "yellow", scheduleTitle: "나는지금배고프다", time: "2 PM - 3 PM", isCompleted: false)),
-        .todo(ToDoListDataModel(colorType: "blue", toDoTitle: "공차가너무먹고싶어요", dueDate: "Today", priorityType: .none, isChecked: false)),
-        .schedule(ScheduleListDataModel(colorType: "red", scheduleTitle: "하다보니깐6시다", time: "12 PM - 4 PM", isCompleted: false)),
-        .todo(ToDoListDataModel(colorType: "green", toDoTitle: "이것만하고자야징", dueDate: "Today", priorityType: .high, isChecked: false)),
-        .todo(ToDoListDataModel(colorType: "orange", toDoTitle: "맥너겟어쩌고저쩌고", dueDate: "Today", priorityType: .low, isChecked: false))
-    ]
-
     @Published var allDayItems: [AllDayListDataModel] = [
         .init(colorType: "red", allDayTitle: "박익범 가정방문 어쩌고저쩌고어쩌라고"),
         .init(colorType: "blue", allDayTitle: "지금은수요일새벽5시반"),
@@ -32,10 +19,35 @@ final class WeeklyCalendarViewModel: ObservableObject {
         .init(colorType: "orange", allDayTitle: "오늘커피6샷마심레전드"),
         .init(colorType: "red", allDayTitle: "보라매공원보라매공원보라매공원")
     ]
-
+    
+    @Published var todayItems: [TodayDataModel] = [
+        .todo(ToDoListDataModel(colorType: "mementoRed", toDoTitle: "와앙", dueDate: "Today", priorityType: .immediate, isChecked: false)),
+        .schedule(ScheduleListDataModel(colorType: "mementoPurple", scheduleTitle: "허걱", time: "12 PM - 4 PM", isCompleted: true)),
+        .todo(ToDoListDataModel(colorType: "mementoBlue", toDoTitle: "메멘토", dueDate: "Today", priorityType: .medium, isChecked: false)),
+        .schedule(ScheduleListDataModel(colorType: "mementoCyan", scheduleTitle: "헐", time: "2 PM - 3 PM", isCompleted: false)),
+        .schedule(ScheduleListDataModel(colorType: "mementoOrange", scheduleTitle: "어쩌라고", time: "2 PM - 3 PM", isCompleted: false)),
+        .todo(ToDoListDataModel(colorType: "mementoYellow", toDoTitle: "냐냐냥", dueDate: "Today", priorityType: .high, isChecked: false)),
+        .schedule(ScheduleListDataModel(colorType: "mementoBlue", scheduleTitle: "호호", time: "12 PM - 4 PM", isCompleted: false)),
+        .todo(ToDoListDataModel(colorType: "mementoLightGreen", toDoTitle: "우웩", dueDate: "Today", priorityType: .none, isChecked: false)),
+        .todo(ToDoListDataModel(colorType: "mementoMint", toDoTitle: "반갑습니다", dueDate: "Today", priorityType: .low, isChecked: false))
+    ]
+    
+    @Published var toDoListItems: [String: [ToDoListDataModel]] = [
+        "Jan 3": [
+            ToDoListDataModel(colorType: "mementoRed", toDoTitle: "와앙", dueDate: "Today", priorityType: .immediate, isChecked: false),
+            ToDoListDataModel(colorType: "mementoBlue", toDoTitle: "메멘토", dueDate: "Today", priorityType: .medium, isChecked: false),
+            ToDoListDataModel(colorType: "mementoYellow", toDoTitle: "냐냐냥", dueDate: "Today", priorityType: .high, isChecked: false),
+            ToDoListDataModel(colorType: "mementoLightGreen", toDoTitle: "우웩", dueDate: "Today", priorityType: .none, isChecked: false)
+        ],
+        "Jan 4": [],
+        "Jan 5": [
+            ToDoListDataModel(colorType: "mementoPink", toDoTitle: "안녕하세요", dueDate: "Today", priorityType: .immediate, isChecked: false)
+        ]
+    ]
+    
     @Published var dragItem: TodayDataModel?
     @Published var dropIndex: Int?
-
+    
     @Published var mCallendarDataSource: MCalendarDataSource
     @Published var mEventDataSource: MEventDatasource
     @Published var currentIndex: Int = 1
@@ -45,9 +57,8 @@ final class WeeklyCalendarViewModel: ObservableObject {
                                                             day: "10",
                                                             weekday: .fri)
     
-    
     private var cancellable = Set<AnyCancellable>()
-
+    
     init(mCalendarDataSource: MCalendarDataSource,
          mEventDataSource: MEventDatasource) {
         self.mCallendarDataSource = mCalendarDataSource
@@ -61,14 +72,14 @@ final class WeeklyCalendarViewModel: ObservableObject {
 extension WeeklyCalendarViewModel {
     func dropAction(dragItem: TodayDataModel?, dropItem: TodayDataModel) {
         guard let dragItem,
-              let toIndex = items.firstIndex(where: { $0.id == dropItem.id }),
-              let fromIndex = items.firstIndex(where: { $0.id == dragItem.id }) else { return }
-
+              let toIndex = todayItems.firstIndex(where: { $0.id == dropItem.id }),
+              let fromIndex = todayItems.firstIndex(where: { $0.id == dragItem.id }) else { return }
+        
         withAnimation {
-            items.move(fromOffsets: IndexSet(integer: fromIndex), toOffset: toIndex > fromIndex ? toIndex + 1 : toIndex)
+            todayItems.move(fromOffsets: IndexSet(integer: fromIndex), toOffset: toIndex > fromIndex ? toIndex + 1 : toIndex)
         }
     }
-
+    
     func makeDummyEvent() {
         mEventDataSource.setCalendarData(mCallendarDataSource.wholeMonthDate)
     }

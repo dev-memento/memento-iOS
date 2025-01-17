@@ -12,7 +12,7 @@ import MCalendar
 enum TabBarItem: CaseIterable {
     
     case today, todo, addition
-
+    
     // 선택되지 않은 탭
     var normalItem: Image? {
         switch self {
@@ -40,22 +40,20 @@ enum TabBarItem: CaseIterable {
     
     // 탭 별 전환될 화면
     var targetView: AnyView {
-            switch self {
-            case .today:
-                return AnyView(WeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
-                            mCalendarDataSource: MCalendarDataSource(),
-                            mEventDataSource: MEventDatasource()
-                        )))
-            case .todo:
-                return AnyView(WeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
-                            mCalendarDataSource: MCalendarDataSource(),
-                            mEventDataSource: MEventDatasource()
-                        )))
-            case .addition:
-                return AnyView(WeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
-                            mCalendarDataSource: MCalendarDataSource(),
-                            mEventDataSource: MEventDatasource()
-                        )))
-            }
+        switch self {
+        case .today:
+            return AnyView(TodayWeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
+                mCalendarDataSource: MCalendarDataSource(),
+                mEventDataSource: MEventDatasource()
+            )))
+        case .todo:
+            return AnyView(ToDoListView()
+            )
+        case .addition:
+            return AnyView(TodayWeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
+                mCalendarDataSource: MCalendarDataSource(),
+                mEventDataSource: MEventDatasource()
+            )))
         }
+    }
 }

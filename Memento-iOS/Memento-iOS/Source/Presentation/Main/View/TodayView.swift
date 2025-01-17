@@ -2,62 +2,59 @@
 //  TodayView.swift
 //  Memento-iOS
 //
-//  Created by 이세민 on 1/17/25.
+//  Created by Gahyun Kim on 1/9/25.
 //
 
 import SwiftUI
 
+import MDSKit
+import MCalendar
+
 struct TodayView: View {
     @ObservedObject var viewModel: WeeklyCalendarViewModel
-
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 8) {
-                ForEach(viewModel.items.indices, id: \.self) { index in
-                    renderItem(at: index)
-                        .padding(.horizontal)
+                ForEach(viewModel.todayItems.indices, id: \.self) { index in
+                    TodayListItemView(
+                        item: $viewModel.todayItems[index],
+                        isHighlighted: isTopPriorityItem(at: index)
+                    )
+                    .padding(.horizontal)
+                    .onDrag {
+                        viewModel.dragItem = viewModel.todayItems[index]
+                        return NSItemProvider()
+                    }
+                    .onDrop(
+                        of: [.text],
+                        delegate: DropViewDelegate(
+                            item: $viewModel.todayItems[index],
+                            items: $viewModel.todayItems,
+                            draggedItem: $viewModel.dragItem,
+                            onDrop: viewModel.dropAction
+                        )
+                    )
                 }
             }
             .padding(.vertical)
         }
-        .background(Color.black)
+        .background(Color.grayBlack)
     }
-
-    private func renderItem(at index: Int) -> some View {
-        let currentItem = viewModel.items[index]
-        let isHighlighted: Bool = {
-            if case .todo(let todo) = currentItem, !todo.isChecked {
-                return viewModel.items.prefix(index + 1)
-                    .filter {
-                        if case .todo(let t) = $0, !t.isChecked { return true }
-                        return false
-                    }
-                    .count == 1
-            }
+    
+    private func isTopPriorityItem(at index: Int) -> Bool {
+        guard case .todo(let todo) = viewModel.todayItems[index], !todo.isChecked else { return false }
+        return viewModel.todayItems.prefix(index + 1).filter {
+            if case .todo(let t) = $0, !t.isChecked { return true }
             return false
-        }()
-
-        return TodayListItemView(item: $viewModel.items[index], isHighlighted: isHighlighted)
-            .onDrag {
-                viewModel.dragItem = currentItem
-                return NSItemProvider()
-            }
-            .onDrop(
-                of: [.text],
-                delegate: DropViewDelegate(
-                    item: $viewModel.items[index],
-                    items: $viewModel.items,
-                    draggedItem: $viewModel.dragItem,
-                    onDrop: viewModel.dropAction
-                )
-            )
+        }.count == 1
     }
 }
 
-struct TodayItemView: View {
+struct TodayListItemView: View {
     @Binding var item: TodayDataModel
     var isHighlighted: Bool
-
+    
     var body: some View {
         switch item {
         case .todo(let todo):
@@ -84,20 +81,20 @@ struct DropViewDelegate: DropDelegate {
     @Binding var item: TodayDataModel
     @Binding var items: [TodayDataModel]
     @Binding var draggedItem: TodayDataModel?
-
+    
     let onDrop: (TodayDataModel?, TodayDataModel) -> Void
-
+    
     func dropUpdated(info: DropInfo) -> DropProposal? {
         DropProposal(operation: .move)
     }
-
+    
     func performDrop(info: DropInfo) -> Bool {
         withAnimation {
             draggedItem = nil
         }
         return true
     }
-
+    
     func dropEntered(info: DropInfo) {
         guard let draggedItem else { return }
         onDrop(draggedItem, item)

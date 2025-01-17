@@ -7,8 +7,10 @@
 
 import SwiftUI
 
+import MDSKit
+
 final class ToDoListViewModel: ObservableObject {
-    @Published var items: [String: [ToDoListDataModel]] = [
+    @Published var toDoListItems: [String: [ToDoListDataModel]] = [
         "Jan 3": [
             ToDoListDataModel(colorType: "mementoRed", toDoTitle: "와앙", dueDate: "Today", priorityType: .immediate, isChecked: false),
             ToDoListDataModel(colorType: "mementoBlue", toDoTitle: "메멘토", dueDate: "Today", priorityType: .medium, isChecked: false),

@@ -1,5 +1,5 @@
 //
-//  WeeklyCalendarView.swift
+//  TodayWeeklyCalendarView.swift
 //  Memento-iOS
 //
 //  Created by Kimgahyun on 1/14/25.
@@ -10,14 +10,13 @@ import SwiftUI
 import MDSKit
 import MCalendar
 
-struct WeeklyCalendarView: View {
-    
+struct TodayWeeklyCalendarView: View {
     @ObservedObject var viewModel: WeeklyCalendarViewModel
-
-    //Scroll value
+    
+    // Scroll value
     @State private var scrollTarget: Int? = nil
     @State private var userInteractionFlag: Bool = false
-
+    
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
@@ -129,7 +128,7 @@ struct WeeklyCalendarView: View {
     
     @ViewBuilder
     private func todayList(item: MCalendarEventList) -> some View {
-        TodayListView(viewModel: viewModel)
+        TodayView(viewModel: viewModel)
             .scrollContentBackground(.hidden)
     }
     
@@ -138,12 +137,12 @@ struct WeeklyCalendarView: View {
         VStack(spacing: 8) {
             AllDayListView(items: viewModel.allDayItems)
                 .padding(.vertical, 4)
-
+            
             todayList(item: item)
         }
     }
-
-
+    
+    
     
     private func makeIndex() {
         self.scrollTarget = (viewModel.mCallendarDataSource.currentIndex * 7) + viewModel.selectedDate.weekday.index
@@ -154,6 +153,6 @@ struct WeeklyCalendarView: View {
 }
 
 #Preview {
-    WeeklyCalendarView(viewModel: .init(mCalendarDataSource: MCalendarDataSource(),
-                                 mEventDataSource: MEventDatasource()))
+    TodayWeeklyCalendarView(viewModel: .init(mCalendarDataSource: MCalendarDataSource(),
+                                             mEventDataSource: MEventDatasource()))
 }
