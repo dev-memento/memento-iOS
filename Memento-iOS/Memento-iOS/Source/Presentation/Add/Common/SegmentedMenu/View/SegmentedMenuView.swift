@@ -85,7 +85,7 @@ private extension SegmentedMenuView {
     var contentView: some View {
         switch viewModel.selectedButton {
         case .checkbox:
-            EmptyView()
+            AddTodoView()
         case .event:
             EmptyView()
         case .brain:
