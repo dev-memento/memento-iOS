@@ -19,12 +19,12 @@ struct EisenhowerMatrixView: View {
     
     @State private var selectedPriority: Priority
     @State private var priorities: [Priority]
-
+    
     private let gridItem = [
         GridItem(.fixed(146)),
         GridItem(.fixed(146))
     ]
-
+    
     init(source: String, externalPriority: Binding<Priority>) {
         self.source = source
         self._externalPriority = externalPriority
@@ -87,13 +87,13 @@ struct HeaderView: View {
             }
             .frame(width: 74, height: 48)
         }
-        .frame(height: 48)
+        .frame(height: 60)
     }
 }
 
 struct TodoItemView: View {
     @Binding var priority: Priority
-
+    
     var body: some View {
         HStack(alignment: .top) {
             Button {
@@ -107,9 +107,12 @@ struct TodoItemView: View {
             .padding(.leading, 24)
             
             VStack(alignment: .leading, spacing: 12) {
-                Text("UXUI 과제")
+                Text("UXUI 과제 피그마 어디어디페이지에 몇시까지 제출하고 카톡으로")
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
                     .applyFont(.body_b_16)
                     .foregroundStyle(Color.white)
+                    .frame(maxWidth: 212, alignment: .leading)
                 
                 VStack(alignment: .leading, spacing: 6) {
                     HStack(spacing: 13) {
@@ -146,8 +149,10 @@ struct TodoItemView: View {
                     }
                 }
             }
-            .frame(width: 212, height: 76)
+            .frame(width: 212)
+            .frame(minHeight: 76)
             .padding(.horizontal, 10)
+            
             Spacer()
             
             PriorityLabel(priority: priority)
@@ -162,7 +167,7 @@ struct MatrixGridView: View {
     @Binding var selectedPriority: Priority
     let gridItem: [GridItem]
     let items: [(String, Priority)]
-
+    
     var body: some View {
         VStack {
             Text("Urgency")
