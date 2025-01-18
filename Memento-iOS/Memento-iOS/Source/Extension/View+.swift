@@ -18,4 +18,17 @@ extension View {
         UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: uiColor ]
         return self
     }
+
+    @ViewBuilder
+    func applyDynamicSheetBehavior() -> some View {
+        if Tag.mockData.count > 4 {
+            self
+                .presentationContentInteraction(.scrolls)
+                .scrollIndicators(.hidden)
+                .presentationDetents([.fraction(0.33), .fraction(0.99)])
+        } else {
+            self
+                .presentationDetents([.fraction(0.33)])
+        }
+    }
 }
