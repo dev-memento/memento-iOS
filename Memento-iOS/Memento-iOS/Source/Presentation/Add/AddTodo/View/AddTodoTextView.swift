@@ -14,6 +14,7 @@ struct AddTodoTextView: View {
     // MARK: - Properties
 
     @ObservedObject var viewModel: AddTodoTextViewModel
+    @FocusState private var isFocused: Bool
 
     // MARK: - Body
 
@@ -24,6 +25,8 @@ struct AddTodoTextView: View {
             .foregroundStyle(Color.grayWhite)
             .lineLimit(nil)
             .textFieldStyle(.plain)
+            .focused($isFocused)
+            .onAppear { isFocused = true }
             .onChange(of: viewModel.text) { _, newText in
                 viewModel.limitTextLength(newText)
             }

@@ -10,6 +10,7 @@ import Foundation
 final class AddTodoTextViewModel: ObservableObject {
 
     @Published var text: String = ""
+    @Published var shouldFocus: Bool = false
 
     var isTextEmpty: Bool {
         text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
