@@ -64,6 +64,7 @@
 				Source/Presentation/Add/Common/Sheet/SheetHeaderView.swift,
 				Source/Presentation/Add/Common/Tag/Model/Tag.swift,
 				Source/Presentation/Add/Common/Tag/View/TagPickerSheetView.swift,
+				Source/Presentation/Add/Common/Tag/View/TagView.swift,
 				"Source/Presentation/Onboarding/View/Launch Screen.storyboard",
 				Source/Presentation/Onboarding/ViewModel/AuthViewModel.swift,
 				Source/Presentation/Onboarding/ViewModel/OnboardingViewModel.swift,

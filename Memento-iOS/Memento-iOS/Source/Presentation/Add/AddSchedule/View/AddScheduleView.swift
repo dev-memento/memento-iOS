@@ -25,6 +25,7 @@ struct AddScheduleView: View {
                 AddEventTitleView(viewModel: viewModel)
                 DateTimePickerView(viewModel: PickerButtonViewModel())
                 RepeatPickerView(viewModel: PickerButtonViewModel())
+                TagView()
                 Spacer()
                 enterButton
             }
