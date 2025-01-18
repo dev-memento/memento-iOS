@@ -40,6 +40,7 @@
 				Source/Component/NeonAnimationView.swift,
 				Source/Data/MCalendarEventList.swift,
 				Source/Data/MEventDataSource.swift,
+				Source/Presentation/Add/AddSchedule/Model/DateTimeSelection.swift,
 				Source/Presentation/Add/AddSchedule/View/AddEventTitleView.swift,
 				Source/Presentation/Add/AddSchedule/View/AddScheduleView.swift,
 				Source/Presentation/Add/AddSchedule/ViewModel/AddEventTitleViewModel.swift,
