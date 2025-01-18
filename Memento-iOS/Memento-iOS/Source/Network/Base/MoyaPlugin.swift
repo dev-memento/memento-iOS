@@ -35,13 +35,15 @@ final class MoyaPlugin: PluginType {
             log.append("✏️ header:\n\(headers)\n")
         }
         
-        if let body = httpRequest.httpBody, let bodyString = String(bytes: body, encoding: String.Encoding.utf8) {
+        if let body = httpRequest.httpBody, let bodyString = String(data: body, encoding: .utf8) {
             log.append("✏️ body:\n\(bodyString)\n")
+        } else {
+            log.append("✏️ body: Unable to decode body\n")
         }
+
         log.append("=========================== 🤖END \(method)🤖============================\n")
         print(log)
     }
-    
     
     // MARK: - Response 받을 시 호출
     
