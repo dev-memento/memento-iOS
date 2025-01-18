@@ -13,6 +13,12 @@ import MCalendar
 struct TodayView: View {
     @ObservedObject var viewModel: WeeklyCalendarViewModel
     
+    @State private var selectTodo: ToDoListDataModel?
+    @State private var selectSchedule: ScheduleListDataModel?
+    
+    @State private var showTodoAlert = false
+    @State private var showScheduleAlert = false
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 8) {
@@ -24,7 +30,10 @@ struct TodayView: View {
                     TodayListItemView(
                         item: $viewModel.todayItems[index],
                         isHighlighted: isTopPriorityItem(at: index),
-                        isArrow: isArrow
+                        isArrow: isArrow,
+                        tappedCell: { item in
+                            handleCellTap(item)
+                        }
                     )
                     .padding(.horizontal)
                     .onDrag {
@@ -47,6 +56,23 @@ struct TodayView: View {
             .padding(.vertical)
         }
         .background(Color.grayBlack)
+        .sheet(isPresented: $showTodoAlert) {
+            if let todo = selectTodo {
+                TodoAlertView(
+                    todoTitle: todo.toDoTitle,
+                    deadline: todo.dueDate,
+                    tag: "Work",
+                    priority: todo.priorityType,
+                    onDelete: {
+                        showTodoAlert = false
+                        // customactionsheet의
+                    },
+                    onEdit: {
+                        showTodoAlert = false
+                    }
+                )
+            }
+        }
     }
     
     private func isTopPriorityItem(at index: Int) -> Bool {
@@ -56,6 +82,14 @@ struct TodayView: View {
             return false
         }.count == 1
     }
+    
+    private func handleCellTap(_ item: TodayItemDataModel) {
+        if case .todo(let todo) = item {
+            selectTodo = todo
+            showTodoAlert = true
+        }
+        
+    }
 }
 
 struct TodayListItemView: View {
@@ -63,37 +97,85 @@ struct TodayListItemView: View {
     
     var isHighlighted: Bool
     var isArrow: Bool
-    
+    var tappedCell: (TodayItemDataModel) -> Void
+
+    @State private var showCustomAlert = false
+    @State private var customAlertView: AnyView?
+
     var body: some View {
-        HStack {
-            Group {
-                if isArrow {
-                    Image(systemName: "chevron.down") // TODO: image 변경
-                        .foregroundColor(.white)
-                        .padding(.trailing, 8)
-                } else {
-                    Spacer()
-                        .frame(width: 20)
-                        .padding(.trailing, 8)
+        ZStack {
+            HStack {
+                Group {
+                    if isArrow {
+                        Image(systemName: "chevron.down")
+                            .foregroundColor(.white)
+                            .padding(.trailing, 8)
+                    } else {
+                        Spacer()
+                            .frame(width: 20)
+                            .padding(.trailing, 8)
+                    }
+                }
+                switch item {
+                case .todo(let todo):
+                    ToDoListCell(
+                        isChecked: $item.toDoBinding.isChecked,
+                        colorType: todo.colorType,
+                        toDoTitle: todo.toDoTitle,
+                        dueDate: todo.dueDate,
+                        priorityType: todo.priorityType,
+                        isHighlighted: isHighlighted
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        customAlertView = AnyView(
+                            TodoAlertView(
+                                todoTitle: todo.toDoTitle,
+                                deadline: todo.dueDate,
+                                tag: "SOPT",
+                                priority: todo.priorityType,
+                                onDelete: {
+                                    print("Delete tapped for \(todo.toDoTitle)")
+                                    showCustomAlert = false
+                                },
+                                onEdit: {
+                                    print("Edit tapped for \(todo.toDoTitle)")
+                                    showCustomAlert = false
+                                }
+                            )
+                        )
+                        showCustomAlert = true
+                    }
+                    
+                case .schedule(let schedule):
+                    ScheduleListCell(
+                        colorType: schedule.colorType,
+                        scheduleTitle: schedule.scheduleTitle,
+                        time: schedule.startTime,
+                        isCompleted: schedule.isCompleted
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        print("Schedule tapped")
+                    }
                 }
             }
-            switch item {
-            case .todo(let todo):
-                ToDoListCell(
-                    isChecked: $item.toDoBinding.isChecked,
-                    colorType: todo.colorType,
-                    toDoTitle: todo.toDoTitle,
-                    dueDate: todo.dueDate,
-                    priorityType: todo.priorityType,
-                    isHighlighted: isHighlighted
-                )
-            case .schedule(let schedule):
-                ScheduleListCell(
-                    colorType: schedule.colorType,
-                    scheduleTitle: schedule.scheduleTitle,
-                    time: schedule.time,
-                    isCompleted: schedule.isCompleted
-                )
+
+            if showCustomAlert {
+                Color.black.opacity(0.4)
+                    .edgesIgnoringSafeArea(.all)
+                    .onTapGesture {
+                        showCustomAlert = false
+                    }
+
+                if let customAlertView = customAlertView {
+                    customAlertView
+                        .frame(width: 343, height: 300)
+                        .background(Color.gray10)
+                        .cornerRadius(16)
+                        .shadow(radius: 10)
+                        .transition(.scale)
+                }
             }
         }
     }
