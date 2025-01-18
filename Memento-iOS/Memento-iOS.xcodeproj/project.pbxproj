@@ -41,6 +41,7 @@
 				Source/Data/MCalendarEventList.swift,
 				Source/Data/MEventDataSource.swift,
 				Source/Presentation/Add/AddTodo/View/AddTodoHeaderView.swift,
+				Source/Presentation/Add/AddTodo/View/AddTodoTextView.swift,
 				Source/Presentation/Add/AddTodo/ViewModel/AddTodoHeaderViewModel.swift,
 				Source/Presentation/Add/AddTodo/ViewModel/AddTodoTextViewModel.swift,
 				Source/Presentation/Add/Common/SegmentedMenu/Model/SegmentedMenuType.swift,
