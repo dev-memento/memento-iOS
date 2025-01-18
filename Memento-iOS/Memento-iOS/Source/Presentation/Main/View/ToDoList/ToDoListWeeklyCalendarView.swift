@@ -13,11 +13,14 @@ import MCalendar
 struct ToDoListWeeklyCalendarView: View {
     @ObservedObject var viewModel: WeeklyCalendarViewModel
     
+    @State private var scrollTarget: String? = nil
+    @State private var userInteractionFlag: Bool = false
+    
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
                 if let date = viewModel.selectedDate.date() {
-                    Text("\(date.makeTodayMonthForMMM()) \(date.makeTodayDayString())") // Jan 14
+                    Text("\(date.makeTodayMonthForMMM()) \(date.makeTodayDayString())")
                         .foregroundStyle(.white)
                         .applyFont(.suiteExtraBold(size: 32),
                                    lineHeight: 36)
@@ -31,7 +34,7 @@ struct ToDoListWeeklyCalendarView: View {
                         .padding(.leading, 22)
                     Spacer()
                     VStack {
-                        Text("\(date.makeTodayYearString())") // 2025
+                        Text("\(date.makeTodayYearString())")
                             .foregroundStyle(Color.gray07)
                             .applyFont(.detail_b_12)
                             .padding(.top, 11)
@@ -49,12 +52,26 @@ struct ToDoListWeeklyCalendarView: View {
             calendarView()
                 .background(Color.grayBlack)
             
-            ToDoListView(viewModel: viewModel)
-                .scrollContentBackground(.hidden)
-                .padding(.vertical, 4)
+            ScrollViewReader { proxy in
+                ToDoListView(viewModel: viewModel)
+                    .scrollContentBackground(.hidden)
+                    .padding(.vertical, 4)
+                    .onChange(of: scrollTarget) { target in
+                        userInteractionFlag = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            userInteractionFlag = true
+                            if let target {
+                                withAnimation {
+                                    proxy.scrollTo(target, anchor: .top)
+                                }
+                            }
+                        }
+                    }
+            }
         }
         .onAppear {
             viewModel.makeDummyEvent()
+            makeIndex()
         }
         .background(Color.grayBlack)
     }
@@ -71,6 +88,7 @@ struct ToDoListWeeklyCalendarView: View {
                             mCallendarDatasource: viewModel.mCallendarDataSource,
                             selectedDateCompletion: { date in
             viewModel.selectedDate = date
+            makeIndex()
         })
         .setWeekDayFont(MWeekDayOptions.allDays,
                         font: Font(MDSFont.suiteBold(size: 12).font))
@@ -91,6 +109,12 @@ struct ToDoListWeeklyCalendarView: View {
         .setDaySelectedBackgroundColors(MWeekDayOptions.allDays,
                                         color: .gray04)
         .setTodayColor(color: .mainGreen)
+    }
+    
+    private func makeIndex() {
+        if let selectedDate = viewModel.selectedDate.date() {
+            scrollTarget = selectedDate.makeTodayMonthForMMM() + " " + selectedDate.makeTodayDayString()
+        }
     }
 }
 

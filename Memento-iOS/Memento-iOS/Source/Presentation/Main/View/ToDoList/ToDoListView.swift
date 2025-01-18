@@ -12,18 +12,46 @@ import MCalendar
 
 struct ToDoListView: View {
     @ObservedObject var viewModel: WeeklyCalendarViewModel
-
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                ForEach(viewModel.toDoListItems.keys.sorted(), id: \.self) { date in
-                    ToDoListItemView(items: Binding(
-                        get: { viewModel.toDoListItems[date] },
-                        set: { viewModel.toDoListItems[date] = $0 }
-                    ), date: date)
+                ToDoListDateView(date: "Jan 16")
+                    .padding(.bottom, 8)
+                
+                ForEach(viewModel.toDoListItems.indices, id: \.self) { index in
+                    ToDoListItemView(
+                        item: $viewModel.toDoListItems[index]
+                    )
                 }
-                .padding(.top, 4)
-
+                
+                ToDoListDateView(date: "Jan 17")
+                    .padding(.bottom, 8)
+                
+                ForEach(viewModel.toDoListItems.indices, id: \.self) { index in
+                    ToDoListItemView(
+                        item: $viewModel.toDoListItems[index]
+                    )
+                }
+                
+                ToDoListDateView(date: "Jan 18")
+                    .padding(.bottom, 8)
+                
+                ForEach(viewModel.toDoListItems.indices, id: \.self) { index in
+                    ToDoListItemView(
+                        item: $viewModel.toDoListItems[index]
+                    )
+                }
+                
+                ToDoListDateView(date: "Jan 19")
+                    .padding(.bottom, 8)
+                
+                ForEach(viewModel.toDoListItems.indices, id: \.self) { index in
+                    ToDoListItemView(
+                        item: $viewModel.toDoListItems[index]
+                    )
+                }
+                
                 Spacer()
             }
         }
@@ -31,11 +59,9 @@ struct ToDoListView: View {
     }
 }
 
-struct ToDoListItemView: View {
-    @Binding var items: [ToDoListDataModel]?
+struct ToDoListDateView: View {
+    var date: String
     
-    let date: String
-
     var body: some View {
         VStack(spacing: 0) {
             Divider()
@@ -43,7 +69,7 @@ struct ToDoListItemView: View {
                 .background(Color.gray07)
                 .frame(height: 10)
                 .padding(.bottom, 2)
-
+            
             HStack {
                 Text(date)
                     .applyFont(.body_b_14)
@@ -53,30 +79,25 @@ struct ToDoListItemView: View {
             }
             .frame(height: 20)
             .padding(.bottom, 8)
-
-            VStack(spacing: 10) {
-                let sortedItems = (items ?? []).sorted { !$0.isChecked && $1.isChecked }
-                ForEach(sortedItems.indices, id: \.self) { index in
-                    ToDoListCell(
-                        isChecked: Binding(
-                            get: { sortedItems[index].isChecked },
-                            set: { isChecked in
-                                if let originalIndex = items?.firstIndex(where: { $0.id == sortedItems[index].id }) {
-                                    items?[originalIndex].isChecked = isChecked
-                                    items?.sort { !$0.isChecked && $1.isChecked }
-                                }
-                            }
-                        ),
-                        colorType: sortedItems[index].colorType,
-                        toDoTitle: sortedItems[index].toDoTitle,
-                        dueDate: sortedItems[index].dueDate,
-                        priorityType: sortedItems[index].priorityType,
-                        isHighlighted: index == 0 && !sortedItems[index].isChecked
-                    )
-                }
-            }
-            .padding(.bottom, 8)
         }
+        .id(date)
+    }
+}
+
+struct ToDoListItemView: View {
+    @Binding var item: ToDoListDataModel
+    var body: some View {
+        VStack(spacing: 10) {
+            ToDoListCell(
+                isChecked: $item.isChecked,
+                colorType: item.colorType,
+                toDoTitle: item.toDoTitle,
+                dueDate: item.dueDate,
+                priorityType: item.priorityType,
+                isHighlighted: false
+            )
+        }
+        .padding(.bottom, 8)
     }
 }
 
@@ -86,3 +107,4 @@ struct ToDoListItemView: View {
         mEventDataSource: MEventDatasource()
     ))
 }
+
