@@ -26,8 +26,8 @@ struct BrainDumpView: View {
             BrainDumpBackgroundView()
             VStack() {
                 ZStack(alignment: .topLeading) {
-                    
-                    RoundedRectangle(cornerRadius: 0)
+                    // 배경
+                    RoundedRectangle(cornerRadius: 8)
                         .fill(Color.black)
                         .frame(width: UIScreen.main.bounds.width * 0.95, height: 172)
                         .shadow(radius: 4)
@@ -39,14 +39,16 @@ struct BrainDumpView: View {
                             .padding(.horizontal, 16)
                             .padding(.top, 10)
                     }
-                    
+
                     CustomTextEditor(text: $inputText)
-                        .frame(height: 172)
-                        .background(Color.clear)
-                        .cornerRadius(8)
                         .padding(.horizontal, 16)
-                        .frame(width: 343, height: 172)
+                        .padding(.top, 10)
+                        .foregroundColor(.white)
+                        .background(Color.clear)
+                        .applyFont(.body_b_16)
                 }
+                .frame(width: UIScreen.main.bounds.width * 0.95, height: 172)
+
                 .overlay {
                     if buttonTap {
                         NeonAnimationView(
@@ -55,7 +57,6 @@ struct BrainDumpView: View {
                         )
                     }
                 }
-                
                 BraindumpExampleTextScrollView(layout: layout, titles: titles)
                     .padding(.leading, 16)
                     .padding(.top, 20)
@@ -86,7 +87,6 @@ struct BraindumpExampleTextScrollView: View {
         }
     }
 }
-
 
 struct BraindumpExampleTextCell: View {
     let title: String
@@ -140,7 +140,6 @@ struct BrainDumpFooterView: View {
         }
     }
 }
-
 
 #Preview {
     BrainDumpView()
