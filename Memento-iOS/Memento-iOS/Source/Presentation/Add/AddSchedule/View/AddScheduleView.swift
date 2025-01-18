@@ -13,7 +13,7 @@ struct AddScheduleView: View {
 
     // MARK: - Properties
 
-    @StateObject private var titleViewModel = AddEventTitleViewModel()
+    @StateObject private var viewModel = AddEventTitleViewModel()
 
     // MARK: - Body
 
@@ -22,10 +22,32 @@ struct AddScheduleView: View {
             Color.gray10.ignoresSafeArea()
 
             VStack {
-                AddEventTitleView(viewModel: titleViewModel)
+                AddEventTitleView(viewModel: viewModel)
                 DateTimePickerView(viewModel: PickerButtonViewModel())
+                Spacer()
+                enterButton
             }
             .padding(.horizontal)
+        }
+    }
+
+    // MARK: - UI Components
+
+    private var enterButton: some View {
+        HStack {
+            Spacer()
+            Button(action: {
+            }) {
+                Image(
+                    viewModel.isTitleEmpty
+                    ? .btn_enter_disabled
+                    : .btn_enter_active
+                )
+            }
+            .frame(width: 42, height: 42)
+            .clipShape(Circle())
+            .disabled(viewModel.isTitleEmpty)
+            .padding(.bottom, 20)
         }
     }
 }
