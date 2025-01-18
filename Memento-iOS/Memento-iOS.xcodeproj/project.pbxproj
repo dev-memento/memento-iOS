@@ -71,6 +71,7 @@
 				Source/Presentation/Today/View/WeeklyCalendarView.swift,
 				Source/Presentation/Today/ViewModel/WeeklyCalendarViewModel.swift,
 				Source/Presentation/ToDoList/View/ToDoListView.swift,
+				Source/Utils/DynamicPresentationDetent.swift,
 			);
 			target = 830F3C552D2A73BD00254FDE /* Memento-iOS */;
 		};
