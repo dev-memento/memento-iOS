@@ -24,8 +24,7 @@ struct BrainDumpView: View {
     var body: some View {
         ZStack {
             BrainDumpBackgroundView()
-            
-            VStack {
+            VStack() {
                 ZStack(alignment: .topLeading) {
                     // 배경
                     RoundedRectangle(cornerRadius: 0)
@@ -43,35 +42,39 @@ struct BrainDumpView: View {
                     }
                     
                     // 텍스트 에디터
-                    TextEditor(text: $inputText)
+                    CustomTextEditor(text: $inputText)
+                        .frame(height: 172)
+                        .background(Color.clear)
+                        .cornerRadius(8)
                         .padding(.horizontal, 16)
-                        .padding(.top, 10)
-                        .foregroundColor(.white) // 입력 텍스트 색상
-                        .background(Color.clear) // 배경 투명
-                        .frame(width: UIScreen.main.bounds.width * 0.95, height: 172)
-                        .scrollContentBackground(.hidden)
+                        .frame(width: 343, height: 172) // 필드 크기
                 }
-                .frame(width: 343, height: 172) // 필드 크기
                 .overlay {
-                    
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        LazyHGrid(rows: layout, spacing: 10) {
-                            ForEach(titles, id: \.self) { item in
-                                TitleCell(title: item)
-                            }
-                        }
-                        .frame(height: 48)
+                    if buttonTap {
+                        NeonAnimationView(
+                            width: UIScreen.main.bounds.width * 0.95,
+                            height: 172
+                        )
                     }
-                    .padding(.leading, 16)
-                    .padding(.top, 20)
-                    
-                    Spacer()
-                    
-                    BrainDumpFooterView(buttonTap: $buttonTap)
-                        .frame(height: 74)
-                        .padding(.leading, 20)
-                        .padding(.trailing, 26)
                 }
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    LazyHGrid(rows: layout, spacing: 10) {
+                        ForEach(titles, id: \.self) { item in
+                            TitleCell(title: item)
+                        }
+                    }
+                    .frame(height: 48)
+                }
+                .padding(.leading, 16)
+                .padding(.top, 20)
+                
+                Spacer()
+                
+                BrainDumpFooterView(buttonTap: $buttonTap)
+                    .frame(height: 74)
+                    .padding(.leading, 20)
+                    .padding(.trailing, 26)
             }
         }
     }
