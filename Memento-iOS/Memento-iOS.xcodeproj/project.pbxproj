@@ -43,6 +43,7 @@
 				Source/Presentation/Add/AddSchedule/View/AddEventTitleView.swift,
 				Source/Presentation/Add/AddSchedule/View/AddScheduleView.swift,
 				Source/Presentation/Add/AddSchedule/ViewModel/AddEventTitleViewModel.swift,
+				Source/Presentation/Add/Common/PickerButton/Model/PickerButtonType.swift,
 				Source/Presentation/Add/Common/SegmentedMenu/Model/SegmentedMenuType.swift,
 				Source/Presentation/Add/Common/SegmentedMenu/View/SegmentedMenuView.swift,
 				Source/Presentation/Add/Common/SegmentedMenu/ViewModel/SegmentedMenuViewModel.swift,
