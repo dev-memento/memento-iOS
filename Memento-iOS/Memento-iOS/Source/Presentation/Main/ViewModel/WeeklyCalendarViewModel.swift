@@ -1,5 +1,5 @@
 //
-//  WeekluCalendarViewModel.swift
+//  WeeklyCalendarViewModel.swift
 //  Memento-iOS
 //
 //  Created by Kimgahyun on 1/14/25.

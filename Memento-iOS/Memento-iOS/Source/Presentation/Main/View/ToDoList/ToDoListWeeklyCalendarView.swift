@@ -1,8 +1,8 @@
 //
-//  TodayWeeklyCalendarView.swift
+//  ToDoListWeeklyCalendarView.swift
 //  Memento-iOS
 //
-//  Created by Kimgahyun on 1/14/25.
+//  Created by 이세민 on 1/18/25.
 //
 
 import SwiftUI
@@ -10,12 +10,8 @@ import SwiftUI
 import MDSKit
 import MCalendar
 
-struct TodayWeeklyCalendarView: View {
+struct ToDoListWeeklyCalendarView: View {
     @ObservedObject var viewModel: WeeklyCalendarViewModel
-    
-    // Scroll value
-    @State private var scrollTarget: Int? = nil
-    @State private var userInteractionFlag: Bool = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -30,7 +26,6 @@ struct TodayWeeklyCalendarView: View {
                             viewModel.mCallendarDataSource.moveOtherWeekday(targetDate: date)
                             if let targetDateModel = date.makeTargetDate() {
                                 viewModel.selectedDate = targetDateModel
-                                makeIndex()
                             }
                         }
                         .padding(.leading, 22)
@@ -53,40 +48,13 @@ struct TodayWeeklyCalendarView: View {
             
             calendarView()
                 .background(Color.grayBlack)
-                .allowsHitTesting(userInteractionFlag)
             
-            ScrollViewReader { proxy in
-                OffsetObservableScrollView(.horizontal,
-                                           showsIndicators: false,
-                                           scrollOffset: $viewModel.currentOffset,
-                                           content: { view in
-                    LazyHStack(spacing: 0) {
-                        ForEach(viewModel.mEventDataSource.eventList.indices, id: \.self) { index in
-                            let item = viewModel.mEventDataSource.eventList[index]
-                            pageView(for: item)
-                                .frame(width: UIScreen.main.bounds.width)
-                                .id(index)
-                        }
-                    }
-                })
-                .onChange(of: scrollTarget) {
-                    userInteractionFlag = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        userInteractionFlag = true
-                        if let target = scrollTarget {
-                            withAnimation {
-                                proxy.scrollTo(target, anchor: .center)
-                            }
-                        }
-                    }
-                }
-                .scrollTargetBehavior(.paging)
+            ToDoListView(viewModel: viewModel)
                 .scrollContentBackground(.hidden)
-            }
+                .padding(.vertical, 4)
         }
         .onAppear {
             viewModel.makeDummyEvent()
-            makeIndex()
         }
         .background(Color.grayBlack)
     }
@@ -103,7 +71,6 @@ struct TodayWeeklyCalendarView: View {
                             mCallendarDatasource: viewModel.mCallendarDataSource,
                             selectedDateCompletion: { date in
             viewModel.selectedDate = date
-            makeIndex()
         })
         .setWeekDayFont(MWeekDayOptions.allDays,
                         font: Font(MDSFont.suiteBold(size: 12).font))
@@ -125,32 +92,11 @@ struct TodayWeeklyCalendarView: View {
                                         color: .gray04)
         .setTodayColor(color: .mainGreen)
     }
-    
-    @ViewBuilder
-    private func todayList(item: MCalendarEventList) -> some View {
-        TodayView(viewModel: viewModel)
-            .scrollContentBackground(.hidden)
-    }
-    
-    @ViewBuilder
-    private func pageView(for item: MCalendarEventList) -> some View {
-        VStack(spacing: 8) {
-            AllDayListView(items: viewModel.allDayItems)
-                .padding(.vertical, 4)
-            
-            todayList(item: item)
-        }
-    }
-    
-    private func makeIndex() {
-        self.scrollTarget = (viewModel.mCallendarDataSource.currentIndex * 7) + viewModel.selectedDate.weekday.index
-        if let scrollTarget {
-            self.viewModel.currentOffset.x = Double(scrollTarget) * UIScreen.main.bounds.width
-        }
-    }
 }
 
 #Preview {
-    TodayWeeklyCalendarView(viewModel: .init(mCalendarDataSource: MCalendarDataSource(),
-                                             mEventDataSource: MEventDatasource()))
+    ToDoListWeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
+        mCalendarDataSource: MCalendarDataSource(),
+        mEventDataSource: MEventDatasource()
+    ))
 }

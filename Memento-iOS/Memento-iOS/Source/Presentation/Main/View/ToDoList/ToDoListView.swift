@@ -8,18 +8,22 @@
 import SwiftUI
 
 import MDSKit
+import MCalendar
 
 struct ToDoListView: View {
-    @ObservedObject var viewModel = ToDoListViewModel()
-    
+    @ObservedObject var viewModel: WeeklyCalendarViewModel
+
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
                 ForEach(viewModel.toDoListItems.keys.sorted(), id: \.self) { date in
-                    ToDoListItemView(items: $viewModel.toDoListItems[date], date: date)
+                    ToDoListItemView(items: Binding(
+                        get: { viewModel.toDoListItems[date] },
+                        set: { viewModel.toDoListItems[date] = $0 }
+                    ), date: date)
                 }
                 .padding(.top, 4)
-                
+
                 Spacer()
             }
         }
@@ -29,8 +33,9 @@ struct ToDoListView: View {
 
 struct ToDoListItemView: View {
     @Binding var items: [ToDoListDataModel]?
-    let date: String
     
+    let date: String
+
     var body: some View {
         VStack(spacing: 0) {
             Divider()
@@ -38,7 +43,7 @@ struct ToDoListItemView: View {
                 .background(Color.gray07)
                 .frame(height: 10)
                 .padding(.bottom, 2)
-            
+
             HStack {
                 Text(date)
                     .applyFont(.body_b_14)
@@ -48,7 +53,7 @@ struct ToDoListItemView: View {
             }
             .frame(height: 20)
             .padding(.bottom, 8)
-            
+
             VStack(spacing: 10) {
                 let sortedItems = (items ?? []).sorted { !$0.isChecked && $1.isChecked }
                 ForEach(sortedItems.indices, id: \.self) { index in
@@ -75,6 +80,9 @@ struct ToDoListItemView: View {
     }
 }
 
-#Preview{
-    ToDoListView()
+#Preview {
+    ToDoListView(viewModel: WeeklyCalendarViewModel(
+        mCalendarDataSource: MCalendarDataSource(),
+        mEventDataSource: MEventDatasource()
+    ))
 }
