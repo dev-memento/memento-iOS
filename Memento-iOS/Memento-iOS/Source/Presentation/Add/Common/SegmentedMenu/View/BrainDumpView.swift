@@ -26,13 +26,12 @@ struct BrainDumpView: View {
             BrainDumpBackgroundView()
             VStack() {
                 ZStack(alignment: .topLeading) {
-                    // 배경
-                    RoundedRectangle(cornerRadius: 0)
-                        .fill(Color.black) // 배경색
-                        .frame(width: UIScreen.main.bounds.width * 0.95, height: 172)
-                        .shadow(radius: 4) // 그림자 효과
                     
-                    // 플레이스홀더
+                    RoundedRectangle(cornerRadius: 0)
+                        .fill(Color.black)
+                        .frame(width: UIScreen.main.bounds.width * 0.95, height: 172)
+                        .shadow(radius: 4)
+                    
                     if inputText.isEmpty {
                         Text("Got plans? I’ll turn it into your to-do.")
                             .foregroundColor(.gray)
@@ -41,13 +40,12 @@ struct BrainDumpView: View {
                             .padding(.top, 10)
                     }
                     
-                    // 텍스트 에디터
                     CustomTextEditor(text: $inputText)
                         .frame(height: 172)
                         .background(Color.clear)
                         .cornerRadius(8)
                         .padding(.horizontal, 16)
-                        .frame(width: 343, height: 172) // 필드 크기
+                        .frame(width: 343, height: 172)
                 }
                 .overlay {
                     if buttonTap {
@@ -58,16 +56,9 @@ struct BrainDumpView: View {
                     }
                 }
                 
-                ScrollView(.horizontal, showsIndicators: false) {
-                    LazyHGrid(rows: layout, spacing: 10) {
-                        ForEach(titles, id: \.self) { item in
-                            TitleCell(title: item)
-                        }
-                    }
-                    .frame(height: 48)
-                }
-                .padding(.leading, 16)
-                .padding(.top, 20)
+                BraindumpExampleTextScrollView(layout: layout, titles: titles)
+                    .padding(.leading, 16)
+                    .padding(.top, 20)
                 
                 Spacer()
                 
@@ -80,7 +71,24 @@ struct BrainDumpView: View {
     }
 }
 
-struct TitleCell: View {
+struct BraindumpExampleTextScrollView: View {
+    let layout: [GridItem]
+    let titles: [String]
+    
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            LazyHGrid(rows: layout, spacing: 10) {
+                ForEach(titles, id: \.self) { item in
+                    BraindumpExampleTextCell(title: item)
+                }
+            }
+            .frame(height: 48)
+        }
+    }
+}
+
+
+struct BraindumpExampleTextCell: View {
     let title: String
     
     var body: some View {
@@ -93,8 +101,8 @@ struct TitleCell: View {
                         .applyFont(.detail_r_12)
                         .font(.system(size: 14))
                         .foregroundColor(.gray06)
-                        .lineLimit(2) // 최대 두 줄로 제한
-                        .truncationMode(.tail) // ...으로 표시
+                        .lineLimit(2)
+                        .truncationMode(.tail)
                         .multilineTextAlignment(.leading)
                         .padding(.horizontal, 10)
                 }
@@ -129,7 +137,6 @@ struct BrainDumpFooterView: View {
                     .scaledToFit()
                     .frame(width: 42, height: 42)
             }
-            
         }
     }
 }
