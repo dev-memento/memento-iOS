@@ -12,13 +12,23 @@ import MDSKit
 enum Priority: String {
     case immediate, high, medium, low, none
     
-    var color: Color {
+    var strokeColor: Color {
         switch self {
         case .immediate: return Color.labelImmediate
         case .high: return Color.labelHigh
         case .medium: return Color.labelMedium
         case .low: return Color.labelLow
-        case .none: return .gray
+        case .none: return Color.gray07
+        }
+    }
+    
+    var backgroundColor: Color {
+        switch self {
+        case .immediate: return Color.labelImmediate15
+        case .high: return Color.labelHigh15
+        case .medium: return Color.labelMedium15
+        case .low: return Color.labelLow15
+        case .none: return Color.mainNavy
         }
     }
     
@@ -43,10 +53,11 @@ struct PriorityLabel: View {
             .foregroundColor(Color.gray04)
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
-            .background(priority.color.opacity(0.15))
+            .background(priority.backgroundColor)
             .overlay(
                 RoundedRectangle(cornerRadius: 2)
-                    .stroke(priority.color, lineWidth: 0.3)
+                    .inset(by: 0.15)
+                    .stroke(priority.strokeColor, lineWidth: 0.3)
             )
     }
 }

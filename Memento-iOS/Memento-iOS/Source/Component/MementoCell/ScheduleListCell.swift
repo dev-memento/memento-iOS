@@ -9,10 +9,10 @@ import SwiftUI
 import MDSKit
 
 struct ScheduleListCell: View {
-    
     var colorType: String
-    var title: String
+    var scheduleTitle: String
     var time: String
+    
     var isCompleted: Bool
     
     var body: some View {
@@ -22,15 +22,15 @@ struct ScheduleListCell: View {
             IconView()
             
             VStack(alignment: .leading, spacing: 8) {
-                TitleView(title: title)
+                TitleView(title: scheduleTitle)
                 TimeInfoView(time: time)
             }
             
             Spacer()
         }
         .frame(height: 68)
+        .background(Color.mainNavy)
         .opacity(isCompleted ? 0.5 : 1.0)
-        .background(Color.grayBlack)
     }
 }
 
@@ -48,7 +48,6 @@ struct TitleView: View {
     var title: String
     
     var body: some View {
-        
         Text(title)
             .applyFont(.body_b_16)
             .foregroundColor(Color.grayWhite)

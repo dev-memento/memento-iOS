@@ -8,15 +8,18 @@
 import SwiftUI
 
 extension Color {
-    
-    /// Tag(카테고리)에 따른 Color를 반환하는 정적 메소드
     static func distinguishColorType(_ colorType: String) -> Color {
         switch colorType {
-        case "red": return .red
-        case "blue": return .blue
-        case "green": return .green
-        case "orange": return .orange
-        default: return .gray
+        case "mementoRed": return Color.mementoRed
+        case "mementoBlue": return Color.mementoBlue
+        case "mementoCyan": return Color.mementoCyan
+        case "mementoMint": return Color.mementoMint
+        case "mementoPink": return Color.mementoPink
+        case "mementoOrange": return Color.mementoOrange
+        case "mementoPurple": return Color.mementoPurple
+        case "mementoYellow": return Color.mementoYellow
+        case "mementoLightGreen": return Color.mementoLightGreen
+        default: return Color.gray05
         }
     }
 }

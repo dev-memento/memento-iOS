@@ -2,15 +2,14 @@
 //  TodayItemDataModel.swift
 //  Memento-iOS
 //
-//  Created by Gahyun Kim on 1/13/25.
+//  Created by 이세민 on 1/17/25.
 //
 
 import Foundation
 
 enum TodayItemDataModel: Identifiable {
-    
-    case todo(TodoDataModel)
-    case schedule(ScheduleDataModel)
+    case todo(ToDoListDataModel)
+    case schedule(ScheduleListDataModel)
     
     var id: UUID {
         switch self {
@@ -23,12 +22,12 @@ enum TodayItemDataModel: Identifiable {
 }
 
 extension TodayItemDataModel {
-    var todoBinding: TodoDataModel {
+    var toDoBinding: ToDoListDataModel {
         get {
             if case .todo(let todo) = self {
                 return todo
             } else {
-                fatalError("Todo 케이스가 아닙니다")
+                fatalError("not To Do case")
             }
         }
         set {
