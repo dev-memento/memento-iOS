@@ -68,11 +68,14 @@ extension WeeklyCalendarViewModel {
     func dropAction(dragItem: TodayItemDataModel?, dropItem: TodayItemDataModel) {
         guard let dragItem,
               let toIndex = todayItems.firstIndex(where: { $0.id == dropItem.id }),
-              let fromIndex = todayItems.firstIndex(where: { $0.id == dragItem.id }) else { return }
+              let fromIndex = todayItems.firstIndex(where: { $0.id == dragItem.id }),
+              case .todo = dragItem else { return }
         
-        withAnimation {
-            todayItems.move(fromOffsets: IndexSet(integer: fromIndex), toOffset: toIndex > fromIndex ? toIndex + 1 : toIndex)
-        }
+        todayItems.move(fromOffsets: IndexSet(integer: fromIndex), toOffset: toIndex > fromIndex ? toIndex + 1 : toIndex)
+        
+        //        withAnimation {
+        //            todayItems.move(fromOffsets: IndexSet(integer: fromIndex), toOffset: toIndex > fromIndex ? toIndex + 1 : toIndex)
+        //        }
     }
     
     func makeDummyEvent() {
