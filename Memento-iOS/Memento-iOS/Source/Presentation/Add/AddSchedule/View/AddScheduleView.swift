@@ -13,7 +13,8 @@ struct AddScheduleView: View {
 
     // MARK: - Properties
 
-    @StateObject private var viewModel = AddEventTitleViewModel()
+    @StateObject private var eventTitleViewModel = AddEventTitleViewModel()
+    @StateObject private var pickerViewModel = PickerButtonViewModel()
 
     // MARK: - Body
 
@@ -22,9 +23,9 @@ struct AddScheduleView: View {
             Color.gray10.ignoresSafeArea()
 
             VStack {
-                AddEventTitleView(viewModel: viewModel)
-                DateTimePickerView(viewModel: PickerButtonViewModel())
-                RepeatPickerView(viewModel: PickerButtonViewModel())
+                AddEventTitleView(viewModel: eventTitleViewModel)
+                DateTimePickerView(viewModel: pickerViewModel)
+                RepeatPickerView(viewModel: pickerViewModel)
                 TagView()
                 Spacer()
                 enterButton
@@ -41,14 +42,14 @@ struct AddScheduleView: View {
             Button(action: {
             }) {
                 Image(
-                    viewModel.isTitleEmpty
+                    eventTitleViewModel.isTitleEmpty
                     ? .btn_enter_disabled
                     : .btn_enter_active
                 )
             }
             .frame(width: 42, height: 42)
             .clipShape(Circle())
-            .disabled(viewModel.isTitleEmpty)
+            .disabled(eventTitleViewModel.isTitleEmpty)
             .padding(.bottom, 20)
         }
     }
