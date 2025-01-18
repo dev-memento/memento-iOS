@@ -77,9 +77,9 @@ struct BaseSheetView: View {
                     .datePickerStyle(.wheel)
                     .environment(\.locale, Locale(identifier: "en_US"))
 
-                case .repeat:
+                case .repeat: EmptyView()
 
-                case .tag:
+                case .tag: EmptyView()
 
                 }
             }
