@@ -47,19 +47,6 @@
 				"Source/Presentation/Onboarding/View/Launch Screen.storyboard",
 				Source/Presentation/Onboarding/ViewModel/AuthViewModel.swift,
 				Source/Presentation/Onboarding/ViewModel/OnboardingViewModel.swift,
-				Source/Presentation/Today/Model/AllDayDataModel.swift,
-				Source/Presentation/Today/Model/ScheduleDataModel.swift,
-				Source/Presentation/Today/Model/TodayItemDataModel.swift,
-				Source/Presentation/Today/Model/TodoDataModel.swift,
-				Source/Presentation/Today/View/AllDayListView.swift,
-				Source/Presentation/Today/View/ArrowListCell.swift,
-				Source/Presentation/Today/View/EmptyView.swift,
-				Source/Presentation/Today/View/OffsetObservableScrollView.swift,
-				Source/Presentation/Today/View/ReusableView/WakeUpHeaderView.swift,
-				Source/Presentation/Today/View/ReusableView/WindDownFooterView.swift,
-				Source/Presentation/Today/View/WeeklyCalendarView.swift,
-				Source/Presentation/Today/ViewModel/WeeklyCalendarViewModel.swift,
-				Source/Presentation/ToDoList/View/ToDoListView.swift,
 			);
 			target = 830F3C552D2A73BD00254FDE /* Memento-iOS */;
 		};
