@@ -8,18 +8,29 @@ import MDSKit
 
 struct EisenhowerMatrixView: View {
     let source: String
+    @Binding var externalPriority: Priority  // 외부에서 받는 Priority
     
-    let items = [
-        ("Important O\nUrgent O", Color.red),
-        ("Important O\nUrgent X", Color.gray09),
-        ("Important X\nUrgent O", Color.gray09),
-        ("Important X\nUrgent X", Color.gray09)
+    let items: [(String, Priority)] = [
+        ("Important O\nUrgent O", .immediate),
+        ("Important O\nUrgent X", .high),
+        ("Important X\nUrgent O", .medium),
+        ("Important X\nUrgent X", .low)
     ]
     
+    @State private var selectedPriority: Priority
+    @State private var priorities: [Priority]
+
     private let gridItem = [
         GridItem(.fixed(146)),
         GridItem(.fixed(146))
     ]
+
+    init(source: String, externalPriority: Binding<Priority>) {
+        self.source = source
+        self._externalPriority = externalPriority
+        self._selectedPriority = State(initialValue: externalPriority.wrappedValue)
+        self._priorities = State(initialValue: [.immediate, .high, .medium, .low])
+    }
     
     var body: some View {
         ZStack {
@@ -29,16 +40,26 @@ struct EisenhowerMatrixView: View {
             VStack {
                 HeaderView()
                 
-                TodoItemView()
+                TodoItemView(priority: $selectedPriority)  // selectedPriority로 변경
                 
-                MatrixGridView(items: items, gridItem: gridItem)
+                MatrixGridView(
+                    priorities: $priorities,
+                    selectedPriority: $selectedPriority,  // 선택된 Priority 전달
+                    gridItem: gridItem,
+                    items: items
+                )
                 .padding(.top, 12)
                 
                 FooterTextView()
                 
                 Spacer()
-                
             }
+        }
+        .onChange(of: selectedPriority) { newValue in
+            externalPriority = newValue  // 외부 Priority 업데이트
+        }
+        .onChange(of: externalPriority) { newValue in
+            selectedPriority = newValue  // 외부 Priority 변경 시 내부 상태 업데이트
         }
     }
 }
@@ -71,6 +92,8 @@ struct HeaderView: View {
 }
 
 struct TodoItemView: View {
+    @Binding var priority: Priority
+
     var body: some View {
         HStack(alignment: .top) {
             Button {
@@ -127,24 +150,25 @@ struct TodoItemView: View {
             .padding(.horizontal, 10)
             Spacer()
             
-            PriorityLabel(priority: .immediate)
+            PriorityLabel(priority: priority)
             
             Spacer()
         }
     }
 }
 
-
 struct MatrixGridView: View {
-    let items: [(String, Color)]
+    @Binding var priorities: [Priority]
+    @Binding var selectedPriority: Priority
     let gridItem: [GridItem]
-    
+    let items: [(String, Priority)]
+
     var body: some View {
-        VStack{
-            // Axis Labels
+        VStack {
             Text("Urgency")
                 .font(.caption)
                 .foregroundColor(.gray04)
+                .padding(.top, 16)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .applyFont(.detail_r_12)
             
@@ -156,17 +180,21 @@ struct MatrixGridView: View {
                     .frame(height: 200, alignment: .center)
                     .applyFont(.detail_r_12)
                 
-                // Grid Layout
-                LazyVGrid(columns: gridItem, spacing: 8) { // 행 간격도 8로 설정
-                    ForEach(items, id: \.0) { item in
-                        ZStack {
-                            Rectangle()
-                                .fill(item.1)
-                                .frame(width: 146, height: 126)
-                            Text(item.0)
-                                .multilineTextAlignment(.center)
-                                .foregroundColor(.gray04)
-                                .font(.body)
+                LazyVGrid(columns: gridItem, spacing: 8) {
+                    ForEach(priorities.indices, id: \.self) { index in
+                        Button {
+                            selectedPriority = items[index].1
+                        } label: {
+                            ZStack {
+                                Rectangle()
+                                    .fill(items[index].1 == selectedPriority ?
+                                          items[index].1.backgroundColor : Color.gray09)  // 수정된 부분
+                                    .frame(width: 146, height: 126)
+                                Text(items[index].0)
+                                    .multilineTextAlignment(.center)
+                                    .foregroundColor(.gray04)
+                                    .applyFont(.detail_r_12)
+                            }
                         }
                     }
                 }
@@ -184,6 +212,10 @@ struct FooterTextView: View {
             .padding(.top, 18)
     }
 }
+
 #Preview {
-    EisenhowerMatrixView(source: "SOPT")
+    EisenhowerMatrixView(
+        source: "SOPT",
+        externalPriority: .constant(.immediate)  // .constant()를 사용하여 Binding 생성
+    )
 }
