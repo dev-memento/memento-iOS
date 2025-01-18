@@ -12,52 +12,58 @@ import MCalendar
 
 struct TodayView: View {
     @ObservedObject var viewModel: WeeklyCalendarViewModel
-    
+
     @State private var selectTodo: ToDoListDataModel?
     @State private var selectSchedule: ScheduleListDataModel?
-    
+
     @State private var showTodoAlert = false
     @State private var showScheduleAlert = false
-    
+
     var body: some View {
-        ScrollView {
-            VStack(spacing: 8) {
-                WakeUpHeaderView(wakeUpTime: "8 AM")
-                
-                ForEach(viewModel.todayItems.indices, id: \.self) { index in
-                    let isArrow = index == 0
-                    
-                    TodayListItemView(
-                        item: $viewModel.todayItems[index],
-                        isHighlighted: isTopPriorityItem(at: index),
-                        isArrow: isArrow,
-                        tappedCell: { item in
-                            handleCellTap(item)
-                        }
-                    )
-                    .padding(.horizontal)
-                    .onDrag {
-                        viewModel.dragItem = viewModel.todayItems[index]
-                        return NSItemProvider()
-                    }
-                    .onDrop(
-                        of: [.text],
-                        delegate: DropViewDelegate(
+        ZStack {
+            ScrollView {
+                VStack(spacing: 8) {
+                    WakeUpHeaderView(wakeUpTime: "8 AM")
+
+                    ForEach(viewModel.todayItems.indices, id: \ .self) { index in
+                        let isArrow = index == 0
+
+                        TodayListItemView(
                             item: $viewModel.todayItems[index],
-                            items: $viewModel.todayItems,
-                            draggedItem: $viewModel.dragItem,
-                            onDrop: viewModel.dropAction
+                            isHighlighted: isTopPriorityItem(at: index),
+                            isArrow: isArrow,
+                            onTodoTap: { todo in
+                                selectTodo = todo
+                                showTodoAlert = true
+                            },
+                            onScheduleTap: { schedule in
+                                selectSchedule = schedule
+                                showScheduleAlert = true
+                            }
                         )
-                    )
+                        .padding(.horizontal)
+                        .onDrag {
+                            viewModel.dragItem = viewModel.todayItems[index]
+                            return NSItemProvider()
+                        }
+                        .onDrop(
+                            of: [.text],
+                            delegate: DropViewDelegate(
+                                item: $viewModel.todayItems[index],
+                                items: $viewModel.todayItems,
+                                draggedItem: $viewModel.dragItem,
+                                onDrop: viewModel.dropAction
+                            )
+                        )
+                    }
+
+                    WindDownFooterView(windDownTime: "11 PM")
                 }
-                
-                WindDownFooterView(windDownTime: "11 PM")
+                .padding(.vertical)
             }
-            .padding(.vertical)
-        }
-        .background(Color.grayBlack)
-        .sheet(isPresented: $showTodoAlert) {
-            if let todo = selectTodo {
+            .background(Color.grayBlack)
+
+            if showTodoAlert, let todo = selectTodo {
                 TodoAlertView(
                     todoTitle: todo.toDoTitle,
                     deadline: todo.dueDate,
@@ -65,12 +71,31 @@ struct TodayView: View {
                     priority: todo.priorityType,
                     onDelete: {
                         showTodoAlert = false
-                        // customactionsheet의
                     },
                     onEdit: {
                         showTodoAlert = false
                     }
                 )
+                .background(Color.black.opacity(0.4))
+                .edgesIgnoringSafeArea(.all)
+            }
+
+            if showScheduleAlert, let schedule = selectSchedule {
+                ScheduleAlertView(
+                    scheduleTitle: schedule.scheduleTitle,
+                    startDate: schedule.startTime,
+                    endDate: schedule.endTime,
+                    tag: "SOPT",
+                    source: "notion",
+                    onDelete: {
+                        showScheduleAlert = false
+                    },
+                    onEdit: {
+                        showScheduleAlert = false
+                    }
+                )
+                .background(Color.black.opacity(0.4))
+                .edgesIgnoringSafeArea(.all)
             }
         }
     }
@@ -82,99 +107,53 @@ struct TodayView: View {
             return false
         }.count == 1
     }
-    
-    private func handleCellTap(_ item: TodayItemDataModel) {
-        if case .todo(let todo) = item {
-            selectTodo = todo
-            showTodoAlert = true
-        }
-        
-    }
 }
 
 struct TodayListItemView: View {
     @Binding var item: TodayItemDataModel
-    
+
     var isHighlighted: Bool
     var isArrow: Bool
-    var tappedCell: (TodayItemDataModel) -> Void
-
-    @State private var showCustomAlert = false
-    @State private var customAlertView: AnyView?
+    var onTodoTap: (ToDoListDataModel) -> Void
+    var onScheduleTap: (ScheduleListDataModel) -> Void
 
     var body: some View {
-        ZStack {
-            HStack {
-                Group {
-                    if isArrow {
-                        Image(systemName: "chevron.down")
-                            .foregroundColor(.white)
-                            .padding(.trailing, 8)
-                    } else {
-                        Spacer()
-                            .frame(width: 20)
-                            .padding(.trailing, 8)
-                    }
-                }
-                switch item {
-                case .todo(let todo):
-                    ToDoListCell(
-                        isChecked: $item.toDoBinding.isChecked,
-                        colorType: todo.colorType,
-                        toDoTitle: todo.toDoTitle,
-                        dueDate: todo.dueDate,
-                        priorityType: todo.priorityType,
-                        isHighlighted: isHighlighted
-                    )
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        customAlertView = AnyView(
-                            TodoAlertView(
-                                todoTitle: todo.toDoTitle,
-                                deadline: todo.dueDate,
-                                tag: "SOPT",
-                                priority: todo.priorityType,
-                                onDelete: {
-                                    print("Delete tapped for \(todo.toDoTitle)")
-                                    showCustomAlert = false
-                                },
-                                onEdit: {
-                                    print("Edit tapped for \(todo.toDoTitle)")
-                                    showCustomAlert = false
-                                }
-                            )
-                        )
-                        showCustomAlert = true
-                    }
-                    
-                case .schedule(let schedule):
-                    ScheduleListCell(
-                        colorType: schedule.colorType,
-                        scheduleTitle: schedule.scheduleTitle,
-                        time: schedule.startTime,
-                        isCompleted: schedule.isCompleted
-                    )
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        print("Schedule tapped")
-                    }
-                }
+        HStack {
+            if isArrow {
+                Image(systemName: "chevron.down")
+                    .foregroundColor(.white)
+                    .padding(.trailing, 8)
+            } else {
+                Spacer()
+                    .frame(width: 20)
+                    .padding(.trailing, 8)
             }
 
-            if showCustomAlert {
-                Color.black.opacity(0.4)
-                    .edgesIgnoringSafeArea(.all)
-                    .onTapGesture {
-                        showCustomAlert = false
-                    }
+            switch item {
+            case .todo(let todo):
+                ToDoListCell(
+                    isChecked: $item.toDoBinding.isChecked,
+                    colorType: todo.colorType,
+                    toDoTitle: todo.toDoTitle,
+                    dueDate: todo.dueDate,
+                    priorityType: todo.priorityType,
+                    isHighlighted: isHighlighted
+                )
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    onTodoTap(todo)
+                }
 
-                if let customAlertView = customAlertView {
-                    customAlertView
-                        .frame(width: 343, height: 300)
-                        .background(Color.gray10)
-                        .cornerRadius(16)
-                        .shadow(radius: 10)
-                        .transition(.scale)
+            case .schedule(let schedule):
+                ScheduleListCell(
+                    colorType: schedule.colorType,
+                    scheduleTitle: schedule.scheduleTitle,
+                    time: schedule.startTime,
+                    isCompleted: schedule.isCompleted
+                )
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    onScheduleTap(schedule)
                 }
             }
         }
