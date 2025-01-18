@@ -37,6 +37,7 @@
 				Resource/Assets.xcassets,
 				Source/Component/Alert/ScheduleAlertView.swift,
 				Source/Component/Alert/TodoAlertView.swift,
+				Source/Component/EisenhowerMatrixView.swift,
 				Source/Component/NeonAnimationView.swift,
 				Source/Data/MCalendarEventList.swift,
 				Source/Data/MEventDataSource.swift,
