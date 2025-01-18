@@ -131,11 +131,13 @@ final class PickerButtonViewModel: BasePickerViewModel {
     }
 
     func updateRepeatType(_ type: RepeatType) {
-        repeatType = type
-        shouldShowEndRepeat = type != .none
-        if type == .none {
-            endRepeatDate = nil
-            isEndRepeatDateSelected = false
+        if repeatType != type {
+            repeatType = type
+            shouldShowEndRepeat = type != .none
+            if type == .none {
+                endRepeatDate = nil
+                isEndRepeatDateSelected = false
+            }
         }
     }
 
