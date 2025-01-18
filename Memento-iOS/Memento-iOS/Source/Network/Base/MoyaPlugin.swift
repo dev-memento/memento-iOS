@@ -18,7 +18,7 @@ final class MoyaPlugin: PluginType {
     // MARK: - Request 보낼 시 호출
     
     func willSend(_ request: RequestType, target: TargetType) {
- 
+        
         guard let httpRequest = request.request else {
             print("==> ❌🤖❌유효하지 않은 요청❌🤖❌")
             return
@@ -27,7 +27,7 @@ final class MoyaPlugin: PluginType {
         let url = httpRequest.description
         let method = httpRequest.httpMethod ?? "unknown method"
         var log = "=======================================================\n🤖1️⃣🤖[\(method)] \(url)\n=======================================================\n"
-
+        
         log.append("\n")
         log.append("🤖2️⃣🤖 API: \(target)\n")
         
@@ -40,7 +40,7 @@ final class MoyaPlugin: PluginType {
         } else {
             log.append("✏️ body: Unable to decode body\n")
         }
-
+    
         log.append("=========================== 🤖END \(method)🤖============================\n")
         print(log)
     }
@@ -76,11 +76,28 @@ final class MoyaPlugin: PluginType {
             onSucceed(response)
             return
         }
+        
+        let errorCode = error.errorCode
+        let errorMessage = mapErrorCodeToMessage(errorCode)
+        
         var log = "❌🤖❌네트워크 오류❌🤖❌"
         
-        log.append("<== \(error.errorCode)\n")
-        log.append("\(error.failureReason ?? error.errorDescription ?? "unknown error")\n")
+        log.append("<== ERROR CODE: \(errorCode)\n")
+        log.append("<== \(errorMessage)\n")
         log.append("<== END HTTP 🤖🤖🤖")
         print(log)
     }
+    
+    // 에러 코드에 따른 메시지 매핑 함수
+    func mapErrorCodeToMessage(_ code: Int) -> String {
+        switch code {
+        case -1009: return "🤖🔥 Internet connection is lost 🔥🤖"      // 인터넷 연결 끊어짐
+        case -1001: return "🤖🔥request timed out🔥🤖"                  // 요청 시간 초과
+        case -1004: return "🤖🔥Server connection failure🔥🤖"          // 서버 연결 실패
+        case 401: return "🤖🔥Certification expires🔥🤖"                // 인증 만료 (재로그인 필요)
+        case 403: return "🤖🔥No permission🔥🤖"                        // 권한 없음
+        default: return "🤖🔥unknown network error [CODE: \(code)🔥🤖"  // 알 수 없는 오류
+        }
+    }
+    
 }
