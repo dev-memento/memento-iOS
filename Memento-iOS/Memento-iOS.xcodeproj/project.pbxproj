@@ -44,6 +44,7 @@
 				Source/Presentation/Add/AddSchedule/View/AddScheduleView.swift,
 				Source/Presentation/Add/AddSchedule/ViewModel/AddEventTitleViewModel.swift,
 				Source/Presentation/Add/Common/PickerButton/Model/PickerButtonType.swift,
+				Source/Presentation/Add/Common/PickerButton/View/PickerButton.swift,
 				Source/Presentation/Add/Common/PickerButton/ViewModel/BasePickerViewModel.swift,
 				Source/Presentation/Add/Common/PickerButton/ViewModel/PickerButtonViewModel.swift,
 				Source/Presentation/Add/Common/Protocols/Presentable.swift,
