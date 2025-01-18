@@ -23,6 +23,7 @@ struct AddScheduleView: View {
 
             VStack {
                 AddEventTitleView(viewModel: titleViewModel)
+                DateTimePickerView(viewModel: PickerButtonViewModel())
             }
             .padding(.horizontal)
         }
