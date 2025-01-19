@@ -34,7 +34,7 @@ struct BrainDumpView: View {
                     
                     if inputText.isEmpty {
                         Text("Got plans? I’ll turn it into your to-do.")
-                            .foregroundColor(.gray)
+                            .foregroundStyle(LinearGradient.todoNow)
                             .applyFont(.body_b_16)
                             .padding(.horizontal, 16)
                             .padding(.top, 10)
@@ -94,7 +94,7 @@ struct BraindumpExampleTextCell: View {
     var body: some View {
         VStack {
             RoundedRectangle(cornerRadius: 2)
-                .fill(Color.gray07)
+                .fill(LinearGradient.brainDump)
                 .frame(width: 195, height: 48)
                 .overlay {
                     Text(title)
