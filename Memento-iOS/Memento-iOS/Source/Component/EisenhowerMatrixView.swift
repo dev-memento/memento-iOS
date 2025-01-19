@@ -169,21 +169,33 @@ struct MatrixGridView: View {
     let items: [(String, Priority)]
     
     var body: some View {
-        VStack {
-            Text("Urgency")
-                .font(.caption)
-                .foregroundColor(.gray04)
-                .padding(.top, 16)
-                .frame(maxWidth: .infinity, alignment: .center)
-                .applyFont(.detail_r_12)
-            
-            HStack {
-                Text("Importance")
-                    .font(.caption)
+        VStack(alignment: .leading){
+            VStack(spacing: 1){
+                Text("Urgency")
                     .foregroundColor(.gray04)
-                    .rotationEffect(.degrees(-90))
-                    .frame(height: 200, alignment: .center)
+                    .padding(.top, 16)
+                    .frame(maxWidth: .infinity, alignment: .center)
                     .applyFont(.detail_r_12)
+                
+                Image(.ic_prio_arrow_v)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 300, height: 12)
+            }
+            
+            HStack() {
+                
+                HStack(spacing: -19){
+                    Text("Importance")
+                        .foregroundColor(.gray04)
+                        .rotationEffect(.degrees(-90))
+                        .applyFont(.detail_r_12)
+                    
+                    Image(.ic_prio_arrow_h)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 12, height: 260)
+                }
                 
                 LazyVGrid(columns: gridItem, spacing: 8) {
                     ForEach(priorities.indices, id: \.self) { index in
@@ -203,6 +215,7 @@ struct MatrixGridView: View {
                         }
                     }
                 }
+                Spacer()
             }
         }
     }
