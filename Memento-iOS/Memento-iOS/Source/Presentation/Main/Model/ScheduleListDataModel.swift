@@ -11,6 +11,7 @@ struct ScheduleListDataModel: Identifiable {
     var id = UUID()
     var colorType: String
     var scheduleTitle: String
-    var time: String
+    var startTime: String
+    var endTime: String
     var isCompleted: Bool
 }
