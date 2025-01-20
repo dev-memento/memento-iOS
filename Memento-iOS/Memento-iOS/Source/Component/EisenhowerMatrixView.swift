@@ -28,7 +28,7 @@ struct EisenhowerMatrixView: View {
     init(source: String, externalPriority: Binding<Priority>) {
         self.source = source
         self._externalPriority = externalPriority
-        self._selectedPriority = State(initialValue: externalPriority.wrappedValue) // selectedPriority는 externalPriority의 초기값으로 설정
+        self._selectedPriority = State(initialValue: externalPriority.wrappedValue)
         self._priorities = State(initialValue: [.immediate, .high, .medium, .low])
     }
     
@@ -44,7 +44,7 @@ struct EisenhowerMatrixView: View {
                 
                 MatrixGridView(
                     priorities: $priorities,
-                    selectedPriority: $selectedPriority,  // 선택된 Priority 전달
+                    selectedPriority: $selectedPriority,
                     gridItem: gridItem,
                     items: items
                 )
@@ -139,9 +139,12 @@ struct TodoItemView: View {
                             .padding(.trailing, 54)
                         
                         HStack(spacing: 3) {
-                            Circle()
-                                .fill(Color.blue)
-                                .frame(width: 10, height: 10)
+                            Image(.ic_tag)
+                                .resizable()
+                                .scaledToFit()
+                                .colorMultiply(Color.blue)
+                                .frame(width: 17, height: 17)
+                            
                             Text("SOPT")
                                 .applyFont(.detail_r_12)
                                 .foregroundColor(.grayWhite)
