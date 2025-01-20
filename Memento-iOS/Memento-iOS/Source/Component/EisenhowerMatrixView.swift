@@ -7,16 +7,16 @@ import SwiftUI
 import MDSKit
 
 struct EisenhowerMatrixView: View {
-    let source: String
-    @Binding var externalPriority: Priority  // 외부에서 받는 Priority
-    
+
     let items: [(String, Priority)] = [
         ("Important O\nUrgent O", .immediate),
         ("Important O\nUrgent X", .high),
         ("Important X\nUrgent O", .medium),
         ("Important X\nUrgent X", .low)
     ]
+    let source: String
     
+    @Binding var externalPriority: Priority
     @State private var selectedPriority: Priority
     @State private var priorities: [Priority]
     
@@ -28,7 +28,7 @@ struct EisenhowerMatrixView: View {
     init(source: String, externalPriority: Binding<Priority>) {
         self.source = source
         self._externalPriority = externalPriority
-        self._selectedPriority = State(initialValue: externalPriority.wrappedValue)
+        self._selectedPriority = State(initialValue: externalPriority.wrappedValue) // selectedPriority는 externalPriority의 초기값으로 설정
         self._priorities = State(initialValue: [.immediate, .high, .medium, .low])
     }
     
@@ -40,7 +40,7 @@ struct EisenhowerMatrixView: View {
             VStack {
                 HeaderView()
                 
-                TodoItemView(priority: $selectedPriority)  // selectedPriority로 변경
+                TodoItemView(priority: $selectedPriority)
                 
                 MatrixGridView(
                     priorities: $priorities,
@@ -182,7 +182,6 @@ struct MatrixGridView: View {
                     .scaledToFit()
                     .frame(width: 300, height: 12)
             }
-            
             HStack() {
                 
                 HStack(spacing: -19){
@@ -196,7 +195,6 @@ struct MatrixGridView: View {
                         .scaledToFit()
                         .frame(width: 12, height: 260)
                 }
-                
                 LazyVGrid(columns: gridItem, spacing: 8) {
                     ForEach(priorities.indices, id: \.self) { index in
                         Button {
@@ -205,7 +203,7 @@ struct MatrixGridView: View {
                             ZStack {
                                 Rectangle()
                                     .fill(items[index].1 == selectedPriority ?
-                                          items[index].1.backgroundColor : Color.gray09)  // 수정된 부분
+                                          items[index].1.backgroundColor : Color.gray09)
                                     .frame(width: 146, height: 126)
                                 Text(items[index].0)
                                     .multilineTextAlignment(.center)
@@ -234,6 +232,6 @@ struct FooterTextView: View {
 #Preview {
     EisenhowerMatrixView(
         source: "SOPT",
-        externalPriority: .constant(.immediate)  // .constant()를 사용하여 Binding 생성
+        externalPriority: .constant(.immediate)
     )
 }
