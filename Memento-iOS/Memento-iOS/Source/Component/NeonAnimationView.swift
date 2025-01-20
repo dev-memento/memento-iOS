@@ -16,31 +16,26 @@ struct NeonAnimationView: View {
     let height: CGFloat
     
     var body: some View {
-        ZStack {
-            Color.black.edgesIgnoringSafeArea(.all)
-            
-            Rectangle()
-                .strokeBorder(
-                    LinearGradient(
-                        colors: gradientColors,
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 8
-                )
-                .frame(width: width, height: height)
-                .shadow(color: gradientColors.first?.opacity(lightBrightness) ?? Color.white.opacity(lightBrightness), radius: 20)
-                .shadow(color: gradientColors.last?.opacity(lightBrightness) ?? Color.white.opacity(lightBrightness), radius: 30)
-                .onAppear {
-                    withAnimation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
-                        lightBrightness = 1.0
-                    }
+        Rectangle()
+            .strokeBorder(
+                LinearGradient(
+                    colors: gradientColors,
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ),
+                lineWidth: 8
+            )
+            .frame(width: width, height: height)
+            .shadow(color: gradientColors.first?.opacity(lightBrightness) ?? Color.white.opacity(lightBrightness), radius: 20)
+            .shadow(color: gradientColors.last?.opacity(lightBrightness) ?? Color.white.opacity(lightBrightness), radius: 30)
+            .onAppear {
+                withAnimation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
+                    lightBrightness = 1.0
                 }
-                .blur(radius: 1.5)
-                .onAppear {
-                    startColorAnimation()
-                }
-        }
+                startColorAnimation()
+            }
+            .blur(radius: 1.5)
+        
     }
     
     private func startColorAnimation() {
