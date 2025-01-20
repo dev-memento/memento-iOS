@@ -26,7 +26,7 @@ struct ToDoListCell: View {
             CheckBoxView(isChecked: $isChecked)
             
             VStack(alignment: .leading) {
-                TitleView(title: toDoTitle)
+                ToDoTitleView(title: toDoTitle, isChecked: isChecked)
                 DueDateView(date: dueDate)
             }
             
@@ -74,11 +74,13 @@ struct CheckBoxView: View {
 
 struct ToDoTitleView: View {
     var title: String
+    var isChecked: Bool
     
     var body: some View {
         Text(title)
             .applyFont(.body_b_16)
             .foregroundColor(Color.grayWhite)
+            .strikethrough(isChecked)
     }
 }
 
