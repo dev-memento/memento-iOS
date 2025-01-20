@@ -47,6 +47,8 @@
 				Source/Presentation/Add/Common/SegmentedMenu/Model/SegmentedMenuType.swift,
 				Source/Presentation/Add/Common/SegmentedMenu/View/SegmentedMenuView.swift,
 				Source/Presentation/Add/Common/SegmentedMenu/ViewModel/SegmentedMenuViewModel.swift,
+				Source/Presentation/Main/View/DragAndDrop/DropViewDelegate.swift,
+				Source/Presentation/Main/View/ToDoList/ToDoListWeeklyCalendarView.swift,
 				"Source/Presentation/Onboarding/View/Launch Screen.storyboard",
 				Source/Presentation/Onboarding/ViewModel/AuthViewModel.swift,
 				Source/Presentation/Onboarding/ViewModel/OnboardingViewModel.swift,

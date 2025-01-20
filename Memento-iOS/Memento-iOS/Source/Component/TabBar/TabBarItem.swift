@@ -47,7 +47,10 @@ enum TabBarItem: CaseIterable {
                 mEventDataSource: MEventDatasource()
             )))
         case .todo:
-            return AnyView(ToDoListView()
+            return AnyView(TodayWeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
+                mCalendarDataSource: MCalendarDataSource(),
+                mEventDataSource: MEventDatasource()
+            ))
             )
         case .addition:
             return AnyView(TodayWeeklyCalendarView(viewModel: WeeklyCalendarViewModel(

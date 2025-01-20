@@ -22,7 +22,7 @@ struct ScheduleListCell: View {
             IconView()
             
             VStack(alignment: .leading, spacing: 8) {
-                TitleView(title: scheduleTitle)
+                ScheduleTitleView(title: scheduleTitle)
                 TimeInfoView(time: time)
             }
             
@@ -44,7 +44,7 @@ struct IconView: View {
     }
 }
 
-struct TitleView: View {
+struct ScheduleTitleView: View {
     var title: String
     
     var body: some View {

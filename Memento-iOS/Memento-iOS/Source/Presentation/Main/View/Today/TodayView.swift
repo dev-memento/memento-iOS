@@ -12,26 +12,29 @@ import MCalendar
 
 struct TodayView: View {
     @ObservedObject var viewModel: WeeklyCalendarViewModel
-
+    
     @State private var selectTodo: ToDoListDataModel?
     @State private var selectSchedule: ScheduleListDataModel?
-
+    
     @State private var showTodoAlert = false
     @State private var showScheduleAlert = false
-
+    
     var body: some View {
         ZStack {
             ScrollView {
                 VStack(spacing: 8) {
                     WakeUpHeaderView(wakeUpTime: "8 AM")
-
-                    ForEach(viewModel.todayItems.indices, id: \ .self) { index in
-                        let isArrow = index == 0
-
+                    
+                    ForEach($viewModel.todayItems, id: \.wrappedValue.id) { item in
+                        let isArrow = item.wrappedValue == viewModel.todayItems.first
+                        let isHighlighted = isTopPriorityItem(at: item.wrappedValue)
+                        
                         TodayListItemView(
-                            item: $viewModel.todayItems[index],
-                            isHighlighted: isTopPriorityItem(at: index),
+                            item: item,
+                            isHighlighted: isHighlighted,
                             isArrow: isArrow,
+                            backgroundColor: Color.mainNavy,
+                            
                             onTodoTap: { todo in
                                 selectTodo = todo
                                 showTodoAlert = true
@@ -43,26 +46,18 @@ struct TodayView: View {
                         )
                         .padding(.horizontal)
                         .onDrag {
-                            viewModel.dragItem = viewModel.todayItems[index]
-                            return NSItemProvider()
+                            viewModel.dragTodayItem = item.wrappedValue
+                            return NSItemProvider(object: String(item.id.hashValue) as NSString)
                         }
-                        .onDrop(
-                            of: [.text],
-                            delegate: DropViewDelegate(
-                                item: $viewModel.todayItems[index],
-                                items: $viewModel.todayItems,
-                                draggedItem: $viewModel.dragItem,
-                                onDrop: viewModel.dropAction
-                            )
-                        )
+                        .onDrop(of: [.text], delegate: DropViewDelegate(item: item, draggedItem: $viewModel.dragTodayItem, onDrop: viewModel.dropActionForToday))
                     }
-
+                    
                     WindDownFooterView(windDownTime: "11 PM")
                 }
                 .padding(.vertical)
             }
             .background(Color.grayBlack)
-
+            
             if showTodoAlert, let todo = selectTodo {
                 TodoAlertView(
                     todoTitle: todo.toDoTitle,
@@ -79,7 +74,7 @@ struct TodayView: View {
                 .background(Color.black.opacity(0.4))
                 .edgesIgnoringSafeArea(.all)
             }
-
+            
             if showScheduleAlert, let schedule = selectSchedule {
                 ScheduleAlertView(
                     scheduleTitle: schedule.scheduleTitle,
@@ -100,23 +95,26 @@ struct TodayView: View {
         }
     }
     
-    private func isTopPriorityItem(at index: Int) -> Bool {
-        guard case .todo(let todo) = viewModel.todayItems[index], !todo.isChecked else { return false }
-        return viewModel.todayItems.prefix(index + 1).filter {
+    private func isTopPriorityItem(at item: TodayItemDataModel) -> Bool {
+        guard case .todo(let todo) = item, !todo.isChecked else { return false }
+        let uncheckedItems = viewModel.todayItems.filter {
             if case .todo(let t) = $0, !t.isChecked { return true }
             return false
-        }.count == 1
+        }
+        return uncheckedItems.first == item
     }
 }
 
 struct TodayListItemView: View {
     @Binding var item: TodayItemDataModel
-
+    
     var isHighlighted: Bool
     var isArrow: Bool
+    var backgroundColor: Color
+    
     var onTodoTap: (ToDoListDataModel) -> Void
     var onScheduleTap: (ScheduleListDataModel) -> Void
-
+    
     var body: some View {
         HStack {
             if isArrow {
@@ -128,7 +126,7 @@ struct TodayListItemView: View {
                     .frame(width: 20)
                     .padding(.trailing, 8)
             }
-
+            
             switch item {
             case .todo(let todo):
                 ToDoListCell(
@@ -137,13 +135,14 @@ struct TodayListItemView: View {
                     toDoTitle: todo.toDoTitle,
                     dueDate: todo.dueDate,
                     priorityType: todo.priorityType,
-                    isHighlighted: isHighlighted
+                    isHighlighted: isHighlighted,
+                    backgroundColor: backgroundColor
                 )
                 .contentShape(Rectangle())
                 .onTapGesture {
                     onTodoTap(todo)
                 }
-
+                
             case .schedule(let schedule):
                 ScheduleListCell(
                     colorType: schedule.colorType,
@@ -157,29 +156,5 @@ struct TodayListItemView: View {
                 }
             }
         }
-    }
-}
-
-struct DropViewDelegate: DropDelegate {
-    @Binding var item: TodayItemDataModel
-    @Binding var items: [TodayItemDataModel]
-    @Binding var draggedItem: TodayItemDataModel?
-    
-    let onDrop: (TodayItemDataModel?, TodayItemDataModel) -> Void
-    
-    func dropUpdated(info: DropInfo) -> DropProposal? {
-        DropProposal(operation: .move)
-    }
-    
-    func performDrop(info: DropInfo) -> Bool {
-        withAnimation {
-            draggedItem = nil
-        }
-        return true
-    }
-    
-    func dropEntered(info: DropInfo) {
-        guard let draggedItem else { return }
-        onDrop(draggedItem, item)
     }
 }
