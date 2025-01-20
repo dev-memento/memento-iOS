@@ -42,10 +42,12 @@ class AuthViewModel: ObservableObject {
     // 구글 로그인을 초기화하고 인증을 시작하는 핵심 함수
     func signInWithGoogle() {
         if GIDSignIn.sharedInstance.hasPreviousSignIn() {
+            // 이전 로그인 세션 복구
             GIDSignIn.sharedInstance.restorePreviousSignIn { [unowned self] user, error in
                 authenticateUser(for: user, with: error)
             }
         } else {
+            // 새로운 로그인 시도
             guard let clientID = FirebaseApp.app()?.options.clientID else { return }
             
             let configuration = GIDConfiguration(clientID: clientID)
@@ -54,31 +56,52 @@ class AuthViewModel: ObservableObject {
             guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
             guard let rootViewController = windowScene.windows.first?.rootViewController else { return }
             
-            GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) {[unowned self] result, error in
-                guard let result = result else { return }
+            GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { [unowned self] result, error in
+                guard let result = result else {
+                    // 로그인 실패 처리
+                    self.errorMessage = error?.localizedDescription ?? "Google 로그인 실패"
+                    self.isAuthenticated = false
+                    return
+                }
                 authenticateUser(for: result.user, with: error)
             }
         }
     }
-    
+
     // Google 로그인 결과를 Firebase로 연결하여 사용자를 인증하는 함수
     private func authenticateUser(for user: GIDGoogleUser?, with error: Error?) {
         if let error = error {
-            print(error.localizedDescription)
+            print("Google 로그인 실패: \(error.localizedDescription)")
+            self.errorMessage = error.localizedDescription
+            self.isAuthenticated = false
             return
         }
         
-        guard let accessToken = user?.accessToken.tokenString, let idToken = user?.idToken?.tokenString else { return }
+        guard let accessToken = user?.accessToken.tokenString, let idToken = user?.idToken?.tokenString else {
+            print("Google 사용자 토큰 누락")
+            self.errorMessage = "Google 사용자 토큰이 누락되었습니다."
+            self.isAuthenticated = false
+            return
+        }
+        
         let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: accessToken)
         
-        Auth.auth().signIn(with: credential) { (_, error) in
+        // Firebase 인증 처리
+        Auth.auth().signIn(with: credential) { [weak self] _, error in
+            guard let self = self else { return }
+            
             if let error = error {
-                print(error.localizedDescription)
+                print("Firebase 인증 실패: \(error.localizedDescription)")
+                self.errorMessage = error.localizedDescription
+                self.isAuthenticated = false
             } else {
-                print("Google 로그인 성공")
+                print("Google 로그인 및 Firebase 인증 성공")
+                self.errorMessage = nil
+                self.isAuthenticated = true
             }
         }
     }
+
     
     func signOutWithGoogle() {
         GIDSignIn.sharedInstance.signOut()

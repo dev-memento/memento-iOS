@@ -193,5 +193,5 @@ private struct NextButton: View {
 }
 
 #Preview {
-    WorkSelectionView().environmentObject(OnboardingViewModel())
+    WorkSelectionView().environmentObject(OnboardingViewModel(authViewModel: AuthViewModel()))
 }

@@ -164,5 +164,5 @@ private struct NextButton: View {
 }
 
 #Preview {
-    SleepCycleSettingView().environmentObject(OnboardingViewModel())
+    SleepCycleSettingView().environmentObject(OnboardingViewModel(authViewModel: AuthViewModel()))
 }

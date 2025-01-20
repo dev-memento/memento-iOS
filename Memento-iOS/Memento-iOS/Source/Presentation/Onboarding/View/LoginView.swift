@@ -14,7 +14,6 @@ import _AuthenticationServices_SwiftUI
 
 struct LoginView: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
-    @StateObject private var authViewModel = AuthViewModel()
     
     var body: some View {
         NavigationStack(path: $viewModel.navigationPath) {
@@ -25,7 +24,7 @@ struct LoginView: View {
                     LoginHeaderView()
                         .padding(.top, 115)
                     
-                    LoginButtons(authViewModel: authViewModel)
+                    LoginButtons(authViewModel: viewModel.authViewModel) // viewModel에서 authViewModel 사용
                         .padding(.top, 103.2)
                     
                     TermsOfUseView()
@@ -77,8 +76,7 @@ private struct LoginHeaderView: View {
 // MARK: - Login Buttons
 
 private struct LoginButtons: View {
-    @EnvironmentObject var viewModel: OnboardingViewModel
-    @ObservedObject var authViewModel: AuthViewModel
+    @ObservedObject var authViewModel: AuthViewModel // ViewModel 전달받음
     
     var body: some View {
         VStack(alignment: .center, spacing: 18) {
@@ -109,7 +107,7 @@ private struct LoginButtons: View {
                 }
             )
             .frame(width: UIScreen.main.bounds.width * 0.95, height: 46)
-            .background(Color.clear) // Apple 버튼 투명 처리
+            .background(Color.clear)
             .overlay(
                 HStack(spacing: 8) {
                     Image(.img_apple)
@@ -121,10 +119,10 @@ private struct LoginButtons: View {
                         .font(.system(size: 16))
                         .foregroundColor(.white)
                 }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 46)
-                    .background(Color.gray10)
-                    .allowsHitTesting(false) // 오버레이는 터치 이벤트를 차단
+                .frame(maxWidth: .infinity)
+                .frame(height: 46)
+                .background(Color.gray10)
+                .allowsHitTesting(false) // 오버레이는 터치 이벤트를 차단
             )
         }
     }
@@ -148,5 +146,5 @@ private struct TermsOfUseView: View {
 
 #Preview {
     LoginView()
-        .environmentObject(OnboardingViewModel())
+        .environmentObject(OnboardingViewModel(authViewModel: AuthViewModel()))
 }
