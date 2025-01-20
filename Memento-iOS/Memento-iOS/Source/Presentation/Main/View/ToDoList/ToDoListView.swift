@@ -39,7 +39,8 @@ struct ToDoListView: View {
                                     }
                                 }
                             ),
-                            isHighlighted: isHighlighted
+                            isHighlighted: isHighlighted,
+                            backgroundColor: Color.grayBlack
                         )
                         
                         .onDrag {
@@ -94,7 +95,9 @@ struct ToDoListDateView: View {
 
 struct ToDoListItemView: View {
     @Binding var item: ToDoListDataModel
+    
     var isHighlighted: Bool
+    var backgroundColor: Color
     
     var body: some View {
         VStack(spacing: 10) {
@@ -104,7 +107,8 @@ struct ToDoListItemView: View {
                 toDoTitle: item.toDoTitle,
                 dueDate: item.dueDate,
                 priorityType: item.priorityType,
-                isHighlighted: isHighlighted
+                isHighlighted: isHighlighted,
+                backgroundColor: backgroundColor
             )
         }
         .padding(.bottom, 8)

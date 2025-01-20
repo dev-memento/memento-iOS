@@ -25,7 +25,8 @@ struct TodayView: View {
                     TodayListItemView(
                         item: item,
                         isHighlighted: isHighlighted,
-                        isArrow: isArrow
+                        isArrow: isArrow,
+                        backgroundColor: Color.mainNavy
                     )
                     .padding(.horizontal)
                     .onDrag {
@@ -57,6 +58,7 @@ struct TodayListItemView: View {
     
     var isHighlighted: Bool
     var isArrow: Bool
+    var backgroundColor: Color
     
     var body: some View {
         HStack {
@@ -79,7 +81,8 @@ struct TodayListItemView: View {
                     toDoTitle: todo.toDoTitle,
                     dueDate: todo.dueDate,
                     priorityType: todo.priorityType,
-                    isHighlighted: isHighlighted
+                    isHighlighted: isHighlighted,
+                    backgroundColor: backgroundColor
                 )
             case .schedule(let schedule):
                 ScheduleListCell(

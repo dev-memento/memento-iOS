@@ -17,6 +17,7 @@ struct ToDoListCell: View {
     var priorityType: Priority
     
     var isHighlighted: Bool
+    var backgroundColor: Color
     
     var body: some View {
         HStack(spacing: 10) {
@@ -34,10 +35,26 @@ struct ToDoListCell: View {
             PriorityLabelView(priority: priorityType)
         }
         .frame(height: 68)
-        .background(ToDoBackgroundView(isHighlighted: isHighlighted))
+        .background(highlightedBackground)
         .opacity(isChecked ? 0.5 : 1.0)
     }
     
+    private var highlightedBackground: some View {
+        if isHighlighted {
+            return AnyView(
+                LinearGradient(
+                    stops: [
+                        Gradient.Stop(color: Color(red: 0.09, green: 0.1, blue: 0.15), location: 0.00),
+                        Gradient.Stop(color: Color(red: 0.26, green: 0.27, blue: 0.4), location: 1.00),
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+        } else {
+            return AnyView(backgroundColor)
+        }
+    }
 }
 
 struct CheckBoxView: View {
@@ -73,6 +90,7 @@ struct DueDateView: View {
             Image(.img_notion)
             Image(.ic_deadline)
                 .padding(.leading, 10)
+                .foregroundColor(Color.gray05)
             Text(date)
                 .applyFont(.detail_r_12)
                 .foregroundColor(Color.gray05)
@@ -91,24 +109,5 @@ struct PriorityLabelView: View {
         }
         .padding(.top, 10)
         .padding(.trailing, 8)
-    }
-}
-
-struct ToDoBackgroundView: View {
-    var isHighlighted: Bool
-    
-    var body: some View {
-        if isHighlighted {
-            LinearGradient(
-                stops: [
-                    Gradient.Stop(color: Color(red: 0.09, green: 0.1, blue: 0.15), location: 0.00),
-                    Gradient.Stop(color: Color(red: 0.26, green: 0.27, blue: 0.4), location: 1.00),
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        } else {
-            Color.mainNavy
-        }
     }
 }
