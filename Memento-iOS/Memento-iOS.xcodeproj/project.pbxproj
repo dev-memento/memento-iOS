@@ -19,6 +19,7 @@
 
 /* Begin PBXFileReference section */
 		830F3C562D2A73BD00254FDE /* Memento-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Memento-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9D0BF1662D3E6BD50070C42B /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -113,6 +114,7 @@
 		830F3C4D2D2A73BD00254FDE = {
 			isa = PBXGroup;
 			children = (
+				9D0BF1662D3E6BD50070C42B /* Config.xcconfig */,
 				9D57D6E32D3AA104002AB064 /* Memento-iOS */,
 				2F459C412D37C91B00EDD537 /* Frameworks */,
 				830F3C572D2A73BD00254FDE /* Products */,

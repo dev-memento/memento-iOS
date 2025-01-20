@@ -34,6 +34,17 @@ struct LoginView: View {
                     Spacer()
                 }
             }
+            
+            .onAppear {
+                viewModel.checkHealthAPI { success in
+                    if success {
+                        print("Success")
+                    } else {
+                        print("Failed")
+                    }
+                }
+            }
+            
             .navigationDestination(for: OnboardingNavigationDestination.self) { destination in
                 switch destination {
                 case .sleepCycleSetting:
