@@ -35,6 +35,7 @@
 				"GoogleService-Info.plist",
 				"Preview Content/Preview Assets.xcassets",
 				Resource/Assets.xcassets,
+				Source/Component/Alert/CustomActionSheetView.swift,
 				Source/Component/Alert/ScheduleAlertView.swift,
 				Source/Component/Alert/TodoAlertView.swift,
 				Source/Component/CustomTextEditor.swift,
