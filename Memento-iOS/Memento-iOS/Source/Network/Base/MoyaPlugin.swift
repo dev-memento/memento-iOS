@@ -96,8 +96,7 @@ final class MoyaPlugin: PluginType {
         case -1004: return "🤖🔥Server connection failure🔥🤖"          // 서버 연결 실패
         case 401: return "🤖🔥Certification expires🔥🤖"                // 인증 만료 (재로그인 필요)
         case 403: return "🤖🔥No permission🔥🤖"                        // 권한 없음
-        default: return "🤖🔥unknown network error [CODE: \(code)🔥🤖"  // 알 수 없는 오류
+        default: return "🤖🔥unknown network error [CODE: \(code)]🔥🤖"  // 알 수 없는 오류
         }
     }
-    
 }
