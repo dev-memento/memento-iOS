@@ -74,7 +74,6 @@ struct ToDoListDateView: View {
     var body: some View {
         VStack(spacing: 0) {
             Divider()
-                .frame(height: 1)
                 .background(Color.gray07)
                 .frame(height: 10)
                 .padding(.bottom, 2)
@@ -113,11 +112,4 @@ struct ToDoListItemView: View {
         }
         .padding(.bottom, 8)
     }
-}
-
-#Preview {
-    ToDoListView(viewModel: WeeklyCalendarViewModel(
-        mCalendarDataSource: MCalendarDataSource(),
-        mEventDataSource: MEventDatasource()
-    ))
 }

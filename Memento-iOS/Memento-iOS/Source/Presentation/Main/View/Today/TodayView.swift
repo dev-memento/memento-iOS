@@ -24,7 +24,9 @@ struct TodayView: View {
             ScrollView {
                 VStack(spacing: 8) {
                     WakeUpHeaderView(wakeUpTime: "8 AM")
-                    
+                        .padding(.leading, 50)
+                        .padding(.bottom, 17)
+
                     ForEach($viewModel.todayItems, id: \.wrappedValue.id) { item in
                         let isArrow = item.wrappedValue == viewModel.todayItems.first
                         let isHighlighted = isTopPriorityItem(at: item.wrappedValue)
@@ -53,6 +55,9 @@ struct TodayView: View {
                     }
                     
                     WindDownFooterView(windDownTime: "11 PM")
+                        .padding(.leading, 50)
+                        .padding(.top, 17)
+
                 }
                 .padding(.vertical)
             }
@@ -117,15 +122,10 @@ struct TodayListItemView: View {
     
     var body: some View {
         HStack {
-            if isArrow {
-                Image(systemName: "chevron.down")
-                    .foregroundColor(.white)
-                    .padding(.trailing, 8)
-            } else {
-                Spacer()
-                    .frame(width: 20)
-                    .padding(.trailing, 8)
-            }
+            Image(.ic_progress)
+                .padding(.leading, -10)
+                .padding(.trailing, 5)
+                .opacity(isArrow ? 1 : 0)
             
             switch item {
             case .todo(let todo):
@@ -157,4 +157,11 @@ struct TodayListItemView: View {
             }
         }
     }
+}
+
+#Preview{
+    TodayView(viewModel: WeeklyCalendarViewModel(
+        mCalendarDataSource: MCalendarDataSource(),
+        mEventDataSource: MEventDatasource()
+    ))
 }
