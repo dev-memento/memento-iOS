@@ -19,6 +19,7 @@
 
 /* Begin PBXFileReference section */
 		830F3C562D2A73BD00254FDE /* Memento-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Memento-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9D2B48AC2D3E4443006863DA /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -107,6 +108,7 @@
 		830F3C4D2D2A73BD00254FDE = {
 			isa = PBXGroup;
 			children = (
+				9D2B48AC2D3E4443006863DA /* Config.xcconfig */,
 				9D57D6E32D3AA104002AB064 /* Memento-iOS */,
 				2F459C412D37C91B00EDD537 /* Frameworks */,
 				830F3C572D2A73BD00254FDE /* Products */,
@@ -219,6 +221,7 @@
 /* Begin XCBuildConfiguration section */
 		830F3C622D2A73BF00254FDE /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9D2B48AC2D3E4443006863DA /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -284,6 +287,7 @@
 		};
 		830F3C632D2A73BF00254FDE /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9D2B48AC2D3E4443006863DA /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;

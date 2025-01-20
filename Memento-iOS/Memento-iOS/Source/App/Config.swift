@@ -10,7 +10,7 @@ import Foundation
 enum Config {
     enum Keys {
         enum Plist {
-            static let baseURL = "BASE_URL"
+            static let BASE_URL = "BASE_URL"
         }
     }
     
@@ -24,9 +24,9 @@ enum Config {
 
 extension Config {
     static let baseURL: String = {
-        guard let key = Config.infoDictionary[Keys.Plist.baseURL] as? String else {
+        guard let key = Config.infoDictionary[Keys.Plist.BASE_URL] as? String else {
             fatalError("🍞⛔️BASE_URL is not set in plist for this configuration⛔️🍞")
         }
-        return key
+        return "http://" + key
     }()
 }
