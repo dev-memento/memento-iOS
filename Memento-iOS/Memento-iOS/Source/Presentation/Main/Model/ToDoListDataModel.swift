@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ToDoListDataModel: Identifiable {
+struct ToDoListDataModel: Identifiable, Equatable {
     var id = UUID()
     var colorType: String
     var toDoTitle: String

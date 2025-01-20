@@ -13,7 +13,7 @@ import MCalendar
 
 final class WeeklyCalendarViewModel: ObservableObject {
     @Published var allDayItems: [AllDayListDataModel] = [
-        .init(colorType: "mementoRed", allDayTitle: "박익범 가정방문 어쩌고저쩌고어쩌라고"),
+        .init(colorType: "mementoRed", allDayTitle: "김가현 땅스부대찌개에서 부대찌개 사오고 자기가 하나부터 열까지 다 끌ㅎ인척하던데 진짜 양심이 있는거냐 미친거야 미친거냐 미친거임?미친걸까 미친 ㅋㅋ "),
         .init(colorType: "mementoOrange", allDayTitle: "지금은수요일새벽5시반"),
         .init(colorType: "mementoLightGreen", allDayTitle: "마라샹궈먹었능데마싯다.."),
         .init(colorType: "mementoOrange", allDayTitle: "오늘커피6샷마심레전드"),
@@ -40,7 +40,8 @@ final class WeeklyCalendarViewModel: ObservableObject {
         ToDoListDataModel(colorType: "mementoPink", toDoTitle: "투두5", dueDate: "Today", priorityType: .immediate, isChecked: false)
     ]
     
-    @Published var dragItem: TodayItemDataModel?
+    @Published var dragTodayItem: TodayItemDataModel?
+    @Published var dragTodoItem: ToDoListDataModel?
     @Published var dropIndex: Int?
     
     @Published var mCallendarDataSource: MCalendarDataSource
@@ -59,23 +60,30 @@ final class WeeklyCalendarViewModel: ObservableObject {
         self.mCallendarDataSource = mCalendarDataSource
         self.mEventDataSource = mEventDataSource
         
+        
         makeDummyEvent()
         addOffsetDebounce()
     }
 }
 
 extension WeeklyCalendarViewModel {
-    func dropAction(dragItem: TodayItemDataModel?, dropItem: TodayItemDataModel) {
+    func dropActionForToday(dragItem: TodayItemDataModel?, dropItem: TodayItemDataModel) {
         guard let dragItem,
-              let toIndex = todayItems.firstIndex(where: { $0.id == dropItem.id }),
+              let dropIndex = todayItems.firstIndex(where: { $0.id == dropItem.id }),
               let fromIndex = todayItems.firstIndex(where: { $0.id == dragItem.id }),
               case .todo = dragItem else { return }
         
-        todayItems.move(fromOffsets: IndexSet(integer: fromIndex), toOffset: toIndex > fromIndex ? toIndex + 1 : toIndex)
+        todayItems.move(fromOffsets: IndexSet(integer: fromIndex),
+                        toOffset: dropIndex > fromIndex ? dropIndex + 1 : dropIndex)
+    }
+    
+    func dropActionForToDoList(dragItem: ToDoListDataModel?, dropItem: ToDoListDataModel) {
+        guard let dragItem,
+              let dropIndex = toDoListItems.firstIndex(where: { $0.id == dropItem.id }),
+              let fromIndex = toDoListItems.firstIndex(where: { $0.id == dragItem.id }) else { return }
         
-        //        withAnimation {
-        //            todayItems.move(fromOffsets: IndexSet(integer: fromIndex), toOffset: toIndex > fromIndex ? toIndex + 1 : toIndex)
-        //        }
+        toDoListItems.move(fromOffsets: IndexSet(integer: fromIndex),
+                           toOffset: dropIndex > fromIndex ? dropIndex + 1 : dropIndex)
     }
     
     func makeDummyEvent() {

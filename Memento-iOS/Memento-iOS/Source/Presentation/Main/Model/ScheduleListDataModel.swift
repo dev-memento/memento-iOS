@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ScheduleListDataModel: Identifiable {
+struct ScheduleListDataModel: Identifiable, Equatable {
     var id = UUID()
     var colorType: String
     var scheduleTitle: String

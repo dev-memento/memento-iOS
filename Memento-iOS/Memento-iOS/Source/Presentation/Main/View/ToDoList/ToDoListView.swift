@@ -13,7 +13,7 @@ import MCalendar
 struct ToDoListView: View {
     @ObservedObject var viewModel: WeeklyCalendarViewModel
     
-    let dates = ["Jan 16", "Jan 17", "Jan 18", "Jan 19"]
+    let dates = ["Jan 18", "Jan 19", "Jan 20", "Jan 21", "Jan 22"]
     
     var body: some View {
         ScrollView {
@@ -25,9 +25,9 @@ struct ToDoListView: View {
                     let sortedItems = viewModel.toDoListItems
                         .sorted { !$0.isChecked && $1.isChecked }
                     
-                    ForEach(sortedItems.indices, id: \.self) { index in
-                        let originalIndex = viewModel.toDoListItems.firstIndex(where: { $0.id == sortedItems[index].id })!
-                        let isHighlighted = isTopPriorityItem(at: index, items: sortedItems)
+                    ForEach($viewModel.toDoListItems, id: \.id) { item in
+                        let originalIndex = viewModel.toDoListItems.firstIndex(where: { $0 == item.wrappedValue})!
+                        let isHighlighted = isTopPriorityItem(at: item.wrappedValue, items: sortedItems)
                         
                         ToDoListItemView(
                             item: Binding(
@@ -41,19 +41,30 @@ struct ToDoListView: View {
                             ),
                             isHighlighted: isHighlighted
                         )
+                        
+                        .onDrag {
+                            viewModel.dragTodoItem = item.wrappedValue
+                            return NSItemProvider(object: String(item.id.hashValue) as NSString)
+                        }
+                        .onDrop(of: [.text], delegate: DropViewDelegate(item: item, draggedItem: $viewModel.dragTodoItem, onDrop: viewModel.dropActionForToDoList))
                     }
                 }
-                
                 Spacer()
             }
         }
         .background(Color.grayBlack)
     }
     
-    private func isTopPriorityItem(at index: Int, items: [ToDoListDataModel]) -> Bool {
-        guard !items[index].isChecked else { return false }
-        return items.prefix(index + 1).filter { !$0.isChecked }.count == 1
+    
+    private func isTopPriorityItem(at item: ToDoListDataModel, items: [ToDoListDataModel]) -> Bool {
+        guard !item.isChecked else { return false }
+        guard let currentIndex = items.firstIndex(where: { $0 == item }) else {
+            return false
+        }
+        let uncheckedCount = items.prefix(upTo: currentIndex).filter { !$0.isChecked }.count
+        return uncheckedCount == 0
     }
+    
 }
 
 struct ToDoListDateView: View {
