@@ -136,7 +136,7 @@ struct TodayWeeklyCalendarView: View {
     private func pageView(for item: MCalendarEventList) -> some View {
         VStack(spacing: 8) {
             AllDayListView(items: viewModel.allDayItems)
-                .padding(.top, 4)
+                .padding(.vertical, 4)
             
             todayList(item: item)
         }

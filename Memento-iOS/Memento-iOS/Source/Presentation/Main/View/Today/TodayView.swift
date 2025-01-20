@@ -26,7 +26,7 @@ struct TodayView: View {
                     WakeUpHeaderView(wakeUpTime: "8 AM")
                         .padding(.leading, 50)
                         .padding(.bottom, 17)
-
+                    
                     ForEach($viewModel.todayItems, id: \.wrappedValue.id) { item in
                         let isArrow = item.wrappedValue == viewModel.todayItems.first
                         let isHighlighted = isTopPriorityItem(at: item.wrappedValue)
@@ -57,9 +57,7 @@ struct TodayView: View {
                     WindDownFooterView(windDownTime: "11 PM")
                         .padding(.leading, 50)
                         .padding(.top, 17)
-
                 }
-                .padding(.vertical)
             }
             .background(Color.grayBlack)
             
@@ -147,7 +145,8 @@ struct TodayListItemView: View {
                 ScheduleListCell(
                     colorType: schedule.colorType,
                     scheduleTitle: schedule.scheduleTitle,
-                    time: schedule.startTime,
+                    startTime: schedule.startTime,
+                    endTime: schedule.endTime,
                     isCompleted: schedule.isCompleted
                 )
                 .contentShape(Rectangle())
