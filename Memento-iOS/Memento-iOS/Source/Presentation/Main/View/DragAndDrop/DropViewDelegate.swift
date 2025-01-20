@@ -14,7 +14,6 @@ struct DropViewDelegate<Item>: DropDelegate where Item: Identifiable {
     let onDrop: (Item?, Item) -> Void
     
     func performDrop(info: DropInfo) -> Bool {
-        print("performDrop")
         draggedItem = nil
         
         return true
