@@ -119,9 +119,6 @@ class AuthViewModel: ObservableObject {
     }
     
     private func signInWithAppleCompletion(_ result: Result<ASAuthorization, Error>) {
-        isLoading = true
-        defer { isLoading = false }
-        
         switch result {
         case .success(let authorization):
             if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
@@ -131,10 +128,21 @@ class AuthViewModel: ObservableObject {
                 
                 print("Apple ID: \(userIdentifier), Full Name: \(String(describing: fullName)), Email: \(String(describing: email))")
                 
-                self.isAuthenticated = true
+                // Firebase Auth로 Apple 인증 정보 전달
+                Task { @MainActor in
+                    do {
+                        // Firebase 인증 처리 (필요한 경우)
+                        self.errorMessage = nil
+                        self.isAuthenticated = true
+                    } catch {
+                        self.errorMessage = error.localizedDescription
+                        self.isAuthenticated = false
+                    }
+                }
             }
         case .failure(let error):
-            errorMessage = error.localizedDescription
+            self.errorMessage = error.localizedDescription
+            self.isAuthenticated = false
         }
     }
 }

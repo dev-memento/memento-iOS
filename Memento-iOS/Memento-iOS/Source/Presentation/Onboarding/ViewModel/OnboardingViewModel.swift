@@ -48,8 +48,12 @@ final class OnboardingViewModel: ObservableObject {
     
     var authViewModel: AuthViewModel
     
+    // MARK: - Properties
+    private var cancellables = Set<AnyCancellable>()
+    
     init(authViewModel: AuthViewModel) {
         self.authViewModel = authViewModel
+        setupAuthStateSubscription()
     }
     
     // MARK: - Data Models
@@ -139,29 +143,24 @@ extension OnboardingViewModel {
 
     func handleAppleLogin(request: ASAuthorizationAppleIDRequest) async {
         isLoading = true
-        print("isLoading \(isLoading)")
+        
         // Apple 로그인 요청 생성
         authViewModel.send(action: .appleLogin(request))
-        
-        // 로그인 결과 관찰
-        for await _ in Timer.publish(every: 0.5, on: .main, in: .common).autoconnect().values {
-            if authViewModel.isAuthenticated {
-                // 로그인 성공 시 SleepCycleSetting 화면으로 전환
-                navigateToNext(.sleepCycleSetting)
-                break
-            } else if let error = authViewModel.errorMessage {
-                // 로그인 실패 시 에러 메시지 표시
-                errorMessage = error
-                break
+    }
+
+    // AuthViewModel 상태 변화 감지를 위한 메서드
+    private func setupAuthStateSubscription() {
+        authViewModel.$isAuthenticated
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isAuthenticated in
+                guard let self = self else { return }
+                if isAuthenticated {
+                    self.navigateToNext(.sleepCycleSetting)
+                }
             }
-        }
-        
-        isLoading = false
-        print("isLoading \(isLoading)")
+            .store(in: &cancellables)
     }
 }
-
-
 
 // MARK: - Helper Methods for OnboardingViewModel
 extension OnboardingViewModel {
