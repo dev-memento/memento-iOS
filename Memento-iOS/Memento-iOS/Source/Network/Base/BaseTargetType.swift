@@ -27,9 +27,9 @@ enum UtilPath: String {
     case todo = "/v1/todos"
     case tag = "/v1/tags"
     case schedule = "/v1/schedules"
-    case hankki = "/v1/stores"
     case auth = "/v1/auth"
     case user = "/v1/members"
+    case health = "/health"
 }
 
 protocol BaseTargetType: TargetType {
