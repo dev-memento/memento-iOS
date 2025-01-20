@@ -15,21 +15,17 @@ struct DropViewDelegate<Item>: DropDelegate where Item: Identifiable {
     
     func performDrop(info: DropInfo) -> Bool {
         print("performDrop")
-        DispatchQueue.main.async {
-                    draggedItem = nil // 상태를 즉시 해제
-                }
+        draggedItem = nil
+        
         return true
     }
     
     func dropEntered(info: DropInfo) {
-        guard let draggedItem else { return }
-       
-            onDrop(draggedItem, item)
-      
+        onDrop(draggedItem, item)
     }
     
     func dropUpdated(info: DropInfo) -> DropProposal? {
-        return nil
+        DropProposal(operation: .move)
     }
     
     func dropExited(info: DropInfo) {
