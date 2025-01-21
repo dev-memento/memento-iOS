@@ -51,8 +51,6 @@
 				Source/Presentation/Add/AddSchedule/View/AllDayCheckBoxButton.swift,
 				Source/Presentation/Add/AddSchedule/View/DateTimePickerSectionView.swift,
 				Source/Presentation/Add/AddSchedule/View/DateTimePickerView.swift,
-				Source/Presentation/Add/AddSchedule/View/RepeatPickerView.swift,
-				Source/Presentation/Add/AddSchedule/View/RepeatTypeListView.swift,
 				Source/Presentation/Add/AddSchedule/ViewModel/AddEventTitleViewModel.swift,
 				Source/Presentation/Add/Common/PickerButton/Model/PickerButtonType.swift,
 				Source/Presentation/Add/Common/PickerButton/View/PickerButton.swift,
