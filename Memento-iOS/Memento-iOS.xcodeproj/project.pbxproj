@@ -18,6 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2F45BA0D2D3F927000EEC829 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		830F3C562D2A73BD00254FDE /* Memento-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Memento-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -35,17 +36,56 @@
 				"GoogleService-Info.plist",
 				"Preview Content/Preview Assets.xcassets",
 				Resource/Assets.xcassets,
+				Source/Component/Alert/CustomActionSheetView.swift,
 				Source/Component/Alert/ScheduleAlertView.swift,
 				Source/Component/Alert/TodoAlertView.swift,
+				Source/Component/CustomTextEditor.swift,
+				Source/Component/EisenhowerMatrixView.swift,
 				Source/Component/NeonAnimationView.swift,
 				Source/Data/MCalendarEventList.swift,
 				Source/Data/MEventDataSource.swift,
+				Source/Presentation/Add/AddSchedule/Model/DateTimeSelection.swift,
+				Source/Presentation/Add/AddSchedule/View/AddEventTitleView.swift,
+				Source/Presentation/Add/AddSchedule/View/AddScheduleView.swift,
+				Source/Presentation/Add/AddSchedule/View/AllDayCheckBoxButton.swift,
+				Source/Presentation/Add/AddSchedule/View/DateTimePickerSectionView.swift,
+				Source/Presentation/Add/AddSchedule/View/DateTimePickerView.swift,
+				Source/Presentation/Add/AddSchedule/ViewModel/AddEventTitleViewModel.swift,
+				Source/Presentation/Add/AddTodo/View/AddDeadlineView.swift,
+				Source/Presentation/Add/Common/PickerButton/View/PickerButton.swift,
+				Source/Presentation/Add/Common/PickerButton/ViewModel/BasePickerViewModel.swift,
+				Source/Presentation/Add/Common/PickerButton/ViewModel/PickerButtonViewModel.swift,
+				Source/Presentation/Add/Common/Protocols/Presentable.swift,
+				Source/Presentation/Add/AddTodo/View/AddTodoBottomView.swift,
+				Source/Presentation/Add/AddTodo/View/AddTodoHeaderView.swift,
+				Source/Presentation/Add/AddTodo/View/AddTodoTextView.swift,
+				Source/Presentation/Add/AddTodo/View/AddTodoView.swift,
+				Source/Presentation/Add/AddTodo/ViewModel/AddTodoHeaderViewModel.swift,
+				Source/Presentation/Add/AddTodo/ViewModel/AddTodoTextViewModel.swift,
+				Source/Presentation/Add/BrainDump/View/BrainDumpView.swift,
+				Source/Presentation/Add/Common/PickerButton/Model/PickerButtonType.swift,
+				Source/Presentation/Add/Common/PickerButton/View/PickerButton.swift,
+				Source/Presentation/Add/Common/PickerButton/ViewModel/BasePickerViewModel.swift,
+				Source/Presentation/Add/Common/PickerButton/ViewModel/PickerButtonViewModel.swift,
+				Source/Presentation/Add/Common/Protocols/Presentable.swift,
 				Source/Presentation/Add/Common/SegmentedMenu/Model/SegmentedMenuType.swift,
 				Source/Presentation/Add/Common/SegmentedMenu/View/SegmentedMenuView.swift,
 				Source/Presentation/Add/Common/SegmentedMenu/ViewModel/SegmentedMenuViewModel.swift,
+				Source/Presentation/Add/Common/Sheet/BaseSheetView.swift,
+				Source/Presentation/Add/Common/Sheet/SheetContainer.swift,
+				Source/Presentation/Add/Common/Sheet/SheetHeaderView.swift,
+				Source/Presentation/Add/Common/Tag/Model/Tag.swift,
+				Source/Presentation/Add/Common/Tag/View/TagListItem.swift,
+				Source/Presentation/Add/Common/Tag/View/TagListView.swift,
+				Source/Presentation/Add/Common/Tag/View/TagPickerButton.swift,
+				Source/Presentation/Add/Common/Tag/View/TagPickerSheetView.swift,
+				Source/Presentation/Add/Common/Tag/View/TagView.swift,
+				Source/Presentation/Main/View/DragAndDrop/DropViewDelegate.swift,
+				Source/Presentation/Main/View/ToDoList/ToDoListWeeklyCalendarView.swift,
 				"Source/Presentation/Onboarding/View/Launch Screen.storyboard",
 				Source/Presentation/Onboarding/ViewModel/AuthViewModel.swift,
 				Source/Presentation/Onboarding/ViewModel/OnboardingViewModel.swift,
+				Source/Utils/DynamicPresentationDetent.swift,
 			);
 			target = 830F3C552D2A73BD00254FDE /* Memento-iOS */;
 		};
@@ -107,6 +147,7 @@
 		830F3C4D2D2A73BD00254FDE = {
 			isa = PBXGroup;
 			children = (
+				2F45BA0D2D3F927000EEC829 /* Config.xcconfig */,
 				9D57D6E32D3AA104002AB064 /* Memento-iOS */,
 				2F459C412D37C91B00EDD537 /* Frameworks */,
 				830F3C572D2A73BD00254FDE /* Products */,
@@ -358,8 +399,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -392,8 +432,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

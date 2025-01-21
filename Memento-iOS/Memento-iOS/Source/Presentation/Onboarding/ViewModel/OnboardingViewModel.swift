@@ -62,7 +62,7 @@ final class OnboardingViewModel: ObservableObject {
     @Published var sleepCycleData: SleepCycleData = SleepCycleData()
     @Published var workSelectionData: WorkSelectionData = WorkSelectionData()
     @Published var workPreferenceData: WorkPreferenceData = WorkPreferenceData()
-
+    
     @Published var errorMessage: String?
     
     var authViewModel: AuthViewModel
@@ -74,7 +74,7 @@ final class OnboardingViewModel: ObservableObject {
         self.authViewModel = authViewModel
         setupAuthStateSubscription()
     }
-    
+
     // MARK: - Submit Onboarding Data
     
     /// 온보딩 데이터를 서버로 전송
@@ -153,5 +153,12 @@ extension OnboardingViewModel {
     /// WorkPreference 화면에서 Next 버튼 활성화 여부를 확인
     var isNextButtonEnabledForWorkPreference: Bool {
         SurveyQuestion.mockData.allSatisfy { workPreferenceData.selectedAnswers[$0.id] != nil }
+    }
+}
+
+
+extension OnboardingViewModel {
+    func getHealthCheck() {
+        
     }
 }

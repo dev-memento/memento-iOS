@@ -12,7 +12,7 @@ final class NetworkService {
     static let shared = NetworkService()
     
     private init() {}
-
-//    let todayService: TodayAPIServiceProtocol = TodayAPIService()
+    
+//    let scheduleService: ScheduleAPIServiceProtocol = ScheduleAPIService()
     
 }

@@ -8,28 +8,68 @@
 import SwiftUI
 
 import MDSKit
+import MCalendar
 
 struct ToDoListView: View {
-    @ObservedObject var viewModel = ToDoListViewModel()
+    @ObservedObject var viewModel: WeeklyCalendarViewModel
+    
+    let dates = ["Jan 18", "Jan 19", "Jan 20", "Jan 21", "Jan 22"]
     
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                ForEach(viewModel.toDoListItems.keys.sorted(), id: \.self) { date in
-                    ToDoListItemView(items: $viewModel.toDoListItems[date], date: date)
+                ForEach(dates, id: \.self) { date in
+                    ToDoListDateView(date: date)
+                        .padding(.bottom, 8)
+                    
+                    let sortedItems = viewModel.toDoListItems
+                        .sorted { !$0.isChecked && $1.isChecked }
+                    
+                    ForEach($viewModel.toDoListItems, id: \.id) { item in
+                        let originalIndex = viewModel.toDoListItems.firstIndex(where: { $0 == item.wrappedValue})!
+                        let isHighlighted = isTopPriorityItem(at: item.wrappedValue, items: sortedItems)
+                        
+                        ToDoListItemView(
+                            item: Binding(
+                                get: { viewModel.toDoListItems[originalIndex] },
+                                set: { newValue in
+                                    viewModel.toDoListItems[originalIndex] = newValue
+                                    if newValue.isChecked {
+                                        viewModel.toDoListItems.append(viewModel.toDoListItems.remove(at: originalIndex))
+                                    }
+                                }
+                            ),
+                            isHighlighted: isHighlighted,
+                            backgroundColor: Color.grayBlack
+                        )
+                        
+                        .onDrag {
+                            viewModel.dragTodoItem = item.wrappedValue
+                            return NSItemProvider(object: String(item.id.hashValue) as NSString)
+                        }
+                        .onDrop(of: [.text], delegate: DropViewDelegate(item: item, draggedItem: $viewModel.dragTodoItem, onDrop: viewModel.dropActionForToDoList))
+                    }
                 }
-                .padding(.top, 4)
-                
                 Spacer()
             }
         }
         .background(Color.grayBlack)
     }
+    
+    
+    private func isTopPriorityItem(at item: ToDoListDataModel, items: [ToDoListDataModel]) -> Bool {
+        guard !item.isChecked else { return false }
+        guard let currentIndex = items.firstIndex(where: { $0 == item }) else {
+            return false
+        }
+        let uncheckedCount = items.prefix(upTo: currentIndex).filter { !$0.isChecked }.count
+        return uncheckedCount == 0
+    }
+    
 }
 
-struct ToDoListItemView: View {
-    @Binding var items: [ToDoListDataModel]?
-    let date: String
+struct ToDoListDateView: View {
+    var date: String
     
     var body: some View {
         VStack(spacing: 0) {
@@ -48,33 +88,36 @@ struct ToDoListItemView: View {
             }
             .frame(height: 20)
             .padding(.bottom, 8)
-            
-            VStack(spacing: 10) {
-                let sortedItems = (items ?? []).sorted { !$0.isChecked && $1.isChecked }
-                ForEach(sortedItems.indices, id: \.self) { index in
-                    ToDoListCell(
-                        isChecked: Binding(
-                            get: { sortedItems[index].isChecked },
-                            set: { isChecked in
-                                if let originalIndex = items?.firstIndex(where: { $0.id == sortedItems[index].id }) {
-                                    items?[originalIndex].isChecked = isChecked
-                                    items?.sort { !$0.isChecked && $1.isChecked }
-                                }
-                            }
-                        ),
-                        colorType: sortedItems[index].colorType,
-                        toDoTitle: sortedItems[index].toDoTitle,
-                        dueDate: sortedItems[index].dueDate,
-                        priorityType: sortedItems[index].priorityType,
-                        isHighlighted: index == 0 && !sortedItems[index].isChecked
-                    )
-                }
-            }
-            .padding(.bottom, 8)
         }
+        .id(date)
     }
 }
 
-#Preview{
-    ToDoListView()
+struct ToDoListItemView: View {
+    @Binding var item: ToDoListDataModel
+    
+    var isHighlighted: Bool
+    var backgroundColor: Color
+    
+    var body: some View {
+        VStack(spacing: 10) {
+            ToDoListCell(
+                isChecked: $item.isChecked,
+                colorType: item.colorType,
+                toDoTitle: item.toDoTitle,
+                dueDate: item.dueDate,
+                priorityType: item.priorityType,
+                isHighlighted: isHighlighted,
+                backgroundColor: backgroundColor
+            )
+        }
+        .padding(.bottom, 8)
+    }
+}
+
+#Preview {
+    ToDoListView(viewModel: WeeklyCalendarViewModel(
+        mCalendarDataSource: MCalendarDataSource(),
+        mEventDataSource: MEventDatasource()
+    ))
 }
