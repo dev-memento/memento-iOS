@@ -38,6 +38,14 @@ struct DynamicPresentationDetent {
             case ranges.largeDeviceRange: detentHeight = 0.33
             default: detentHeight = 0.43
             }
+
+        case .deadline:
+            switch screenHeight {
+            case ranges.smallDeviceRange: detentHeight = 0.9
+            case ranges.mediumDeviceRange: detentHeight = 0.83
+            case ranges.largeDeviceRange: detentHeight = 0.8
+            default: detentHeight = 0.9
+            }
         }
 
         return [.fraction(detentHeight)]
