@@ -23,7 +23,7 @@ extension Date {
     }
     
     /// 문자열 날짜를 특정 포맷 날짜로 반환
-    static func fromString(_ dateString: String, format: String = "yyyy-MM-dd HH:mm:ss.SSSSSS") -> Date? {
+    static func dateFromString(_ dateString: String, format: String = "yyyy-MM-dd HH:mm:ss.SSSSSS") -> Date? {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = format
         dateFormatter.timeZone = TimeZone.current
@@ -33,8 +33,8 @@ extension Date {
 
     /// Start Date와 End Date의 소요 시간 (Duration Time)을 계산해주는 메소드
     static func calculateDuration(startDate: String, endDate: String, format: String = "yyyy-MM-dd HH:mm:ss.SSSSSS") -> Int {
-        guard let start = Date.fromString(startDate, format: format),
-              let end = Date.fromString(endDate, format: format) else {
+        guard let start = Date.dateFromString(startDate, format: format),
+              let end = Date.dateFromString(endDate, format: format) else {
             // 변환 실패 시 기본값 반환
             return 0
         }
