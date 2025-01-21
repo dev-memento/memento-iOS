@@ -21,7 +21,7 @@ struct AddEventTitleView: View {
         VStack {
             ZStack(alignment: .leading) {
                 if viewModel.isTitleEmpty {
-                    Text("Add your event")
+                    Text(StringLiteral.AddEvent.title)
                         .foregroundColor(.gray07)
                         .applyFont(.body_b_18)
                         .padding(.vertical, 11)
