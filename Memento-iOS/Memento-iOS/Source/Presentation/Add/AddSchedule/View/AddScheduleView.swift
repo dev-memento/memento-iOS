@@ -14,7 +14,7 @@ struct AddScheduleView: View {
     // MARK: - Properties
 
     @StateObject private var eventTitleViewModel = AddEventTitleViewModel()
-    @StateObject private var pickerViewModel = PickerButtonViewModel()
+    @StateObject private var pickerViewModel = AddSchedulePickerButtonViewModel()
 
     // MARK: - Body
 

@@ -14,7 +14,7 @@ struct AddDeadlineView: View {
     // MARK: - Properties
 
     @Environment(\.presentationMode) var presentationMode
-    @ObservedObject var viewModel: PickerButtonViewModel
+    @ObservedObject var viewModel: AddTodoPickerButtonViewModel
     @Binding var selectedDateText: String
 
     // MARK: - Body

@@ -11,10 +11,10 @@ import MDSKit
 
 struct SheetContainer<Content: View>: View {
 
-    let type: PickerButtonType
+    let type: AddSchedulePickerButtonType
     let content: Content
 
-    init(type: PickerButtonType, @ViewBuilder content: () -> Content) {
+    init(type: AddSchedulePickerButtonType, @ViewBuilder content: () -> Content) {
         self.type = type
         self.content = content()
     }

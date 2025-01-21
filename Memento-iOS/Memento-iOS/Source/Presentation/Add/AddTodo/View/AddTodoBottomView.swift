@@ -16,7 +16,9 @@ struct AddTodoBottomView: View {
     @ObservedObject var viewModel: AddTodoTextViewModel
     @State private var isDeadlinePresented: Bool = false
     @State private var selectedDateText: String = "Today"
-    @StateObject private var pickerViewModel = PickerButtonViewModel(type: .deadline)
+    @State private var selectedTagColor: Color = .gray05
+    @StateObject private var deadlineViewModel = AddTodoPickerButtonViewModel(type: .deadline)
+    @StateObject private var tagViewModel = AddTodoPickerButtonViewModel(type: .tag)
 
     // MARK: - Body
 
