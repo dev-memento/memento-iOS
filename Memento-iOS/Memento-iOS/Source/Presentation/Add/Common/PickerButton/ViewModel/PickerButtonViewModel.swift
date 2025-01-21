@@ -80,24 +80,15 @@ final class PickerButtonViewModel: BasePickerViewModel {
         switch pickerType {
         case .date:
             return selectedDate.formattedDate(with: "MMM d, yyyy")
-        case .endRepeat:
-            return isEndRepeatDateSelected
-            ? (endRepeatDate ?? selectedDate).formattedDate(with: "MMM d, yyyy")
-            : "Select Date"
-        case .repeat:
-            return repeatType.title
         case .time:
             return selectedDate.formattedDate(with: "h:mm a")
         case .tag:
             return selectedTag.title.isEmpty ? "Untitled" : selectedTag.title
+        case .deadline:
+            return Calendar.current.isDateInToday(selectedDate)
+            ? "Today"
+            : selectedDate.formattedDate(with: "MMM d")
         }
-    }
-
-    var titleColor: Color {
-        if pickerType == .endRepeat && !isEndRepeatDateSelected {
-            return .mementoBlue
-        }
-        return .gray02
     }
 
     // MARK: - Override methods
