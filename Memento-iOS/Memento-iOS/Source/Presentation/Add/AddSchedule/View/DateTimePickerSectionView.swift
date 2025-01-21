@@ -41,7 +41,6 @@ struct DateTimePickerSectionView: View {
         PickerButton(
             type: .date,
             title: formattedDate,
-            titleColor: .gray02,
             width: 124,
             action: { datePickerViewModel.togglePresentation() },
             viewModel: datePickerViewModel
@@ -64,7 +63,6 @@ struct DateTimePickerSectionView: View {
         PickerButton(
             type: .time,
             title: formattedTime,
-            titleColor: .gray02,
             width: 96,
             action: { timePickerViewModel.togglePresentation() },
             viewModel: timePickerViewModel

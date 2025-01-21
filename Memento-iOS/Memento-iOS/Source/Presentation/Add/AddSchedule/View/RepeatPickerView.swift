@@ -30,7 +30,6 @@ struct RepeatPickerView: View {
                 PickerButton(
                     type: .repeat,
                     title: viewModel.repeatType.title,
-                    titleColor: .gray02,
                     width: 200,
                     action: { repeatViewModel.togglePresentation() },
                     viewModel: repeatViewModel
@@ -64,7 +63,7 @@ struct RepeatPickerView: View {
                         title: viewModel.endRepeatDate?.formattedDate(
                             with: "MMM d, yyyy"
                         ) ?? "Select Date",
-                        titleColor: viewModel.endRepeatDate == nil ? .mementoBlue : .gray02,
+                        titleColor: viewModel.titleColor,
                         width: 200,
                         action: { endRepeatViewModel.togglePresentation()
                         },

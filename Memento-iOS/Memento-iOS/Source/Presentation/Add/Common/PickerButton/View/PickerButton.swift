@@ -15,7 +15,7 @@ struct PickerButton: View {
 
     let type: PickerButtonType
     let title: String
-    let titleColor: Color
+    var titleColor: Color = .gray02
     let width: CGFloat
     let action: () -> Void
 
@@ -46,7 +46,6 @@ struct PickerButton: View {
             PickerButton(
                 type: .date,
                 title: "Jan 31, 2025",
-                titleColor: .gray02,
                 width: 124,
                 action: {},
                 viewModel: PickerButtonViewModel()
@@ -55,7 +54,6 @@ struct PickerButton: View {
             PickerButton(
                 type: .time,
                 title: "8:53 AM",
-                titleColor: .gray02,
                 width: 96,
                 action: {},
                 viewModel: PickerButtonViewModel()
@@ -64,7 +62,15 @@ struct PickerButton: View {
             PickerButton(
                 type: .tag,
                 title: "Select Tag",
-                titleColor: .gray02,
+                width: 200,
+                action: {},
+                viewModel: PickerButtonViewModel()
+            )
+
+            PickerButton(
+                type: .endRepeat,
+                title: "Select Date",
+                titleColor: .mementoBlue,
                 width: 200,
                 action: {},
                 viewModel: PickerButtonViewModel()
