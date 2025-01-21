@@ -132,3 +132,12 @@ final class AddSchedulePickerButtonViewModel: BasePickerViewModel {
         }
     }
 }
+
+// MARK: - Protocols
+
+extension AddSchedulePickerButtonViewModel: TagSelectable {
+
+    func updateSelectedTag(_ tag: Tag) {
+        selectedTag = tag
+    }
+}

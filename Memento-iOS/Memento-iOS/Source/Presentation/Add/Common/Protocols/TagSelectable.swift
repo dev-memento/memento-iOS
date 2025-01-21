@@ -11,17 +11,3 @@ protocol TagSelectable {
     var selectedTag: Tag { get set }
     func updateSelectedTag(_ tag: Tag)
 }
-
-extension AddSchedulePickerButtonViewModel: TagSelectable {
-
-    func updateSelectedTag(_ tag: Tag) {
-        selectedTag = tag
-    }
-}
-
-extension AddTodoPickerButtonViewModel: TagSelectable {
-
-    func updateSelectedTag(_ tag: Tag) {
-        selectedTag = tag
-    }
-}

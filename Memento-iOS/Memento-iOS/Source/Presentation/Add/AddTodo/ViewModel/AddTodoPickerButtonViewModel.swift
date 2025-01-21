@@ -45,3 +45,12 @@ final class AddTodoPickerButtonViewModel: BasePickerViewModel {
         setPressedState(false)
     }
 }
+
+// MARK: - Protocols
+
+extension AddTodoPickerButtonViewModel: TagSelectable {
+
+    func updateSelectedTag(_ tag: Tag) {
+        selectedTag = tag
+    }
+}
