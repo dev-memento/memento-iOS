@@ -8,5 +8,5 @@
 import Foundation
 
 enum PickerButtonType {
-    case date, time, `repeat`, endRepeat, tag
+    case date, time, `repeat`, endRepeat, tag, deadline
 }
