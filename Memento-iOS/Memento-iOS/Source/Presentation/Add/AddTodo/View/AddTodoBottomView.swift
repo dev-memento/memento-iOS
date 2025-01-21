@@ -70,6 +70,14 @@ struct AddTodoBottomView: View {
                 .cornerRadius(2)
         }
         .frame(width: 42, height: 42)
+        .sheet(isPresented: $isTagPresented) {
+            AddTagView(viewModel: tagViewModel)
+                .presentationDetents(
+                    DynamicPresentationDetent.dynamicDetent(
+                        for: AddTodoPickerButtonType.tag
+                    )
+                )
+        }
     }
 
     private var matrixButton: some View {

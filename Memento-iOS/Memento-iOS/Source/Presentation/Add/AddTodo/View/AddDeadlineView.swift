@@ -50,7 +50,7 @@ struct AddDeadlineView: View {
                         .sheet(isPresented: $viewModel.isPresented) {
                             viewModel.isPresented = false
                         } content: {
-                            SheetContainer(type: .date) {
+                            SheetContainer(type: AddTodoPickerButtonType.date) {
                                 VStack {
                                     SheetHeaderView {
                                         viewModel.isPresented = false
