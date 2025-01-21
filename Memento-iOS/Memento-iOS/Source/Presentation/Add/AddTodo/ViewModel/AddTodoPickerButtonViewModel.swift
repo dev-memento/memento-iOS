@@ -31,7 +31,7 @@ final class AddTodoPickerButtonViewModel: BasePickerViewModel {
         switch pickerType {
         case .tag:
             return selectedTag.title.isEmpty ? "Untitled" : selectedTag.title
-        case .deadline:
+        case .date, .deadline:
             return Calendar.current.isDateInToday(selectedDate)
                 ? "Today"
                 : selectedDate.formattedDate(with: "MMM d")

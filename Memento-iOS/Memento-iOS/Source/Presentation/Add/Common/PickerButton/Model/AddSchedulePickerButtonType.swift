@@ -12,5 +12,5 @@ enum AddSchedulePickerButtonType {
 }
 
 enum AddTodoPickerButtonType {
-    case tag, deadline
+    case date, tag, deadline
 }

@@ -52,6 +52,14 @@ struct DynamicPresentationDetent {
         let ranges = DynamicPresentationDetent()
 
         switch type {
+        case .date:
+            switch screenHeight {
+            case ranges.smallDeviceRange: detentHeight = 0.6
+            case ranges.mediumDeviceRange: detentHeight = 0.53
+            case ranges.largeDeviceRange: detentHeight = 0.5
+            default: detentHeight = 0.6
+            }
+            
         case .deadline, .tag:
             switch screenHeight {
             case ranges.smallDeviceRange: detentHeight = 0.9
