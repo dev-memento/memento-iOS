@@ -21,7 +21,7 @@ struct TodayWeeklyCalendarView: View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
                 if let date = viewModel.selectedDate.date() {
-                    Text("\(date.makeTodayMonthForMMM()) \(date.makeTodayDayString())") // Jan 14
+                    Text("\(date.makeTodayMonthForMMM()) \(date.makeTodayDayString())")
                         .foregroundStyle(.white)
                         .applyFont(.suiteExtraBold(size: 32),
                                    lineHeight: 36)
@@ -141,8 +141,6 @@ struct TodayWeeklyCalendarView: View {
             todayList(item: item)
         }
     }
-    
-    
     
     private func makeIndex() {
         self.scrollTarget = (viewModel.mCallendarDataSource.currentIndex * 7) + viewModel.selectedDate.weekday.index

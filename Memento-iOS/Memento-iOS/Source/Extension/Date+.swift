@@ -13,6 +13,7 @@ extension Date {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = format
         dateFormatter.timeZone = timeZone
+        dateFormatter.locale = Locale(identifier: "en_US")
         return dateFormatter.string(from: self)
     }
 

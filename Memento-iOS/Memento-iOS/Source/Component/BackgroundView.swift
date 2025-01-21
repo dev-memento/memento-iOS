@@ -14,6 +14,12 @@ struct BackgroundView: View {
     }
 }
 
+struct BrainDumpBackgroundView: View {
+    var body: some View {
+        Color.gray10
+            .ignoresSafeArea()
+    }
+}
 
 #Preview {
     BackgroundView()
