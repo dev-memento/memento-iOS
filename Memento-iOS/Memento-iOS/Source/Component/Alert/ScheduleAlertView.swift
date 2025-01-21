@@ -19,7 +19,6 @@ struct ScheduleAlertView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            
             HStack {
                 Image(.ic_event)
                     .resizable()
@@ -105,38 +104,10 @@ struct ScheduleAlertView: View {
             Spacer()
             
             HStack(spacing: 15) {
-                Button(action: {
-                    onDelete()
-                }) {
-                    VStack {
-                        Image(.ic_delete)
-                            .foregroundColor(.mementoRed)
-                        Text(StringLiteral.Alert.delete)
-                    }
-                    .applyFont(.body_r_16)
-                    .foregroundColor(.mementoRed)
-                    .padding()
-                    .frame(width: 140, height: 74)
-                    .background(Color.labelImmediate15)
-                    .cornerRadius(2)
-                }
-                
-                Button(action: {
-                    onEdit()
-                }) {
-                    VStack {
-                        Image(.ic_edit)
-                        Text(StringLiteral.Alert.edit)
-                    }
-                    .applyFont(.body_r_16)
-                    .foregroundColor(.gray05)
-                    .padding()
-                    .frame(width: 140, height: 74)
-                    .background(Color.gray09)
-                    .cornerRadius(2)
-                }
+                DeleteButton(onDelete: onDelete)
+                EditButton(onEdit: onEdit)
             }
-            .padding(.bottom, 16)
+            .padding(.bottom, 26)
             .padding(.horizontal, 24)
         }
         .frame(width: 343, height: 332)
