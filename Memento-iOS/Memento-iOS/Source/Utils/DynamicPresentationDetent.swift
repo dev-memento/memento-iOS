@@ -14,9 +14,9 @@ struct DynamicPresentationDetent {
     let mediumDeviceRange = CGFloat(668)..<CGFloat(875) // 중간 기기
     let largeDeviceRange = CGFloat(875)..<CGFloat(957)  // 대형 기기
 
-    /// 기기 화면 크기에 따라 동적으로 Detent 값을 반환
+    /// 기기 화면 크기에 따라 동적으로 Detent 값을 반환(AddSchedule용 Detent)
     static func dynamicDetent(
-        for type: PickerButtonType
+        for type: AddSchedulePickerButtonType
     ) -> Set<PresentationDetent> {
         let screenHeight = UIScreen.main.bounds.height
         let detentHeight: CGFloat
@@ -38,8 +38,21 @@ struct DynamicPresentationDetent {
             case ranges.largeDeviceRange: detentHeight = 0.33
             default: detentHeight = 0.43
             }
+        }
 
-        case .deadline:
+        return [.fraction(detentHeight)]
+    }
+
+    /// 기기 화면 크기에 따라 동적으로 Detent 값을 반환(AddTodo용 Detent)
+    static func dynamicDetent(
+        for type: AddTodoPickerButtonType
+    ) -> Set<PresentationDetent> {
+        let screenHeight = UIScreen.main.bounds.height
+        let detentHeight: CGFloat
+        let ranges = DynamicPresentationDetent()
+
+        switch type {
+        case .deadline, .tag:
             switch screenHeight {
             case ranges.smallDeviceRange: detentHeight = 0.9
             case ranges.mediumDeviceRange: detentHeight = 0.83
