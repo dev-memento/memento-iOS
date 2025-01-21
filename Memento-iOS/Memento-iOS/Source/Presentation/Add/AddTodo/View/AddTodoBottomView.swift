@@ -33,8 +33,6 @@ struct AddTodoBottomView: View {
 
     // MARK: - UI Components
 
-    // MARK: Deadline Button
-
     private var deadlineButton: some View {
         Button(action: {
             isDeadlinePresented.toggle()
@@ -62,8 +60,6 @@ struct AddTodoBottomView: View {
         }
     }
 
-    // MARK: Tag Button
-
     private var tagButton: some View {
         Button(action: {}) {
             Image(.ic_tag)
@@ -73,8 +69,6 @@ struct AddTodoBottomView: View {
         }
         .frame(width: 42, height: 42)
     }
-
-    // MARK: Matrix Button
 
     private var matrixButton: some View {
         Button(action: {}) {
@@ -86,8 +80,6 @@ struct AddTodoBottomView: View {
         }
         .frame(width: 42, height: 42)
     }
-
-    // MARK: Enter Button
 
     private var enterButton: some View {
         Button(action: {
