@@ -21,4 +21,25 @@ extension Date {
     func makeCurrentDate() -> String {
         return self.formattedDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX", timeZone: TimeZone(abbreviation: "UTC")!)
     }
+    
+    /// 문자열 날짜를 특정 포맷 날짜로 반환
+    static func fromString(_ dateString: String, format: String = "yyyy-MM-dd HH:mm:ss.SSSSSS") -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = format
+        dateFormatter.timeZone = TimeZone.current
+        dateFormatter.locale = Locale(identifier: "en_US")
+        return dateFormatter.date(from: dateString)
+    }
+
+    /// Start Date와 End Date의 소요 시간 (Duration Time)을 계산해주는 메소드
+    static func calculateDuration(startDate: String, endDate: String, format: String = "yyyy-MM-dd HH:mm:ss.SSSSSS") -> Int {
+        guard let start = Date.fromString(startDate, format: format),
+              let end = Date.fromString(endDate, format: format) else {
+            // 변환 실패 시 기본값 반환
+            return 0
+        }
+        
+        // 초 단위 시간 차이 반환
+        return Int(end.timeIntervalSince(start))
+    }
 }
