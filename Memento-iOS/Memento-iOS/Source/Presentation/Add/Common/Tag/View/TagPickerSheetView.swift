@@ -45,50 +45,8 @@ struct TagPickerSheetView: View {
             isPressed = false
         }) {
             VStack {
-                HStack {
-                    Spacer()
-                    Button("OK") {
-                        isPresented = false
-                    }
-                    .applyFont(.body_r_14)
-                    .foregroundColor(Color.gray04)
-                    .padding(.top, 20)
-                    .padding(.bottom, 10)
-                    .padding(.trailing, 22)
-                }
-
-                List {
-                    ForEach(Tag.mockData) { tag in
-                        Button(action: {
-                            viewModel.selectedTag = tag
-                        }) {
-                            HStack {
-                                Circle()
-                                    .fill(tag.color)
-                                    .frame(width: 12, height: 12)
-
-                                Text(tag.title)
-                                    .applyFont(.body_r_14)
-                                    .foregroundColor(
-                                        viewModel.selectedTag.id == tag.id
-                                        ? .gray02
-                                        : .gray07
-                                    )
-
-                                Spacer()
-                            }
-                        }
-                        .listRowBackground(
-                            viewModel.selectedTag.id == tag.id
-                            ? Color.gray08
-                            : Color.clear
-                        )
-                    }
-                }
-                .listStyle(PlainListStyle())
-                .ignoresSafeArea()
-                .padding([.horizontal, .bottom], 10)
-                .scrollDisabled(Tag.mockData.count <= 4)
+                SheetHeaderView { isPresented = false }
+                TagListView(viewModel: viewModel)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.gray09)
