@@ -13,7 +13,8 @@ struct TagView: View {
 
     // MARK: - Properties
 
-    @StateObject private var viewModel = PickerButtonViewModel(type: .tag)
+//    @StateObject private var viewModel = PickerButtonViewModel(type: .tag)
+    @ObservedObject var viewModel: PickerButtonViewModel
 
     // MARK: - Body
 
@@ -27,16 +28,5 @@ struct TagView: View {
 
             TagPickerSheetView(viewModel: viewModel)
         }
-    }
-}
-
-// MARK: - Preview
-
-#Preview {
-    ZStack {
-        Color.gray10
-            .ignoresSafeArea()
-
-        TagView()
     }
 }
