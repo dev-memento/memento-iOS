@@ -53,32 +53,6 @@ struct OnboardingData {
 @MainActor
 final class OnboardingViewModel: ObservableObject {
     
-    var delegate: NetworkResult<Any>?
-    private let healthCheckService: HealthCheckAPIServiceProtocol
-    
-    init(healthCheckService: HealthCheckAPIServiceProtocol = HealthCheckAPIService()) {
-            self.healthCheckService = healthCheckService
-        }
-        
-    func checkHealthAPI(completion: @escaping (Bool) -> Void) {
-        healthCheckService.getHealthCheck { [weak self] result in
-                switch result {
-                case .success(let response):
-                    if let status = response?.data.status {
-                        print("Health Check Status: \(status)")
-                        completion(true)
-                    } else {
-                        print("Decoding error: No data available")
-                        completion(false)
-                    }
-                    
-                // TODO: - 에러 핸들링 필요
-                default:
-                    print("ERROR")
-                }
-            }
-        }
-
     // MARK: - Published Properties
     
     /// 네비게이션 스택을 관리
@@ -88,7 +62,7 @@ final class OnboardingViewModel: ObservableObject {
     @Published var sleepCycleData: SleepCycleData = SleepCycleData()
     @Published var workSelectionData: WorkSelectionData = WorkSelectionData()
     @Published var workPreferenceData: WorkPreferenceData = WorkPreferenceData()
-
+    
     @Published var errorMessage: String?
     
     var authViewModel: AuthViewModel
@@ -100,7 +74,7 @@ final class OnboardingViewModel: ObservableObject {
         self.authViewModel = authViewModel
         setupAuthStateSubscription()
     }
-    
+
     // MARK: - Submit Onboarding Data
     
     /// 온보딩 데이터를 서버로 전송
