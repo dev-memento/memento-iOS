@@ -66,15 +66,6 @@ struct PickerButton: View {
                 action: {},
                 viewModel: PickerButtonViewModel()
             )
-
-            PickerButton(
-                type: .endRepeat,
-                title: "Select Date",
-                titleColor: .mementoBlue,
-                width: 200,
-                action: {},
-                viewModel: PickerButtonViewModel()
-            )
         }
     }
 }

@@ -77,7 +77,7 @@ struct DateTimePickerSectionView: View {
                 selection: sectionType == .start ? $viewModel.selectedStartTime : $viewModel.selectedEndTime,
                 isPresented: $timePickerViewModel.isPresented,
                 type: .time,
-                onDismiss: viewModel.confirmSelection
+                onDismiss: viewModel.dismiss
             )
         }
     }
