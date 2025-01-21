@@ -19,14 +19,35 @@ enum OnboardingNavigationDestination: String, Hashable {
     case calendarConnect = "CalendarConnectView"
 }
 
+// MARK: - Data Models
+
+/// 수면 주기 데이터 모델
+struct SleepCycleData {
+    var wakeUpTime: Date? = nil
+    var sleepTime: Date? = nil
+}
+
+/// 작업 선택 데이터 모델
+struct WorkSelectionData {
+    var selectedCategory: String? = nil
+    var customCategory: String = ""
+    var selectedWorks: Set<String> = []
+}
+
+/// 작업 선호도 데이터 모델
+struct WorkPreferenceData {
+    var selectedAnswers: [UUID: Bool?] = [:]
+}
+
 // MARK: - Data Transfer Object
 
 /// 서버에 전달할 온보딩 데이터를 구조화한 객체
 struct OnboardingData {
-    let sleepCycle: OnboardingViewModel.SleepCycleData
-    let workSelection: OnboardingViewModel.WorkSelectionData
-    let workPreference: OnboardingViewModel.WorkPreferenceData
+    let sleepCycle: SleepCycleData
+    let workSelection: WorkSelectionData
+    let workPreference: WorkPreferenceData
 }
+
 
 // MARK: - OnboardingViewModel Core
 @MainActor
@@ -54,49 +75,30 @@ final class OnboardingViewModel: ObservableObject {
     init(authViewModel: AuthViewModel) {
         self.authViewModel = authViewModel
         setupAuthStateSubscription()
-    }
-    
-    // MARK: - Data Models
-    
-    /// 수면 주기 데이터 모델
-    struct SleepCycleData {
-        var wakeUpTime: Date? = nil
-        var sleepTime: Date? = nil
-    }
-    
-    /// 작업 선택 데이터 모델
-    struct WorkSelectionData {
-        var selectedCategory: String? = nil
-        var customCategory: String = ""
-        var selectedWorks: Set<String> = []
-    }
-    
-    /// 작업 선호도 데이터 모델
-    struct WorkPreferenceData {
-        var selectedAnswers: [UUID: Bool?] = [:]
-    }
-    
-    // MARK: - Submit Onboarding Data
-    
-    /// 온보딩 데이터를 서버로 전송
-    func submitOnboardingData() async throws {
-        isLoading = true
-        defer { isLoading = false }
         
-        // 온보딩 데이터 생성
-        let onboardingData = OnboardingData(
-            sleepCycle: sleepCycleData,
-            workSelection: workSelectionData,
-            workPreference: workPreferenceData
-        )
         
-        // 서버로 데이터 전송
-        try await submitToServer(onboardingData)
-    }
-    
-    /// 서버로 데이터 전송 로직
-    private func submitToServer(_ data: OnboardingData) async throws {
-        // 서버 API 호출 구현
+        // MARK: - Submit Onboarding Data
+        
+        /// 온보딩 데이터를 서버로 전송
+        func submitOnboardingData() async throws {
+            isLoading = true
+            defer { isLoading = false }
+            
+            // 온보딩 데이터 생성
+            let onboardingData = OnboardingData(
+                sleepCycle: sleepCycleData,
+                workSelection: workSelectionData,
+                workPreference: workPreferenceData
+            )
+            
+            // 서버로 데이터 전송
+            try await submitToServer(onboardingData)
+        }
+        
+        /// 서버로 데이터 전송 로직
+        func submitToServer(_ data: OnboardingData) async throws {
+            // 서버 API 호출 구현
+        }
     }
 }
 

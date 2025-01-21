@@ -125,8 +125,18 @@ class AuthViewModel: ObservableObject {
                 let userIdentifier = appleIDCredential.user
                 let fullName = appleIDCredential.fullName
                 let email = appleIDCredential.email
-                
+                if let appleID = appleIDCredential.identityToken,
+                   let authorizationCode = appleIDCredential.authorizationCode {
+                    // Base64 또는 UTF-8 문자열로 변환
+                    let appleIDString = String(data: appleID, encoding: .utf8) ?? "Invalid token"
+                    let authorizationCodeString = String(data: authorizationCode, encoding: .utf8) ?? "Invalid code"
+                    
+                    print("Apple ID Token: \(appleIDString)")
+                    print("Authorization Code: \(authorizationCodeString)")
+                }
+
                 print("Apple ID: \(userIdentifier), Full Name: \(String(describing: fullName)), Email: \(String(describing: email))")
+
                 
                 // Firebase Auth로 Apple 인증 정보 전달
                 Task { @MainActor in
