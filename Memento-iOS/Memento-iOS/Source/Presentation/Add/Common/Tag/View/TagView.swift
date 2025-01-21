@@ -12,8 +12,7 @@ import MDSKit
 struct TagView: View {
 
     // MARK: - Properties
-
-//    @StateObject private var viewModel = PickerButtonViewModel(type: .tag)
+    
     @ObservedObject var viewModel: PickerButtonViewModel
 
     // MARK: - Body
