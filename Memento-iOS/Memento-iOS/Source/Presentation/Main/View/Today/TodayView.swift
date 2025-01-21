@@ -62,11 +62,29 @@ struct TodayView: View {
             .background(Color.grayBlack)
             
             if showTodoAlert, let todo = selectTodo {
+                let todoBinding = Binding<Bool>(
+                    get: {
+                        if let index = viewModel.todayItems.firstIndex(where: { $0.id == todo.id }),
+                           case .todo(let t) = viewModel.todayItems[index] {
+                            return t.isChecked
+                        }
+                        return false
+                    },
+                    set: { newValue in
+                        if let index = viewModel.todayItems.firstIndex(where: { $0.id == todo.id }),
+                           case .todo(var t) = viewModel.todayItems[index] {
+                            t.isChecked = newValue
+                            viewModel.todayItems[index] = .todo(t)
+                        }
+                    }
+                )
+                
                 ToDoAlertView(
                     todoTitle: todo.toDoTitle,
                     deadline: todo.dueDate,
                     tag: "Work",
                     priority: todo.priorityType,
+                    isChecked: todoBinding,
                     onDelete: {
                         showTodoAlert = false
                     },
@@ -84,7 +102,7 @@ struct TodayView: View {
                     startDate: schedule.startTime,
                     endDate: schedule.endTime,
                     tag: "SOPT",
-                    source: "notion",
+                    source: "Notion",
                     onDelete: {
                         showScheduleAlert = false
                     },

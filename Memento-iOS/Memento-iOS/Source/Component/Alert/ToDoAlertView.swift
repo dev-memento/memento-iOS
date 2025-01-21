@@ -14,25 +14,25 @@ struct ToDoAlertView: View {
     let tag: String
     let priority: Priority
     
+    @Binding var isChecked: Bool
+    
     var onDelete: () -> Void
     var onEdit: () -> Void
-    
-    @State private var isCompleted: Bool = false
     
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
                 Button(action: {
-                    isCompleted.toggle()
+                    isChecked.toggle()
                 }) {
-                    Image(isCompleted ? .btn_check_selected_square : .btn_check_unselected_square)
+                    Image(isChecked ? .btn_check_selected_square : .btn_check_unselected_square)
                         .resizable()
                         .frame(width: 20, height: 20)
                 }
                 Text(todoTitle)
                     .applyFont(.body_b_16)
                     .foregroundColor(.grayWhite)
-                    .strikethrough(isCompleted, color: .grayWhite)
+                    .strikethrough(isChecked, color: .grayWhite)
                 Spacer()
             }
             .padding(.top, 22)
@@ -104,16 +104,4 @@ struct ToDoAlertView: View {
         .background(Color.gray10)
         .cornerRadius(2)
     }
-}
-
-
-#Preview {
-    ToDoAlertView(todoTitle: "UXUI 과제", deadline: "Today", tag: "SOPT", priority: .high,
-                  onDelete: {
-        print("Delete button tapped")
-    },
-                  onEdit: {
-        print("Edit button tapped")
-    }
-    )
 }

@@ -22,12 +22,12 @@ final class WeeklyCalendarViewModel: ObservableObject {
     
     @Published var todayItems: [TodayItemDataModel] = [
         .todo(ToDoListDataModel(colorType: "mementoRed", toDoTitle: "투두1", dueDate: "Today", priorityType: .immediate, isChecked: false)),
-        .schedule(ScheduleListDataModel(colorType: "mementoPurple", scheduleTitle: "스케줄1", startTime: "12 PM ", endTime: "- 4 PM", isCompleted: true)),
+        .schedule(ScheduleListDataModel(colorType: "mementoPurple", scheduleTitle: "스케줄1", startTime: "12 PM ", endTime: "4 PM", isCompleted: true)),
         .todo(ToDoListDataModel(colorType: "mementoBlue", toDoTitle: "투두2", dueDate: "Today", priorityType: .medium, isChecked: false)),
-        .schedule(ScheduleListDataModel(colorType: "mementoCyan", scheduleTitle: "스케줄2", startTime: "12 PM ", endTime: "- 4 PM", isCompleted: false)),
-        .schedule(ScheduleListDataModel(colorType: "mementoOrange", scheduleTitle: "스케줄3", startTime: "12 PM ", endTime: "- 4 PM", isCompleted: false)),
+        .schedule(ScheduleListDataModel(colorType: "mementoCyan", scheduleTitle: "스케줄2", startTime: "12 PM ", endTime: "4 PM", isCompleted: false)),
+        .schedule(ScheduleListDataModel(colorType: "mementoOrange", scheduleTitle: "스케줄3", startTime: "12 PM ", endTime: "4 PM", isCompleted: false)),
         .todo(ToDoListDataModel(colorType: "mementoYellow", toDoTitle: "투두3", dueDate: "Today", priorityType: .high, isChecked: false)),
-        .schedule(ScheduleListDataModel(colorType: "mementoBlue", scheduleTitle: "스케줄4", startTime: "12 PM ", endTime: "- 4 PM", isCompleted: false)),
+        .schedule(ScheduleListDataModel(colorType: "mementoBlue", scheduleTitle: "스케줄4", startTime: "12 PM ", endTime: "4 PM", isCompleted: false)),
         .todo(ToDoListDataModel(colorType: "mementoLightGreen", toDoTitle: "투두4", dueDate: "Today", priorityType: .none, isChecked: false)),
         .todo(ToDoListDataModel(colorType: "mementoMint", toDoTitle: "투두5", dueDate: "Today", priorityType: .low, isChecked: false))
     ]
