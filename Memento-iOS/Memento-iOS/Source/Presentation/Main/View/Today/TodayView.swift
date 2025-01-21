@@ -62,7 +62,7 @@ struct TodayView: View {
             .background(Color.grayBlack)
             
             if showTodoAlert, let todo = selectTodo {
-                TodoAlertView(
+                ToDoAlertView(
                     todoTitle: todo.toDoTitle,
                     deadline: todo.dueDate,
                     tag: "Work",

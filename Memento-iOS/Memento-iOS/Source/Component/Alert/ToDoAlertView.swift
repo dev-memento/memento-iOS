@@ -1,5 +1,5 @@
 //
-//  TodoAlertView.swift
+//  ToDoAlertView.swift
 //  Memento-iOS
 //
 //  Created by Kimgahyun on 1/16/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct TodoAlertView: View {
+struct ToDoAlertView: View {
     
     let todoTitle: String
     let deadline: String
@@ -46,6 +46,7 @@ struct TodoAlertView: View {
                 
                 HStack(spacing: 3) {
                     Image(.ic_deadline)
+                        .foregroundColor(.gray05)
                     Text(deadline)
                         .applyFont(.detail_r_12)
                         .foregroundColor(.gray05)
@@ -64,12 +65,12 @@ struct TodoAlertView: View {
                     .padding(.trailing, 54)
                 
                 HStack(spacing: 3) {
-                    Circle()
-                        .fill(Color.blue)
-                        .frame(width: 10, height: 10)
+                    Image(.ic_tag)
+                        .renderingMode(.template)
+                        .foregroundColor(.mementoBlue)
                     Text(tag)
                         .applyFont(.detail_r_12)
-                        .foregroundColor(.grayWhite)
+                        .foregroundColor(.gray05)
                 }
                 
                 Spacer()
@@ -117,7 +118,7 @@ struct TodoAlertView: View {
                         Text(StringLiteral.Alert.edit)
                     }
                     .applyFont(.body_r_16)
-                    .foregroundColor(.grayWhite)
+                    .foregroundColor(.gray05)
                     .padding()
                     .frame(width: 140, height: 74)
                     .background(Color.gray09)
@@ -128,7 +129,6 @@ struct TodoAlertView: View {
             .padding(.horizontal, 24)
         }
         .frame(width: 343, height: 300)
-        .padding()
         .background(Color.gray10)
         .cornerRadius(2)
     }
@@ -136,7 +136,7 @@ struct TodoAlertView: View {
 
 
 #Preview {
-    TodoAlertView(todoTitle: "UXUI 과제", deadline: "Today", tag: "SOPT", priority: .high,
+    ToDoAlertView(todoTitle: "UXUI 과제", deadline: "Today", tag: "SOPT", priority: .high,
                   onDelete: {
         print("Delete button tapped")
     },
