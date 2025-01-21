@@ -37,7 +37,7 @@ struct TodayView: View {
                             isArrow: isArrow,
                             backgroundColor: Color.mainNavy,
                             
-                            onTodoTap: { todo in
+                            onToDoTap: { todo in
                                 selectTodo = todo
                                 showTodoAlert = true
                             },
@@ -133,7 +133,7 @@ struct TodayListItemView: View {
     var isArrow: Bool
     var backgroundColor: Color
     
-    var onTodoTap: (ToDoListDataModel) -> Void
+    var onToDoTap: (ToDoListDataModel) -> Void
     var onScheduleTap: (ScheduleListDataModel) -> Void
     
     var body: some View {
@@ -156,7 +156,7 @@ struct TodayListItemView: View {
                 )
                 .contentShape(Rectangle())
                 .onTapGesture {
-                    onTodoTap(todo)
+                    onToDoTap(todo)
                 }
                 
             case .schedule(let schedule):
