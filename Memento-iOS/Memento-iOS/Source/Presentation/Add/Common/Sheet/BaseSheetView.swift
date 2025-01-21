@@ -29,7 +29,7 @@ struct BaseSheetView: View {
     }
 
     var body: some View {
-        SheetContainer(height: 0) {
+        SheetContainer(type: type) {
             VStack(spacing: 0) {
                 SheetHeaderView {
                     switch type {
@@ -41,8 +41,6 @@ struct BaseSheetView: View {
                         if let newDate = calendar.date(bySettingHour: hour, minute: minute, second: 0, of: selection) {
                             selection = newDate
                         }
-                    case .repeat:
-                        repeatViewModel?.confirmSelection()
                     case .tag:
                         isPresented = true
                     default:
@@ -53,7 +51,7 @@ struct BaseSheetView: View {
                 }
 
                 switch type {
-                case .date, .endRepeat:
+                case .date:
                     DatePicker(
                         "날짜 선택",
                         selection: $selection,
@@ -77,13 +75,9 @@ struct BaseSheetView: View {
                     .datePickerStyle(.wheel)
                     .environment(\.locale, Locale(identifier: "en_US"))
 
-                case .repeat: EmptyView()
-
-                case .tag: EmptyView()
-
+                case .tag, .deadline: EmptyView()
                 }
             }
         }
-        .presentationDetents(DynamicPresentationDetent.dynamicDetent(for: type))
     }
 }

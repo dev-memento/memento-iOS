@@ -16,10 +16,6 @@ final class PickerButtonViewModel: BasePickerViewModel {
     @Published private(set) var selection: DateTimeSelection
     @Published var selectedDate: Date = Date()
     @Published var isAllDay: Bool = false
-    @Published var repeatType: RepeatType = .none
-    @Published var shouldShowEndRepeat: Bool = false
-    @Published var endRepeatDate: Date?
-    @Published var isEndRepeatDateSelected: Bool = false
     @Published var selectedTag: Tag = Tag.mockData.first ?? Tag(color: .gray02, title: "Untitled")
 
     let pickerType: PickerButtonType
@@ -115,36 +111,9 @@ final class PickerButtonViewModel: BasePickerViewModel {
     override func dismiss() {
         super.dismiss()
         setPressedState(false)
-
-        if pickerType == .endRepeat {
-            isEndRepeatDateSelected = true
-        }
     }
 
     // MARK: - Public Methods
-
-    func confirmSelection() {
-        if pickerType == .repeat {
-            updateRepeatType(repeatType)
-        }
-        dismiss()
-    }
-
-    func updateRepeatType(_ type: RepeatType) {
-        if repeatType != type {
-            repeatType = type
-            shouldShowEndRepeat = type != .none
-            if type == .none {
-                endRepeatDate = nil
-                isEndRepeatDateSelected = false
-            }
-        }
-    }
-
-    func updateEndRepeatDate(_ date: Date) {
-        endRepeatDate = date
-        isEndRepeatDateSelected = true
-    }
 
     func resetToInitialTime() {
         selection.selectedStartTime = initialStartTime
