@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum TodayItemDataModel: Identifiable {
+enum TodayItemDataModel: Identifiable, Equatable {
     case todo(ToDoListDataModel)
     case schedule(ScheduleListDataModel)
     
