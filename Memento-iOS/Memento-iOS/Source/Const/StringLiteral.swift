@@ -73,6 +73,10 @@ enum StringLiteral {
         static let wakeUp = "Wake up"
         static let windDown = "Wind down"
     }
+
+    enum AddEvent {
+        static let title = "Add your event"
+    }
 }
 
 //MARK: typealias

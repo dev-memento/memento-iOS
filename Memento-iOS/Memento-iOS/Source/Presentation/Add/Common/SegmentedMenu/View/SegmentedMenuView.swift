@@ -87,7 +87,7 @@ private extension SegmentedMenuView {
         case .checkbox:
             AddTodoView()
         case .event:
-            EmptyView()
+            AddScheduleView()
         case .brain:
             EmptyView()
         }

@@ -18,4 +18,24 @@ extension View {
         UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: uiColor ]
         return self
     }
+
+    /// 사용 예시:
+    /// ```
+    /// ExampleView()
+    ///     .applyDynamicSheetForTagCount()
+    /// ```
+    ///
+    /// - Returns: 동적으로 동작하는 시트 반환
+    @ViewBuilder
+    func applyDynamicSheetForTagCount() -> some View {
+        if Tag.mockData.count > 4 {
+            self
+                .presentationContentInteraction(.scrolls)
+                .scrollIndicators(.hidden)
+                .presentationDetents([.fraction(0.33), .fraction(0.99)])
+        } else {
+            self
+                .presentationDetents([.fraction(0.33)])
+        }
+    }
 }
