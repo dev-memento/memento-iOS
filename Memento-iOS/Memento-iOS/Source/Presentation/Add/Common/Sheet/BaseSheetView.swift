@@ -17,7 +17,6 @@ struct BaseSheetView: View {
     var isStartsDate: Bool = false
     var minimumDate: Date? = nil
     var onDismiss: (() -> Void)? = nil
-    var repeatViewModel: PickerButtonViewModel? = nil
     var tagViewModel: PickerButtonViewModel? = nil
 
     private var dateRange: ClosedRange<Date> {
