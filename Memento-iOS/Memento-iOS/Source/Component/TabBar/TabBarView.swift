@@ -8,27 +8,28 @@
 import SwiftUI
 
 struct TabBarView: View {
-    
     @State private var selectedTab: TabBarItem = .today
     
-    init() {
-        UITabBar.appearance().backgroundColor = .darkGray
-    }
-    
     var body: some View {
-        VStack(spacing: 0) {
-            TabView(selection: $selectedTab) {
-                ForEach(TabBarItem.allCases, id: \.self) { tabItem in
-                    tabItem.targetView
-                        .tabItem {
-                            VStack {
-                                selectedTab == tabItem ? tabItem.selectedItem : tabItem.normalItem
-                            }
-                        }
-                        .tag(tabItem)
-                }
+        TabView(selection: $selectedTab) {
+            ForEach(TabBarItem.allCases, id: \.self) { tab in
+                tab.targetView
+                    .tabItem {
+                        (selectedTab == tab ? tab.selectedItem : tab.normalItem)
+                    }
             }
-            .accentColor(.white)
+        }
+        .onAppear {
+            let appearance = UITabBarAppearance()
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = UIColor(Color.mainNavy)
+            
+            UITabBar.appearance().standardAppearance = appearance
+            UITabBar.appearance().scrollEdgeAppearance = appearance
         }
     }
+}
+
+#Preview {
+    TabBarView()
 }
