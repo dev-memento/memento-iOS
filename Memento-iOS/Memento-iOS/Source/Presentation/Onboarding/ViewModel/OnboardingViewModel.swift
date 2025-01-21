@@ -31,6 +31,32 @@ struct OnboardingData {
 
 @MainActor
 final class OnboardingViewModel: ObservableObject {
+    
+    var delegate: NetworkResult<Any>?
+    private let healthCheckService: HealthCheckAPIServiceProtocol
+    
+    init(healthCheckService: HealthCheckAPIServiceProtocol = HealthCheckAPIService()) {
+            self.healthCheckService = healthCheckService
+        }
+        
+    func checkHealthAPI(completion: @escaping (Bool) -> Void) {
+        healthCheckService.getHealthCheck { [weak self] result in
+                switch result {
+                case .success(let response):
+                    if let status = response?.data.status {
+                        print("Health Check Status: \(status)")
+                        completion(true)
+                    } else {
+                        print("Decoding error: No data available")
+                        completion(false)
+                    }
+                    
+                // TODO: - 에러 핸들링 필요
+                default:
+                    print("ERROR")
+                }
+            }
+        }
 
     // MARK: - Published Properties
     
@@ -139,5 +165,12 @@ final class OnboardingViewModel: ObservableObject {
     /// 서버로 데이터 전송 로직
     private func submitToServer(_ data: OnboardingData) async throws {
         // 서버 API 호출 구현
+    }
+}
+
+
+extension OnboardingViewModel {
+    func getHealthCheck() {
+        
     }
 }
