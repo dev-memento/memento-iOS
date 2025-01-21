@@ -13,5 +13,5 @@ struct ScheduleAllDayResponseData: Codable {
     let isAllDay: Bool
     let scheduleType: String
     let tagName: String
-    let tagColor: String
+    let tagColorCode: String
 }

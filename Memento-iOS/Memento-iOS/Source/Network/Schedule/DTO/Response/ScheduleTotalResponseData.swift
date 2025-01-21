@@ -11,11 +11,8 @@ struct ScheduleTotalResponseData: Codable {
     let startDate: String
     let endDate: String
     let isAllDay: Bool
-    let repeatOption: String
-    let repeatExpiredDate: String?
-    let scheduleGroupId: String
     let scheduleType: String
-    let tagName: String
-    let tagColor: String
     let order: Int
+    let tagName: String
+    let tagColorCode: String
 }
