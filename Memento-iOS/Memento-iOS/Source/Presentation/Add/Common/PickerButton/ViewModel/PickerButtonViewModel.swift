@@ -20,7 +20,7 @@ final class PickerButtonViewModel: BasePickerViewModel {
     @Published var shouldShowEndRepeat: Bool = false
     @Published var endRepeatDate: Date?
     @Published var isEndRepeatDateSelected: Bool = false
-    @Published var selectedTag: Tag = Tag.mockData.first!
+    @Published var selectedTag: Tag = Tag.mockData.first ?? Tag(color: .gray02, title: "Untitled")
 
     let pickerType: PickerButtonType
     private let initialStartTime: Date
