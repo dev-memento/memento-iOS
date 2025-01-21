@@ -41,35 +41,54 @@ class AuthViewModel: ObservableObject {
     
     // 구글 로그인을 초기화하고 인증을 시작하는 핵심 함수
     func signInWithGoogle() {
-        if GIDSignIn.sharedInstance.hasPreviousSignIn() {
-            // 이전 로그인 세션 복구
-            GIDSignIn.sharedInstance.restorePreviousSignIn { [unowned self] user, error in
-                authenticateUser(for: user, with: error)
-            }
-        } else {
-            // 새로운 로그인 시도
-            guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+        Task { @MainActor in
+            guard !isLoading else { return }
             
-            let configuration = GIDConfiguration(clientID: clientID)
-            GIDSignIn.sharedInstance.configuration = configuration
+            isLoading = true
             
-            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
-            guard let rootViewController = windowScene.windows.first?.rootViewController else { return }
-            
-            GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { [unowned self] result, error in
-                guard let result = result else {
-                    // 로그인 실패 처리
-                    self.errorMessage = error?.localizedDescription ?? "Google 로그인 실패"
-                    self.isAuthenticated = false
+            if GIDSignIn.sharedInstance.hasPreviousSignIn() {
+                GIDSignIn.sharedInstance.restorePreviousSignIn { [weak self] user, error in
+                    Task { @MainActor in
+                        await self?.authenticateUser(for: user, with: error)
+                    }
+                }
+            } else {
+                guard let clientID = FirebaseApp.app()?.options.clientID else {
+                    isLoading = false
                     return
                 }
-                authenticateUser(for: result.user, with: error)
+                
+                let configuration = GIDConfiguration(clientID: clientID)
+                GIDSignIn.sharedInstance.configuration = configuration
+                
+                guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                      let rootViewController = windowScene.windows.first?.rootViewController else {
+                    isLoading = false
+                    return
+                }
+                
+                GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { [weak self] result, error in
+                    Task { @MainActor in
+                        guard let self = self else { return }
+                        
+                        if let result = result {
+                            await self.authenticateUser(for: result.user, with: error)
+                        } else {
+                            self.errorMessage = error?.localizedDescription ?? "Google 로그인 실패"
+                            self.isAuthenticated = false
+                            self.isLoading = false
+                        }
+                    }
+                }
             }
         }
     }
 
     // Google 로그인 결과를 Firebase로 연결하여 사용자를 인증하는 함수
-    private func authenticateUser(for user: GIDGoogleUser?, with error: Error?) {
+    @MainActor
+    private func authenticateUser(for user: GIDGoogleUser?, with error: Error?) async {
+        defer { isLoading = false }
+        
         if let error = error {
             print("Google 로그인 실패: \(error.localizedDescription)")
             self.errorMessage = error.localizedDescription
@@ -77,7 +96,8 @@ class AuthViewModel: ObservableObject {
             return
         }
         
-        guard let accessToken = user?.accessToken.tokenString, let idToken = user?.idToken?.tokenString else {
+        guard let accessToken = user?.accessToken.tokenString,
+              let idToken = user?.idToken?.tokenString else {
             print("Google 사용자 토큰 누락")
             self.errorMessage = "Google 사용자 토큰이 누락되었습니다."
             self.isAuthenticated = false
@@ -86,19 +106,15 @@ class AuthViewModel: ObservableObject {
         
         let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: accessToken)
         
-        // Firebase 인증 처리
-        Auth.auth().signIn(with: credential) { [weak self] _, error in
-            guard let self = self else { return }
-            
-            if let error = error {
-                print("Firebase 인증 실패: \(error.localizedDescription)")
-                self.errorMessage = error.localizedDescription
-                self.isAuthenticated = false
-            } else {
-                print("Google 로그인 및 Firebase 인증 성공")
-                self.errorMessage = nil
-                self.isAuthenticated = true
-            }
+        do {
+            let result = try await Auth.auth().signIn(with: credential)
+            print("Google 로그인 및 Firebase 인증 성공: \(result.user.uid)")
+            self.errorMessage = nil
+            self.isAuthenticated = true
+        } catch {
+            print("Firebase 인증 실패: \(error.localizedDescription)")
+            self.errorMessage = error.localizedDescription
+            self.isAuthenticated = false
         }
     }
 
@@ -119,40 +135,46 @@ class AuthViewModel: ObservableObject {
     }
     
     private func signInWithAppleCompletion(_ result: Result<ASAuthorization, Error>) {
-        switch result {
-        case .success(let authorization):
-            if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
-                let userIdentifier = appleIDCredential.user
-                let fullName = appleIDCredential.fullName
-                let email = appleIDCredential.email
-                if let appleID = appleIDCredential.identityToken,
-                   let authorizationCode = appleIDCredential.authorizationCode {
-                    // Base64 또는 UTF-8 문자열로 변환
-                    let appleIDString = String(data: appleID, encoding: .utf8) ?? "Invalid token"
-                    let authorizationCodeString = String(data: authorizationCode, encoding: .utf8) ?? "Invalid code"
-                    
-                    print("Apple ID Token: \(appleIDString)")
-                    print("Authorization Code: \(authorizationCodeString)")
-                }
-
-                print("Apple ID: \(userIdentifier), Full Name: \(String(describing: fullName)), Email: \(String(describing: email))")
-
-                
-                // Firebase Auth로 Apple 인증 정보 전달
-                Task { @MainActor in
-                    do {
-                        // Firebase 인증 처리 (필요한 경우)
+        Task { @MainActor in
+            guard !isLoading else { return }
+            
+            isLoading = true
+            defer { isLoading = false }
+            
+            do {
+                switch result {
+                case .success(let authorization):
+                    if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential,
+                       let appleIDToken = appleIDCredential.identityToken,
+                       let authorizationCode = appleIDCredential.authorizationCode,
+                       let idTokenString = String(data: appleIDToken, encoding: .utf8),
+                       let authorizationCodeString = String(data: authorizationCode, encoding: .utf8) {
+                        
+                        // Firebase 인증용 credential 생성
+                        let credential = OAuthProvider.credential(
+                            withProviderID: "apple.com",
+                            idToken: idTokenString,
+                            accessToken: authorizationCodeString
+                        )
+                        
+                        // Firebase 인증
+                        let authResult = try await Auth.auth().signIn(with: credential)
+                        print("Apple 로그인 성공: \(authResult.user.uid)")
+                        
                         self.errorMessage = nil
                         self.isAuthenticated = true
-                    } catch {
-                        self.errorMessage = error.localizedDescription
-                        self.isAuthenticated = false
+                    } else {
+                        throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Apple 인증 정보 누락"])
                     }
+                    
+                case .failure(let error):
+                    throw error
                 }
+            } catch {
+                print("Apple 로그인 실패: \(error.localizedDescription)")
+                self.errorMessage = error.localizedDescription
+                self.isAuthenticated = false
             }
-        case .failure(let error):
-            self.errorMessage = error.localizedDescription
-            self.isAuthenticated = false
         }
     }
 }

@@ -32,6 +32,7 @@ struct LoginView: View {
                     
                     Spacer()
                 }
+                
             }
             .navigationDestination(for: OnboardingNavigationDestination.self) { destination in
                 switch destination {
@@ -48,6 +49,11 @@ struct LoginView: View {
                     CalendarConnectView()
                         .navigationBarBackButtonHidden()
                 }
+            }
+        }
+        .onAppear {
+            if viewModel.authViewModel.isAuthenticated {
+                viewModel.authViewModel.isAuthenticated = false
             }
         }
     }
@@ -76,10 +82,11 @@ private struct LoginHeaderView: View {
 // MARK: - Login Buttons
 
 private struct LoginButtons: View {
-    @ObservedObject var authViewModel: AuthViewModel // ViewModel 전달받음
+    @ObservedObject var authViewModel: AuthViewModel
     
     var body: some View {
         VStack(alignment: .center, spacing: 18) {
+            // Google 로그인 버튼
             Button {
                 authViewModel.send(action: .googleLogin)
             } label: {
@@ -97,17 +104,23 @@ private struct LoginButtons: View {
             }
             .frame(width: UIScreen.main.bounds.width * 0.95, height: 46)
             .background(Color.gray10)
+            .disabled(authViewModel.isLoading)  // 로딩 중일 때 버튼 비활성화
+            .opacity(authViewModel.isLoading ? 0.6 : 1)  // 로딩 중일 때 버튼 반투명하게
             
+            // Apple 로그인 버튼
             SignInWithAppleButton(
                 onRequest: { request in
+                    guard !authViewModel.isLoading else { return }  // 로딩 중이면 실행 방지
                     authViewModel.send(action: .appleLogin(request))
                 },
                 onCompletion: { result in
+                    guard !authViewModel.isLoading else { return }  // 로딩 중이면 실행 방지
                     authViewModel.send(action: .appleLoginCompletion(result))
                 }
             )
             .frame(width: UIScreen.main.bounds.width * 0.95, height: 46)
             .background(Color.clear)
+            .disabled(authViewModel.isLoading)  // 로딩 중일 때 버튼 비활성화
             .overlay(
                 HStack(spacing: 8) {
                     Image(.img_apple)
@@ -124,7 +137,9 @@ private struct LoginButtons: View {
                 .background(Color.gray10)
                 .allowsHitTesting(false) // 오버레이는 터치 이벤트를 차단
             )
+        
         }
+        
     }
 }
 
