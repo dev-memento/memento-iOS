@@ -62,9 +62,7 @@ final class OnboardingViewModel: ObservableObject {
     @Published var sleepCycleData: SleepCycleData = SleepCycleData()
     @Published var workSelectionData: WorkSelectionData = WorkSelectionData()
     @Published var workPreferenceData: WorkPreferenceData = WorkPreferenceData()
-    
-    /// UI 상태 관리
-    @Published var isLoading: Bool = false
+
     @Published var errorMessage: String?
     
     var authViewModel: AuthViewModel
@@ -75,32 +73,29 @@ final class OnboardingViewModel: ObservableObject {
     init(authViewModel: AuthViewModel) {
         self.authViewModel = authViewModel
         setupAuthStateSubscription()
+    }
+    
+    // MARK: - Submit Onboarding Data
+    
+    /// 온보딩 데이터를 서버로 전송
+    func submitOnboardingData() async throws {
         
+        // 온보딩 데이터 생성
+        let onboardingData = OnboardingData(
+            sleepCycle: sleepCycleData,
+            workSelection: workSelectionData,
+            workPreference: workPreferenceData
+        )
         
-        // MARK: - Submit Onboarding Data
-        
-        /// 온보딩 데이터를 서버로 전송
-        func submitOnboardingData() async throws {
-            isLoading = true
-            defer { isLoading = false }
-            
-            // 온보딩 데이터 생성
-            let onboardingData = OnboardingData(
-                sleepCycle: sleepCycleData,
-                workSelection: workSelectionData,
-                workPreference: workPreferenceData
-            )
-            
-            // 서버로 데이터 전송
-            try await submitToServer(onboardingData)
-        }
-        
-        /// 서버로 데이터 전송 로직
-        func submitToServer(_ data: OnboardingData) async throws {
-            // 서버 API 호출 구현
-        }
+        try await submitToServer(onboardingData)
+    }
+    
+    /// 서버로 데이터 전송 로직
+    func submitToServer(_ data: OnboardingData) async throws {
+        // 서버 API 호출 구현
     }
 }
+
 
 // MARK: - Onboarding Navigation Logic
 extension OnboardingViewModel {
@@ -125,31 +120,14 @@ extension OnboardingViewModel {
 // MARK: - Authentication Handling
 extension OnboardingViewModel {
     
-    func handleGoogleLogin() async {
-        isLoading = true
-        
-        // Google 로그인 요청
-        await authViewModel.signInWithGoogle()
-        
-        // 로그인 결과 처리
-        if authViewModel.isAuthenticated {
-            // 로그인 성공 시 SleepCycleSetting 화면으로 전환
-            navigateToNext(.sleepCycleSetting)
-        } else if let error = authViewModel.errorMessage {
-            // 로그인 실패 시 에러 메시지 표시
-            errorMessage = error
-        }
-        
-        isLoading = false
+    func handleGoogleLogin() {
+        authViewModel.signInWithGoogle()
     }
-
-    func handleAppleLogin(request: ASAuthorizationAppleIDRequest) async {
-        isLoading = true
-        
-        // Apple 로그인 요청 생성
+    
+    func handleAppleLogin(request: ASAuthorizationAppleIDRequest) {
         authViewModel.send(action: .appleLogin(request))
     }
-
+    
     // AuthViewModel 상태 변화 감지를 위한 메서드
     private func setupAuthStateSubscription() {
         authViewModel.$isAuthenticated
