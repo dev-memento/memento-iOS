@@ -11,11 +11,11 @@ import MDSKit
 
 struct SheetContainer<Content: View>: View {
 
-    let height: CGFloat
+    let type: PickerButtonType
     let content: Content
 
-    init(height: CGFloat, @ViewBuilder content: () -> Content) {
-        self.height = height
+    init(type: PickerButtonType, @ViewBuilder content: () -> Content) {
+        self.type = type
         self.content = content()
     }
 
@@ -27,6 +27,6 @@ struct SheetContainer<Content: View>: View {
         .background(Color.gray09)
         .presentationCornerRadius(0)
         .presentationDragIndicator(.hidden)
-        .presentationDetents([.height(height)])
+        .presentationDetents(DynamicPresentationDetent.dynamicDetent(for: type))
     }
 }
