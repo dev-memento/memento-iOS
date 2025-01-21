@@ -14,22 +14,37 @@ struct AddTodoBottomView: View {
     // MARK: - Properties
 
     @ObservedObject var viewModel: AddTodoTextViewModel
+    @State private var isDeadlinePresented: Bool = false
+    @State private var selectedDateText: String = "Today"
+    @StateObject private var pickerViewModel = PickerButtonViewModel(type: .deadline)
 
     // MARK: - Body
 
     var body: some View {
         HStack(spacing: 8) {
-            Button(action: {}) {
+            Button(action: {
+                isDeadlinePresented.toggle()
+            }) {
                 HStack {
                     Image(.ic_deadline)
 
-                    Text("Today")
+                    Text(pickerViewModel.formattedPickerTitle)
+                        .applyFont(.detail_r_12)
                 }
+                .frame(maxWidth: .infinity)
                 .foregroundStyle(Color.gray02)
-                .padding(.vertical, 12)
-                .padding(.horizontal, 16)
-                .background(Color.gray09)
-                .cornerRadius(2)
+            }
+            .frame(width: 86, height: 41)
+            .background(Color.gray09)
+            .clipShape(RoundedRectangle(cornerRadius: 2))
+            .sheet(isPresented: $isDeadlinePresented) {
+                AddDeadlineView(
+                    viewModel: pickerViewModel,
+                    selectedDateText: $selectedDateText
+                )
+                .presentationDetents(
+                    DynamicPresentationDetent.dynamicDetent(for: .deadline)
+                )
             }
 
             Button(action: {}) {
