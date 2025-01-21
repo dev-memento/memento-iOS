@@ -10,6 +10,7 @@ import SwiftUI
 struct TabBarView: View {
     @State private var selectedTab: TabBarItem = .today
     @State private var isAdditionSheetPresented: Bool = false
+    @State private var previousTab: TabBarItem = .today  // Add this to store the previous tab
     
     var body: some View {
         ZStack {
@@ -24,7 +25,7 @@ struct TabBarView: View {
                             .onChange(of: selectedTab) { newValue in
                                 if newValue == .addition {
                                     isAdditionSheetPresented = true
-                                    selectedTab = .today
+                                    selectedTab = previousTab  // Revert to previous tab instead of .today
                                 }
                             }
                     } else {
@@ -33,6 +34,11 @@ struct TabBarView: View {
                                 (selectedTab == tab ? tab.selectedItem : tab.normalItem)
                             }
                             .tag(tab)
+                            .onChange(of: selectedTab) { newValue in
+                                if newValue != .addition {
+                                    previousTab = newValue  // Store the current tab when it changes
+                                }
+                            }
                     }
                 }
             }
