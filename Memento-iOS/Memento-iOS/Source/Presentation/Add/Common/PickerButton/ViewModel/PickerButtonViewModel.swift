@@ -16,10 +16,6 @@ final class PickerButtonViewModel: BasePickerViewModel {
     @Published private(set) var selection: DateTimeSelection
     @Published var selectedDate: Date = Date()
     @Published var isAllDay: Bool = false
-    @Published var repeatType: RepeatType = .none
-    @Published var shouldShowEndRepeat: Bool = false
-    @Published var endRepeatDate: Date?
-    @Published var isEndRepeatDateSelected: Bool = false
     @Published var selectedTag: Tag = Tag.mockData.first ?? Tag(color: .gray02, title: "Untitled")
 
     let pickerType: PickerButtonType
@@ -84,24 +80,15 @@ final class PickerButtonViewModel: BasePickerViewModel {
         switch pickerType {
         case .date:
             return selectedDate.formattedDate(with: "MMM d, yyyy")
-        case .endRepeat:
-            return isEndRepeatDateSelected
-            ? (endRepeatDate ?? selectedDate).formattedDate(with: "MMM d, yyyy")
-            : "Select Date"
-        case .repeat:
-            return repeatType.title
         case .time:
             return selectedDate.formattedDate(with: "h:mm a")
         case .tag:
             return selectedTag.title.isEmpty ? "Untitled" : selectedTag.title
+        case .deadline:
+            return Calendar.current.isDateInToday(selectedDate)
+            ? "Today"
+            : selectedDate.formattedDate(with: "MMM d")
         }
-    }
-
-    var titleColor: Color {
-        if pickerType == .endRepeat && !isEndRepeatDateSelected {
-            return .mementoBlue
-        }
-        return .gray02
     }
 
     // MARK: - Override methods
@@ -115,36 +102,9 @@ final class PickerButtonViewModel: BasePickerViewModel {
     override func dismiss() {
         super.dismiss()
         setPressedState(false)
-
-        if pickerType == .endRepeat {
-            isEndRepeatDateSelected = true
-        }
     }
 
     // MARK: - Public Methods
-
-    func confirmSelection() {
-        if pickerType == .repeat {
-            updateRepeatType(repeatType)
-        }
-        dismiss()
-    }
-
-    func updateRepeatType(_ type: RepeatType) {
-        if repeatType != type {
-            repeatType = type
-            shouldShowEndRepeat = type != .none
-            if type == .none {
-                endRepeatDate = nil
-                isEndRepeatDateSelected = false
-            }
-        }
-    }
-
-    func updateEndRepeatDate(_ date: Date) {
-        endRepeatDate = date
-        isEndRepeatDateSelected = true
-    }
 
     func resetToInitialTime() {
         selection.selectedStartTime = initialStartTime

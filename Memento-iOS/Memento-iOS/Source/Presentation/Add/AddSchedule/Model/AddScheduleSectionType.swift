@@ -8,5 +8,5 @@
 import Foundation
 
 enum AddScheduleSectionType {
-    case start, end, `repeat`, endRepeat
+    case start, end
 }

@@ -11,7 +11,6 @@ final class SegmentedMenuViewModel: ObservableObject {
 
     @Published var selectedButton: SegmentedMenuType = .checkbox
     @Published var isShowing: Bool = false
-    @Published var isRepeat: Bool = false
 
     func selectButton(_ type: SegmentedMenuType) {
         selectedButton = type
