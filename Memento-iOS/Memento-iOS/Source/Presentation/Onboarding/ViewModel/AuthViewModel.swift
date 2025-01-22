@@ -25,7 +25,7 @@ class AuthViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     @Published var isAuthenticated: Bool = false
-   
+    
     // 서버 API 호출 구현
     let loginService = LoginAPIService()
     
@@ -86,7 +86,7 @@ class AuthViewModel: ObservableObject {
             }
         }
     }
-
+    
     // Google 로그인 결과를 Firebase로 연결하여 사용자를 인증하는 함수
     @MainActor
     private func authenticateUser(for user: GIDGoogleUser?, with error: Error?) async {
@@ -115,13 +115,16 @@ class AuthViewModel: ObservableObject {
             self.errorMessage = nil
             self.isAuthenticated = true
             
+            // 토큰 저장
             loginService.login(provider: "GOOGLE", idToken: idToken) { result in
                 switch result {
                 case .success(let response):
-                    print("Access Token: \(response?.data.accessToken)")
-                    print("Refresh Token: \(response?.data.refreshToken)")
-                    print("Is New User: \(response?.data.isNewUser)")
-                    // TODO: - 에러 핸들링 필요
+                    if let accessToken = response?.data.accessToken,
+                       let refreshToken = response?.data.refreshToken {
+                        KeychainManager.shared.save(key: "AccessToken", value: accessToken)
+                        KeychainManager.shared.save(key: "RefreshToken", value: refreshToken)
+                    }
+                    print("토큰 저장 완료")
                 default:
                     print("ERROR")
                 }
@@ -133,7 +136,6 @@ class AuthViewModel: ObservableObject {
             self.isAuthenticated = false
         }
     }
-
     
     func signOutWithGoogle() {
         GIDSignIn.sharedInstance.signOut()
@@ -179,13 +181,16 @@ class AuthViewModel: ObservableObject {
                         self.errorMessage = nil
                         self.isAuthenticated = true
                         
+                        // 토큰 저장
                         loginService.login(provider: "APPLE", idToken: idTokenString) { result in
                             switch result {
                             case .success(let response):
-                                print("Access Token: \(response?.data.accessToken)")
-                                print("Refresh Token: \(response?.data.refreshToken)")
-                                print("Is New User: \(response?.data.isNewUser)")
-                                // TODO: - 에러 핸들링 필요
+                                if let accessToken = response?.data.accessToken,
+                                   let refreshToken = response?.data.refreshToken {
+                                    KeychainManager.shared.save(key: "AccessToken", value: accessToken)
+                                    KeychainManager.shared.save(key: "RefreshToken", value: refreshToken)
+                                }
+                                print("토큰 저장 완료")
                             default:
                                 print("ERROR")
                             }
