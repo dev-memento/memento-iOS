@@ -121,15 +121,25 @@ class AuthViewModel: ObservableObject {
                 case .success(let response):
                     if let accessToken = response?.data.accessToken,
                        let refreshToken = response?.data.refreshToken {
-                        KeychainManager.shared.save(key: "AccessToken", value: accessToken)
-                        KeychainManager.shared.save(key: "RefreshToken", value: refreshToken)
+                        do {
+                            try TokenKeychainManager.shared.saveAccessToken(accessToken)
+                            try TokenKeychainManager.shared.saveRefreshToken(refreshToken)
+                            print("토큰 저장 완료")
+                            
+                            // 추후 response?.data.isNewUser호 가입 사용자인지 체크 후 화면 전환
+                            if let isNewUser = response?.data.isNewUser, isNewUser {
+                                print("신규 사용자 - 추가 작업 필요")
+                            } else {
+                                print("기존 사용자 - 추가 작업 필요")
+                            }
+                        } catch {
+                            print("토큰 저장 실패: \(error.localizedDescription)")
+                        }
                     }
-                    print("토큰 저장 완료")
                 default:
                     print("ERROR")
                 }
             }
-            
         } catch {
             print("Firebase 인증 실패: \(error.localizedDescription)")
             self.errorMessage = error.localizedDescription
@@ -187,14 +197,26 @@ class AuthViewModel: ObservableObject {
                             case .success(let response):
                                 if let accessToken = response?.data.accessToken,
                                    let refreshToken = response?.data.refreshToken {
-                                    KeychainManager.shared.save(key: "AccessToken", value: accessToken)
-                                    KeychainManager.shared.save(key: "RefreshToken", value: refreshToken)
+                                    do {
+                                        try TokenKeychainManager.shared.saveAccessToken(accessToken)
+                                        try TokenKeychainManager.shared.saveRefreshToken(refreshToken)
+                                        print("토큰 저장 완료")
+                                        
+                                        // 추후 response?.data.isNewUser호 가입 사용자인지 체크 후 화면 전환
+                                        if let isNewUser = response?.data.isNewUser, isNewUser {
+                                            print("신규 사용자 - 추가 작업 필요")
+                                        } else {
+                                            print("기존 사용자 - 추가 작업 필요")
+                                        }
+                                    } catch {
+                                        print("토큰 저장 실패: \(error.localizedDescription)")
+                                    }
                                 }
-                                print("토큰 저장 완료")
                             default:
                                 print("ERROR")
                             }
                         }
+
                     } else {
                         throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Apple 인증 정보 누락"])
                     }
