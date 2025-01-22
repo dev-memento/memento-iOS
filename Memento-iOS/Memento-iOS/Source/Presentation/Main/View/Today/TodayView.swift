@@ -113,7 +113,7 @@ struct TodayListItemView: View {
     var backgroundColor: Color
     
     var onTodoTap: (ToDoListDataModel) -> Void
-    var onScheduleTap: (ScheduleListDataModel) -> Void
+    var onScheduleTap: (ScheduleTotalResponseData) -> Void
     
     var body: some View {
         HStack {
@@ -144,16 +144,11 @@ struct TodayListItemView: View {
                 }
                 
             case .schedule(let schedule):
-                ScheduleListCell(
-                    colorType: schedule.colorType,
-                    scheduleTitle: schedule.scheduleTitle,
-                    time: schedule.startTime,
-                    isCompleted: schedule.isCompleted
-                )
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    onScheduleTap(schedule)
-                }
+                ScheduleListCell(schedule: schedule)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        onScheduleTap(schedule)
+                    }
             }
         }
     }

@@ -5,7 +5,7 @@
 //  Created by Kimgahyun on 1/21/25.
 //
 
-struct ScheduleTotalResponseData: Codable {
+struct ScheduleTotalResponseData: Codable, Equatable {
     let id: Int
     let description: String
     let startDate: String
