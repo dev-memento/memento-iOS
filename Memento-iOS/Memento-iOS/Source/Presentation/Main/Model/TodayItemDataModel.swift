@@ -7,10 +7,11 @@
 
 import Foundation
 
-enum TodayItemDataModel: Identifiable {
+enum TodayItemDataModel: Identifiable, Equatable {
     case todo(ToDoListDataModel)
-    case schedule(ScheduleTotalResponseData)
+    case schedule(ScheduleTotalResponseDataTest)
     
+    // `Identifiable`을 준수하기 위해 고유 id 추가
     var id: Int {
         switch self {
         case .todo(let todo):
@@ -19,53 +20,20 @@ enum TodayItemDataModel: Identifiable {
             return schedule.id
         }
     }
-}
-
-//extension TodayItemDataModel {
-//    var toDoBinding: ToDoListDataModel {
-//        if case .todo(let todo) = self {
-//            return todo
-//        } else {
-//            fatalError("not To Do case")
-//        }
-//    }
-//    
-//    var scheduleBinding: ScheduleTotalResponseData {
-//        if case .schedule(let schedule) = self {
-//            return schedule
-//        } else {
-//            fatalError("not Schedule case")
-//        }
-//    }
-//}
-
-extension TodayItemDataModel {
+    
+    // `toDoBinding`에 getter와 setter 추가
     var toDoBinding: ToDoListDataModel {
         get {
             if case .todo(let todo) = self {
                 return todo
             } else {
-                fatalError("not To Do case")
+                fatalError("not ToDo case")
             }
         }
         set {
             if case .todo = self {
                 self = .todo(newValue)
             }
-        }
-    }
-}
-
-
-extension TodayItemDataModel: Equatable {
-    static func == (lhs: TodayItemDataModel, rhs: TodayItemDataModel) -> Bool {
-        switch (lhs, rhs) {
-        case (.todo(let lhsTodo), .todo(let rhsTodo)):
-            return lhsTodo == rhsTodo
-        case (.schedule(let lhsSchedule), .schedule(let rhsSchedule)):
-            return lhsSchedule == rhsSchedule
-        default:
-            return false
         }
     }
 }
