@@ -25,6 +25,9 @@ class AuthViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     @Published var isAuthenticated: Bool = false
+   
+    // 서버 API 호출 구현
+    let loginService = LoginAPIService()
     
     func send(action: AuthAction){
         switch action {
@@ -108,9 +111,22 @@ class AuthViewModel: ObservableObject {
         
         do {
             let result = try await Auth.auth().signIn(with: credential)
-            print("Google 로그인 및 Firebase 인증 성공: \(result.user.uid)")
+            print("Google 로그인 및 Firebase 인증 성공: idToken \(idToken)")
             self.errorMessage = nil
             self.isAuthenticated = true
+            
+            loginService.login(provider: "GOOGLE", idToken: idToken) { result in
+                switch result {
+                case .success(let response):
+                    print("Access Token: \(response?.data.accessToken)")
+                    print("Refresh Token: \(response?.data.refreshToken)")
+                    print("Is New User: \(response?.data.isNewUser)")
+                    // TODO: - 에러 핸들링 필요
+                default:
+                    print("ERROR")
+                }
+            }
+            
         } catch {
             print("Firebase 인증 실패: \(error.localizedDescription)")
             self.errorMessage = error.localizedDescription
@@ -159,10 +175,21 @@ class AuthViewModel: ObservableObject {
                         
                         // Firebase 인증
                         let authResult = try await Auth.auth().signIn(with: credential)
-                        print("Apple 로그인 성공: \(authResult.user.uid)")
-                        
+                        print("Apple 로그인 성공: idTokenString \(idTokenString)")
                         self.errorMessage = nil
                         self.isAuthenticated = true
+                        
+                        loginService.login(provider: "APPLE", idToken: idTokenString) { result in
+                            switch result {
+                            case .success(let response):
+                                print("Access Token: \(response?.data.accessToken)")
+                                print("Refresh Token: \(response?.data.refreshToken)")
+                                print("Is New User: \(response?.data.isNewUser)")
+                                // TODO: - 에러 핸들링 필요
+                            default:
+                                print("ERROR")
+                            }
+                        }
                     } else {
                         throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Apple 인증 정보 누락"])
                     }
