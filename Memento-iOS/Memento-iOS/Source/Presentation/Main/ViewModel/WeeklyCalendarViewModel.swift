@@ -12,6 +12,22 @@ import MDSKit
 import MCalendar
 
 final class WeeklyCalendarViewModel: ObservableObject {
+    
+    @Published var schedules: [ScheduleTotalResponseData] = []
+    private let scheduleService: ScheduleAPIServiceProtocol
+    
+    init(mCalendarDataSource: MCalendarDataSource,
+         mEventDataSource: MEventDatasource,
+         scheduleService: ScheduleAPIServiceProtocol) {
+        self.mCallendarDataSource = mCalendarDataSource
+        self.mEventDataSource = mEventDataSource
+        self.scheduleService = scheduleService
+        
+        
+        makeDummyEvent()
+        addOffsetDebounce()
+    }
+    
     @Published var allDayItems: [AllDayListDataModel] = [
         .init(colorType: "mementoRed", allDayTitle: "김가현 땅스부대찌개에서 부대찌개 사오고 자기가 하나부터 열까지 다 끌ㅎ인척하던데 진짜 양심이 있는거냐 미친거야 미친거냐 미친거임?미친걸까 미친 ㅋㅋ "),
         .init(colorType: "mementoOrange", allDayTitle: "지금은수요일새벽5시반"),
@@ -54,16 +70,6 @@ final class WeeklyCalendarViewModel: ObservableObject {
                                                             weekday: .fri)
     
     private var cancellable = Set<AnyCancellable>()
-    
-    init(mCalendarDataSource: MCalendarDataSource,
-         mEventDataSource: MEventDatasource) {
-        self.mCallendarDataSource = mCalendarDataSource
-        self.mEventDataSource = mEventDataSource
-        
-        
-        makeDummyEvent()
-        addOffsetDebounce()
-    }
 }
 
 extension WeeklyCalendarViewModel {
@@ -102,5 +108,25 @@ extension WeeklyCalendarViewModel {
                 }
             }
             .store(in: &cancellable)
+    }
+}
+
+extension WeeklyCalendarViewModel {
+    func schedulesTotalAPI() {
+        scheduleService.getSchedulesTotal { [weak self] result in
+            switch result {
+            case .success(let response):
+                DispatchQueue.main.async {
+                    if let scheduleData = response?.data as? [ScheduleTotalResponseData] {
+                        self?.schedules = scheduleData
+                    } else {
+                        print("데이터변환 실패 ")
+                        self?.schedules = []
+                    }
+                }
+            default:
+                print("ERROR")
+            }
+        }
     }
 }
