@@ -74,7 +74,7 @@ final class OnboardingViewModel: ObservableObject {
         self.authViewModel = authViewModel
         setupAuthStateSubscription()
     }
-
+    
     // MARK: - Submit Onboarding Data
     
     /// 온보딩 데이터를 서버로 전송
@@ -92,7 +92,7 @@ final class OnboardingViewModel: ObservableObject {
     
     /// 서버로 데이터 전송 로직
     func submitToServer(_ data: OnboardingData) async throws {
-        // 서버 API 호출 구현
+       
     }
 }
 

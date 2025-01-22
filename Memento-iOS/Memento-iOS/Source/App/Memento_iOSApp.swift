@@ -30,7 +30,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
 }
 
-
 @main
 struct MementoApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
