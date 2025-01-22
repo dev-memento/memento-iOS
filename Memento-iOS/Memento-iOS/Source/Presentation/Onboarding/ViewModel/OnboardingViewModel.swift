@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import AuthenticationServices
 
 // MARK: - Navigation Destinations
 
@@ -18,153 +19,140 @@ enum OnboardingNavigationDestination: String, Hashable {
     case calendarConnect = "CalendarConnectView"
 }
 
+// MARK: - Data Models
+
+/// 수면 주기 데이터 모델
+struct SleepCycleData {
+    var wakeUpTime: Date? = nil
+    var sleepTime: Date? = nil
+}
+
+/// 작업 선택 데이터 모델
+struct WorkSelectionData {
+    var selectedCategory: String? = nil
+    var customCategory: String = ""
+    var selectedWorks: Set<String> = []
+}
+
+/// 작업 선호도 데이터 모델
+struct WorkPreferenceData {
+    var selectedAnswers: [UUID: Bool?] = [:]
+}
+
 // MARK: - Data Transfer Object
 
 /// 서버에 전달할 온보딩 데이터를 구조화한 객체
 struct OnboardingData {
-    let sleepCycle: OnboardingViewModel.SleepCycleData
-    let workSelection: OnboardingViewModel.WorkSelectionData
-    let workPreference: OnboardingViewModel.WorkPreferenceData
+    let sleepCycle: SleepCycleData
+    let workSelection: WorkSelectionData
+    let workPreference: WorkPreferenceData
 }
 
-// MARK: - Onboarding ViewModel
 
+// MARK: - OnboardingViewModel Core
 @MainActor
 final class OnboardingViewModel: ObservableObject {
     
-    var delegate: NetworkResult<Any>?
-    private let healthCheckService: HealthCheckAPIServiceProtocol
-    
-    init(healthCheckService: HealthCheckAPIServiceProtocol = HealthCheckAPIService()) {
-            self.healthCheckService = healthCheckService
-        }
-        
-    func checkHealthAPI(completion: @escaping (Bool) -> Void) {
-        healthCheckService.getHealthCheck { [weak self] result in
-                switch result {
-                case .success(let response):
-                    if let status = response?.data.status {
-                        print("Health Check Status: \(status)")
-                        completion(true)
-                    } else {
-                        print("Decoding error: No data available")
-                        completion(false)
-                    }
-                    
-                // TODO: - 에러 핸들링 필요
-                default:
-                    print("ERROR")
-                }
-            }
-        }
-
     // MARK: - Published Properties
     
     /// 네비게이션 스택을 관리
     @Published var navigationPath: [OnboardingNavigationDestination] = []
-
+    
     /// 사용자 입력 데이터
     @Published var sleepCycleData: SleepCycleData = SleepCycleData()
     @Published var workSelectionData: WorkSelectionData = WorkSelectionData()
     @Published var workPreferenceData: WorkPreferenceData = WorkPreferenceData()
-
-    /// UI 상태 관리
-    @Published var isLoading: Bool = false
+    
     @Published var errorMessage: String?
-
-    // MARK: - Navigation Methods
-
-    /// 특정 화면으로 이동
-    func navigateToNext(_ destination: OnboardingNavigationDestination) {
-        navigationPath.append(destination)
-    }
-
-    /// 현재 화면에서 뒤로 이동
-    func navigateBack() {
-        navigationPath.removeLast()
-    }
-
-    // MARK: - SleepCycle Data Model and Logic
-
-    struct SleepCycleData {
-        var wakeUpTime: Date? = nil
-        var sleepTime: Date? = nil
-    }
-
-    /// SleepCycle 화면에서 Next 버튼 활성화 여부를 확인
-    var isNextButtonEnabledForSleepCycle: Bool {
-        sleepCycleData.wakeUpTime != nil && sleepCycleData.sleepTime != nil
-    }
-
-    // MARK: - WorkSelection Data Model and Logic
-
-    struct WorkSelectionData {
-        var selectedCategory: String? = nil
-        var customCategory: String = ""
-        var selectedWorks: Set<String> = []
-    }
-
-    // MARK: - WorkPreference Data Model and Logic
-
-    struct WorkPreferenceData {
-        var selectedAnswers: [UUID: Bool?] = [:]
-    }
-
-    /// WorkPreference 화면에서 Next 버튼 활성화 여부를 확인
-    var isNextButtonEnabledForWorkPreference: Bool {
-        SurveyQuestion.mockData.allSatisfy { workPreferenceData.selectedAnswers[$0.id] != nil }
-    }
-
-    // MARK: - Authentication Methods
-
-    /// Google 로그인 처리
-    func signInWithGoogle() async {
-        isLoading = true
-        defer { isLoading = false }
-
-        do {
-            // Google 로그인 로직 구현
-            navigateToNext(.sleepCycleSetting)
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-    }
-
-    /// Apple 로그인 처리
-    func signInWithApple() async {
-        isLoading = true
-        defer { isLoading = false }
-
-        do {
-            // Apple 로그인 로직 구현
-
-            navigateToNext(.sleepCycleSetting)
-        } catch {
-            errorMessage = error.localizedDescription
-        }
+    
+    var authViewModel: AuthViewModel
+    
+    // MARK: - Properties
+    private var cancellables = Set<AnyCancellable>()
+    
+    init(authViewModel: AuthViewModel) {
+        self.authViewModel = authViewModel
+        setupAuthStateSubscription()
     }
 
     // MARK: - Submit Onboarding Data
-
+    
     /// 온보딩 데이터를 서버로 전송
     func submitOnboardingData() async throws {
-        isLoading = true
-        defer { isLoading = false }
-
+        
         // 온보딩 데이터 생성
         let onboardingData = OnboardingData(
             sleepCycle: sleepCycleData,
             workSelection: workSelectionData,
             workPreference: workPreferenceData
         )
-
-        // 서버로 데이터 전송
+        
         try await submitToServer(onboardingData)
     }
-
+    
     /// 서버로 데이터 전송 로직
-    private func submitToServer(_ data: OnboardingData) async throws {
+    func submitToServer(_ data: OnboardingData) async throws {
         // 서버 API 호출 구현
+    }
+}
+
+
+// MARK: - Onboarding Navigation Logic
+extension OnboardingViewModel {
+    /// 특정 화면으로 이동
+    /// - Parameter destination: 이동할 화면의 목적지
+    func navigateToNext(_ destination: OnboardingNavigationDestination) {
+        navigationPath.append(destination)
+    }
+    
+    /// 현재 화면에서 뒤로 이동
+    func navigateBack() {
+        guard !navigationPath.isEmpty else { return }
+        navigationPath.removeLast()
+    }
+    
+    /// 네비게이션 스택 리셋
+    func resetNavigation() {
+        navigationPath.removeAll()
+    }
+}
+
+// MARK: - Authentication Handling
+extension OnboardingViewModel {
+    
+    func handleGoogleLogin() {
+        authViewModel.signInWithGoogle()
+    }
+    
+    func handleAppleLogin(request: ASAuthorizationAppleIDRequest) {
+        authViewModel.send(action: .appleLogin(request))
+    }
+    
+    // AuthViewModel 상태 변화 감지를 위한 메서드
+    private func setupAuthStateSubscription() {
+        authViewModel.$isAuthenticated
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isAuthenticated in
+                guard let self = self else { return }
+                if isAuthenticated {
+                    self.navigateToNext(.sleepCycleSetting)
+                }
+            }
+            .store(in: &cancellables)
+    }
+}
+
+// MARK: - Helper Methods for OnboardingViewModel
+extension OnboardingViewModel {
+    
+    /// SleepCycle 화면에서 Next 버튼 활성화 여부를 확인
+    var isNextButtonEnabledForSleepCycle: Bool {
+        sleepCycleData.wakeUpTime != nil && sleepCycleData.sleepTime != nil
+    }
+    
+    /// WorkPreference 화면에서 Next 버튼 활성화 여부를 확인
+    var isNextButtonEnabledForWorkPreference: Bool {
+        SurveyQuestion.mockData.allSatisfy { workPreferenceData.selectedAnswers[$0.id] != nil }
     }
 }
 
