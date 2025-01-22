@@ -20,6 +20,7 @@ enum HeaderType {
     case accessTokenHeader
     case refreshTokenHeader
     case tokenHealthHeader(tokenHealthType: TokenHealthType)
+    case noTokenHeader
 }
 
 /// 각 API에 따라 공통된 Path 값 (존재하지 않는 경우 빈 String 값)
@@ -66,6 +67,9 @@ extension BaseTargetType {
         case .tokenHealthHeader:
             // 나중에 추가
             // Access Token 또는 Refresh Token의 상태 확인 및 구분
+            break
+            
+        case .noTokenHeader:
             break
         }
         

@@ -14,7 +14,7 @@ struct AddDeadlineView: View {
     // MARK: - Properties
 
     @Environment(\.presentationMode) var presentationMode
-    @ObservedObject var viewModel: PickerButtonViewModel
+    @ObservedObject var viewModel: AddTodoPickerButtonViewModel
     @Binding var selectedDateText: String
 
     // MARK: - Body
@@ -50,7 +50,7 @@ struct AddDeadlineView: View {
                         .sheet(isPresented: $viewModel.isPresented) {
                             viewModel.isPresented = false
                         } content: {
-                            SheetContainer(type: .date) {
+                            SheetContainer(type: AddTodoPickerButtonType.date) {
                                 VStack {
                                     SheetHeaderView {
                                         viewModel.isPresented = false

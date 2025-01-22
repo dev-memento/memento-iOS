@@ -11,4 +11,12 @@ final class AddTodoHeaderViewModel: ObservableObject {
 
     @Published var showDatePicker: Bool = false
     @Published var selectedDate: Date = Date()
+
+    var formattedDate: String {
+        if Calendar.current.isDateInToday(selectedDate) {
+            return "Today"
+        } else {
+            return selectedDate.formattedDate(with: "MMM d")
+        }
+    }
 }

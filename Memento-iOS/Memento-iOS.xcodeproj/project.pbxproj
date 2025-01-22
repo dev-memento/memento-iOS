@@ -18,8 +18,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2F45BA0D2D3F927000EEC829 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		830F3C562D2A73BD00254FDE /* Memento-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Memento-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		9D0BF1662D3E6BD50070C42B /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -38,12 +38,16 @@
 				Resource/Assets.xcassets,
 				Source/Component/Alert/CustomActionSheetView.swift,
 				Source/Component/Alert/ScheduleAlertView.swift,
-				Source/Component/Alert/TodoAlertView.swift,
 				Source/Component/CustomTextEditor.swift,
 				Source/Component/EisenhowerMatrixView.swift,
 				Source/Component/NeonAnimationView.swift,
 				Source/Data/MCalendarEventList.swift,
 				Source/Data/MEventDataSource.swift,
+				Source/Network/Base/TokenRefreshPlugin.swift,
+				Source/Network/Onboarding/DTO/Request/LoginRequest.swift,
+				"Source/Network/Onboarding/DTO/Response /LoginResponse.swift",
+				Source/Network/Onboarding/LoginAPIService.swift,
+				Source/Network/Onboarding/TokenRefreshType.swift,
 				Source/Presentation/Add/AddSchedule/Model/DateTimeSelection.swift,
 				Source/Presentation/Add/AddSchedule/View/AddEventTitleView.swift,
 				Source/Presentation/Add/AddSchedule/View/AddScheduleView.swift,
@@ -59,10 +63,8 @@
 				Source/Presentation/Add/AddTodo/ViewModel/AddTodoHeaderViewModel.swift,
 				Source/Presentation/Add/AddTodo/ViewModel/AddTodoTextViewModel.swift,
 				Source/Presentation/Add/BrainDump/View/BrainDumpView.swift,
-				Source/Presentation/Add/Common/PickerButton/Model/PickerButtonType.swift,
 				Source/Presentation/Add/Common/PickerButton/View/PickerButton.swift,
 				Source/Presentation/Add/Common/PickerButton/ViewModel/BasePickerViewModel.swift,
-				Source/Presentation/Add/Common/PickerButton/ViewModel/PickerButtonViewModel.swift,
 				Source/Presentation/Add/Common/Protocols/Presentable.swift,
 				Source/Presentation/Add/Common/SegmentedMenu/Model/SegmentedMenuType.swift,
 				Source/Presentation/Add/Common/SegmentedMenu/View/SegmentedMenuView.swift,
@@ -143,7 +145,7 @@
 		830F3C4D2D2A73BD00254FDE = {
 			isa = PBXGroup;
 			children = (
-				9D0BF1662D3E6BD50070C42B /* Config.xcconfig */,
+				2F45BA0D2D3F927000EEC829 /* Config.xcconfig */,
 				9D57D6E32D3AA104002AB064 /* Memento-iOS */,
 				2F459C412D37C91B00EDD537 /* Frameworks */,
 				830F3C572D2A73BD00254FDE /* Products */,
@@ -256,6 +258,7 @@
 /* Begin XCBuildConfiguration section */
 		830F3C622D2A73BF00254FDE /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2F45BA0D2D3F927000EEC829 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -321,6 +324,7 @@
 		};
 		830F3C632D2A73BF00254FDE /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2F45BA0D2D3F927000EEC829 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -379,6 +383,7 @@
 		};
 		830F3C652D2A73BF00254FDE /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2F45BA0D2D3F927000EEC829 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -391,11 +396,11 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Memento-iOS/Info.plist";
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Memento에서 일정 동기화를 위해 Apple Calendar의 데이터를 가져오려고 합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -412,6 +417,7 @@
 		};
 		830F3C662D2A73BF00254FDE /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2F45BA0D2D3F927000EEC829 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -424,11 +430,11 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Memento-iOS/Info.plist";
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Memento에서 일정 동기화를 위해 Apple Calendar의 데이터를 가져오려고 합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

@@ -30,12 +30,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
 }
 
-
 @main
 struct MementoApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    @StateObject private var onboardingViewModel = OnboardingViewModel()
-    
+    @StateObject private var onboardingViewModel = OnboardingViewModel(authViewModel: AuthViewModel())
+
     var body: some Scene {
         WindowGroup {
             LoginView()

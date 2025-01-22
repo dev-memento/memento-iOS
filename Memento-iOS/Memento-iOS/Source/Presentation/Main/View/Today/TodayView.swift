@@ -24,23 +24,44 @@ struct TodayView: View {
             ScrollView {
                 VStack(spacing: 8) {
                     WakeUpHeaderView(wakeUpTime: "8 AM")
+                        .padding(.leading, 50)
+                        .padding(.bottom, 17)
                     
                     ForEach($viewModel.todayItems, id: \.wrappedValue.id) { item in
                         createTodayListItemView(for: item)
                     }
                     
                     WindDownFooterView(windDownTime: "11 PM")
+                        .padding(.leading, 50)
+                        .padding(.top, 17)
                 }
-                .padding(.vertical)
             }
             .background(Color.grayBlack)
             
             if showTodoAlert, let todo = selectTodo {
-                TodoAlertView(
+                let todoBinding = Binding<Bool>(
+                    get: {
+                        if let index = viewModel.todayItems.firstIndex(where: { $0.id == todo.id }),
+                           case .todo(let t) = viewModel.todayItems[index] {
+                            return t.isChecked
+                        }
+                        return false
+                    },
+                    set: { newValue in
+                        if let index = viewModel.todayItems.firstIndex(where: { $0.id == todo.id }),
+                           case .todo(var t) = viewModel.todayItems[index] {
+                            t.isChecked = newValue
+                            viewModel.todayItems[index] = .todo(t)
+                        }
+                    }
+                )
+                
+                ToDoAlertView(
                     todoTitle: todo.toDoTitle,
                     deadline: todo.dueDate,
                     tag: "Work",
                     priority: todo.priorityType,
+                    isChecked: todoBinding,
                     onDelete: {
                         showTodoAlert = false
                     },
@@ -58,7 +79,7 @@ struct TodayView: View {
                     startDate: schedule.startDate,
                     endDate: schedule.endDate,
                     tag: "SOPT",
-                    source: "notion",
+                    source: "Notion",
                     onDelete: {
                         showScheduleAlert = false
                     },
@@ -130,15 +151,10 @@ struct TodayListItemView: View {
 
     var body: some View {
         HStack {
-            if isArrow {
-                Image(systemName: "chevron.down")
-                    .foregroundColor(.white)
-                    .padding(.trailing, 8)
-            } else {
-                Spacer()
-                    .frame(width: 20)
-                    .padding(.trailing, 8)
-            }
+            Image(.ic_progress)
+                .padding(.leading, -10)
+                .padding(.trailing, 5)
+                .opacity(isArrow ? 1 : 0)
             
             // ScheduleListCell 추가
             if case .schedule(let schedule) = item {
@@ -154,4 +170,11 @@ struct TodayListItemView: View {
         .padding(.horizontal)
         .background(backgroundColor)
     }
+}
+
+#Preview{
+    TodayView(viewModel: WeeklyCalendarViewModel(
+        mCalendarDataSource: MCalendarDataSource(),
+        mEventDataSource: MEventDatasource()
+    ))
 }
