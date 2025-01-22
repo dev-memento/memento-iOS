@@ -85,6 +85,7 @@ struct TodayWeeklyCalendarView: View {
             }
         }
         .onAppear {
+            viewModel.getSchedulesTotalAPI()
             viewModel.makeDummyEvent()
             makeIndex()
         }
@@ -151,6 +152,8 @@ struct TodayWeeklyCalendarView: View {
 }
 
 #Preview {
-    TodayWeeklyCalendarView(viewModel: .init(mCalendarDataSource: MCalendarDataSource(),
-                                             mEventDataSource: MEventDatasource()))
+    TodayWeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
+        mCalendarDataSource: MCalendarDataSource(),
+        mEventDataSource: MEventDatasource(),
+        scheduleService: ScheduleAPIService()))
 }

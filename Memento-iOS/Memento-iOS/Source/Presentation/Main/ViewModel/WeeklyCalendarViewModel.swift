@@ -99,30 +99,10 @@ extension WeeklyCalendarViewModel {
             }
             .store(in: &cancellable)
     }
-    
-    private func updateTodayItems() {
-            // ToDo와 Schedule 데이터 결합
-            let scheduleItems: [TodayItemDataModel] = schedules.map {
-                .schedule(ScheduleTotalResponseData(
-                    id: $0.id,
-                    description: $0.description,
-                    startDate: $0.startDate,
-                    endDate: $0.endDate,
-                    isAllDay: $0.isAllDay,
-                    scheduleType: $0.scheduleType,
-                    order: $0.order,
-                    tagName: $0.tagName,
-                    tagColorCode: $0.tagColorCode
-                ))
-            }
-            let todoItems: [TodayItemDataModel] = toDoListItems.map { .todo($0) }
-            
-            todayItems = todoItems + scheduleItems
-        }
 }
 
 extension WeeklyCalendarViewModel {
-    func schedulesTotalAPI() {
+    func getSchedulesTotalAPI() {
         scheduleService.getSchedulesTotal { [weak self] result in
             switch result {
             case .success(let response):
