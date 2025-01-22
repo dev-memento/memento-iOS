@@ -21,7 +21,6 @@ struct WindDownFooterView: View {
         }
         .applyFont(.detail_b_12)
         .foregroundColor(.gray07)
-        .padding()
     }
 }
 

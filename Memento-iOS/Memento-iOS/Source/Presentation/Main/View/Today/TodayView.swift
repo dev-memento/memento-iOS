@@ -24,6 +24,8 @@ struct TodayView: View {
             ScrollView {
                 VStack(spacing: 8) {
                     WakeUpHeaderView(wakeUpTime: "8 AM")
+                        .padding(.leading, 50)
+                        .padding(.bottom, 17)
                     
                     ForEach($viewModel.todayItems, id: \.wrappedValue.id) { item in
                         let isArrow = item.wrappedValue == viewModel.todayItems.first
@@ -35,7 +37,7 @@ struct TodayView: View {
                             isArrow: isArrow,
                             backgroundColor: Color.mainNavy,
                             
-                            onTodoTap: { todo in
+                            onToDoTap: { todo in
                                 selectTodo = todo
                                 showTodoAlert = true
                             },
@@ -53,17 +55,36 @@ struct TodayView: View {
                     }
                     
                     WindDownFooterView(windDownTime: "11 PM")
+                        .padding(.leading, 50)
+                        .padding(.top, 17)
                 }
-                .padding(.vertical)
             }
             .background(Color.grayBlack)
             
             if showTodoAlert, let todo = selectTodo {
-                TodoAlertView(
+                let todoBinding = Binding<Bool>(
+                    get: {
+                        if let index = viewModel.todayItems.firstIndex(where: { $0.id == todo.id }),
+                           case .todo(let t) = viewModel.todayItems[index] {
+                            return t.isChecked
+                        }
+                        return false
+                    },
+                    set: { newValue in
+                        if let index = viewModel.todayItems.firstIndex(where: { $0.id == todo.id }),
+                           case .todo(var t) = viewModel.todayItems[index] {
+                            t.isChecked = newValue
+                            viewModel.todayItems[index] = .todo(t)
+                        }
+                    }
+                )
+                
+                ToDoAlertView(
                     todoTitle: todo.toDoTitle,
                     deadline: todo.dueDate,
                     tag: "Work",
                     priority: todo.priorityType,
+                    isChecked: todoBinding,
                     onDelete: {
                         showTodoAlert = false
                     },
@@ -81,7 +102,7 @@ struct TodayView: View {
                     startDate: schedule.startTime,
                     endDate: schedule.endTime,
                     tag: "SOPT",
-                    source: "notion",
+                    source: "Notion",
                     onDelete: {
                         showScheduleAlert = false
                     },
@@ -112,20 +133,15 @@ struct TodayListItemView: View {
     var isArrow: Bool
     var backgroundColor: Color
     
-    var onTodoTap: (ToDoListDataModel) -> Void
+    var onToDoTap: (ToDoListDataModel) -> Void
     var onScheduleTap: (ScheduleListDataModel) -> Void
     
     var body: some View {
         HStack {
-            if isArrow {
-                Image(systemName: "chevron.down")
-                    .foregroundColor(.white)
-                    .padding(.trailing, 8)
-            } else {
-                Spacer()
-                    .frame(width: 20)
-                    .padding(.trailing, 8)
-            }
+            Image(.ic_progress)
+                .padding(.leading, -10)
+                .padding(.trailing, 5)
+                .opacity(isArrow ? 1 : 0)
             
             switch item {
             case .todo(let todo):
@@ -140,7 +156,7 @@ struct TodayListItemView: View {
                 )
                 .contentShape(Rectangle())
                 .onTapGesture {
-                    onTodoTap(todo)
+                    onToDoTap(todo)
                 }
                 
             case .schedule(let schedule):
@@ -157,4 +173,11 @@ struct TodayListItemView: View {
             }
         }
     }
+}
+
+#Preview{
+    TodayView(viewModel: WeeklyCalendarViewModel(
+        mCalendarDataSource: MCalendarDataSource(),
+        mEventDataSource: MEventDatasource()
+    ))
 }
