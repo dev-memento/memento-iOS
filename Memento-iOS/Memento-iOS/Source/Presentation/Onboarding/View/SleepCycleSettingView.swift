@@ -9,7 +9,7 @@ import SwiftUI
 import MDSKit
 
 struct SleepCycleSettingView: View {
-    @EnvironmentObject var viewModel: OnboardingViewModel // 뷰모델 주입
+    @EnvironmentObject var viewModel: OnboardingViewModel
     @State private var isPickerPresented: Bool = false
     @State private var selectedTimeType: TimeType = .wakeUp
     
@@ -92,7 +92,7 @@ private struct TimeSelectionView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 29) {
             timeSelectionRow(
-                icon: .ic_sun_line,
+                icon: .ic_wakeup,
                 title: OnboardingSleepCycleText.wakeUpTitle,
                 time: wakeUpTime,
                 action: {
@@ -102,7 +102,7 @@ private struct TimeSelectionView: View {
             )
             
             timeSelectionRow(
-                icon: .ic_bad,
+                icon: .ic_winddown,
                 title: OnboardingSleepCycleText.windDownTitle,
                 time: windDownTime,
                 action: {
@@ -164,5 +164,5 @@ private struct NextButton: View {
 }
 
 #Preview {
-    SleepCycleSettingView().environmentObject(OnboardingViewModel())
+    SleepCycleSettingView().environmentObject(OnboardingViewModel(authViewModel: AuthViewModel()))
 }

@@ -73,9 +73,7 @@ private struct CalendarConnectButtons: View {
     var body: some View {
         VStack(alignment: .center, spacing: 18) {
             Button {
-                Task {
-                    await viewModel.signInWithGoogle()
-                }
+               
             } label: {
                 HStack(spacing: 8) {
                     Image(.img_google)
@@ -95,9 +93,7 @@ private struct CalendarConnectButtons: View {
             .background(Color.gray10)
 
             Button {
-                Task {
-                    await viewModel.signInWithApple()
-                }
+                
             } label: {
                 HStack(spacing: 8) {
                     Image(.img_apple)
@@ -141,5 +137,5 @@ private struct AppStartButton: View {
 }
 
 #Preview {
-    CalendarConnectView().environmentObject(OnboardingViewModel())
+    CalendarConnectView().environmentObject(OnboardingViewModel(authViewModel: AuthViewModel()))
 }

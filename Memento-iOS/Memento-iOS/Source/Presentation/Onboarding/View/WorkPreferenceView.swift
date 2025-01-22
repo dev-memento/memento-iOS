@@ -143,5 +143,5 @@ private struct NextButton: View {
 }
 
 #Preview {
-    WorkPreferenceView().environmentObject(OnboardingViewModel())
+    WorkPreferenceView().environmentObject(OnboardingViewModel(authViewModel: AuthViewModel()))
 }
