@@ -15,6 +15,7 @@ struct AddTodoBottomView: View {
 
     @ObservedObject var viewModel: AddTodoTextViewModel
     @State private var isDeadlinePresented: Bool = false
+    @State private var isMatrixPresented: Bool = false
     @State private var selectedDateText: String = "Today"
     @StateObject private var pickerViewModel = PickerButtonViewModel(type: .deadline)
 
@@ -71,7 +72,9 @@ struct AddTodoBottomView: View {
     }
 
     private var matrixButton: some View {
-        Button(action: {}) {
+        Button(action: {
+            isMatrixPresented.toggle()
+        }) {
             Image(.matrix_none)
                 .frame(width: 26, height: 26)
                 .padding(8)
@@ -79,6 +82,12 @@ struct AddTodoBottomView: View {
                 .cornerRadius(2)
         }
         .frame(width: 42, height: 42)
+        .sheet(isPresented: $isMatrixPresented) {
+            EisenhowerMatrixView(
+                source: "",
+                externalPriority: .constant(.none)
+            )
+        }
     }
 
     private var enterButton: some View {
