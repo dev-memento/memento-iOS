@@ -13,11 +13,11 @@ struct BaseSheetView: View {
 
     @Binding var selection: Date
     @Binding var isPresented: Bool
-    let type: PickerButtonType
+    let type: AddSchedulePickerButtonType
     var isStartsDate: Bool = false
     var minimumDate: Date? = nil
     var onDismiss: (() -> Void)? = nil
-    var tagViewModel: PickerButtonViewModel? = nil
+    var tagViewModel: AddSchedulePickerButtonViewModel? = nil
 
     private var dateRange: ClosedRange<Date> {
         if isStartsDate {
@@ -74,7 +74,7 @@ struct BaseSheetView: View {
                     .datePickerStyle(.wheel)
                     .environment(\.locale, Locale(identifier: "en_US"))
 
-                case .tag, .deadline: EmptyView()
+                case .tag: EmptyView()
                 }
             }
         }

@@ -13,7 +13,7 @@ struct AllDayCheckBoxButton: View {
 
     // MARK: - Properties
 
-    @ObservedObject var viewModel: PickerButtonViewModel
+    @ObservedObject var viewModel: AddSchedulePickerButtonViewModel
 
     // MARK: - Body
 
