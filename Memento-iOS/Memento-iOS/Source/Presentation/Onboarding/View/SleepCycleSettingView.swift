@@ -92,7 +92,7 @@ private struct TimeSelectionView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 29) {
             timeSelectionRow(
-                icon: .ic_sun_line,
+                icon: .ic_wakeup,
                 title: OnboardingSleepCycleText.wakeUpTitle,
                 time: wakeUpTime,
                 action: {

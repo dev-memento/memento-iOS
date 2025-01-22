@@ -75,7 +75,7 @@ private struct LoginHeaderView: View {
                 .multilineTextAlignment(.center)
                 .foregroundColor(.white)
             
-            Image(.img_main_logo)
+            Image(.img_logo_memento_white)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 100, height: 100)
