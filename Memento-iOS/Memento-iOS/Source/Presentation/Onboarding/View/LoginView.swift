@@ -24,7 +24,7 @@ struct LoginView: View {
                     LoginHeaderView()
                         .padding(.top, 115)
                     
-                    LoginButtons(authViewModel: viewModel.authViewModel) // viewModel에서 authViewModel 사용
+                    LoginButtons(authViewModel: viewModel.authViewModel)
                         .padding(.top, 103.2)
                     
                     TermsOfUseView()
@@ -104,23 +104,23 @@ private struct LoginButtons: View {
             }
             .frame(width: UIScreen.main.bounds.width * 0.95, height: 46)
             .background(Color.gray10)
-            .disabled(authViewModel.isLoading)  // 로딩 중일 때 버튼 비활성화
-            .opacity(authViewModel.isLoading ? 0.6 : 1)  // 로딩 중일 때 버튼 반투명하게
+            .disabled(authViewModel.isLoading)
+            .opacity(authViewModel.isLoading ? 0.6 : 1)
             
             // Apple 로그인 버튼
             SignInWithAppleButton(
                 onRequest: { request in
-                    guard !authViewModel.isLoading else { return }  // 로딩 중이면 실행 방지
+                    guard !authViewModel.isLoading else { return }
                     authViewModel.send(action: .appleLogin(request))
                 },
                 onCompletion: { result in
-                    guard !authViewModel.isLoading else { return }  // 로딩 중이면 실행 방지
+                    guard !authViewModel.isLoading else { return }
                     authViewModel.send(action: .appleLoginCompletion(result))
                 }
             )
             .frame(width: UIScreen.main.bounds.width * 0.95, height: 46)
             .background(Color.clear)
-            .disabled(authViewModel.isLoading)  // 로딩 중일 때 버튼 비활성화
+            .disabled(authViewModel.isLoading)
             .overlay(
                 HStack(spacing: 8) {
                     Image(.img_apple)
@@ -135,7 +135,7 @@ private struct LoginButtons: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: 46)
                 .background(Color.gray10)
-                .allowsHitTesting(false) // 오버레이는 터치 이벤트를 차단
+                .allowsHitTesting(false)
             )
         
         }
