@@ -16,9 +16,7 @@ final class AddTodoHeaderViewModel: ObservableObject {
         if Calendar.current.isDateInToday(selectedDate) {
             return "Today"
         } else {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "MMM d"
-            return dateFormatter.string(from: selectedDate)
+            return selectedDate.formattedDate(with: "MMM d")
         }
     }
 }
