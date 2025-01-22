@@ -10,8 +10,7 @@ import SwiftUI
 import MDSKit
 
 struct ScheduleListCell: View {
-    
-    var schedule: ScheduleTotalResponseData
+    var schedule: ScheduleTotalResponseDataTest
     
     // 현재 시간에 맞춰 일정 완료 여부
     private var isCompleted: Bool {
@@ -105,6 +104,6 @@ struct TimeInfoView: View {
     }
 }
 
-#Preview {
-    ScheduleListCell(schedule: ScheduleTotalResponseData(id: 0, description: "가ㅏ나다가가라ㅏㅏ마너ㅜ이ㅓㅜ", startDate: "2025-01-15 14:53:00.462351", endDate: "2025-01-23 19:53:00.462351", isAllDay: false, scheduleType: "GOOGLE", order: 1, tagName: "SOPT", tagColorCode: "EE8AAD"))
-}
+//#Preview {
+//    ScheduleListCell(schedule: ScheduleTotalResponseData(id: 0, description: "가ㅏ나다가가라ㅏㅏ마너ㅜ이ㅓㅜ", startDate: "2025-01-15 14:53:00.462351", endDate: "2025-01-23 19:53:00.462351", isAllDay: false, scheduleType: "GOOGLE", order: 1, tagName: "SOPT", tagColorCode: "EE8AAD"))
+//}
