@@ -29,9 +29,6 @@ struct AddTodoView: View {
         }
         .padding(.horizontal)
         .background(Color.gray10)
-        .sheet(isPresented: $headerViewModel.showDatePicker) {
-            // TODO: BaseSheetView 추가
-        }
     }
 }
 
