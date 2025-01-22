@@ -8,10 +8,8 @@
 import Foundation
 
 struct NewAccessTokenResponse: Codable {
-    struct Data: Codable {
-        let accessToken: String
-        let refreshToken: String
-    }
-    let data: Data
+    let accessToken: String
+    let refreshToken: String
 }
+
 

@@ -22,7 +22,7 @@ extension LoginAPIServiceProtocol {
 
 final class LoginAPIService: BaseAPIService, LoginAPIServiceProtocol {
     
-    let provider = MoyaProvider<LoginTargetType>(plugins: [MoyaPlugin.shared, TokenRefreshPlugin()])
+    let provider = MoyaProvider<LoginTargetType>(plugins: [MoyaPlugin.shared])
     
     /// 로그인 API 호출
     func login(provider: String, idToken: String, completion: @escaping (NetworkResult<LoginResponseDTO>) -> Void) {

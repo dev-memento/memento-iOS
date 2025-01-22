@@ -44,9 +44,11 @@
 				Source/Component/NeonAnimationView.swift,
 				Source/Data/MCalendarEventList.swift,
 				Source/Data/MEventDataSource.swift,
+				Source/Network/Base/TokenRefreshPlugin.swift,
 				Source/Network/Onboarding/DTO/Request/LoginRequest.swift,
 				"Source/Network/Onboarding/DTO/Response /LoginResponse.swift",
 				Source/Network/Onboarding/LoginAPIService.swift,
+				Source/Network/Onboarding/TokenRefreshType.swift,
 				Source/Presentation/Add/AddSchedule/Model/DateTimeSelection.swift,
 				Source/Presentation/Add/AddSchedule/View/AddEventTitleView.swift,
 				Source/Presentation/Add/AddSchedule/View/AddScheduleView.swift,
@@ -263,6 +265,7 @@
 /* Begin XCBuildConfiguration section */
 		830F3C622D2A73BF00254FDE /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2F45BA0D2D3F927000EEC829 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -328,6 +331,7 @@
 		};
 		830F3C632D2A73BF00254FDE /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2F45BA0D2D3F927000EEC829 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -386,6 +390,7 @@
 		};
 		830F3C652D2A73BF00254FDE /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2F45BA0D2D3F927000EEC829 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -419,6 +424,7 @@
 		};
 		830F3C662D2A73BF00254FDE /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2F45BA0D2D3F927000EEC829 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
