@@ -10,9 +10,15 @@ import SwiftUI
 import MDSKit
 
 struct ScheduleListCell: View {
+    
     var schedule: ScheduleTotalResponseData
-    var isCompleted: Bool
-
+    
+    // 현재 시간에 맞춰 일정 완료 여부
+    private var isCompleted: Bool {
+        guard let endDate = Date.dateFromString(schedule.endDate) else { return false }
+        return Date() > endDate
+    }
+    
     var body: some View {
         HStack(spacing: 10) {
             ColorTagView(colorType: schedule.tagColorCode)
@@ -71,6 +77,7 @@ struct TimeInfoView: View {
         }
     }
 
+    // 시간 표현 정규식
     private func formattedTime(startDate: String, endDate: String) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSSSS"
@@ -85,6 +92,7 @@ struct TimeInfoView: View {
         return "\(outputFormatter.string(from: start)) - \(outputFormatter.string(from: end))"
     }
 
+    // 일정 타입에 따라 icon 삽입
     private func scheduleIconName(for type: String) -> Image? {
         switch type {
         case "GOOGLE":
@@ -98,5 +106,5 @@ struct TimeInfoView: View {
 }
 
 #Preview {
-    ScheduleListCell(schedule: ScheduleTotalResponseData(id: 0, description: "가ㅏ나다가가라ㅏㅏ마너ㅜ이ㅓㅜ", startDate: "2025-01-15 14:53:00.462351", endDate: "2025-01-15 19:53:00.462351", isAllDay: false, scheduleType: "GOOGLE", order: 1, tagName: "SOPT", tagColorCode: "EE8AAD"), isCompleted: false)
+    ScheduleListCell(schedule: ScheduleTotalResponseData(id: 0, description: "가ㅏ나다가가라ㅏㅏ마너ㅜ이ㅓㅜ", startDate: "2025-01-15 14:53:00.462351", endDate: "2025-01-23 19:53:00.462351", isAllDay: false, scheduleType: "GOOGLE", order: 1, tagName: "SOPT", tagColorCode: "EE8AAD"))
 }
