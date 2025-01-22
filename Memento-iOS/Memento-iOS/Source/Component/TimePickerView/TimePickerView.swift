@@ -13,20 +13,53 @@ enum TimeType {
     case windDown
 }
 
+// UIDatePicker를 SwiftUI에서 사용하기 위한 wrapper
+struct UIKitDatePicker: UIViewRepresentable {
+    @Binding var selection: Date
+    let displayedComponents: DatePickerComponents
+    
+    func makeUIView(context: Context) -> UIDatePicker {
+        let picker = UIDatePicker()
+        picker.datePickerMode = .time
+        picker.preferredDatePickerStyle = .wheels
+        picker.minuteInterval = 30  // 30분 간격으로 설정
+        picker.addTarget(context.coordinator, action: #selector(Coordinator.dateChanged(_:)), for: .valueChanged)
+        return picker
+    }
+    
+    func updateUIView(_ uiView: UIDatePicker, context: Context) {
+        uiView.date = selection
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+    
+    class Coordinator: NSObject {
+        let parent: UIKitDatePicker
+        
+        init(_ parent: UIKitDatePicker) {
+            self.parent = parent
+        }
+        
+        @objc func dateChanged(_ sender: UIDatePicker) {
+            parent.selection = sender.date
+        }
+    }
+}
+
 struct TimePickerView: View {
     @Binding var isPickerPresented: Bool
     @Binding var selectedTimeType: TimeType
     @Binding var wakeUpTime: Date?
     @Binding var windDownTime: Date?
-
+    
     var body: some View {
         ZStack(alignment: .topTrailing) {
             VStack {
                 Spacer()
-
-                // DatePicker
-                DatePicker(
-                    "",
+                
+                UIKitDatePicker(
                     selection: Binding(
                         get: {
                             selectedTimeType == .wakeUp ? (wakeUpTime ?? Date()) : (windDownTime ?? Date())
@@ -41,14 +74,11 @@ struct TimePickerView: View {
                     ),
                     displayedComponents: .hourAndMinute
                 )
-                .datePickerStyle(WheelDatePickerStyle())
-                .colorScheme(.dark) // 다크 모드 강제 적용
-                .labelsHidden()
+                .colorScheme(.dark)
             }
-            .presentationDetents([.fraction(0.3)]) // 시트 높이 설정
+            .presentationDetents([.fraction(0.3)])
             .presentationBackground(Color.gray09)
-
-            // Done 버튼
+            
             Button(action: {
                 isPickerPresented = false
             }) {
