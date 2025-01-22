@@ -12,6 +12,22 @@ import MDSKit
 import MCalendar
 
 final class WeeklyCalendarViewModel: ObservableObject {
+    
+    @Published var schedules: [ScheduleTotalResponseData] = []
+    private let scheduleService: ScheduleAPIServiceProtocol
+    
+    init(mCalendarDataSource: MCalendarDataSource,
+         mEventDataSource: MEventDatasource,
+         scheduleService: ScheduleAPIServiceProtocol) {
+        self.mCallendarDataSource = mCalendarDataSource
+        self.mEventDataSource = mEventDataSource
+        self.scheduleService = scheduleService
+        
+        
+        makeDummyEvent()
+        addOffsetDebounce()
+    }
+    
     @Published var allDayItems: [AllDayListDataModel] = [
         .init(colorType: "mementoRed", allDayTitle: "김가현 땅스부대찌개에서 부대찌개 사오고 자기가 하나부터 열까지 다 끌ㅎ인척하던데 진짜 양심이 있는거냐 미친거야 미친거냐 미친거임?미친걸까 미친 ㅋㅋ "),
         .init(colorType: "mementoOrange", allDayTitle: "지금은수요일새벽5시반"),
@@ -19,18 +35,8 @@ final class WeeklyCalendarViewModel: ObservableObject {
         .init(colorType: "mementoOrange", allDayTitle: "오늘커피6샷마심레전드"),
         .init(colorType: "mementoMint", allDayTitle: "보라매공원보라매공원보라매공원")
     ]
-    
-    @Published var todayItems: [TodayItemDataModel] = [
-        .todo(ToDoListDataModel(colorType: "mementoRed", toDoTitle: "투두1", dueDate: "Today", priorityType: .immediate, isChecked: false)),
-        .schedule(ScheduleListDataModel(colorType: "mementoPurple", scheduleTitle: "스케줄1", startTime: "12 PM", endTime: "- 4 PM", isCompleted: true)),
-        .todo(ToDoListDataModel(colorType: "mementoBlue", toDoTitle: "투두2", dueDate: "Today", priorityType: .medium, isChecked: false)),
-        .schedule(ScheduleListDataModel(colorType: "mementoCyan", scheduleTitle: "스케줄2", startTime: "12 PM", endTime: "- 4 PM", isCompleted: false)),
-        .schedule(ScheduleListDataModel(colorType: "mementoOrange", scheduleTitle: "스케줄3", startTime: "12 PM", endTime: "- 4 PM", isCompleted: false)),
-        .todo(ToDoListDataModel(colorType: "mementoYellow", toDoTitle: "투두3", dueDate: "Today", priorityType: .high, isChecked: false)),
-        .schedule(ScheduleListDataModel(colorType: "mementoBlue", scheduleTitle: "스케줄4", startTime: "12 PM", endTime: "- 4 PM", isCompleted: false)),
-        .todo(ToDoListDataModel(colorType: "mementoLightGreen", toDoTitle: "투두4", dueDate: "Today", priorityType: .none, isChecked: false)),
-        .todo(ToDoListDataModel(colorType: "mementoMint", toDoTitle: "투두5", dueDate: "Today", priorityType: .low, isChecked: false))
-    ]
+
+    @Published var todayItems: [TodayItemDataModel] = []
     
     @Published var toDoListItems: [ToDoListDataModel] = [
         ToDoListDataModel(colorType: "mementoRed", toDoTitle: "투두1", dueDate: "Today", priorityType: .immediate, isChecked: false),
@@ -54,16 +60,6 @@ final class WeeklyCalendarViewModel: ObservableObject {
                                                             weekday: .fri)
     
     private var cancellable = Set<AnyCancellable>()
-    
-    init(mCalendarDataSource: MCalendarDataSource,
-         mEventDataSource: MEventDatasource) {
-        self.mCallendarDataSource = mCalendarDataSource
-        self.mEventDataSource = mEventDataSource
-        
-        
-        makeDummyEvent()
-        addOffsetDebounce()
-    }
 }
 
 extension WeeklyCalendarViewModel {
@@ -102,5 +98,25 @@ extension WeeklyCalendarViewModel {
                 }
             }
             .store(in: &cancellable)
+    }
+}
+
+extension WeeklyCalendarViewModel {
+    func getSchedulesTotalAPI() {
+        scheduleService.getSchedulesTotal { [weak self] result in
+            switch result {
+            case .success(let response):
+                DispatchQueue.main.async {
+                    if let scheduleData = response?.data as? [ScheduleTotalResponseData] {
+                        self?.schedules = scheduleData
+                    } else {
+                        print("데이터변환 실패 ")
+                        self?.schedules = []
+                    }
+                }
+            default:
+                print("ERROR")
+            }
+        }
     }
 }

@@ -12,6 +12,8 @@ import Moya
 enum ScheduleTargetType {
     case getSchedulesTotal
     case getSchedulesAllDay
+    case getSchedules
+    case getSchedulesDetail
 }
 
 extension ScheduleTargetType: BaseTargetType {

@@ -157,9 +157,9 @@ struct ToDoListItemView: View {
     }
 }
 
-#Preview{
-    ToDoListView(viewModel: WeeklyCalendarViewModel(
-        mCalendarDataSource: MCalendarDataSource(),
-        mEventDataSource: MEventDatasource()
-    ))
-}
+//#Preview {
+//    ToDoListView(viewModel: WeeklyCalendarViewModel(
+//        mCalendarDataSource: MCalendarDataSource(),
+//        mEventDataSource: MEventDatasource()
+//    ))
+//}
