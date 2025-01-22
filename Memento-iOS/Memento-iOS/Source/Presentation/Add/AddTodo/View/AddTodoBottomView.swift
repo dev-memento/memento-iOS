@@ -98,8 +98,8 @@ struct AddTodoBottomView: View {
         .frame(width: 42, height: 42)
         .sheet(isPresented: $isMatrixPresented) {
             EisenhowerMatrixView(
-                source: "SOPT",
-                externalPriority: .constant(.immediate)
+                source: "",
+                externalPriority: .constant(.none)
             )
         }
     }
