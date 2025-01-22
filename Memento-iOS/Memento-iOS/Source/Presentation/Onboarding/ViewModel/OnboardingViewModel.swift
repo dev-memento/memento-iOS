@@ -64,6 +64,7 @@ final class OnboardingViewModel: ObservableObject {
     @Published var workPreferenceData: WorkPreferenceData = WorkPreferenceData()
     
     @Published var errorMessage: String?
+    @Published var mementoStart: Bool = false
     
     var authViewModel: AuthViewModel
     

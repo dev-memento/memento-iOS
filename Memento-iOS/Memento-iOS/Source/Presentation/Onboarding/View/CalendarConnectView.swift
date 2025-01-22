@@ -134,7 +134,7 @@ private struct AppStartButton: View {
 
     var body: some View {
         Button {
-            viewModel.navigateToNext(.calendarConnect)
+            viewModel.mementoStart = true
         } label: {
             Text(OnboardingCalendarConnectText.startMementoButton)
                 .applyFont(.body_b_16)

@@ -17,43 +17,48 @@ struct LoginView: View {
     
     var body: some View {
         NavigationStack(path: $viewModel.navigationPath) {
-            ZStack {
-                BackgroundView()
-                
-                VStack(alignment: .center) {
-                    LoginHeaderView()
-                        .padding(.top, 115)
+            if viewModel.mementoStart {
+                TabBarView()
+                    .navigationBarBackButtonHidden()
+            } else {
+                ZStack {
+                    BackgroundView()
                     
-                    LoginButtons(authViewModel: viewModel.authViewModel)
-                        .padding(.top, 103.2)
+                    VStack(alignment: .center) {
+                        LoginHeaderView()
+                            .padding(.top, 115)
+                        
+                        LoginButtons(authViewModel: viewModel.authViewModel)
+                            .padding(.top, 103.2)
+                        
+                        TermsOfUseView()
+                            .padding(.top, 18)
+                        
+                        Spacer()
+                    }
                     
-                    TermsOfUseView()
-                        .padding(.top, 18)
-                    
-                    Spacer()
                 }
-                
-            }
-            .navigationDestination(for: OnboardingNavigationDestination.self) { destination in
-                switch destination {
-                case .sleepCycleSetting:
-                    SleepCycleSettingView()
-                        .navigationBarBackButtonHidden()
-                case .workSelection:
-                    WorkSelectionView()
-                        .navigationBarBackButtonHidden()
-                case .workPreference:
-                    WorkPreferenceView()
-                        .navigationBarBackButtonHidden()
-                case .calendarConnect:
-                    CalendarConnectView()
-                        .navigationBarBackButtonHidden()
+                .navigationDestination(for: OnboardingNavigationDestination.self) { destination in
+                    switch destination {
+                    case .sleepCycleSetting:
+                        SleepCycleSettingView()
+                            .navigationBarBackButtonHidden()
+                    case .workSelection:
+                        WorkSelectionView()
+                            .navigationBarBackButtonHidden()
+                    case .workPreference:
+                        WorkPreferenceView()
+                            .navigationBarBackButtonHidden()
+                    case .calendarConnect:
+                        CalendarConnectView()
+                            .navigationBarBackButtonHidden()
+                    }
                 }
-            }
-        }
-        .onAppear {
-            if viewModel.authViewModel.isAuthenticated {
-                viewModel.authViewModel.isAuthenticated = false
+                .onAppear {
+                    if viewModel.authViewModel.isAuthenticated {
+                        viewModel.authViewModel.isAuthenticated = false
+                    }
+                }
             }
         }
     }
@@ -132,12 +137,12 @@ private struct LoginButtons: View {
                         .font(.system(size: 16))
                         .foregroundColor(.white)
                 }
-                .frame(maxWidth: .infinity)
-                .frame(height: 46)
-                .background(Color.gray10)
-                .allowsHitTesting(false)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 46)
+                    .background(Color.gray10)
+                    .allowsHitTesting(false)
             )
-        
+            
         }
         
     }
