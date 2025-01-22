@@ -163,8 +163,7 @@ struct TodayListItemView: View {
                 ScheduleListCell(
                     colorType: schedule.colorType,
                     scheduleTitle: schedule.scheduleTitle,
-                    startTime: schedule.startTime,
-                    endTime: schedule.endTime,
+                    time: schedule.startTime,
                     isCompleted: schedule.isCompleted
                 )
                 .contentShape(Rectangle())

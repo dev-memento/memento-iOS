@@ -11,8 +11,7 @@ import MDSKit
 struct ScheduleListCell: View {
     var colorType: String
     var scheduleTitle: String
-    var startTime: String
-    var endTime: String
+    var time: String
     
     var isCompleted: Bool
     
@@ -24,7 +23,7 @@ struct ScheduleListCell: View {
             
             VStack(alignment: .leading, spacing: 8) {
                 ScheduleTitleView(title: scheduleTitle)
-                TimeInfoView(startTime: startTime, endTime: endTime)
+                TimeInfoView(time: time)
             }
             
             Spacer()
@@ -57,22 +56,15 @@ struct ScheduleTitleView: View {
 }
 
 struct TimeInfoView: View {
-    var startTime: String
-    var endTime: String
+    var time: String
     
     var body: some View {
         HStack(spacing: 0) {
             Image(.img_notion)
-            Text(startTime)
+            Text(time)
                 .applyFont(.detail_r_12)
                 .foregroundColor(Color.gray05)
                 .padding(.leading, 12)
-            Text("  -  ")
-                .applyFont(.detail_r_12)
-                .foregroundColor(Color.gray05)
-            Text(endTime)
-                .applyFont(.detail_r_12)
-                .foregroundColor(Color.gray05)
         }
     }
 }
