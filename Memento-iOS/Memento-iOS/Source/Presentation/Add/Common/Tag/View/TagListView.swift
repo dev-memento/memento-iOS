@@ -9,11 +9,11 @@ import SwiftUI
 
 import MDSKit
 
-struct TagListView: View {
+struct TagListView<ViewModel: BasePickerViewModel & TagSelectable>: View {
 
     // MARK: - Properties
 
-    @ObservedObject var viewModel: PickerButtonViewModel
+    @ObservedObject var viewModel: ViewModel
 
     // MARK: - Body
 

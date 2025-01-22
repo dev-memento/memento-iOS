@@ -9,12 +9,12 @@ import SwiftUI
 
 import MDSKit
 
-struct SheetContainer<Content: View>: View {
+struct SheetContainer<Content: View, ButtonType>: View {
 
-    let type: PickerButtonType
+    let type: ButtonType
     let content: Content
 
-    init(type: PickerButtonType, @ViewBuilder content: () -> Content) {
+    init(type: ButtonType, @ViewBuilder content: () -> Content) {
         self.type = type
         self.content = content()
     }
@@ -27,6 +27,15 @@ struct SheetContainer<Content: View>: View {
         .background(Color.gray09)
         .presentationCornerRadius(0)
         .presentationDragIndicator(.hidden)
-        .presentationDetents(DynamicPresentationDetent.dynamicDetent(for: type))
+        .presentationDetents(dynamicDetentForType(type))
+    }
+
+    private func dynamicDetentForType(_ type: ButtonType) -> Set<PresentationDetent> {
+        if case let scheduleType as AddSchedulePickerButtonType = type {
+            return DynamicPresentationDetent.dynamicDetent(for: scheduleType)
+        } else if case let todoType as AddTodoPickerButtonType = type {
+            return DynamicPresentationDetent.dynamicDetent(for: todoType)
+        }
+        return [.fraction(0.5)]
     }
 }

@@ -13,7 +13,7 @@ struct PickerButton: View {
 
     // MARK: - Properties
 
-    let type: PickerButtonType
+    let type: AddSchedulePickerButtonType
     let title: String
     var titleColor: Color = .gray02
     let width: CGFloat
@@ -48,7 +48,7 @@ struct PickerButton: View {
                 title: "Jan 31, 2025",
                 width: 124,
                 action: {},
-                viewModel: PickerButtonViewModel()
+                viewModel: AddSchedulePickerButtonViewModel()
             )
 
             PickerButton(
@@ -56,7 +56,7 @@ struct PickerButton: View {
                 title: "8:53 AM",
                 width: 96,
                 action: {},
-                viewModel: PickerButtonViewModel()
+                viewModel: AddSchedulePickerButtonViewModel()
             )
 
             PickerButton(
@@ -64,7 +64,7 @@ struct PickerButton: View {
                 title: "Select Tag",
                 width: 200,
                 action: {},
-                viewModel: PickerButtonViewModel()
+                viewModel: AddSchedulePickerButtonViewModel()
             )
         }
     }

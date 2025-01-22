@@ -15,9 +15,12 @@ struct AddTodoBottomView: View {
 
     @ObservedObject var viewModel: AddTodoTextViewModel
     @State private var isDeadlinePresented: Bool = false
+    @State private var isTagPresented: Bool = false
     @State private var isMatrixPresented: Bool = false
     @State private var selectedDateText: String = "Today"
-    @StateObject private var pickerViewModel = PickerButtonViewModel(type: .deadline)
+    @State private var selectedTagColor: Color = .gray05
+    @StateObject private var deadlineViewModel = AddTodoPickerButtonViewModel(type: .deadline)
+    @StateObject private var tagViewModel = AddTodoPickerButtonViewModel(type: .tag)
 
     // MARK: - Body
 
@@ -41,7 +44,7 @@ struct AddTodoBottomView: View {
             HStack {
                 Image(.ic_deadline)
 
-                Text(pickerViewModel.formattedPickerTitle)
+                Text(deadlineViewModel.formattedPickerTitle)
                     .applyFont(.detail_r_12)
             }
             .frame(maxWidth: .infinity)
@@ -52,7 +55,7 @@ struct AddTodoBottomView: View {
         .clipShape(RoundedRectangle(cornerRadius: 2))
         .sheet(isPresented: $isDeadlinePresented) {
             AddDeadlineView(
-                viewModel: pickerViewModel,
+                viewModel: deadlineViewModel,
                 selectedDateText: $selectedDateText
             )
             .presentationDetents(
@@ -62,13 +65,24 @@ struct AddTodoBottomView: View {
     }
 
     private var tagButton: some View {
-        Button(action: {}) {
-            Image(.ic_tag)
-                .padding(14)
-                .background(Color.gray09)
-                .cornerRadius(2)
+        Button(action: {
+            isTagPresented.toggle()
+        }) {
+            Circle()
+                .fill(Color(tagViewModel.selectedTag.color))
+                .frame(width: 10, height: 10)
         }
         .frame(width: 42, height: 42)
+        .background(Color.gray09)
+        .clipShape(RoundedRectangle(cornerRadius: 2))
+        .sheet(isPresented: $isTagPresented) {
+            AddTagView(viewModel: tagViewModel)
+                .presentationDetents(
+                    DynamicPresentationDetent.dynamicDetent(
+                        for: AddTodoPickerButtonType.tag
+                    )
+                )
+        }
     }
 
     private var matrixButton: some View {
