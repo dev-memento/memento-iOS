@@ -35,18 +35,8 @@ final class WeeklyCalendarViewModel: ObservableObject {
         .init(colorType: "mementoOrange", allDayTitle: "오늘커피6샷마심레전드"),
         .init(colorType: "mementoMint", allDayTitle: "보라매공원보라매공원보라매공원")
     ]
-    
-    @Published var todayItems: [TodayItemDataModel] = [
-        .todo(ToDoListDataModel(colorType: "mementoRed", toDoTitle: "투두1", dueDate: "Today", priorityType: .immediate, isChecked: false)),
-        .schedule(ScheduleListDataModel(colorType: "mementoPurple", scheduleTitle: "스케줄1", startTime: "12 PM", endTime: "- 4 PM", isCompleted: true)),
-        .todo(ToDoListDataModel(colorType: "mementoBlue", toDoTitle: "투두2", dueDate: "Today", priorityType: .medium, isChecked: false)),
-        .schedule(ScheduleListDataModel(colorType: "mementoCyan", scheduleTitle: "스케줄2", startTime: "12 PM", endTime: "- 4 PM", isCompleted: false)),
-        .schedule(ScheduleListDataModel(colorType: "mementoOrange", scheduleTitle: "스케줄3", startTime: "12 PM", endTime: "- 4 PM", isCompleted: false)),
-        .todo(ToDoListDataModel(colorType: "mementoYellow", toDoTitle: "투두3", dueDate: "Today", priorityType: .high, isChecked: false)),
-        .schedule(ScheduleListDataModel(colorType: "mementoBlue", scheduleTitle: "스케줄4", startTime: "12 PM", endTime: "- 4 PM", isCompleted: false)),
-        .todo(ToDoListDataModel(colorType: "mementoLightGreen", toDoTitle: "투두4", dueDate: "Today", priorityType: .none, isChecked: false)),
-        .todo(ToDoListDataModel(colorType: "mementoMint", toDoTitle: "투두5", dueDate: "Today", priorityType: .low, isChecked: false))
-    ]
+
+    @Published var todayItems: [TodayItemDataModel] = []
     
     @Published var toDoListItems: [ToDoListDataModel] = [
         ToDoListDataModel(colorType: "mementoRed", toDoTitle: "투두1", dueDate: "Today", priorityType: .immediate, isChecked: false),
@@ -109,6 +99,26 @@ extension WeeklyCalendarViewModel {
             }
             .store(in: &cancellable)
     }
+    
+    private func updateTodayItems() {
+            // ToDo와 Schedule 데이터 결합
+            let scheduleItems: [TodayItemDataModel] = schedules.map {
+                .schedule(ScheduleTotalResponseData(
+                    id: $0.id,
+                    description: $0.description,
+                    startDate: $0.startDate,
+                    endDate: $0.endDate,
+                    isAllDay: $0.isAllDay,
+                    scheduleType: $0.scheduleType,
+                    order: $0.order,
+                    tagName: $0.tagName,
+                    tagColorCode: $0.tagColorCode
+                ))
+            }
+            let todoItems: [TodayItemDataModel] = toDoListItems.map { .todo($0) }
+            
+            todayItems = todoItems + scheduleItems
+        }
 }
 
 extension WeeklyCalendarViewModel {
