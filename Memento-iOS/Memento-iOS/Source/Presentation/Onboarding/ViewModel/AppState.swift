@@ -22,7 +22,7 @@ class AppState: ObservableObject {
     func checkToken() {
         do {
             // AccessToken 확인
-            if let accessToken = try TokenKeychainManager.shared.loadAccessToken(), !accessToken.isEmpty {
+            if let accessToken = try TokenKeychainManager.shared.getRefreshToken(), !accessToken.isEmpty {
                 isLoggedIn = true
             } else {
                 isLoggedIn = false

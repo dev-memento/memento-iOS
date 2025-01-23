@@ -77,6 +77,7 @@ final class OnboardingViewModel: ObservableObject {
     init(authViewModel: AuthViewModel) {
         self.authViewModel = authViewModel
         setupAuthStateSubscription()
+        checkAuthenticationStatus()
     }
     
     // MARK: - Submit Onboarding Data
@@ -117,6 +118,13 @@ final class OnboardingViewModel: ObservableObject {
         //                print("시간 가져오기 실패")
         //            }
         //        }
+    }
+    
+    // 토큰 체크 메서드 추가
+    func checkAuthenticationStatus() {
+        if TokenKeychainManager.shared.hasValidToken() {
+            mementoStart = true
+        }
     }
 }
 

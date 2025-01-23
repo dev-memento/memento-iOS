@@ -129,8 +129,15 @@ private struct AppStartButton: View {
 
     var body: some View {
         Button {
+            // 1. 먼저 데이터 전송
             viewModel.submitOnboardingData()
-            viewModel.mementoStart = true
+            
+            // 2. 약간의 딜레이 후 화면 전환
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                withAnimation(.easeInOut) {
+                    viewModel.mementoStart = true
+                }
+            }
         } label: {
             Text(OnboardingCalendarConnectText.startMementoButton)
                 .applyFont(.body_b_16)
@@ -141,6 +148,8 @@ private struct AppStartButton: View {
         .background(Color.mainGreen)
         .frame(height: 50)
         .cornerRadius(2)
+        // 3. 중복 탭 방지
+        .disabled(viewModel.mementoStart)
     }
 }
 

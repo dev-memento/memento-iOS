@@ -59,14 +59,14 @@ extension BaseTargetType {
             header["Authorization"] = "Bearer \(socialToken)"
             
         case .accessTokenHeader:
-            if let accessToken = try? keychainManager.loadAccessToken() {
+            if let accessToken = try? keychainManager.getAccessToken() {
                 return ["Authorization": "Bearer \(accessToken)", "Content-Type": "application/json"]
             } else {
                 print("[ERROR] 액세스 토큰 로드 실패")
                 return nil
             }
         case .refreshTokenHeader:
-            if let refreshToken = try? keychainManager.loadRefreshToken() {
+            if let refreshToken = try? keychainManager.getRefreshToken() {
                 return ["Authorization": "Bearer \(refreshToken)", "Content-Type": "application/json"]
             } else {
                 print("[ERROR] 리프레시 토큰 로드 실패")

@@ -16,47 +16,44 @@ struct LoginView: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
     
     var body: some View {
-        NavigationStack(path: $viewModel.navigationPath) {
-            if viewModel.mementoStart {
+        Group {
+            if TokenKeychainManager.shared.hasValidToken() && viewModel.mementoStart {
+                // 토큰이 있고 회원 가입 마치고 mementoStart 누르면 Main 화면 보이게
                 TabBarView()
-                    .navigationBarBackButtonHidden()
             } else {
-                ZStack {
-                    BackgroundView()
-                    
-                    VStack(alignment: .center) {
-                        LoginHeaderView()
-                            .padding(.top, 115)
+                // 토큰이 없고 신규 사용자라면 로그인 화면 표시
+                NavigationStack(path: $viewModel.navigationPath) {
+                    ZStack {
+                        BackgroundView()
                         
-                        LoginButtons(authViewModel: viewModel.authViewModel)
-                            .padding(.top, 103.2)
-                        
-                        TermsOfUseView()
-                            .padding(.top, 18)
-                        
-                        Spacer()
+                        VStack(alignment: .center) {
+                            LoginHeaderView()
+                                .padding(.top, 115)
+                            
+                            LoginButtons(authViewModel: viewModel.authViewModel)
+                                .padding(.top, 103.2)
+                            
+                            TermsOfUseView()
+                                .padding(.top, 18)
+                            
+                            Spacer()
+                        }
                     }
-                    
-                }
-                .navigationDestination(for: OnboardingNavigationDestination.self) { destination in
-                    switch destination {
-                    case .sleepCycleSetting:
-                        SleepCycleSettingView()
-                            .navigationBarBackButtonHidden()
-                    case .workSelection:
-                        WorkSelectionView()
-                            .navigationBarBackButtonHidden()
-                    case .workPreference:
-                        WorkPreferenceView()
-                            .navigationBarBackButtonHidden()
-                    case .calendarConnect:
-                        CalendarConnectView()
-                            .navigationBarBackButtonHidden()
-                    }
-                }
-                .onAppear {
-                    if viewModel.authViewModel.isAuthenticated {
-                        viewModel.authViewModel.isAuthenticated = false
+                    .navigationDestination(for: OnboardingNavigationDestination.self) { destination in
+                        switch destination {
+                        case .sleepCycleSetting:
+                            SleepCycleSettingView()
+                                .navigationBarBackButtonHidden()
+                        case .workSelection:
+                            WorkSelectionView()
+                                .navigationBarBackButtonHidden()
+                        case .workPreference:
+                            WorkPreferenceView()
+                                .navigationBarBackButtonHidden()
+                        case .calendarConnect:
+                            CalendarConnectView()
+                                .navigationBarBackButtonHidden()
+                        }
                     }
                 }
             }

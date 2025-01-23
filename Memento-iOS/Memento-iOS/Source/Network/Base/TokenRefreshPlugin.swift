@@ -50,7 +50,7 @@ final class TokenRefreshPlugin: PluginType {
         isRefreshing = true
 
         do {
-            guard let refreshToken = try keychainManager.loadRefreshToken() else {
+            guard let refreshToken = try keychainManager.getRefreshToken() else {
                 print("[ERROR] No Refresh Token Available")
                 completeRefresh(success: false)
                 return
