@@ -154,7 +154,7 @@ private struct TermsOfUseView: View {
                 .applyFont(.detail_r_12)
                 .foregroundColor(Color.gray07)
             
-            Link(OnboardingLoginText.termsOfUse, destination: URL(string: "https://www.naver.com")!)
+            Link(OnboardingLoginText.termsOfUse, destination: URL(string: "https://memento.today/terms")!)
                 .applyFont(.detail_r_12)
                 .foregroundColor(Color.gray04)
         }
