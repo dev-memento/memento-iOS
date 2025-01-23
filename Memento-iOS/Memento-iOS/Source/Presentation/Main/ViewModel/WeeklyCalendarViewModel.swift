@@ -38,14 +38,6 @@ final class WeeklyCalendarViewModel: ObservableObject {
         loadDummyData()
     }
     
-    @Published var allDayItems: [AllDayListDataModel] = [
-//        .init(colorType: "mementoRed", allDayTitle: "김가현 땅스부대찌개에서 부대찌개 사오고 자기가 하나부터 열까지 다 끌ㅎ인척하던데 진짜 양심이 있는거냐 미친거야 미친거냐 미친거임?미친걸까 미친 ㅋㅋ "),
-//        .init(colorType: "mementoOrange", allDayTitle: "지금은수요일새벽5시반"),
-//        .init(colorType: "mementoLightGreen", allDayTitle: "마라샹궈먹었능데마싯다.."),
-//        .init(colorType: "mementoOrange", allDayTitle: "오늘커피6샷마심레전드"),
-//        .init(colorType: "mementoMint", allDayTitle: "보라매공원보라매공원보라매공원")
-    ]
-    
     @Published var todayItems: [TodayItemDataModel] = []
     
     @Published var toDoListItems: [ToDoListDataModel] = [
@@ -148,11 +140,10 @@ extension WeeklyCalendarViewModel {
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
-                    if let scheduleData = response?.data as? [ScheduleAllDayResponseData] {
-                        print(self?.schedules)
+                    if let scheduleData = response?.data as? [ScheduleAllDayResponseDataTest] {
+                        self?.allday = scheduleData
                     } else {
-                        print("데이터변환 실패 ")
-                        self?.schedules = []
+                        self?.allday = []
                     }
                 }
             default:
