@@ -29,12 +29,16 @@ final class ToDoListAPIService: BaseAPIService, ToDoListAPIServiceProtocol {
         provider.request(.getToDoList) { result in
             switch result {
             case .success(let response):
-                let networkResult: NetworkResult<ToDoListResponseDTO> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
+                let networkResult: NetworkResult<ToDoListResponseDTO> = self.fetchNetworkResult(
+                    statusCode: response.statusCode,
+                    data: response.data
+                )
                 print(networkResult.stateDescription)
                 completion(networkResult)
             case .failure(let error):
                 if let response = error.response {
-                    let networkResult: NetworkResult<ToDoListResponseDTO> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
+                    let networkResult: NetworkResult<ToDoListResponseDTO> = self.fetchNetworkResult(statusCode: response.statusCode,
+                                                                                                    data: response.data)
                     completion(networkResult)
                 }
             }
