@@ -23,6 +23,6 @@ extension TagAPIServiceProtocol {
 
 final class TagAPIService: BaseAPIService, TagAPIServiceProtocol {
 
-    private let provider = MoyaProvider<ScheduleTargetType>(plugins: [MoyaPlugin.shared])
+    private let provider = MoyaProvider<TagTargetType>(plugins: [MoyaPlugin.shared])
     
 }
