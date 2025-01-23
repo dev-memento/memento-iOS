@@ -9,10 +9,11 @@ import SwiftUI
 import MDSKit
 
 struct ToDoListCell: View {
+    var toDoList: ToDoListTotalResponseDataTest
+    
+    
     @Binding var isChecked: Bool
     
-    var colorType: String
-    var toDoTitle: String
     var dueDate: String
     var priorityType: Priority
     
@@ -21,18 +22,18 @@ struct ToDoListCell: View {
     
     var body: some View {
         HStack(spacing: 10) {
-            ColorTagView(colorType: colorType)
+            ColorTagView(colorType: toDoList.tagColor)
             
             CheckBoxView(isChecked: $isChecked)
             
             VStack(alignment: .leading) {
-                ToDoTitleView(title: toDoTitle, isChecked: isChecked)
-                DueDateView(date: dueDate)
+                ToDoTitleView(title: toDoList.description, isChecked: isChecked)
+                DueDateView(date: toDoList.endDate, toDoType: toDoList.toDoType)
             }
             
             Spacer()
             
-            PriorityLabelView(priority: priorityType)
+            PriorityLabelView(priority: Priority(rawValue: toDoList.priorityType) ?? .none)
         }
         .frame(height: 68)
         .background(highlightedBackground)
@@ -86,17 +87,33 @@ struct ToDoTitleView: View {
 
 struct DueDateView: View {
     var date: String
+    var toDoType: String
     
     var body: some View {
         HStack(spacing: 0) {
-            Image(.img_notion)
+            if let toDoImage = toDoIconName(for: toDoType) {
+                toDoImage
+            }
+            
             Image(.ic_deadline)
                 .padding(.leading, 10)
                 .foregroundColor(Color.gray05)
+            
             Text(date)
                 .applyFont(.detail_r_12)
                 .foregroundColor(Color.gray05)
                 .padding(.leading, 1)
+        }
+    }
+    
+    private func toDoIconName(for type: String) -> Image? {
+        switch type {
+        case "GOOGLE":
+            return Image(.img_google)
+        case "APPLE":
+            return Image(.img_apple)
+        default:
+            return nil
         }
     }
 }
