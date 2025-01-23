@@ -13,7 +13,6 @@ import MCalendar
 struct TodayWeeklyCalendarView: View {
     @ObservedObject var viewModel: WeeklyCalendarViewModel
     
-    // Scroll value
     @State private var scrollTarget: Int? = nil
     @State private var userInteractionFlag: Bool = false
     
@@ -85,8 +84,8 @@ struct TodayWeeklyCalendarView: View {
             }
         }
         .onAppear {
-            viewModel.getTagsAPI()
-//            viewModel.getSchedulesTotalAPI()
+            // viewModel.getTagsAPI()
+            // viewModel.getSchedulesTotalAPI()
             viewModel.makeDummyEvent()
             makeIndex()
         }
@@ -105,6 +104,11 @@ struct TodayWeeklyCalendarView: View {
                             mCallendarDatasource: viewModel.mCallendarDataSource,
                             selectedDateCompletion: { date in
             viewModel.selectedDate = date
+            // MCalendarDataModel -> Date 변환
+            if let selectedDate = date.date() {
+                viewModel.filterSchedules(for: selectedDate) 
+            } else { return }
+            print(date, "❤️")
             makeIndex()
         })
         .setWeekDayFont(MWeekDayOptions.allDays,
@@ -152,9 +156,11 @@ struct TodayWeeklyCalendarView: View {
     }
 }
 
-//#Preview {
-//    TodayWeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
-//        mCalendarDataSource: MCalendarDataSource(),
-//        mEventDataSource: MEventDatasource(),
-//        scheduleService: ScheduleAPIService(), tagService: TagAPIServiceProtocol as! TagAPIServiceProtocol))
-//}
+#Preview {
+    TodayWeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
+        mCalendarDataSource: MCalendarDataSource(),
+        mEventDataSource: MEventDatasource(),
+        scheduleService: ScheduleAPIService(),
+        tagService: TagAPIService()
+    ))
+}
