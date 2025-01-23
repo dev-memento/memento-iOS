@@ -12,7 +12,7 @@ struct ColorTagView: View {
     
     var body: some View {
         Rectangle()
-            .fill(Color.distinguishColorType(colorType))
+            .fill(Color.fromHex(colorType))
             .frame(width: 3)
     }
 }

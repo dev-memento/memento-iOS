@@ -85,6 +85,8 @@ struct TodayWeeklyCalendarView: View {
             }
         }
         .onAppear {
+            viewModel.getTagsAPI()
+//            viewModel.getSchedulesTotalAPI()
             viewModel.makeDummyEvent()
             makeIndex()
         }
@@ -150,7 +152,9 @@ struct TodayWeeklyCalendarView: View {
     }
 }
 
-#Preview {
-    TodayWeeklyCalendarView(viewModel: .init(mCalendarDataSource: MCalendarDataSource(),
-                                             mEventDataSource: MEventDatasource()))
-}
+//#Preview {
+//    TodayWeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
+//        mCalendarDataSource: MCalendarDataSource(),
+//        mEventDataSource: MEventDatasource(),
+//        scheduleService: ScheduleAPIService(), tagService: TagAPIServiceProtocol as! TagAPIServiceProtocol))
+//}

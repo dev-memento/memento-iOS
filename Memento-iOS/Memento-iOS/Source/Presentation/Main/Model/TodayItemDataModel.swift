@@ -9,25 +9,25 @@ import Foundation
 
 enum TodayItemDataModel: Identifiable, Equatable {
     case todo(ToDoListDataModel)
-    case schedule(ScheduleListDataModel)
+    case schedule(ScheduleTotalResponseDataTest)
     
-    var id: UUID {
+    // `Identifiable`을 준수하기 위해 고유 id 추가
+    var id: Int {
         switch self {
         case .todo(let todo):
-            return todo.id
+            return todo.id.hashValue
         case .schedule(let schedule):
             return schedule.id
         }
     }
-}
-
-extension TodayItemDataModel {
+    
+    // `toDoBinding`에 getter와 setter 추가
     var toDoBinding: ToDoListDataModel {
         get {
             if case .todo(let todo) = self {
                 return todo
             } else {
-                fatalError("not To Do case")
+                fatalError("not ToDo case")
             }
         }
         set {
