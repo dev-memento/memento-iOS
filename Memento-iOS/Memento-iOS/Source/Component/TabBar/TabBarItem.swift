@@ -45,21 +45,24 @@ enum TabBarItem: CaseIterable {
                         mCalendarDataSource: MCalendarDataSource(),
                         mEventDataSource: MEventDatasource(),
                         scheduleService: ScheduleAPIService(),
-                        tagService: TagAPIService()
+                        tagService: TagAPIService(),
+                        toDoListService: ToDoListAPIService()
                     )))
         case .todo:
             return AnyView(TodayWeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
                         mCalendarDataSource: MCalendarDataSource(),
                         mEventDataSource: MEventDatasource(),
                         scheduleService: ScheduleAPIService(),
-                        tagService: TagAPIService()
+                        tagService: TagAPIService(),
+                        toDoListService: ToDoListAPIService()
                     )))
         case .addition:
             return AnyView(TodayWeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
                         mCalendarDataSource: MCalendarDataSource(),
                         mEventDataSource: MEventDatasource(),
                         scheduleService: ScheduleAPIService(),
-                        tagService: TagAPIService()
+                        tagService: TagAPIService(),
+                        toDoListService: ToDoListAPIService()
                     )))
         }
     }
