@@ -15,12 +15,12 @@ struct AddTodoBottomView: View {
 
     @ObservedObject var viewModel: AddTodoTextViewModel
     @ObservedObject var todoViewModel: AddTodoViewModel
+    @StateObject var bottomViewModel: AddTodoPickerButtonViewModel
     @State private var isDeadlinePresented: Bool = false
     @State private var isTagPresented: Bool = false
     @State private var isMatrixPresented: Bool = false
     @State private var selectedDateText: String = "Today"
     @State private var selectedTagColor: Color = .gray05
-    @StateObject private var deadlineViewModel = AddTodoPickerButtonViewModel(type: .deadline)
     @StateObject private var tagViewModel = AddTodoPickerButtonViewModel(type: .tag)
 
     // MARK: - Body
@@ -37,7 +37,9 @@ struct AddTodoBottomView: View {
         .onChange(of: viewModel.text) { _, newText in
             todoViewModel.description = newText
         }
-    }
+        .onChange(of: bottomViewModel.selectedDate) { _, newDate in
+            todoViewModel.endDate = bottomViewModel.isoFormattedDate
+        }
 
     // MARK: - UI Components
 
@@ -48,7 +50,7 @@ struct AddTodoBottomView: View {
             HStack {
                 Image(.ic_deadline)
 
-                Text(deadlineViewModel.formattedPickerTitle)
+                Text(bottomViewModel.formattedPickerTitle)
                     .applyFont(.detail_r_12)
             }
             .frame(maxWidth: .infinity)
