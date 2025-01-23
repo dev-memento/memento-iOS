@@ -126,9 +126,3 @@ struct AddTodoBottomView: View {
         .disabled(viewModel.isTextEmpty)
     }
 }
-
-// MARK: - Preview
-
-#Preview {
-    AddTodoBottomView(viewModel: AddTodoTextViewModel())
-}
