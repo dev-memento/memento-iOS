@@ -134,6 +134,7 @@ private struct AppStartButton: View {
 
     var body: some View {
         Button {
+            viewModel.submitOnboardingData()
             viewModel.mementoStart = true
         } label: {
             Text(OnboardingCalendarConnectText.startMementoButton)
