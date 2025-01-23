@@ -40,6 +40,10 @@ struct AddTodoBottomView: View {
         .onChange(of: bottomViewModel.selectedDate) { _, newDate in
             todoViewModel.endDate = bottomViewModel.isoFormattedDate
         }
+        .onChange(of: bottomViewModel.selectedTag) { _, newTag in
+            todoViewModel.tagId = newTag.tagId
+        }
+    }
 
     // MARK: - UI Components
 
@@ -75,14 +79,14 @@ struct AddTodoBottomView: View {
             isTagPresented.toggle()
         }) {
             Circle()
-                .fill(Color(tagViewModel.selectedTag.color))
+                .fill(Color(bottomViewModel.selectedTag.color))
                 .frame(width: 10, height: 10)
         }
         .frame(width: 42, height: 42)
         .background(Color.gray09)
         .clipShape(RoundedRectangle(cornerRadius: 2))
         .sheet(isPresented: $isTagPresented) {
-            AddTagView(viewModel: tagViewModel)
+            AddTagView(viewModel: bottomViewModel)
                 .presentationDetents(
                     DynamicPresentationDetent.dynamicDetent(
                         for: AddTodoPickerButtonType.tag
