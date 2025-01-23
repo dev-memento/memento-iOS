@@ -67,6 +67,7 @@ final class OnboardingViewModel: ObservableObject {
     @Published var mementoStart: Bool = false
     
     var authViewModel: AuthViewModel
+    let userInfoAPIService = UserInfoAPIService()
     
     // MARK: - Properties
     private var cancellables = Set<AnyCancellable>()
@@ -79,8 +80,7 @@ final class OnboardingViewModel: ObservableObject {
     // MARK: - Submit Onboarding Data
     
     /// 온보딩 데이터를 서버로 전송
-    func submitOnboardingData() async throws {
-        
+    func submitOnboardingData() {
         // 온보딩 데이터 생성
         let onboardingData = OnboardingData(
             sleepCycle: sleepCycleData,
@@ -88,12 +88,23 @@ final class OnboardingViewModel: ObservableObject {
             workPreference: workPreferenceData
         )
         
-        try await submitToServer(onboardingData)
+        submitToServer(onboardingData)
     }
-    
+
     /// 서버로 데이터 전송 로직
-    func submitToServer(_ data: OnboardingData) async throws {
-       
+    func submitToServer(_ data: OnboardingData) {
+        // OnboardingData를 UserInfoRequest로 변환
+        let userInfoRequest = UserInfoRequest(onboardingData: data)
+        
+        userInfoAPIService.updateUserInfo(request: userInfoRequest) { result in
+            switch result {
+            case .success(let response):
+                print("온보딩 데이터 전송 성공: \(response?.message)")
+                // 추가 작업 필요 시 여기에 작성
+            default:
+                print("회원 개인 정보 업데이트 실패")
+            }
+        }
     }
 }
 
