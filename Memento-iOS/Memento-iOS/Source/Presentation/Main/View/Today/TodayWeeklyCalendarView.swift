@@ -86,6 +86,7 @@ struct TodayWeeklyCalendarView: View {
         .onAppear {
             // viewModel.getTagsAPI()
             // viewModel.getSchedulesTotalAPI()
+            viewModel.getSchedulesAllDayAPI()
             viewModel.makeDummyEvent()
             makeIndex()
         }
@@ -141,7 +142,7 @@ struct TodayWeeklyCalendarView: View {
     @ViewBuilder
     private func pageView(for item: MCalendarEventList) -> some View {
         VStack(spacing: 8) {
-            AllDayListView(items: viewModel.allDayItems)
+            AllDayListView(items: viewModel.allday)
                 .padding(.vertical, 4)
             
             todayList(item: item)
