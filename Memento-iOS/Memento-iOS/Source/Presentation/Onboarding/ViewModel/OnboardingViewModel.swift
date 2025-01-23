@@ -200,8 +200,7 @@ extension OnboardingViewModel {
                     description: event.title ?? "제목 없음",
                     startDate: dateFormatter.string(from: event.startDate),
                     endDate: dateFormatter.string(from: event.endDate),
-                    isAllDay: event.isAllDay,
-                    tagId: 2 // 태그 ID는 고정값으로 설정하거나 필요에 따라 수정
+                    isAllDay: event.isAllDay
                 )
             }
             

@@ -24,7 +24,7 @@ struct UserInfoRequest: Codable {
         self.wakeUpTime = onboardingData.sleepCycle.wakeUpTime.map { dateFormatter.string(from: $0) } ?? "00:00:00"
         self.windDownTime = onboardingData.sleepCycle.sleepTime.map { dateFormatter.string(from: $0) } ?? "00:00:00"
         self.job = onboardingData.workSelection.selectedCategory ?? "TECHNOLOGY"
-        self.jobOtherDetail = onboardingData.workSelection.customCategory ?? ""
+        self.jobOtherDetail = onboardingData.workSelection.customCategory
         self.isStressedUnorganizedSchedule = onboardingData.workPreference.selectedAnswers.values.contains(true)
         self.isForgetImportantThings = onboardingData.workPreference.selectedAnswers.values.contains(true)
         self.isPreferReminder = onboardingData.workPreference.selectedAnswers.values.contains(true)
