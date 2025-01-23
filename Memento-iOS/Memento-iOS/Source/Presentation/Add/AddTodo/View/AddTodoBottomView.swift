@@ -14,6 +14,7 @@ struct AddTodoBottomView: View {
     // MARK: - Properties
 
     @ObservedObject var viewModel: AddTodoTextViewModel
+    @ObservedObject var todoViewModel: AddTodoViewModel
     @State private var isDeadlinePresented: Bool = false
     @State private var isTagPresented: Bool = false
     @State private var isMatrixPresented: Bool = false
@@ -33,6 +34,9 @@ struct AddTodoBottomView: View {
             enterButton
         }
         .padding(.bottom, 20)
+        .onChange(of: viewModel.text) { _, newText in
+            todoViewModel.description = newText
+        }
     }
 
     // MARK: - UI Components
