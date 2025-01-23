@@ -21,22 +21,27 @@ struct TodayView: View {
     
     var body: some View {
         ZStack {
-            ScrollView {
-                VStack(spacing: 8) {
-                    WakeUpHeaderView(wakeUpTime: "8 AM")
-                        .padding(.leading, 50)
-                        .padding(.bottom, 17)
-                    
-                    ForEach($viewModel.todayItems, id: \.wrappedValue.id) { item in
-                        createTodayListItemView(for: item)
+            if viewModel.todayItems.isEmpty {
+                        // Empty 상태일 경우 EmptyView 표시
+                        EmptyView()
+                    } else {
+                        ScrollView {
+                            VStack(spacing: 8) {
+                                WakeUpHeaderView(wakeUpTime: "8 AM")
+                                    .padding(.leading, 50)
+                                    .padding(.bottom, 17)
+                                
+                                ForEach($viewModel.todayItems, id: \.wrappedValue.id) { item in
+                                    createTodayListItemView(for: item)
+                                }
+                                
+                                WindDownFooterView(windDownTime: "11 PM")
+                                    .padding(.leading, 50)
+                                    .padding(.top, 17)
+                            }
+                        }
+                        .background(Color.grayBlack)
                     }
-                    
-                    WindDownFooterView(windDownTime: "11 PM")
-                        .padding(.leading, 50)
-                        .padding(.top, 17)
-                }
-            }
-            .background(Color.grayBlack)
             
             if showTodoAlert, let todo = selectTodo {
                 let todoBinding = Binding<Bool>(
@@ -172,9 +177,9 @@ struct TodayListItemView: View {
     }
 }
 
-#Preview{
-    TodayView(viewModel: WeeklyCalendarViewModel(
-        mCalendarDataSource: MCalendarDataSource(),
-        mEventDataSource: MEventDatasource()
-    ))
-}
+//#Preview{
+//    TodayView(viewModel: WeeklyCalendarViewModel(
+//        mCalendarDataSource: MCalendarDataSource(),
+//        mEventDataSource: MEventDatasource()
+//    ))
+//}
