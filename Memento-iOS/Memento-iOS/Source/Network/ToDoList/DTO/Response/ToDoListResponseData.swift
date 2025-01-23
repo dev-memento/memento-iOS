@@ -6,10 +6,10 @@
 //
 
 struct ToDoListTotalResponseData: Codable, Equatable {
-    let data: [ToDoListResponseDataTest]
+    let data: [ToDoListTotalResponseDataTest]
 }
 
-struct ToDoListResponseDataTest: Codable, Equatable {
+struct ToDoListTotalResponseDataTest: Codable, Equatable {
     let id: Int
     let groupId: String
     let description: String
