@@ -5,7 +5,11 @@
 //  Created by 이세민 on 1/23/25.
 //
 
-struct ToDoListResponseData: Codable {
+struct ToDoListTotalResponseData: Codable, Equatable {
+    let data: [ToDoListResponseDataTest]
+}
+
+struct ToDoListResponseDataTest: Codable, Equatable {
     let id: Int
     let groupId: String
     let description: String

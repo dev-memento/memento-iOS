@@ -15,7 +15,7 @@ protocol ToDoListAPIServiceProtocol {
 }
 
 extension ToDoListAPIServiceProtocol {
-    typealias ToDoListResponseDTO = BaseDTO<[ToDoListResponseData]>
+    typealias ToDoListResponseDTO = BaseDTO<[ToDoListTotalResponseData]>
 }
 
 // MARK: - ToDoListAPIService
