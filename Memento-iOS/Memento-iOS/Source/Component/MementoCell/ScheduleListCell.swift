@@ -10,11 +10,18 @@ import SwiftUI
 import MDSKit
 
 struct ScheduleListCell: View {
+    
     var schedule: ScheduleTotalResponseDataTest
     
     // 현재 시간에 맞춰 일정 완료 여부
     private var isCompleted: Bool {
-        guard let endDate = Date.dateFromString(schedule.endDate) else { return false }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
+        formatter.timeZone = TimeZone.current
+
+        guard let endDate = formatter.date(from: schedule.endDate) else {
+            return false
+        }
         return Date() > endDate
     }
     
@@ -58,7 +65,6 @@ struct ScheduleTitleView: View {
 }
 
 struct TimeInfoView: View {
-    
     var startDate: String
     var endDate: String
     var scheduleType: String
@@ -76,10 +82,11 @@ struct TimeInfoView: View {
         }
     }
 
-    // 시간 표현 정규식
     private func formattedTime(startDate: String, endDate: String) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSSSS"
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
+        formatter.timeZone = TimeZone.current
+
         guard
             let start = formatter.date(from: startDate),
             let end = formatter.date(from: endDate)
@@ -91,7 +98,6 @@ struct TimeInfoView: View {
         return "\(outputFormatter.string(from: start)) - \(outputFormatter.string(from: end))"
     }
 
-    // 일정 타입에 따라 icon 삽입
     private func scheduleIconName(for type: String) -> Image? {
         switch type {
         case "GOOGLE":
