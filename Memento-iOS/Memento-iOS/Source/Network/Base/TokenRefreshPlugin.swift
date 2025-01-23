@@ -10,28 +10,36 @@ import Moya
 
 final class TokenRefreshPlugin: PluginType {
     private let keychainManager = TokenKeychainManager.shared
-    private let refreshProvider = MoyaProvider<TokenRefreshType>()
+    private let tokenRefreshProvider = MoyaProvider<TokenRefreshType>(plugins: [MoyaPlugin.shared])
     private var isRefreshing = false
     private var refreshQueue: [(Bool) -> Void] = []
 
-    func didReceive(_ result: Result<Response, MoyaError>, target: TargetType) {
-        guard case .failure(let error) = result,
-              let response = error.response,
-              response.statusCode == 401 else { return }
+    func process(_ result: Result<Response, MoyaError>, target: TargetType) -> Result<Response, MoyaError> {
+        print("TokenRefreshPlugin - process called")  // 디버깅용 로그
         
-        print("401 Unauthorized detected for URL: \(response.request?.url?.absoluteString ?? "Unknown URL")")
-        
-        handleTokenRefresh { [weak self] success in
-            guard let self = self else { return }
-            
-            if success {
-                print("Token successfully refreshed. Retrying request...")
-                self.retryMoyaRequest(target: target)
-            } else {
-                print("Token refresh failed.")
+        switch result {
+        case .failure(let error):
+            if let response = error.response, response.statusCode == 401 {
+                print("TokenRefreshPlugin - 401 error detected")  // 디버깅용 로그
+                
+                handleTokenRefresh { [weak self] success in
+                    guard let self = self else { return }
+                    
+                    if success {
+                        print("Token successfully refreshed. Retrying request...")
+                        self.retryMoyaRequest(target: target)
+                    } else {
+                        print("Token refresh failed.")
+                    }
+                }
             }
+        case .success(let response):
+            print("TokenRefreshPlugin - Success response: \(response.statusCode)")  // 디버깅용 로그
         }
+        
+        return result
     }
+
 
     private func handleTokenRefresh(completion: @escaping (Bool) -> Void) {
         guard !isRefreshing else {
@@ -43,59 +51,57 @@ final class TokenRefreshPlugin: PluginType {
 
         do {
             guard let refreshToken = try keychainManager.loadRefreshToken() else {
-                print("리프레시 토큰 없음")
+                print("[ERROR] No Refresh Token Available")
                 completeRefresh(success: false)
                 return
             }
 
-            refreshProvider.request(.auth(refreshToken: refreshToken)) { [weak self] result in
+            tokenRefreshProvider.request(.auth(refreshToken: refreshToken)) { [weak self] result in
                 guard let self = self else { return }
 
                 switch result {
                 case .success(let response):
-                    do {
-                        guard (200...299).contains(response.statusCode) else {
-                            print("갱신 실패: 상태 코드 \(response.statusCode)")
+                    if (200..<300).contains(response.statusCode) {
+                        do {
+                            let decodedResponse = try JSONDecoder().decode(NewAccessTokenResponse.self, from: response.data)
+                            try self.keychainManager.saveAccessToken(decodedResponse.accessToken)
+                            try self.keychainManager.saveRefreshToken(decodedResponse.refreshToken)
+                            print("[INFO] Access Token successfully refreshed.")
+                            self.completeRefresh(success: true)
+                        } catch {
+                            print("[ERROR] Failed to decode token refresh response: \(error.localizedDescription)")
                             self.completeRefresh(success: false)
-                            return
                         }
-
-                        let decodedResponse = try JSONDecoder().decode(NewAccessTokenResponse.self, from: response.data)
-                        try self.keychainManager.saveAccessToken(decodedResponse.accessToken)
-                        try self.keychainManager.saveRefreshToken(decodedResponse.refreshToken)
-                        print("Access Token 갱신 성공")
-                        self.completeRefresh(success: true)
-
-                    } catch {
-                        print("디코딩 실패: \(error.localizedDescription)")
+                    } else {
+                        print("[ERROR] Token refresh failed with status code: \(response.statusCode)")
                         self.completeRefresh(success: false)
                     }
 
                 case .failure(let error):
-                    print("네트워크 오류: \(error.localizedDescription)")
+                    print("[ERROR] Token refresh network error: \(error.localizedDescription)")
                     self.completeRefresh(success: false)
                 }
             }
         } catch {
-            print("리프레시 토큰 로드 실패: \(error.localizedDescription)")
+            print("[ERROR] Failed to load refresh token from Keychain: \(error.localizedDescription)")
             completeRefresh(success: false)
         }
     }
 
     private func retryMoyaRequest(target: TargetType) {
         guard let moyaTarget = target as? UserInfoTargetType else {
-            print("재요청 실패: 잘못된 TargetType")
+            print("[ERROR] Unable to retry request - invalid TargetType")
             return
         }
-        
+
         let provider = MoyaProvider<UserInfoTargetType>(plugins: [self])
-        
+
         provider.request(moyaTarget) { result in
             switch result {
             case .success(let response):
-                print("재요청 성공: \(response.statusCode)")
+                print("[INFO] Retry request successful with status code: \(response.statusCode)")
             case .failure(let error):
-                print("재요청 실패: \(error.localizedDescription)")
+                print("[ERROR] Retry request failed: \(error.localizedDescription)")
             }
         }
     }
@@ -136,3 +142,5 @@ extension TargetType {
  plugins: [MoyaPlugin.shared, TokenRefreshPlugin()]
  )
  */
+
+
