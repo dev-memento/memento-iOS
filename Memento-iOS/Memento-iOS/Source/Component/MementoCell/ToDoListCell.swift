@@ -11,12 +11,6 @@ import MDSKit
 struct ToDoListCell: View {
     var toDoList: ToDoListTotalResponseDataTest
     
-    
-    @Binding var isChecked: Bool
-    
-    var dueDate: String
-    var priorityType: Priority
-    
     var isHighlighted: Bool
     var backgroundColor: Color
     
@@ -24,11 +18,11 @@ struct ToDoListCell: View {
         HStack(spacing: 10) {
             ColorTagView(colorType: toDoList.tagColor)
             
-            CheckBoxView(isChecked: $isChecked)
+            CheckBoxView(isChecked: toDoList.isCompleted)
             
             VStack(alignment: .leading) {
-                ToDoTitleView(title: toDoList.description, isChecked: isChecked)
-                DueDateView(date: toDoList.endDate, toDoType: toDoList.toDoType)
+                ToDoTitleView(title: toDoList.description, isChecked: toDoList.isCompleted)
+                DueDateView(endDate: toDoList.endDate, toDoType: toDoList.toDoType)
             }
             
             Spacer()
@@ -37,7 +31,7 @@ struct ToDoListCell: View {
         }
         .frame(height: 68)
         .background(highlightedBackground)
-        .opacity(isChecked ? 0.5 : 1.0)
+        .opacity(toDoList.isCompleted ? 0.5 : 1.0)
     }
     
     private var highlightedBackground: some View {
@@ -59,14 +53,11 @@ struct ToDoListCell: View {
 }
 
 struct CheckBoxView: View {
-    @Binding var isChecked: Bool
+    var isChecked: Bool
     
     var body: some View {
         VStack {
             Image(isChecked ? .btn_check_selected_square : .btn_check_unselected_square)
-                .onTapGesture {
-                    isChecked.toggle()
-                }
             Spacer()
         }
         .padding(.top, 11)
@@ -86,7 +77,7 @@ struct ToDoTitleView: View {
 }
 
 struct DueDateView: View {
-    var date: String
+    var endDate: String
     var toDoType: String
     
     var body: some View {
@@ -99,7 +90,7 @@ struct DueDateView: View {
                 .padding(.leading, 10)
                 .foregroundColor(Color.gray05)
             
-            Text(date)
+            Text(endDate)
                 .applyFont(.detail_r_12)
                 .foregroundColor(Color.gray05)
                 .padding(.leading, 1)
