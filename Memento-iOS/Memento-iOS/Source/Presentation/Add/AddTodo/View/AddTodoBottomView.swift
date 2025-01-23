@@ -65,7 +65,7 @@ struct AddTodoBottomView: View {
         .clipShape(RoundedRectangle(cornerRadius: 2))
         .sheet(isPresented: $isDeadlinePresented) {
             AddDeadlineView(
-                viewModel: deadlineViewModel,
+                viewModel: bottomViewModel,
                 selectedDateText: $selectedDateText
             )
             .presentationDetents(
