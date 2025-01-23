@@ -16,6 +16,7 @@ struct ScheduleTotalResponseDataTest: Codable, Equatable {
     let description: String
     let startDate: String
     let endDate: String
+    let timeDuration: String
     let isAllDay: Bool
     let scheduleType: String
     let order: Int
