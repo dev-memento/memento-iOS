@@ -10,15 +10,15 @@ import SwiftUI
 import MDSKit
 
 struct AllDayListView: View {
-    let items: [AllDayListDataModel]
+    let items: [ScheduleAllDayResponseDataTest]
     
     var body: some View {
         let isScroll = items.count >= 5
         
         ScrollView(isScroll ? .vertical : .init(), showsIndicators: isScroll) {
             VStack(spacing: 3) {
-                ForEach(items, id: \.allDayTitle) { item in
-                    AllDayListCell(colorType: item.colorType, allDayTitle: item.allDayTitle)
+                ForEach(items, id: \..id) { item in
+                    AllDayListCell(allday: item)
                 }
             }
             .frame(maxHeight: isScroll ? .infinity : CGFloat(items.count) * 35)

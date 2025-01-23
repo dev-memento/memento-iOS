@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct AllDayListCell: View {
-    var colorType: String
-    var allDayTitle: String
+    
+    var allday: ScheduleAllDayResponseDataTest
     
     var body: some View {
         HStack(spacing: 21) {
-            ColorTagView(colorType: colorType)
+            ColorTagView(colorType: allday.tagColorCode)
             
-            AllDayTitleView(title: allDayTitle)
+            AllDayTitleView(title: allday.description)
             
             Spacer()
         }
