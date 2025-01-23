@@ -137,19 +137,21 @@ extension WeeklyCalendarViewModel {
     
     func getToDoListTotalAPI() {
         toDoListService.getToDoList { [weak self] result in
-            //            switch result {
-            //            case .success(let response):
-            ////                DispatchQueue.main.async {
-            //                    if let toDoData = response?.data as? [ToDoListTotalResponseData] {
-            //                        self?.toDoListItems = toDoData.map { ToDoListDataModel(todo: $0) }
-            //                    } else {
-            //                        print("데이터 변환 실패")
-            //                        self?.toDoListItems = []
-            //                    }
-            //                }
-            //            default:
-            //                print("ERROR")
-            //            }
+            switch result {
+            case .success(let response):
+                DispatchQueue.main.async {
+                    if let toDoData = response?.data as? [ToDoListTotalResponseData] {
+                        self?.toDoList = toDoData
+                    } else {
+                        print("데이터변환 실패")
+                        self?.toDoListItems = []
+                    }
+                }
+            default:
+                print("ERROR")
+            }
         }
     }
+    
 }
+
