@@ -118,6 +118,7 @@ struct TodayView: View {
                     description: schedule.description,
                     startDate: schedule.startDate,
                     endDate: schedule.endDate,
+                    timeDuration: schedule.timeDuration,
                     isAllDay: schedule.isAllDay,
                     scheduleType: schedule.scheduleType,
                     order: schedule.order,

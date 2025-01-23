@@ -146,16 +146,16 @@ extension WeeklyCalendarViewModel {
     // TODO: - Tag API 연결 후 더미 메소드 삭제
     func loadDummyData() {
         let dummyData: [ScheduleTotalResponseDataTest] = [
-            ScheduleTotalResponseDataTest(id: 20, description: "나는김가현이다", startDate: "2025-01-12T20:35:00.657", endDate: "2025-01-13T23:35:00.657", isAllDay: false, scheduleType: "NORMAL", order: 1, tagName: "SOPT", tagColorCode: "EE8AAD"),
-            ScheduleTotalResponseDataTest(id: 19, description: "소금빵고마워", startDate: "2025-01-12T20:35:00.657", endDate: "2025-01-14T23:35:00.657", isAllDay: false, scheduleType: "NORMAL", order: 1, tagName: "SOPT", tagColorCode: "FFE483"),
-            ScheduleTotalResponseDataTest(id: 11, description: "팀 프로젝트11111219", startDate: "2025-01-12T02:20:00", endDate: "2025-01-15T12:00:00", isAllDay: false, scheduleType: "NORMAL", order: 1, tagName: "SOPT", tagColorCode: "149C95"),
-            ScheduleTotalResponseDataTest(id: 12, description: "팀 프로젝트11111219", startDate: "2025-01-13T02:20:00", endDate: "2025-01-18T12:00:00", isAllDay: false, scheduleType: "APPLE", order: 2, tagName: "SOPT", tagColorCode: "FFE483"),
-            ScheduleTotalResponseDataTest(id: 13, description: "지금 이건 서버 테스트", startDate: "2025-01-13T02:20:00", endDate: "2025-01-18T12:00:00", isAllDay: false, scheduleType: "NORMAL", order: 3, tagName: "SOPT", tagColorCode: "EE8AAD"),
-            ScheduleTotalResponseDataTest(id: 14, description: "나는김가현", startDate: "2025-01-14T19:35:00.657", endDate: "2025-01-22T23:35:00.657", isAllDay: false, scheduleType: "NORMAL", order: 16, tagName: "SOPT", tagColorCode: "FFE483"),
-            ScheduleTotalResponseDataTest(id: 15, description: "그만하자내힘들다", startDate: "2025-01-14T19:35:00.657", endDate: "2025-01-24T23:35:00.657", isAllDay: false, scheduleType: "NORMAL", order: 4, tagName: "SOPT", tagColorCode: "EE8AAD"),
-            ScheduleTotalResponseDataTest(id: 16, description: "신민규이민규바보", startDate: "2025-01-15T19:35:00.657", endDate: "2025-01-24T23:35:00.657", isAllDay: false, scheduleType: "GOOGLE", order: 5, tagName: "SOPT", tagColorCode: "149C95"),
-            ScheduleTotalResponseDataTest(id: 17, description: "저데모데이안갈래요미안해요", startDate: "2025-01-23T19:35:00.657", endDate: "2025-01-26T23:35:00.657", isAllDay: false, scheduleType: "APPLE", order: 6, tagName: "SOPT", tagColorCode: "FFE483"),
-            ScheduleTotalResponseDataTest(id: 18, description: "걍더미데이터넣자", startDate: "2025-01-23T20:35:00.657", endDate: "2025-01-27T23:35:00.657", isAllDay: false, scheduleType: "NORMAL", order: 7, tagName: "SOPT", tagColorCode: "149C95")
+            ScheduleTotalResponseDataTest(id: 20, description: "나는김가현이다", startDate: "2025-01-12T20:35:00.657", endDate: "2025-01-13T23:35:00.657", timeDuration: "12PM-4PM (4h)",isAllDay: false, scheduleType: "NORMAL", order: 1, tagName: "SOPT", tagColorCode: "EE8AAD"),
+            ScheduleTotalResponseDataTest(id: 19, description: "소금빵고마워", startDate: "2025-01-12T20:35:00.657", endDate: "2025-01-14T23:35:00.657", timeDuration: "12PM-4PM (4h)", isAllDay: false, scheduleType: "NORMAL", order: 1, tagName: "SOPT", tagColorCode: "FFE483"),
+            ScheduleTotalResponseDataTest(id: 11, description: "팀 프로젝트11111219", startDate: "2025-01-12T02:20:00", endDate: "2025-01-15T12:00:00", timeDuration: "12PM-4PM (4h)", isAllDay: false, scheduleType: "NORMAL", order: 1, tagName: "SOPT", tagColorCode: "149C95"),
+            ScheduleTotalResponseDataTest(id: 12, description: "팀 프로젝트11111219", startDate: "2025-01-13T02:20:00", endDate: "2025-01-18T12:00:00", timeDuration: "12PM-4PM (4h)", isAllDay: false, scheduleType: "APPLE", order: 2, tagName: "SOPT", tagColorCode: "FFE483"),
+            ScheduleTotalResponseDataTest(id: 13, description: "지금 이건 서버 테스트", startDate: "2025-01-13T02:20:00", endDate: "2025-01-18T12:00:00", timeDuration: "12PM-4PM (4h)", isAllDay: false, scheduleType: "NORMAL", order: 3, tagName: "SOPT", tagColorCode: "EE8AAD"),
+            ScheduleTotalResponseDataTest(id: 14, description: "나는김가현", startDate: "2025-01-14T19:35:00.657", endDate: "2025-01-22T23:35:00.657", timeDuration: "12PM-4PM (4h)", isAllDay: false, scheduleType: "NORMAL", order: 16, tagName: "SOPT", tagColorCode: "FFE483"),
+            ScheduleTotalResponseDataTest(id: 15, description: "그만하자내힘들다", startDate: "2025-01-14T19:35:00.657", endDate: "2025-01-24T23:35:00.657", timeDuration: "12PM-4PM (4h)", isAllDay: false, scheduleType: "NORMAL", order: 4, tagName: "SOPT", tagColorCode: "EE8AAD"),
+            ScheduleTotalResponseDataTest(id: 16, description: "신민규이민규바보", startDate: "2025-01-15T19:35:00.657", endDate: "2025-01-24T23:35:00.657", timeDuration: "12PM-4PM (4h)", isAllDay: false, scheduleType: "GOOGLE", order: 5, tagName: "SOPT", tagColorCode: "149C95"),
+            ScheduleTotalResponseDataTest(id: 17, description: "저데모데이안갈래요미안해요", startDate: "2025-01-23T19:35:00.657", endDate: "2025-01-26T23:35:00.657", timeDuration: "12PM-4PM (4h)", isAllDay: false, scheduleType: "APPLE", order: 6, tagName: "SOPT", tagColorCode: "FFE483"),
+            ScheduleTotalResponseDataTest(id: 18, description: "걍더미데이터넣자", startDate: "2025-01-23T20:35:00.657", endDate: "2025-01-27T23:35:00.657", timeDuration: "12PM-4PM (4h)", isAllDay: false, scheduleType: "NORMAL", order: 7, tagName: "SOPT", tagColorCode: "149C95")
         ]
         self.schedules = dummyData
     }
