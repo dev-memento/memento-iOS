@@ -172,9 +172,9 @@ struct TodayListItemView: View {
     }
 }
 
-#Preview{
-    TodayView(viewModel: WeeklyCalendarViewModel(
-        mCalendarDataSource: MCalendarDataSource(),
-        mEventDataSource: MEventDatasource()
-    ))
-}
+//#Preview{
+//    TodayView(viewModel: WeeklyCalendarViewModel(
+//        mCalendarDataSource: MCalendarDataSource(),
+//        mEventDataSource: MEventDatasource()
+//    ))
+//}

@@ -16,7 +16,7 @@ final class AddSchedulePickerButtonViewModel: BasePickerViewModel {
     @Published private(set) var selection: DateTimeSelection
     @Published var selectedDate: Date = Date()
     @Published var isAllDay: Bool = false
-    @Published var selectedTag: Tag = Tag.mockData.first ?? Tag(color: .gray02, title: "Untitled")
+    @Published var selectedTag: Tag = Tag.mockData.first ?? Tag(tagId: 0, color: .gray02, title: "Untitled")
 
     let pickerType: AddSchedulePickerButtonType
     private let initialStartTime: Date
