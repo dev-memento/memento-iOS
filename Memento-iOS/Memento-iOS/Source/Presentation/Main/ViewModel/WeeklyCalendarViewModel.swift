@@ -13,7 +13,9 @@ import MCalendar
 
 final class WeeklyCalendarViewModel: ObservableObject {
     
-    @Published var schedules: [ScheduleTotalResponseData] = []
+    // TODO: - Tag API 연결 후 주석 해제
+    // @Published var schedules: [ScheduleTotalResponseData] = []
+    @Published var schedules: [ScheduleTotalResponseDataTest] = []
     @Published var tag: [TagResponseData] = []
     private let scheduleService: ScheduleAPIServiceProtocol
     private let tagService: TagAPIServiceProtocol
@@ -31,6 +33,7 @@ final class WeeklyCalendarViewModel: ObservableObject {
         
         makeDummyEvent()
         addOffsetDebounce()
+        loadDummyData()
     }
     
     @Published var allDayItems: [AllDayListDataModel] = [
@@ -40,7 +43,7 @@ final class WeeklyCalendarViewModel: ObservableObject {
         .init(colorType: "mementoOrange", allDayTitle: "오늘커피6샷마심레전드"),
         .init(colorType: "mementoMint", allDayTitle: "보라매공원보라매공원보라매공원")
     ]
-
+    
     @Published var todayItems: [TodayItemDataModel] = []
     
     @Published var toDoListItems: [ToDoListDataModel] = [
@@ -113,7 +116,9 @@ extension WeeklyCalendarViewModel {
             case .success(let response):
                 DispatchQueue.main.async {
                     if let scheduleData = response?.data as? [ScheduleTotalResponseData] {
-                        self?.schedules = scheduleData
+                        // TODO: - Tag API 연결 후 주석 해제
+                        // self?.schedules = scheduleData
+                        print(self?.schedules)
                     } else {
                         print("데이터변환 실패 ")
                         self?.schedules = []
@@ -134,5 +139,64 @@ extension WeeklyCalendarViewModel {
                 print("ERROR")
             }
         }
+    }
+}
+
+extension WeeklyCalendarViewModel {
+    // TODO: - Tag API 연결 후 더미 메소드 삭제
+    func loadDummyData() {
+        let dummyData: [ScheduleTotalResponseDataTest] = [
+            ScheduleTotalResponseDataTest(id: 20, description: "나는김가현이다", startDate: "2025-01-12T20:35:00.657", endDate: "2025-01-13T23:35:00.657", isAllDay: false, scheduleType: "NORMAL", order: 1, tagName: "SOPT", tagColorCode: "EE8AAD"),
+            ScheduleTotalResponseDataTest(id: 19, description: "소금빵고마워", startDate: "2025-01-12T20:35:00.657", endDate: "2025-01-14T23:35:00.657", isAllDay: false, scheduleType: "NORMAL", order: 1, tagName: "SOPT", tagColorCode: "FFE483"),
+            ScheduleTotalResponseDataTest(id: 11, description: "팀 프로젝트11111219", startDate: "2025-01-12T02:20:00", endDate: "2025-01-15T12:00:00", isAllDay: false, scheduleType: "NORMAL", order: 1, tagName: "SOPT", tagColorCode: "149C95"),
+            ScheduleTotalResponseDataTest(id: 12, description: "팀 프로젝트11111219", startDate: "2025-01-13T02:20:00", endDate: "2025-01-18T12:00:00", isAllDay: false, scheduleType: "NORMAL", order: 2, tagName: "SOPT", tagColorCode: "FFE483"),
+            ScheduleTotalResponseDataTest(id: 13, description: "지금 이건 서버 테스트", startDate: "2025-01-13T02:20:00", endDate: "2025-01-18T12:00:00", isAllDay: false, scheduleType: "NORMAL", order: 3, tagName: "SOPT", tagColorCode: "EE8AAD"),
+            ScheduleTotalResponseDataTest(id: 14, description: "나는김가현", startDate: "2025-01-14T19:35:00.657", endDate: "2025-01-22T23:35:00.657", isAllDay: false, scheduleType: "NORMAL", order: 16, tagName: "SOPT", tagColorCode: "FFE483"),
+            ScheduleTotalResponseDataTest(id: 15, description: "그만하자내힘들다", startDate: "2025-01-14T19:35:00.657", endDate: "2025-01-24T23:35:00.657", isAllDay: false, scheduleType: "NORMAL", order: 4, tagName: "SOPT", tagColorCode: "EE8AAD"),
+            ScheduleTotalResponseDataTest(id: 16, description: "신민규이민규바보", startDate: "2025-01-15T19:35:00.657", endDate: "2025-01-24T23:35:00.657", isAllDay: false, scheduleType: "NORMAL", order: 5, tagName: "SOPT", tagColorCode: "149C95"),
+            ScheduleTotalResponseDataTest(id: 17, description: "저데모데이안갈래요미안해요", startDate: "2025-01-23T19:35:00.657", endDate: "2025-01-26T23:35:00.657", isAllDay: false, scheduleType: "NORMAL", order: 6, tagName: "SOPT", tagColorCode: "FFE483"),
+            ScheduleTotalResponseDataTest(id: 18, description: "걍더미데이터넣자", startDate: "2025-01-23T20:35:00.657", endDate: "2025-01-27T23:35:00.657", isAllDay: false, scheduleType: "NORMAL", order: 7, tagName: "SOPT", tagColorCode: "149C95")
+        ]
+        self.schedules = dummyData
+    }
+    
+    func filterSchedules(for date: Date) {
+        todayItems = schedules.filter { schedule in
+            guard let startDate = schedule.startDate.toDate(),
+                  let endDate = schedule.endDate.toDate() else {
+                print("💔날짜 변환 실패 \(schedule)💔")
+                return false
+            }
+            
+            let isInRange = Calendar.current.isDate(date, inSameDayAs: startDate) ||
+            (date > startDate && date < endDate) ||
+            Calendar.current.isDate(date, inSameDayAs: endDate)
+            
+            if isInRange {
+                print("💙일정이 \(schedule.description) 있지롱요💙")
+            }
+            return isInRange
+        }.map { schedule in
+            TodayItemDataModel.schedule(schedule)
+        }
+        print("💛선택한 날짜에 해당되는 일정 데이터 : \(todayItems)💛")
+    }
+}
+
+extension String {
+    func toDate() -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        return formatter.date(from: self)
+    }
+}
+
+
+extension WeeklyCalendarViewModel {
+    func onDateSelected(date: Date) {
+        print("선택한 날짜: \(date)")
+        filterSchedules(for: date)
     }
 }
