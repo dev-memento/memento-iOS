@@ -15,18 +15,23 @@ final class WeeklyCalendarViewModel: ObservableObject {
     
     @Published var schedules: [ScheduleTotalResponseData] = []
     @Published var tag: [TagResponseData] = []
+    @Published var toDoList: [ToDoListTotalResponseData] = []
     private let scheduleService: ScheduleAPIServiceProtocol
     private let tagService: TagAPIServiceProtocol
+    private let toDoListService: ToDoListAPIServiceProtocol
     
     init(mCalendarDataSource: MCalendarDataSource,
          mEventDataSource: MEventDatasource,
          scheduleService: ScheduleAPIServiceProtocol,
-         tagService: TagAPIServiceProtocol) {
+         tagService: TagAPIServiceProtocol,
+         toDoListService: ToDoListAPIServiceProtocol
+    ) {
         
         self.mCallendarDataSource = mCalendarDataSource
         self.mEventDataSource = mEventDataSource
         self.scheduleService = scheduleService
         self.tagService = tagService
+        self.toDoListService = toDoListService
         
         
         makeDummyEvent()
@@ -40,16 +45,10 @@ final class WeeklyCalendarViewModel: ObservableObject {
         .init(colorType: "mementoOrange", allDayTitle: "오늘커피6샷마심레전드"),
         .init(colorType: "mementoMint", allDayTitle: "보라매공원보라매공원보라매공원")
     ]
-
+    
     @Published var todayItems: [TodayItemDataModel] = []
     
-    @Published var toDoListItems: [ToDoListDataModel] = [
-        ToDoListDataModel(colorType: "mementoRed", toDoTitle: "투두1", dueDate: "Today", priorityType: .immediate, isChecked: false),
-        ToDoListDataModel(colorType: "mementoBlue", toDoTitle: "투두2", dueDate: "Today", priorityType: .medium, isChecked: false),
-        ToDoListDataModel(colorType: "mementoYellow", toDoTitle: "투두3", dueDate: "Today", priorityType: .high, isChecked: false),
-        ToDoListDataModel(colorType: "mementoLightGreen", toDoTitle: "투두4", dueDate: "Today", priorityType: .none, isChecked: false),
-        ToDoListDataModel(colorType: "mementoPink", toDoTitle: "투두5", dueDate: "Today", priorityType: .immediate, isChecked: false)
-    ]
+    @Published var toDoListItems: [ToDoListDataModel] = []
     
     @Published var dragTodayItem: TodayItemDataModel?
     @Published var dragTodoItem: ToDoListDataModel?
@@ -115,7 +114,7 @@ extension WeeklyCalendarViewModel {
                     if let scheduleData = response?.data as? [ScheduleTotalResponseData] {
                         self?.schedules = scheduleData
                     } else {
-                        print("데이터변환 실패 ")
+                        print("데이터변환 실패")
                         self?.schedules = []
                     }
                 }
@@ -133,6 +132,24 @@ extension WeeklyCalendarViewModel {
             default:
                 print("ERROR")
             }
+        }
+    }
+    
+    func getToDoListTotalAPI() {
+        toDoListService.getToDoList { [weak self] result in
+            //            switch result {
+            //            case .success(let response):
+            ////                DispatchQueue.main.async {
+            //                    if let toDoData = response?.data as? [ToDoListTotalResponseData] {
+            //                        self?.toDoListItems = toDoData.map { ToDoListDataModel(todo: $0) }
+            //                    } else {
+            //                        print("데이터 변환 실패")
+            //                        self?.toDoListItems = []
+            //                    }
+            //                }
+            //            default:
+            //                print("ERROR")
+            //            }
         }
     }
 }
