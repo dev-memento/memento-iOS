@@ -14,7 +14,7 @@ struct TodayView: View {
     @ObservedObject var viewModel: WeeklyCalendarViewModel
     
     @State private var selectTodo: ToDoListDataModel?
-    @State private var selectSchedule: ScheduleListDataModel?
+    @State private var selectSchedule: ScheduleTotalResponseDataTest?
     
     @State private var showTodoAlert = false
     @State private var showScheduleAlert = false
@@ -24,46 +24,44 @@ struct TodayView: View {
             ScrollView {
                 VStack(spacing: 8) {
                     WakeUpHeaderView(wakeUpTime: "8 AM")
+                        .padding(.leading, 50)
+                        .padding(.bottom, 17)
                     
                     ForEach($viewModel.todayItems, id: \.wrappedValue.id) { item in
-                        let isArrow = item.wrappedValue == viewModel.todayItems.first
-                        let isHighlighted = isTopPriorityItem(at: item.wrappedValue)
-                        
-                        TodayListItemView(
-                            item: item,
-                            isHighlighted: isHighlighted,
-                            isArrow: isArrow,
-                            backgroundColor: Color.mainNavy,
-                            
-                            onTodoTap: { todo in
-                                selectTodo = todo
-                                showTodoAlert = true
-                            },
-                            onScheduleTap: { schedule in
-                                selectSchedule = schedule
-                                showScheduleAlert = true
-                            }
-                        )
-                        .padding(.horizontal)
-                        .onDrag {
-                            viewModel.dragTodayItem = item.wrappedValue
-                            return NSItemProvider(object: String(item.id.hashValue) as NSString)
-                        }
-                        .onDrop(of: [.text], delegate: DropViewDelegate(item: item, draggedItem: $viewModel.dragTodayItem, onDrop: viewModel.dropActionForToday))
+                        createTodayListItemView(for: item)
                     }
                     
                     WindDownFooterView(windDownTime: "11 PM")
+                        .padding(.leading, 50)
+                        .padding(.top, 17)
                 }
-                .padding(.vertical)
             }
             .background(Color.grayBlack)
             
             if showTodoAlert, let todo = selectTodo {
-                TodoAlertView(
+                let todoBinding = Binding<Bool>(
+                    get: {
+                        if let index = viewModel.todayItems.firstIndex(where: { $0.id == todo.id }),
+                           case .todo(let t) = viewModel.todayItems[index] {
+                            return t.isChecked
+                        }
+                        return false
+                    },
+                    set: { newValue in
+                        if let index = viewModel.todayItems.firstIndex(where: { $0.id == todo.id }),
+                           case .todo(var t) = viewModel.todayItems[index] {
+                            t.isChecked = newValue
+                            viewModel.todayItems[index] = .todo(t)
+                        }
+                    }
+                )
+                
+                ToDoAlertView(
                     todoTitle: todo.toDoTitle,
                     deadline: todo.dueDate,
                     tag: "Work",
                     priority: todo.priorityType,
+                    isChecked: todoBinding,
                     onDelete: {
                         showTodoAlert = false
                     },
@@ -77,11 +75,11 @@ struct TodayView: View {
             
             if showScheduleAlert, let schedule = selectSchedule {
                 ScheduleAlertView(
-                    scheduleTitle: schedule.scheduleTitle,
-                    startDate: schedule.startTime,
-                    endDate: schedule.endTime,
+                    scheduleTitle: schedule.description,
+                    startDate: schedule.startDate,
+                    endDate: schedule.endDate,
                     tag: "SOPT",
-                    source: "notion",
+                    source: "Notion",
                     onDelete: {
                         showScheduleAlert = false
                     },
@@ -94,7 +92,43 @@ struct TodayView: View {
             }
         }
     }
-    
+     
+    private func createTodayListItemView(for item: Binding<TodayItemDataModel>) -> some View {
+        let currentItem = item.wrappedValue
+        let isArrow = currentItem == viewModel.todayItems.first
+        let isHighlighted = isTopPriorityItem(at: currentItem)
+
+        return TodayListItemView(
+            item: item,
+            isHighlighted: isHighlighted,
+            isArrow: isArrow,
+            backgroundColor: Color.mainNavy,
+            onTodoTap: { todo in
+                selectTodo = todo
+                showTodoAlert = true
+            },
+            onScheduleTap: { schedule in
+                selectSchedule = ScheduleTotalResponseDataTest(
+                    id: schedule.id,
+                    description: schedule.description,
+                    startDate: schedule.startDate,
+                    endDate: schedule.endDate,
+                    isAllDay: schedule.isAllDay,
+                    scheduleType: schedule.scheduleType,
+                    order: schedule.order,
+                    tagName: schedule.tagName,
+                    tagColorCode: schedule.tagColorCode)
+            }
+        )
+        .padding(.horizontal)
+        .onDrag {
+            viewModel.dragTodayItem = currentItem
+            return NSItemProvider(object: String(currentItem.id.hashValue) as NSString)
+        }
+        .onDrop(of: [.text], delegate: DropViewDelegate(item: item, draggedItem: $viewModel.dragTodayItem, onDrop: viewModel.dropActionForToday))
+    }
+
+
     private func isTopPriorityItem(at item: TodayItemDataModel) -> Bool {
         guard case .todo(let todo) = item, !todo.isChecked else { return false }
         let uncheckedItems = viewModel.todayItems.filter {
@@ -107,54 +141,40 @@ struct TodayView: View {
 
 struct TodayListItemView: View {
     @Binding var item: TodayItemDataModel
-    
+
     var isHighlighted: Bool
     var isArrow: Bool
     var backgroundColor: Color
-    
+
     var onTodoTap: (ToDoListDataModel) -> Void
-    var onScheduleTap: (ScheduleListDataModel) -> Void
-    
+    var onScheduleTap: (ScheduleTotalResponseDataTest) -> Void
+
     var body: some View {
         HStack {
-            if isArrow {
-                Image(systemName: "chevron.down")
-                    .foregroundColor(.white)
-                    .padding(.trailing, 8)
-            } else {
-                Spacer()
-                    .frame(width: 20)
-                    .padding(.trailing, 8)
+            Image(.ic_progress)
+                .padding(.leading, -10)
+                .padding(.trailing, 5)
+                .opacity(isArrow ? 1 : 0)
+            
+            // ScheduleListCell 추가
+            if case .schedule(let schedule) = item {
+                ScheduleListCell(schedule: schedule)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        onScheduleTap(schedule)
+                    }
             }
             
-            switch item {
-            case .todo(let todo):
-                ToDoListCell(
-                    isChecked: $item.toDoBinding.isChecked,
-                    colorType: todo.colorType,
-                    toDoTitle: todo.toDoTitle,
-                    dueDate: todo.dueDate,
-                    priorityType: todo.priorityType,
-                    isHighlighted: isHighlighted,
-                    backgroundColor: backgroundColor
-                )
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    onTodoTap(todo)
-                }
-                
-            case .schedule(let schedule):
-                ScheduleListCell(
-                    colorType: schedule.colorType,
-                    scheduleTitle: schedule.scheduleTitle,
-                    time: schedule.startTime,
-                    isCompleted: schedule.isCompleted
-                )
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    onScheduleTap(schedule)
-                }
-            }
+            Spacer()
         }
+        .padding(.horizontal)
+        .background(backgroundColor)
     }
 }
+
+//#Preview{
+//    TodayView(viewModel: WeeklyCalendarViewModel(
+//        mCalendarDataSource: MCalendarDataSource(),
+//        mEventDataSource: MEventDatasource()
+//    ))
+//}

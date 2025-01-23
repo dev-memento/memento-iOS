@@ -89,7 +89,7 @@ private extension SegmentedMenuView {
         case .event:
             AddScheduleView()
         case .brain:
-            EmptyView()
+            BrainDumpView()
         }
     }
 }

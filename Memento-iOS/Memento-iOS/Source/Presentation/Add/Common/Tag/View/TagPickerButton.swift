@@ -15,7 +15,7 @@ struct TagPickerButton: View {
 
     @Binding var isPressed: Bool
     @Binding var isPresented: Bool
-    let viewModel: PickerButtonViewModel
+    let viewModel: AddSchedulePickerButtonViewModel
 
     // MARK: - Body
     var body: some View {

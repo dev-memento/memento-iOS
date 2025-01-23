@@ -1,28 +1,25 @@
 //
-//  ScheduleTargetType.swift
+//  TagTargetType.swift
 //  Memento-iOS
 //
-//  Created by Kimgahyun on 1/21/25.
+//  Created by Kimgahyun on 1/23/25.
 //
 
 import Foundation
 
 import Moya
 
-enum ScheduleTargetType {
-    case getSchedulesTotal
-    case getSchedulesAllDay
-    case getSchedules
-    case getSchedulesDetail
+enum TagTargetType {
+    case getTags
 }
 
-extension ScheduleTargetType: BaseTargetType {
+extension TagTargetType: BaseTargetType {
     var headerType: HeaderType {
         return .accessTokenHeader
     }
     
     var utilPath: UtilPath {
-        return .schedule
+        return .tag
     }
     
     var pathParameter: String? {

@@ -14,11 +14,11 @@ struct DateTimePickerSectionView: View {
     // MARK: - Properties
 
     let title: String
-    @ObservedObject var viewModel: PickerButtonViewModel
+    @ObservedObject var viewModel: AddSchedulePickerButtonViewModel
     let sectionType: AddScheduleSectionType
 
-    @StateObject private var datePickerViewModel = PickerButtonViewModel()
-    @StateObject private var timePickerViewModel = PickerButtonViewModel()
+    @StateObject private var datePickerViewModel = AddSchedulePickerButtonViewModel()
+    @StateObject private var timePickerViewModel = AddSchedulePickerButtonViewModel()
 
     // MARK: - Body
 

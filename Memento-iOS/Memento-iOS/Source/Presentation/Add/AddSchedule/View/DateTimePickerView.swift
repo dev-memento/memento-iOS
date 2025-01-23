@@ -13,11 +13,11 @@ struct DateTimePickerView: View {
 
     // MARK: - Properties
 
-    @StateObject private var viewModel: PickerButtonViewModel
+    @StateObject private var viewModel: AddSchedulePickerButtonViewModel
 
     // MARK: - Initializer
 
-    init(viewModel: PickerButtonViewModel = PickerButtonViewModel()) {
+    init(viewModel: AddSchedulePickerButtonViewModel = AddSchedulePickerButtonViewModel()) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
 

@@ -11,17 +11,17 @@ import MCalendar
 
 enum TabBarItem: CaseIterable {
     
-    case today, todo, addition
+    case today, addition, todo
     
     // 선택되지 않은 탭
     var normalItem: Image? {
         switch self {
         case .today:
-            return Image(systemName: "calendar")
-        case .todo:
-            return Image(systemName: "calendar")
+            return Image(.btn_today_unselected)
         case .addition:
-            return Image(systemName: "calendar")
+            return Image(.btn_add_unselected)
+        case .todo:
+            return Image(.btn_todo_unselected)
         }
     }
     
@@ -29,34 +29,39 @@ enum TabBarItem: CaseIterable {
     var selectedItem: Image? {
         switch self {
         case .today:
-            return Image(systemName: "calendar")
-        case .todo:
-            return Image(systemName: "calendar")
+            return Image(.btn_today_selected)
         case .addition:
-            return Image(systemName: "calendar")
+            return Image(.btn_add_selected)
+        case .todo:
+            return Image(.btn_todo_selected)
         }
     }
-    
     
     // 탭 별 전환될 화면
     var targetView: AnyView {
         switch self {
         case .today:
             return AnyView(TodayWeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
-                mCalendarDataSource: MCalendarDataSource(),
-                mEventDataSource: MEventDatasource()
-            )))
+                        mCalendarDataSource: MCalendarDataSource(),
+                        mEventDataSource: MEventDatasource(),
+                        scheduleService: ScheduleAPIService(),
+                        tagService: TagAPIService()
+                    )))
         case .todo:
             return AnyView(TodayWeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
-                mCalendarDataSource: MCalendarDataSource(),
-                mEventDataSource: MEventDatasource()
-            ))
-            )
+                        mCalendarDataSource: MCalendarDataSource(),
+                        mEventDataSource: MEventDatasource(),
+                        scheduleService: ScheduleAPIService(),
+                        tagService: TagAPIService()
+                    )))
         case .addition:
             return AnyView(TodayWeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
-                mCalendarDataSource: MCalendarDataSource(),
-                mEventDataSource: MEventDatasource()
-            )))
+                        mCalendarDataSource: MCalendarDataSource(),
+                        mEventDataSource: MEventDatasource(),
+                        scheduleService: ScheduleAPIService(),
+                        tagService: TagAPIService()
+                    )))
         }
     }
 }
+

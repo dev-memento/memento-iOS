@@ -9,11 +9,11 @@ import SwiftUI
 
 import MDSKit
 
-struct TagListView: View {
+struct TagListView<ViewModel: BasePickerViewModel & TagSelectable>: View {
 
     // MARK: - Properties
 
-    @ObservedObject var viewModel: PickerButtonViewModel
+    @ObservedObject var viewModel: ViewModel
 
     // MARK: - Body
 
@@ -22,7 +22,7 @@ struct TagListView: View {
             ForEach(Tag.mockData) { tag in
                 TagListItem(tag: tag, viewModel: viewModel)
                     .listRowBackground(
-                        viewModel.selectedTag.id == tag.id
+                        viewModel.selectedTag.tagId == tag.tagId
                         ? Color.gray08
                         : Color.clear
                     )

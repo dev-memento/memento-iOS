@@ -9,18 +9,18 @@ import SwiftUI
 
 import MDSKit
 
-struct TagListItem: View {
+struct TagListItem<ViewModel: BasePickerViewModel & TagSelectable>: View {
 
     // MARK: - Properties
 
     let tag: Tag
-    @ObservedObject var viewModel: PickerButtonViewModel
+    @ObservedObject var viewModel: ViewModel
 
     // MARK: - Body
 
     var body: some View {
         Button(action: {
-            viewModel.selectedTag = tag
+            viewModel.updateSelectedTag(tag)
         }) {
             HStack {
                 Circle()

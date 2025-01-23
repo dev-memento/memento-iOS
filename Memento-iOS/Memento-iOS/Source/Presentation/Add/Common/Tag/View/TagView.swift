@@ -9,11 +9,11 @@ import SwiftUI
 
 import MDSKit
 
-struct TagView: View {
+struct TagView<ViewModel: BasePickerViewModel & TagSelectable>: View {
 
     // MARK: - Properties
-
-    @StateObject private var viewModel = PickerButtonViewModel(type: .tag)
+    
+    @ObservedObject var viewModel: ViewModel
 
     // MARK: - Body
 
@@ -27,16 +27,5 @@ struct TagView: View {
 
             TagPickerSheetView(viewModel: viewModel)
         }
-    }
-}
-
-// MARK: - Preview
-
-#Preview {
-    ZStack {
-        Color.gray10
-            .ignoresSafeArea()
-
-        TagView()
     }
 }

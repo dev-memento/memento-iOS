@@ -1,5 +1,5 @@
 //
-//  PickerButtonViewModel.swift
+//  AddSchedulePickerButtonViewModel.swift
 //  Memento-iOS
 //
 //  Created by RAFA on 1/18/25.
@@ -9,22 +9,22 @@ import SwiftUI
 
 import MDSKit
 
-final class PickerButtonViewModel: BasePickerViewModel {
+final class AddSchedulePickerButtonViewModel: BasePickerViewModel {
 
     // MARK: - Properties
 
     @Published private(set) var selection: DateTimeSelection
     @Published var selectedDate: Date = Date()
     @Published var isAllDay: Bool = false
-    @Published var selectedTag: Tag = Tag.mockData.first ?? Tag(color: .gray02, title: "Untitled")
+    @Published var selectedTag: Tag = Tag.mockData.first ?? Tag(tagId: 0, color: .gray02, title: "Untitled")
 
-    let pickerType: PickerButtonType
+    let pickerType: AddSchedulePickerButtonType
     private let initialStartTime: Date
     private let initialEndTime: Date
 
     // MARK: - Initializer
 
-    init(type: PickerButtonType = .date) {
+    init(type: AddSchedulePickerButtonType = .date) {
         let now = Date()
         self.pickerType = type
         self.initialStartTime = now
@@ -84,10 +84,6 @@ final class PickerButtonViewModel: BasePickerViewModel {
             return selectedDate.formattedDate(with: "h:mm a")
         case .tag:
             return selectedTag.title.isEmpty ? "Untitled" : selectedTag.title
-        case .deadline:
-            return Calendar.current.isDateInToday(selectedDate)
-            ? "Today"
-            : selectedDate.formattedDate(with: "MMM d")
         }
     }
 
@@ -134,5 +130,14 @@ final class PickerButtonViewModel: BasePickerViewModel {
         } else {
             resetToInitialTime()
         }
+    }
+}
+
+// MARK: - Protocols
+
+extension AddSchedulePickerButtonViewModel: TagSelectable {
+
+    func updateSelectedTag(_ tag: Tag) {
+        selectedTag = tag
     }
 }
