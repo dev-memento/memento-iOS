@@ -38,11 +38,9 @@ struct MementoApp: App {
     
     var body: some Scene {
         WindowGroup {
-            // 자동 로그인 부분
             if appState.isLoggedIn {
                 TabBarView()
             } else {
-                // 처음 사용자라면?
                 LoginView()
                     .environmentObject(onboardingViewModel)
             }

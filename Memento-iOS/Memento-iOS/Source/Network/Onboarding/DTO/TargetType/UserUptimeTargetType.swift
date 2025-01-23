@@ -37,7 +37,7 @@ extension UserUptimeTargetType: BaseTargetType {
     }
 
     var requestBodyParameter: Codable? {
-        return nil // GET 요청은 Body가 없음
+        return nil 
     }
 
     var queryParameter: [String: Any]? {

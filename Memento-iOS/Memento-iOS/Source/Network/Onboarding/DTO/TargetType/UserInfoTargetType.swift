@@ -8,10 +8,8 @@
 import Foundation
 import Moya
 
-import Foundation
-
 enum UserInfoTargetType {
-    case user(request: UserInfoRequest) // 서버로 던질거 정의
+    case user(request: UserInfoRequest)
 }
 
 extension UserInfoTargetType: BaseTargetType {

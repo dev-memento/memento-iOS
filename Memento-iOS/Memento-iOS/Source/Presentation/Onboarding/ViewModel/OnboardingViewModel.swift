@@ -51,6 +51,7 @@ struct OnboardingData {
 
 
 // MARK: - OnboardingViewModel Core
+
 @MainActor
 final class OnboardingViewModel: ObservableObject {
     
@@ -108,7 +109,6 @@ final class OnboardingViewModel: ObservableObject {
                 print("회원 개인 정보 업데이트 실패")
             }
         }
-        
         //        userUptimeAPIService.fetchUptime{ result in
         //            switch result {
         //            case .success(let response):
@@ -129,6 +129,7 @@ final class OnboardingViewModel: ObservableObject {
 }
 
 // MARK: - Onboarding Navigation Logic
+
 extension OnboardingViewModel {
     /// 특정 화면으로 이동
     /// - Parameter destination: 이동할 화면의 목적지
@@ -149,6 +150,7 @@ extension OnboardingViewModel {
 }
 
 // MARK: - Authentication Handling
+
 extension OnboardingViewModel {
     
     func handleGoogleLogin() {
@@ -174,6 +176,7 @@ extension OnboardingViewModel {
 }
 
 // MARK: - Helper Methods for OnboardingViewModel
+
 extension OnboardingViewModel {
     
     /// SleepCycle 화면에서 Next 버튼 활성화 여부를 확인
@@ -185,16 +188,19 @@ extension OnboardingViewModel {
     var isNextButtonEnabledForWorkPreference: Bool {
         SurveyQuestion.mockData.allSatisfy { workPreferenceData.selectedAnswers[$0.id] != nil }
     }
-    //
+
+    /// 선택된 카테고리를 서버에서 요구하는 형식으로 변환하고,
+    /// WorkSelectionData의 selectedCategory에 저장합니다.
     func updateCategory(categoryName: String) {
         let transformedCategory = CategoryType.from(name: categoryName)
         workSelectionData.selectedCategory = transformedCategory
     }
 }
 
+//MARK: - APPLE 캘린더 연동
 
 extension OnboardingViewModel {
-    
+
     func submitEventsToAPI() async {
         do {
             // 캘린더 이벤트 가져오기

@@ -8,8 +8,6 @@
 import Foundation
 import Moya
 
-import Foundation
-
 enum AppleSchedulesTargetType {
     case schedule(request: AppleScheduleListRequest)
 }
