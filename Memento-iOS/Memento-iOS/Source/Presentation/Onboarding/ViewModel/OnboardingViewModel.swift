@@ -68,6 +68,7 @@ final class OnboardingViewModel: ObservableObject {
     
     var authViewModel: AuthViewModel
     let userInfoAPIService = UserInfoAPIService()
+    let userUptimeAPIService = UserUptimeAPIService()
     
     // MARK: - Properties
     private var cancellables = Set<AnyCancellable>()
@@ -105,6 +106,16 @@ final class OnboardingViewModel: ObservableObject {
                 print("회원 개인 정보 업데이트 실패")
             }
         }
+        
+//        userUptimeAPIService.fetchUptime{ result in
+//            switch result {
+//            case .success(let response):
+//                print("시간 가져오기 성공")
+//                // 추가 작업 필요 시 여기에 작성
+//            default:
+//                print("시간 가져오기 실패")
+//            }
+//        }
     }
 }
 

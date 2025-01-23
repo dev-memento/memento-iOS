@@ -32,6 +32,7 @@ extension UserInfoAPIServiceProtocol {
 // MARK: - UserInfoAPIService
 
 final class UserInfoAPIService: BaseAPIService, UserInfoAPIServiceProtocol {
+
     private let provider = MoyaProvider<UserInfoTargetType>(plugins: [MoyaPlugin.shared, TokenRefreshPlugin()])
 
     /// 사용자 정보 업데이트 API 호출
@@ -61,3 +62,4 @@ final class UserInfoAPIService: BaseAPIService, UserInfoAPIServiceProtocol {
         }
     }
 }
+
