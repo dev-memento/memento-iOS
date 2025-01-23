@@ -65,6 +65,7 @@
 				Source/Presentation/Add/AddTodo/View/AddTodoView.swift,
 				Source/Presentation/Add/AddTodo/ViewModel/AddTodoHeaderViewModel.swift,
 				Source/Presentation/Add/AddTodo/ViewModel/AddTodoTextViewModel.swift,
+				Source/Presentation/Add/AddTodo/ViewModel/AddTodoViewModel.swift,
 				Source/Presentation/Add/BrainDump/View/BrainDumpView.swift,
 				Source/Presentation/Add/Common/PickerButton/View/PickerButton.swift,
 				Source/Presentation/Add/Common/PickerButton/ViewModel/BasePickerViewModel.swift,
