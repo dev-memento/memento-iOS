@@ -14,14 +14,19 @@ import MCalendar
 final class WeeklyCalendarViewModel: ObservableObject {
     
     @Published var schedules: [ScheduleTotalResponseData] = []
+    @Published var tag: [TagResponseData] = []
     private let scheduleService: ScheduleAPIServiceProtocol
+    private let tagService: TagAPIServiceProtocol
     
     init(mCalendarDataSource: MCalendarDataSource,
          mEventDataSource: MEventDatasource,
-         scheduleService: ScheduleAPIServiceProtocol) {
+         scheduleService: ScheduleAPIServiceProtocol,
+         tagService: TagAPIServiceProtocol) {
+        
         self.mCallendarDataSource = mCalendarDataSource
         self.mEventDataSource = mEventDataSource
         self.scheduleService = scheduleService
+        self.tagService = tagService
         
         
         makeDummyEvent()
@@ -114,6 +119,17 @@ extension WeeklyCalendarViewModel {
                         self?.schedules = []
                     }
                 }
+            default:
+                print("ERROR")
+            }
+        }
+    }
+    
+    func getTagsAPI() {
+        tagService.getTags() { [weak self] result in
+            switch result {
+            case .success(let response):
+                print("SUCCESS")
             default:
                 print("ERROR")
             }
