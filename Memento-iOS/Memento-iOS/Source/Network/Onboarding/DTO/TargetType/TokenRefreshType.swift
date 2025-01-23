@@ -9,7 +9,7 @@ import Foundation
 import Moya
 
 enum TokenRefreshType {
-    case refreshToken(refreshToken: String)
+    case auth(refreshToken: String)
 }
 
 extension TokenRefreshType: BaseTargetType {
@@ -20,7 +20,7 @@ extension TokenRefreshType: BaseTargetType {
     
     var headerType: HeaderType {
         switch self {
-        case .refreshToken(let refreshToken):
+        case .auth(let refreshToken):
             return .socialTokenHeader(socialToken: refreshToken) // Refresh Token을 Authorization 헤더에 추가
         }
     }
@@ -31,7 +31,7 @@ extension TokenRefreshType: BaseTargetType {
     
     var path: String {
         switch self {
-        case .refreshToken:
+        case .auth:
             return "\(utilPath.rawValue)/token/refresh" // 결과: "/v1/auth/token/refresh"
         }
     }

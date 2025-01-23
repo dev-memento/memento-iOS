@@ -13,90 +13,117 @@ final class TokenRefreshPlugin: PluginType {
     private let refreshProvider = MoyaProvider<TokenRefreshType>()
     private var isRefreshing = false
     private var refreshQueue: [(Bool) -> Void] = []
-    
-    /// `didReceive` 메서드에서 401 응답 처리
+
     func didReceive(_ result: Result<Response, MoyaError>, target: TargetType) {
         guard case .failure(let error) = result,
               let response = error.response,
               response.statusCode == 401 else { return }
         
-        handleTokenRefresh { success in
+        print("401 Unauthorized detected for URL: \(response.request?.url?.absoluteString ?? "Unknown URL")")
+        
+        handleTokenRefresh { [weak self] success in
+            guard let self = self else { return }
+            
             if success {
-                print("토큰 갱신 성공")
-                // 필요시 갱신 후 추가 작업
+                print("Token successfully refreshed. Retrying request...")
+                self.retryMoyaRequest(target: target)
             } else {
-                print("토큰 갱신 실패")
-                // 갱신 실패 시 추가 작업
+                print("Token refresh failed.")
             }
         }
     }
-    
-    /// Access Token 갱신 로직
+
     private func handleTokenRefresh(completion: @escaping (Bool) -> Void) {
-        // 동시성 문제 방지: 이미 갱신 중이면 큐에 추가
         guard !isRefreshing else {
             refreshQueue.append(completion)
             return
         }
-        
+
         isRefreshing = true
-        
+
         do {
-            // Keychain에서 Refresh Token 로드
             guard let refreshToken = try keychainManager.loadRefreshToken() else {
                 print("리프레시 토큰 없음")
                 completeRefresh(success: false)
                 return
             }
-            
-            // Refresh Token 요청
-            refreshProvider.request(.refreshToken(refreshToken: refreshToken)) { [weak self] result in
+
+            refreshProvider.request(.auth(refreshToken: refreshToken)) { [weak self] result in
                 guard let self = self else { return }
-                
+
                 switch result {
                 case .success(let response):
                     do {
-                        // 상태 코드 확인 및 데이터 처리
                         guard (200...299).contains(response.statusCode) else {
-                            print("서버 응답 상태 코드 에러: \(response.statusCode)")
+                            print("갱신 실패: 상태 코드 \(response.statusCode)")
                             self.completeRefresh(success: false)
                             return
                         }
-                        
-                        // 응답 데이터 디코딩
+
                         let decodedResponse = try JSONDecoder().decode(NewAccessTokenResponse.self, from: response.data)
-                        
-                        // 새로운 Access Token 저장
                         try self.keychainManager.saveAccessToken(decodedResponse.accessToken)
                         try self.keychainManager.saveRefreshToken(decodedResponse.refreshToken)
-                        
                         print("Access Token 갱신 성공")
                         self.completeRefresh(success: true)
-                        
+
                     } catch {
-                        // 디코딩 오류 처리
                         print("디코딩 실패: \(error.localizedDescription)")
                         self.completeRefresh(success: false)
                     }
-                    
+
                 case .failure(let error):
-                    // 네트워크 오류 처리
                     print("네트워크 오류: \(error.localizedDescription)")
                     self.completeRefresh(success: false)
                 }
             }
         } catch {
-            // Keychain 에러 처리
             print("리프레시 토큰 로드 실패: \(error.localizedDescription)")
             completeRefresh(success: false)
         }
     }
-    
-    /// 토큰 갱신 완료 처리 및 대기 중인 요청 처리
+
+    private func retryMoyaRequest(target: TargetType) {
+        guard let moyaTarget = target as? UserInfoTargetType else {
+            print("재요청 실패: 잘못된 TargetType")
+            return
+        }
+        
+        let provider = MoyaProvider<UserInfoTargetType>(plugins: [self])
+        
+        provider.request(moyaTarget) { result in
+            switch result {
+            case .success(let response):
+                print("재요청 성공: \(response.statusCode)")
+            case .failure(let error):
+                print("재요청 실패: \(error.localizedDescription)")
+            }
+        }
+    }
+
     private func completeRefresh(success: Bool) {
         isRefreshing = false
         refreshQueue.forEach { $0(success) }
         refreshQueue.removeAll()
+    }
+}
+
+extension TargetType {
+    func asURLRequest() throws -> URLRequest {
+        let url = try self.baseURL.appendingPathComponent(self.path)
+        var request = URLRequest(url: url)
+        request.httpMethod = self.method.rawValue
+
+        switch self.task {
+        case .requestParameters(let parameters, let encoding):
+            request = try encoding.encode(request, with: parameters)
+        case .requestJSONEncodable(let encodable):
+            request.httpBody = try JSONEncoder().encode(encodable)
+        default:
+            break
+        }
+
+        self.headers?.forEach { request.setValue($1, forHTTPHeaderField: $0) }
+        return request
     }
 }
 
