@@ -116,6 +116,7 @@ struct AddTodoBottomView: View {
 
     private var enterButton: some View {
         Button(action: {
+            todoViewModel.createTodo()
         }) {
             Image(
                 viewModel.isTextEmpty
