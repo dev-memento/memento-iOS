@@ -22,7 +22,7 @@ struct TagListView<ViewModel: BasePickerViewModel & TagSelectable>: View {
             ForEach(Tag.mockData) { tag in
                 TagListItem(tag: tag, viewModel: viewModel)
                     .listRowBackground(
-                        viewModel.selectedTag.id == tag.id
+                        viewModel.selectedTag.tagId == tag.tagId
                         ? Color.gray08
                         : Color.clear
                     )
