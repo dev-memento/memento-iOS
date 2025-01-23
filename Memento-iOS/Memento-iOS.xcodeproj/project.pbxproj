@@ -48,6 +48,7 @@
 				"Source/Network/Onboarding/DTO/Response /LoginResponse.swift",
 				Source/Network/Onboarding/LoginAPIService.swift,
 				Source/Network/Onboarding/TokenRefreshType.swift,
+				Source/Network/Todo/DTO/Request/TodoRequest.swift,
 				Source/Presentation/Add/AddSchedule/Model/DateTimeSelection.swift,
 				Source/Presentation/Add/AddSchedule/View/AddEventTitleView.swift,
 				Source/Presentation/Add/AddSchedule/View/AddScheduleView.swift,
