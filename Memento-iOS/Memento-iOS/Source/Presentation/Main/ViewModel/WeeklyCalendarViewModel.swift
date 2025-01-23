@@ -140,7 +140,7 @@ extension WeeklyCalendarViewModel {
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
-                    if let scheduleData = response?.data as? [ScheduleAllDayResponseDataTest] {
+                    if let scheduleData = response?.data.allDaySchedulesList {
                         self?.allday = scheduleData
                     } else {
                         self?.allday = []
