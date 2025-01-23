@@ -39,6 +39,7 @@ struct AddTagView<ViewModel: BasePickerViewModel & TagSelectable>: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
+                        viewModel.updateSelectedTag(viewModel.selectedTag)
                         presentationMode.wrappedValue.dismiss()
                     }) {
                         Text("Done")
