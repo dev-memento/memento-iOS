@@ -108,9 +108,9 @@ extension WeeklyCalendarViewModel {
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
-                    if let scheduleData = response?.data as? [ScheduleTotalResponseData] {
+                    if let scheduleData = response?.data as? [ScheduleTotalResponseDataTest] {
                         // TODO: - Tag API 연결 후 주석 해제
-                        // self?.schedules = scheduleData
+                         self?.schedules = scheduleData
                         print(self?.schedules)
                     } else {
                         print("데이터변환 실패 ")
