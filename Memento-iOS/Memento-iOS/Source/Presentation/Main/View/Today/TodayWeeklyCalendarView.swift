@@ -85,7 +85,7 @@ struct TodayWeeklyCalendarView: View {
         }
         .onAppear {
             viewModel.getTagsAPI()
-            viewModel.getSchedulesTotalAPI()
+//            viewModel.getSchedulesTotalAPI()
             viewModel.getSchedulesAllDayAPI()
             viewModel.userUptimeAPI()
             viewModel.makeDummyEvent()
