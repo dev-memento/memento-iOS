@@ -137,6 +137,11 @@ struct TodayView: View {
                     width: UIScreen.main.bounds.width * 0.95,
                     height: UIScreen.main.bounds.height
                 )
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                        aiPlottingButtonpPressed = false
+                    }
+                }
             }
         }
     }
