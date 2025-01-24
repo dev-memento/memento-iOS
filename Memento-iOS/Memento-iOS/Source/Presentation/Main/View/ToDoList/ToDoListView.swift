@@ -15,58 +15,50 @@ struct ToDoListView: View {
     
     @State private var showTodoAlert = false
     
-    let dates = ["Jan 18", "Jan 19", "Jan 20", "Jan 21", "Jan 22"]
-    
     var body: some View {
         ZStack {
             ScrollView {
                 VStack(spacing: 0) {
-                    ForEach(dates, id: \.self) { date in
-                        ToDoListDateView(date: date)
+                    ForEach(viewModel.mCallendarDataSource.wholeMonthDate, id: \.self) { date in
+                        ToDoListDateView(date: "\(date.month) \(date.day)")
                             .padding(.bottom, 8)
                         
                         let sortedItems = viewModel.toDoListItems
                             .sorted { !$0.isChecked && $1.isChecked }
                         
-                        ForEach(viewModel.toDoListItems, id: \.self) { item in
+                        ForEach(viewModel.filteredTargetEvent(date), id: \.self) { item in
                             let originalIndex = viewModel.toDoListItems.firstIndex(where: { $0 == item })!
                             let isHighlighted = isTopPriorityItem(at: item, items: sortedItems)
                             
                             ToDoListItemView(item: item.mapToToDoItem(),
-                                             isHighlighted: true,
+                                             isHighlighted: isHighlighted,
                                              backgroundColor: Color.grayBlack,
                                              onTodoTap: { selectedItem in
-                                
                             })
                             .onTapGesture {
                                 showTodoAlert = true
                             }
-                            .onDrag{
-                                viewModel.dragTodoItem = item
-                                return NSItemProvider(object: String(item.id.hashValue) as NSString)
-                            }
                             
                         }
                     }
+                    Spacer()
                 }
-                Spacer()
+            }
+            .background(Color.grayBlack)
+            .onAppear {
+                viewModel.getToDoListTotalAPI()
             }
         }
-        .background(Color.grayBlack)
-        .onAppear {
-            viewModel.getToDoListTotalAPI()
+    }
+    
+    private func isTopPriorityItem(at item: ToDoListDataModel, items: [ToDoListDataModel]) -> Bool {
+        guard !item.isChecked else { return false }
+        guard let currentIndex = items.firstIndex(where: { $0 == item }) else {
+            return false
         }
-        
+        let uncheckedCount = items.prefix(upTo: currentIndex).filter { !$0.isChecked }.count
+        return uncheckedCount == 0
     }
-}
-
-private func isTopPriorityItem(at item: ToDoListDataModel, items: [ToDoListDataModel]) -> Bool {
-    guard !item.isChecked else { return false }
-    guard let currentIndex = items.firstIndex(where: { $0 == item }) else {
-        return false
-    }
-    let uncheckedCount = items.prefix(upTo: currentIndex).filter { !$0.isChecked }.count
-    return uncheckedCount == 0
 }
 
 struct ToDoListDateView: View {
@@ -92,6 +84,7 @@ struct ToDoListDateView: View {
         .id(date)
     }
 }
+
 
 #Preview {
     ToDoListView(viewModel: .init(mCalendarDataSource: .init(),

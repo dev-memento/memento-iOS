@@ -11,6 +11,7 @@ struct ToDoListDataModel: Identifiable, Equatable, Hashable {
     var id = Int()
     var colorType: String
     var toDoTitle: String
+    var date: String
     var dueDate: String
     var priorityType: Priority
     var isChecked: Bool
@@ -19,7 +20,7 @@ struct ToDoListDataModel: Identifiable, Equatable, Hashable {
         return .init(id: id,
                      groupId: "",
                      description: toDoTitle,
-                     startDate: "",
+                     startDate: date,
                      endDate: dueDate,
                      isCompleted: false,
                      priorityValue: 1,
