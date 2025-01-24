@@ -44,6 +44,9 @@ struct AddTodoBottomView: View {
         .onChange(of: bottomViewModel.selectedTag) { _, newTag in
             todoViewModel.tagId = newTag.tagId
         }
+        .onChange(of: selectedPriority) { _, newValue in
+            todoViewModel.selectedPriority = newValue
+        }
     }
 
     // MARK: - UI Components

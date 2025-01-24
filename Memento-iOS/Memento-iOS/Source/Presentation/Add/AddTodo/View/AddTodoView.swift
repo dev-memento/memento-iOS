@@ -39,6 +39,11 @@ struct AddTodoView: View {
             .onChange(of: bottomViewModel.selectedDate) {
                 todoViewModel.endDate = bottomViewModel.isoFormattedDate
             }
+            .onChange(of: todoViewModel.selectedPriority) { _, newValue in
+                let (urgency, importance) = newValue.getPriorityValues()
+                todoViewModel.priorityUrgency = urgency
+                todoViewModel.priorityImportance = importance
+            }
         }
         .padding(.horizontal)
         .background(Color.gray10)
