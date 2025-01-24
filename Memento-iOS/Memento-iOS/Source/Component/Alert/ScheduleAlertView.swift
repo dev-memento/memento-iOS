@@ -133,16 +133,12 @@ struct ScheduleAlertView: View {
                     onDelete()
                     print("DEBUG: Schedule 삭제 성공")
                 case .badRequest:
-                    onDelete()
                     print("DEBUG: 잘못된 요청입니다. - Schedule 삭제 실패")
                 case .notFound:
-                    onDelete()
                     print("DEBUG: 잘못된 요청입니다. - Schedule 삭제 실패")
                 case .serverError:
-                    onDelete()
                     print("DEBUG: 내부 서버 에러 - Schedule 삭제 실패")
                 default:
-                    onDelete()
                     print("DEBUG: 알 수 없는 에러 - Schedule 삭제 실패")
                 }
             }
