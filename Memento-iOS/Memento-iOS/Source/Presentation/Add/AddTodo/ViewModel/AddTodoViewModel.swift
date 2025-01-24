@@ -12,7 +12,7 @@ final class AddTodoViewModel: ObservableObject {
     @Published var startDate: String = ""
     @Published var description: String = ""
     @Published var endDate: String?
-    @Published var tagId: Int?
+    @Published var tagId: Int? = 1
     @Published var priorityUrgency: Double?
     @Published var priorityImportance: Double?
     @Published var selectedPriority: Priority = .none

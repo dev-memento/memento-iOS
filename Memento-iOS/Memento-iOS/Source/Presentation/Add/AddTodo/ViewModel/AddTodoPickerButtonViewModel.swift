@@ -19,7 +19,7 @@ final class AddTodoPickerButtonViewModel: BasePickerViewModel {
         }
     }
 
-    @Published var selectedTag: Tag = Tag.mockData.first ?? Tag(tagId: 0, color: .gray02, title: "Untitled")
+    @Published var selectedTag: Tag = Tag(tagId: 1, color: .gray05, title: "Untitled")
     @Published var formattedPickerTitle: String = "Today"
 
     let pickerType: AddTodoPickerButtonType
@@ -53,7 +53,7 @@ final class AddTodoPickerButtonViewModel: BasePickerViewModel {
     private func updateFormattedPickerTitle() {
         switch pickerType {
         case .tag:
-            formattedPickerTitle = selectedTag.title.isEmpty ? "Untitled" : selectedTag.title
+            formattedPickerTitle = selectedTag.title
         case .date, .deadline:
             let calendar = Calendar.current
             if calendar.isDateInToday(selectedDate) {
