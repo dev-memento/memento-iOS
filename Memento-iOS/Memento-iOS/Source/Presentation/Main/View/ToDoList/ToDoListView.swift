@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-
 import MDSKit
 import MCalendar
 
@@ -14,6 +13,8 @@ struct ToDoListView: View {
     @ObservedObject var viewModel: WeeklyCalendarViewModel
     
     @State private var showTodoAlert = false
+    @State private var selectedItem: ToDoListDataModel?
+    @State private var isChecked = false
     
     var body: some View {
         ZStack {
@@ -23,22 +24,20 @@ struct ToDoListView: View {
                         ToDoListDateView(date: "\(makeMonthDate(month: date.month)) \(date.day)")
                             .padding(.bottom, 8)
                             .id(date)
-                        let sortedItems = viewModel.toDoListItems
-                            .sorted { !$0.isChecked && $1.isChecked }
                         
-                        ForEach(viewModel.filteredTargetEvent(date), id: \.self) { item in
-                            let originalIndex = viewModel.toDoListItems.firstIndex(where: { $0 == item })!
-                            let isHighlighted = isTopPriorityItem(at: item, items: sortedItems)
-                            
-                            ToDoListItemView(item: item.mapToToDoItem(),
-                                             isHighlighted: isHighlighted,
-                                             backgroundColor: Color.grayBlack,
-                                             onTodoTap: { selectedItem in
-                            })
-                            .onTapGesture {
-                                showTodoAlert = true
+                        if let events = viewModel.toDoListItemDict[date] {
+                            ForEach(events, id: \.self) { event in
+                                ToDoListItemView(
+                                    item: event.mapToToDoItem(),
+                                    isHighlighted: isTopPriorityItem(at: event, items: events),
+                                    backgroundColor: Color.grayBlack,
+                                    onTodoTap: { selectedItem in }
+                                )
+                                .onTapGesture {
+                                    selectedItem = event
+                                    showTodoAlert = true
+                                }
                             }
-                            
                         }
                     }
                     Spacer()
@@ -47,6 +46,24 @@ struct ToDoListView: View {
             .background(Color.grayBlack)
             .onAppear {
                 viewModel.getToDoListTotalAPI()
+            }
+            
+            if showTodoAlert {
+                ToDoAlertView(
+                    todoTitle: selectedItem?.mapToToDoItem().description ?? "",
+                    deadline: selectedItem?.mapToToDoItem().endDate ?? "",
+                    tag: selectedItem?.mapToToDoItem().tagColor ?? "",
+                    priority: selectedItem?.priorityType ?? .none,
+                    isChecked: $isChecked,
+                    onDelete: {
+                        showTodoAlert = false
+                    },
+                    onEdit: {
+                        showTodoAlert = false
+                    }
+                )
+                .background(Color.black.opacity(0.4))
+                .edgesIgnoringSafeArea(.all)
             }
         }
     }
@@ -112,7 +129,6 @@ struct ToDoListDateView: View {
             .frame(height: 20)
             .padding(.bottom, 8)
         }
-        .id(date)
     }
 }
 

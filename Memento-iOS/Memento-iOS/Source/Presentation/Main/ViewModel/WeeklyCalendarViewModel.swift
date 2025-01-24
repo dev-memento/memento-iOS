@@ -67,7 +67,15 @@ final class WeeklyCalendarViewModel: ObservableObject {
     
     
     private let dateFormatter = DateFormatter()
-    func filteredTargetEvent(_ date: MCalendarDataModel) -> [ToDoListDataModel] {
+    @Published var toDoListItemDict: [MCalendarDataModel: [ToDoListDataModel]] = [:]
+    
+    func preprocessingForEventDate() {
+        for date in mCallendarDataSource.wholeMonthDate {
+            toDoListItemDict[date] = filteredTargetEvent(date)
+        }
+    }
+    
+    private func filteredTargetEvent(_ date: MCalendarDataModel) -> [ToDoListDataModel] {
         dateFormatter.dateFormat = "yyyy-MM-dd"
         return toDoListItems.filter {
             dateFormatter.date(from: $0.date)! == date.date()!
@@ -166,6 +174,7 @@ extension WeeklyCalendarViewModel {
                         print("데이터변환 실패")
                         self?.toDoListItems = []
                     }
+                    self?.preprocessingForEventDate()
                 }
             default:
                 print("ERROR")

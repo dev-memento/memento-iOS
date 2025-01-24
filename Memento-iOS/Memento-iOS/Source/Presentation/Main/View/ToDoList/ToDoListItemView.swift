@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ToDoListItemView: View {
-    let item: ToDoListTotalResponseDataTest
+    var item: ToDoListTotalResponseDataTest
     
     var isHighlighted: Bool
     var backgroundColor: Color
@@ -19,7 +19,7 @@ struct ToDoListItemView: View {
         VStack(spacing: 10) {
             ToDoListCell(
                 toDoList: item,
-                isHighlighted: item.isCompleted,
+                isHighlighted: isHighlighted,
                 backgroundColor: backgroundColor
             )
         }
