@@ -134,7 +134,7 @@ struct TodayView: View {
         .overlay {
             if aiPlottingButtonpPressed {
                 NeonAnimationView(
-                    width: UIScreen.main.bounds.width * 0.95,
+                    width: UIScreen.main.bounds.width * 0.97,
                     height: UIScreen.main.bounds.height
                 )
                 .onAppear {

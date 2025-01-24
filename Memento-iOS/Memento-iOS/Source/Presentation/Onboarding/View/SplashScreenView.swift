@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct SplashScreenView: View {
-    @EnvironmentObject var appState: AppState
+    @Binding var showLottieAnimation: Bool
     
     var body: some View {
         LottieView(animationName: "memento_logo_animation", loopMode: .playOnce) {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                appState.showLottieAnimation = false
+                showLottieAnimation = false
             }
         }
         .edgesIgnoringSafeArea(.all)
