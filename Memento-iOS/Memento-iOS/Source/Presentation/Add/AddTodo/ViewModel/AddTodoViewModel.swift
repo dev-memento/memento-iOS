@@ -19,7 +19,7 @@ final class AddTodoViewModel: ObservableObject {
     
     private let todoAPIService: TodoAPIServiceProtocol = TodoAPIService()
 
-    func createTodo() {
+    func createTodo(completion: @escaping () -> Void) {
         let (priorityUrgency, priorityImportance) = getPriorityValues()
 
         todoAPIService.createTodo(
@@ -33,6 +33,7 @@ final class AddTodoViewModel: ObservableObject {
             switch result {
             case .success(let response):
                 guard let response else { return }
+                completion()
                 print("DEBUG: Success - \(response)")
             case .badRequest, .notFound:
                 print("DEBUG: Error - 잘못된 요청입니다.")

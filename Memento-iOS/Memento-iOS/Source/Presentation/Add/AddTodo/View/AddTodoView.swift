@@ -12,7 +12,6 @@ import MDSKit
 struct AddTodoView: View {
 
     // MARK: - Properties
-
     @StateObject private var headerViewModel = AddTodoHeaderViewModel()
     @StateObject private var textViewModel = AddTodoTextViewModel()
     @StateObject private var bottomViewModel = AddTodoPickerButtonViewModel(type: .deadline)
