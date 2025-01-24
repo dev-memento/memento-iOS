@@ -15,7 +15,7 @@ enum TodayItemDataModel: Identifiable, Equatable {
     var id: Int {
         switch self {
         case .todo(let todo):
-            return todo.id.hashValue
+            return todo.id
         case .schedule(let schedule):
             return schedule.id
         }
