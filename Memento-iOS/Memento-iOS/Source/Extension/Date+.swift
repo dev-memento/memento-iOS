@@ -8,6 +8,10 @@
 import Foundation
 
 extension Date {
+    var startOfDay: Date {
+        return Calendar.current.startOfDay(for: self)
+    }
+    
     /// 특정 포맷의 날짜 문자열 반환
     func formattedDate(with format: String, timeZone: TimeZone = .current) -> String {
         let dateFormatter = DateFormatter()

@@ -13,8 +13,6 @@ import MCalendar
 
 final class WeeklyCalendarViewModel: ObservableObject {
     
-    // TODO: - Tag API 연결 후 주석 해제
-    // @Published var schedules: [ScheduleTotalResponseData] = []
     @Published var schedules: [ScheduleTotalResponseDataTest] = []
     @Published var tag: [TagResponseData] = []
     @Published var allday: [ScheduleAllDayResponseDataTest] = []
@@ -35,6 +33,12 @@ final class WeeklyCalendarViewModel: ObservableObject {
         
         makeDummyEvent()
         addOffsetDebounce()
+        bindSelectedDateSubject()
+        setSendNotificationObserver()
+    }
+    
+    deinit {
+        removeObserver()
     }
     
     @Published var todayItems: [TodayItemDataModel] = []
@@ -61,6 +65,37 @@ final class WeeklyCalendarViewModel: ObservableObject {
                                                             weekday: .fri)
     
     private var cancellable = Set<AnyCancellable>()
+    
+    private func bindSelectedDateSubject() {
+        $selectedDate
+            .removeDuplicates()
+            .debounce(for: .seconds(0.2), scheduler: RunLoop.main)
+            .sink(receiveValue: { [weak self] newDate in
+                guard let self else { return }
+                if let date = newDate.date() {
+                    self.onDateSelected(date: date)
+                }
+            })
+            .store(in: &cancellable)
+    }
+    
+    func setSendNotificationObserver() {
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(didReceiveNotification),
+                                               name: .init("postScheduleComplete"),
+                                               object: nil)
+    }
+    
+    func removeObserver() {
+        NotificationCenter.default.removeObserver(self,
+                                                  name: .init("postScheduleComplete"),
+                                                  object: nil)
+    }
+    
+    @objc
+    private func didReceiveNotification() {
+        self.getSchedulesTotalAPI()
+    }
 }
 
 extension WeeklyCalendarViewModel {
@@ -108,10 +143,8 @@ extension WeeklyCalendarViewModel {
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
-                    if let scheduleData = response?.data as? [ScheduleTotalResponseDataTest] {
-                        // TODO: - Tag API 연결 후 주석 해제
-                         self?.schedules = scheduleData
-                        print(self?.schedules)
+                    if let scheduleData = response?.data.scheduleWithOrderInfos {
+                        self?.schedules = scheduleData
                     } else {
                         print("데이터변환 실패 ")
                         self?.schedules = []
@@ -152,36 +185,77 @@ extension WeeklyCalendarViewModel {
     }
 }
 
+extension Date {
+    /// 예) 2025-01-12 15:00 이면 → 2025-01-12 23:59:59
+    var endOfDay: Date {
+        let start = self.startOfDay
+        // start + 1일 - 1초 (즉 다음날 0시 직전)
+        return Calendar.current.date(byAdding: DateComponents(day: 1, second: -1), to: start)!
+    }
+}
+
 extension WeeklyCalendarViewModel {
     func filterSchedules(for date: Date) {
+        // 1) "하루의 시작"과 "하루의 끝" 구하기
+        let dayStart = date.startOfDay
+        let dayEnd = date.endOfDay
+        
+        // 2) schedules 배열에서 일정이 하루라도 겹치는 것만 필터링
         todayItems = schedules.filter { schedule in
-            guard let startDate = schedule.startDate.toDate(),
-                  let endDate = schedule.endDate.toDate() else {
+            guard
+                let start = toDateFromString(schedule.startDate),
+                let end   = toDateFromString(schedule.endDate)
+            else {
                 print("💔날짜 변환 실패 \(schedule)💔")
                 return false
             }
             
-            let isInRange = Calendar.current.isDate(date, inSameDayAs: startDate) ||
-            (date > startDate && date < endDate) ||
-            Calendar.current.isDate(date, inSameDayAs: endDate)
-            
-            if isInRange {
-                print("💙일정이 \(schedule.description) 있지롱요💙")
-            }
-            return isInRange
-        }.map { schedule in
-            TodayItemDataModel.schedule(schedule)
+            // 3) 일정이 [dayStart, dayEnd] 범위와 겹치는지 확인
+            //    일정의 시작 ≤ dayEnd && 일정의 끝 ≥ dayStart
+            return start <= dayEnd && end >= dayStart
         }
-        print("💛선택한 날짜에 해당되는 일정 데이터 : \(todayItems)💛")
+        .map {
+            TodayItemDataModel.schedule(
+                .init(
+                    id: $0.id,
+                    description: $0.description,
+                    startDate: $0.startDate,
+                    endDate: $0.endDate,
+                    timeDuration: $0.timeDuration,
+                    isAllDay: $0.isAllDay,
+                    scheduleType: $0.scheduleType,
+                    order: $0.order,
+                    tagName: $0.tagName,
+                    tagColorCode: $0.tagColorCode
+                )
+            )
+        }
     }
+    
+    private func toDateFromString(_ date: String) -> Date? {
+        if let date1 = date.toDate() {
+            return date1
+        } else {
+            if let date2 = date.toDateForNotContainMiliseconds() {
+                return date2
+            } else {
+                return nil
+            }
+        }
+    }
+        
 }
 
 extension String {
     func toDate() -> Date? {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
-        formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        formatter.locale = Locale(identifier: "en_US_POSIX")
+        return formatter.date(from: self)
+    }
+    
+    func toDateForNotContainMiliseconds() -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
         return formatter.date(from: self)
     }
 }

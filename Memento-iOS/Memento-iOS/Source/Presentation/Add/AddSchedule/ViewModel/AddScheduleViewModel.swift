@@ -17,13 +17,20 @@ final class AddScheduleViewModel: ObservableObject {
                                                     startDate: startDate,
                                                     endDate: endDate,
                                                     isAllDay: isAllDay,
-                                                    tagID: tagID) //이거 태그 미리 불러서 싱글턴이든 뭐든 좀 들고 있어야 겠구만
-        
+                                                    tagID: tagID == 0 ? 1 : tagID) //이거 태그 미리 불러서 싱글턴이든 뭐든 좀 들고 있어야 겠구만
         print(body)
         scheduleApiService.postCreateSchedule(bodyParam: body,
                                               completion: { [weak self] result in
             guard let self else { return }
             completion()
+            self.postMakeScheduleNotiFication()
         })
+    }
+    
+    func postMakeScheduleNotiFication() {
+        print("ㅇㅇㅇㅇㅇ====ㅇㅇㅇㅇㅇ")
+        NotificationCenter.default.post(name: NSNotification.Name("postScheduleComplete"),
+                                        object: nil,
+                                        userInfo: nil)
     }
 }

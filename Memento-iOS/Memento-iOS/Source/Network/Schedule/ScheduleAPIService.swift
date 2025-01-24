@@ -35,11 +35,11 @@ final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
     
     // 일정(Schedule) 관련 전체 데이터 
     func getSchedulesTotal(completion: @escaping (NetworkResult<BaseDTO<ScheduleTotalResponseData>>) -> Void) {
-        provider.request(.getSchedulesTotal) { result in
+        provider.request(.getSchedulesTotal) { [weak self] result in
+            guard let self else { return }
             switch result {
             case .success(let response):
                 let networkResult: NetworkResult<BaseDTO<ScheduleTotalResponseData>> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
-                print(networkResult.stateDescription)
                 completion(networkResult)
             case .failure(let error):
                 if let response = error.response {

@@ -20,7 +20,6 @@ struct AddScheduleView: View {
     var body: some View {
         ZStack {
             Color.gray10.ignoresSafeArea()
-
             VStack {
                 AddEventTitleView(viewModel: eventTitleViewModel)
                 DateTimePickerView(viewModel: pickerViewModel)

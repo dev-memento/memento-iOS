@@ -11,7 +11,7 @@ import MDSKit
 import MCalendar
 
 struct TodayView: View {
-    @ObservedObject var viewModel: WeeklyCalendarViewModel
+    @StateObject var viewModel: WeeklyCalendarViewModel
     
     @State private var selectTodo: ToDoListDataModel?
     @State private var selectSchedule: ScheduleTotalResponseDataTest?
@@ -43,7 +43,8 @@ struct TodayView: View {
                 .background(Color.grayBlack)
             }
             
-            if showTodoAlert, let todo = selectTodo {
+            if showTodoAlert,
+               let todo = selectTodo {
                 let todoBinding = Binding<Bool>(
                     get: {
                         if let index = viewModel.todayItems.firstIndex(where: { $0.id == todo.id }),
@@ -181,7 +182,7 @@ struct TodayView: View {
         }
         .onDrop(of: [.text], delegate: DropViewDelegate(item: item, draggedItem: $viewModel.dragTodayItem, onDrop: viewModel.dropActionForToday))
     }
-    
+
     
     private func isTopPriorityItem(at item: TodayItemDataModel) -> Bool {
         guard case .todo(let todo) = item, !todo.isChecked else { return false }
@@ -225,10 +226,3 @@ struct TodayListItemView: View {
         .background(backgroundColor)
     }
 }
-
-//#Preview{
-//    TodayView(viewModel: WeeklyCalendarViewModel(
-//        mCalendarDataSource: MCalendarDataSource(),
-//        mEventDataSource: MEventDatasource()
-//    ))
-//}
