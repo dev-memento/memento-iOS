@@ -157,13 +157,3 @@ struct TodayWeeklyCalendarView: View {
         }
     }
 }
-
-#Preview {
-    TodayWeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
-        mCalendarDataSource: MCalendarDataSource(),
-        mEventDataSource: MEventDatasource(),
-        scheduleService: ScheduleAPIService(),
-        tagService: TagAPIService(),
-        userUptimeService: UserUptimeAPIService()
-    ))
-}

@@ -12,6 +12,7 @@ struct TabBarView: View {
         mEventDataSource: MEventDatasource(),
         scheduleService: ScheduleAPIService(),
         tagService: TagAPIService(),
+        toDoListService: ToDoListAPIService(),
         userUptimeService: UserUptimeAPIService()
     )
     
@@ -35,7 +36,7 @@ struct TabBarView: View {
                         : TabBarItem.today.normalItem
                     }
                     .tag(TabBarItem.today)
-
+                
                 // 가운데 Addition 탭
                 AddView()
                     .tabItem {
@@ -50,24 +51,19 @@ struct TabBarView: View {
                             selectedTab = previousTab
                         }
                     }
-
-                // Todo 탭
-                // 여기서도 동일한 ViewModel을 사용하거나
-                // 다른 ViewModel을 쓰고 싶다면 추가로 선언해도 됩니다.
-                VStack {
-                    ToDoListView(viewModel: calendarViewModel)
-                }
-                .tabItem {
-                    selectedTab == .todo
-                    ? TabBarItem.todo.selectedItem
-                    : TabBarItem.todo.normalItem
-                }
-                .tag(TabBarItem.todo)
-                .onChange(of: selectedTab) { newValue in
-                    if newValue != .addition {
-                        previousTab = newValue
+                
+                ToDoListWeeklyCalendarView(viewModel: calendarViewModel)
+                    .tabItem {
+                        selectedTab == .todo
+                        ? TabBarItem.todo.selectedItem
+                        : TabBarItem.todo.normalItem
                     }
-                }
+                    .tag(TabBarItem.todo)
+                    .onChange(of: selectedTab) { newValue in
+                        if newValue != .addition {
+                            previousTab = newValue
+                        }
+                    }
             }
             
             // 시트 반투명 배경
