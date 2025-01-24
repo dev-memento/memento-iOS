@@ -22,10 +22,6 @@ struct AddTodoView: View {
     var body: some View {
         VStack {
             AddTodoHeaderView(viewModel: headerViewModel)
-                .onAppear {
-                    todoViewModel.startDate = headerViewModel.isoFormattedDate
-                }
-
             AddTodoTextView(viewModel: textViewModel)
 
             Spacer()
@@ -35,9 +31,6 @@ struct AddTodoView: View {
                 todoViewModel: todoViewModel,
                 bottomViewModel: bottomViewModel
             )
-            .onChange(of: bottomViewModel.selectedDate) {
-                todoViewModel.endDate = bottomViewModel.isoFormattedDate
-            }
             .onChange(of: todoViewModel.selectedPriority) { _, newValue in
                 let (urgency, importance) = newValue.getPriorityValues()
                 todoViewModel.priorityUrgency = urgency
@@ -46,9 +39,19 @@ struct AddTodoView: View {
         }
         .padding(.horizontal)
         .background(Color.gray10)
-        .onAppear {
-            todoViewModel.startDate = headerViewModel.isoFormattedDate
-            todoViewModel.endDate = bottomViewModel.isoFormattedDate
+        .onChange(of: headerViewModel.selectedDate) {
+            if headerViewModel.selectedDate != bottomViewModel.selectedDate {
+                bottomViewModel.selectedDate = headerViewModel.selectedDate
+            }
+            todoViewModel.startDate = headerViewModel.selectedDate.formattedDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+            todoViewModel.endDate = headerViewModel.selectedDate.formattedDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        }
+        .onChange(of: bottomViewModel.selectedDate) {
+            if headerViewModel.selectedDate != bottomViewModel.selectedDate {
+                headerViewModel.selectedDate = bottomViewModel.selectedDate
+            }
+            todoViewModel.startDate = headerViewModel.selectedDate.formattedDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+            todoViewModel.endDate = headerViewModel.selectedDate.formattedDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         }
     }
 }
