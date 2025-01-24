@@ -95,6 +95,28 @@ struct TodayView: View {
                 .background(Color.black.opacity(0.4))
                 .edgesIgnoringSafeArea(.all)
             }
+            // 플로팅 버튼
+            VStack {
+                Spacer() // 위쪽 여백을 채워 아래로 밀기
+                HStack {
+                    Spacer() // 왼쪽 여백을 채워 오른쪽으로 밀기
+                    ZStack {
+                        Circle()
+                            .frame(width: 52, height: 52)
+                            .foregroundColor(Color.gray09)
+                        
+                        Button {
+                            print("눌림")
+                        } label: {
+                            Image(.ic_prio)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 26, height: 26)
+                        }
+                    }
+                    .padding(21) // 버튼과 화면 가장자리 간격 설정
+                }
+            }
         }
     }
      

@@ -12,12 +12,12 @@ class AppState: ObservableObject {
       @Published var showLottieAnimation: Bool = true
     
     init() {
-        do {
-            try TokenKeychainManager.shared.clearTokens()
-        } catch {
-            
-        }
-        //checkToken()
+//        do {
+//            try TokenKeychainManager.shared.clearTokens()
+//        } catch {
+//            
+//        }
+        checkToken()
     }
     
     func checkToken() {
