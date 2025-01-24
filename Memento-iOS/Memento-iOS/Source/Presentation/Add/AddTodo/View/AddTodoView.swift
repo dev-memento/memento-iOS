@@ -39,31 +39,17 @@ struct AddTodoView: View {
             .onChange(of: bottomViewModel.selectedDate) {
                 todoViewModel.endDate = bottomViewModel.isoFormattedDate
             }
+            .onChange(of: todoViewModel.selectedPriority) { _, newValue in
+                let (urgency, importance) = newValue.getPriorityValues()
+                todoViewModel.priorityUrgency = urgency
+                todoViewModel.priorityImportance = importance
+            }
         }
         .padding(.horizontal)
         .background(Color.gray10)
         .onAppear {
-            loadTokens()
             todoViewModel.startDate = headerViewModel.isoFormattedDate
             todoViewModel.endDate = bottomViewModel.isoFormattedDate
-        }
-    }
-
-    private func loadTokens() {
-        do {
-            if let accessToken = try TokenKeychainManager.shared.getAccessToken() {
-                print("Access Token: \(accessToken)")
-            } else {
-                print("Access Token이 저장되지 않았습니다.")
-            }
-
-            if let refreshToken = try TokenKeychainManager.shared.getRefreshToken() {
-                print("Refresh Token: \(refreshToken)")
-            } else {
-                print("Refresh Token이 저장되지 않았습니다.")
-            }
-        } catch {
-            print("Error: \(error)")
         }
     }
 }

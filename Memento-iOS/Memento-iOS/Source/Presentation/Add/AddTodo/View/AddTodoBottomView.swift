@@ -21,6 +21,7 @@ struct AddTodoBottomView: View {
     @State private var isMatrixPresented: Bool = false
     @State private var selectedDateText: String = "Today"
     @State private var selectedTagColor: Color = .gray05
+    @State private var selectedPriority: Priority = .none
     @StateObject private var tagViewModel = AddTodoPickerButtonViewModel(type: .tag)
 
     // MARK: - Body
@@ -42,6 +43,9 @@ struct AddTodoBottomView: View {
         }
         .onChange(of: bottomViewModel.selectedTag) { _, newTag in
             todoViewModel.tagId = newTag.tagId
+        }
+        .onChange(of: selectedPriority) { _, newValue in
+            todoViewModel.selectedPriority = newValue
         }
     }
 
@@ -99,7 +103,7 @@ struct AddTodoBottomView: View {
         Button(action: {
             isMatrixPresented.toggle()
         }) {
-            Image(.matrix_none)
+            Image(getPriorityImage(selectedPriority))
                 .frame(width: 26, height: 26)
                 .padding(8)
                 .background(Color.gray09)
@@ -108,8 +112,9 @@ struct AddTodoBottomView: View {
         .frame(width: 42, height: 42)
         .sheet(isPresented: $isMatrixPresented) {
             EisenhowerMatrixView(
+                viewType: .add,
                 source: "",
-                externalPriority: .constant(.none)
+                externalPriority: $selectedPriority
             )
         }
     }
@@ -125,5 +130,17 @@ struct AddTodoBottomView: View {
             )
         }
         .disabled(viewModel.isTextEmpty)
+    }
+
+    // MARK: - Helpers
+
+    private func getPriorityImage(_ priority: Priority) -> MDSImageName {
+        switch priority {
+        case .immediate: return .matrix_immediate
+        case .high: return .matrix_high
+        case .medium: return .matrix_medium
+        case .low: return .matrix_low
+        case .none: return .matrix_none
+        }
     }
 }

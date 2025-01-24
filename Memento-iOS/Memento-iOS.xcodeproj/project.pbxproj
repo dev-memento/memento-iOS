@@ -90,6 +90,7 @@
 				Source/Presentation/Add/Common/Tag/View/TagPickerButton.swift,
 				Source/Presentation/Add/Common/Tag/View/TagPickerSheetView.swift,
 				Source/Presentation/Add/Common/Tag/View/TagView.swift,
+				Source/Presentation/Add/Common/ViewType/ViewType.swift,
 				Source/Presentation/Main/View/DragAndDrop/DropViewDelegate.swift,
 				Source/Presentation/Main/View/ToDoList/ToDoListWeeklyCalendarView.swift,
 				"Source/Presentation/Onboarding/View/Launch Screen.storyboard",

@@ -41,6 +41,21 @@ enum Priority: String {
         case .none: return StringLiteral.Priority.none
         }
     }
+
+    func getPriorityValues() -> (urgency: Double, importance: Double) {
+        switch self {
+        case .immediate:
+            return (0.75, 0.75)
+        case .high:
+            return (0.25, 0.75)
+        case .medium:
+            return (0.75, 0.25)
+        case .low:
+            return (0.25, 0.25)
+        case .none:
+            return (0.0, 0.0)
+        }
+    }
 }
 
 struct PriorityLabel: View {
