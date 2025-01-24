@@ -11,7 +11,7 @@ import MDSKit
 import MCalendar
 
 struct TodayView: View {
-    @StateObject var viewModel: WeeklyCalendarViewModel
+    @ObservedObject var viewModel: WeeklyCalendarViewModel
     
     @State private var selectTodo: ToDoListDataModel?
     @State private var selectSchedule: ScheduleTotalResponseDataTest?
@@ -83,17 +83,27 @@ struct TodayView: View {
             
             if showScheduleAlert, let schedule = selectSchedule {
                 ScheduleAlertView(
+                    scheduleId: schedule.id,
                     scheduleTitle: schedule.description,
                     startDate: schedule.startDate,
                     endDate: schedule.endDate,
                     tag: "SOPT",
                     source: "Notion",
                     onDelete: {
+                        if let index = viewModel.todayItems.firstIndex(where: {
+                            if case .schedule(let s) = $0 {
+                                return s.id == schedule.id
+                            }
+                            return false
+                        }) {
+                            viewModel.todayItems.remove(at: index)
+                        }
                         showScheduleAlert = false
                     },
                     onEdit: {
                         showScheduleAlert = false
-                    }
+                    },
+                    scheduleAPIService: ScheduleAPIService()
                 )
                 .background(Color.black.opacity(0.4))
                 .edgesIgnoringSafeArea(.all)
