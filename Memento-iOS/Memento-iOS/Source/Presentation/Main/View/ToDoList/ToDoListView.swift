@@ -31,7 +31,10 @@ struct ToDoListView: View {
                                     item: event.mapToToDoItem(),
                                     isHighlighted: isTopPriorityItem(at: event, items: events),
                                     backgroundColor: Color.grayBlack,
-                                    onTodoTap: { selectedItem in }
+                                    onTodoTap: { selectedItem in },
+                                    onCheckChanged: { isChecked in
+                                        viewModel.updateToDoCompletion(toDoId: event.id)
+                                    }
                                 )
                                 .onTapGesture {
                                     selectedItem = event
@@ -130,4 +133,39 @@ struct ToDoListDateView: View {
             .padding(.bottom, 8)
         }
     }
+}
+
+struct ToDoListItemView: View {
+    var item: ToDoListTotalResponseDataTest
+    
+    var isHighlighted: Bool
+    var backgroundColor: Color
+    
+    var onTodoTap: (ToDoListTotalResponseData) -> Void
+    var onCheckChanged: (Bool) -> Void
+    
+    var body: some View {
+        VStack(spacing: 10) {
+            ToDoListCell(
+                toDoList: item,
+                isHighlighted: isHighlighted,
+                backgroundColor: backgroundColor,
+                onCheckChanged: onCheckChanged
+            )
+        }
+        .padding(.bottom, 8)
+    }
+}
+
+#Preview {
+    ToDoListWeeklyCalendarView(
+        viewModel: WeeklyCalendarViewModel(
+            mCalendarDataSource: MCalendarDataSource(),
+            mEventDataSource: MEventDatasource(),
+            scheduleService: ScheduleAPIService(),
+            tagService: TagAPIService(),
+            toDoListService: ToDoListAPIService(),
+            userUptimeService: UserUptimeAPIService()
+        )
+    )
 }

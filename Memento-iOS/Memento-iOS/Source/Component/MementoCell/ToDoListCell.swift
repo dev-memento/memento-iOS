@@ -14,11 +14,15 @@ struct ToDoListCell: View {
     var isHighlighted: Bool
     var backgroundColor: Color
     
+    var onCheckChanged: (Bool) -> Void
+    
     var body: some View {
         HStack(spacing: 10) {
             ColorTagView(colorType: toDoList.tagColor)
             
-            CheckBoxView(isChecked: toDoList.isCompleted)
+            CheckBoxView(isChecked: toDoList.isCompleted) {
+                onCheckChanged(!toDoList.isCompleted)
+            }
             
             VStack(alignment: .leading) {
                 ToDoTitleView(title: toDoList.description, isChecked: toDoList.isCompleted)
@@ -54,10 +58,14 @@ struct ToDoListCell: View {
 
 struct CheckBoxView: View {
     var isChecked: Bool
+    var onCheckChanged: () -> Void
     
     var body: some View {
         VStack {
             Image(isChecked ? .btn_check_selected_square : .btn_check_unselected_square)
+                .onTapGesture {
+                    onCheckChanged()
+                }
             Spacer()
         }
         .padding(.top, 11)
