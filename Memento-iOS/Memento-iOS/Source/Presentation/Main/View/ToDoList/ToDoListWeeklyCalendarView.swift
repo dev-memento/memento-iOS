@@ -13,7 +13,7 @@ import MCalendar
 struct ToDoListWeeklyCalendarView: View {
     @ObservedObject var viewModel: WeeklyCalendarViewModel
     
-    @State private var scrollTarget: String? = nil
+    @State private var scrollTarget: MCalendarDataModel? = nil
     @State private var userInteractionFlag: Bool = false
     
     var body: some View {
@@ -56,21 +56,14 @@ struct ToDoListWeeklyCalendarView: View {
                 ToDoListView(viewModel: viewModel)
                     .scrollContentBackground(.hidden)
                     .padding(.vertical, 4)
-                    .onChange(of: scrollTarget) { target in
-                        userInteractionFlag = false
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            userInteractionFlag = true
-                            if let target {
-                                withAnimation {
-                                    proxy.scrollTo(target, anchor: .top)
-                                }
-                            }
+                    .onChange(of: scrollTarget) {
+                        withAnimation {
+                            proxy.scrollTo(scrollTarget, anchor: .top)
                         }
                     }
             }
         }
         .onAppear {
-            viewModel.makeDummyEvent()
             makeIndex()
         }
         .background(Color.grayBlack)
@@ -112,15 +105,16 @@ struct ToDoListWeeklyCalendarView: View {
     }
     
     private func makeIndex() {
-        if let selectedDate = viewModel.selectedDate.date() {
-            scrollTarget = selectedDate.makeTodayMonthForMMM() + " " + selectedDate.makeTodayDayString()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            scrollTarget = viewModel.selectedDate
         }
     }
 }
 
-//#Preview {
-//    ToDoListWeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
-//        mCalendarDataSource: MCalendarDataSource(),
-//        mEventDataSource: MEventDatasource()
-//    ))
-//}
+#Preview {
+    ToDoListWeeklyCalendarView(viewModel: .init(mCalendarDataSource: .init(),
+                                                mEventDataSource: .init(),
+                                                scheduleService: ScheduleAPIService(),
+                                                tagService: TagAPIService(),
+                                                toDoListService: ToDoListAPIService()))
+}
