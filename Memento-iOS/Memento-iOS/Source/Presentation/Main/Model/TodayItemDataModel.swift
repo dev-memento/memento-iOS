@@ -37,3 +37,14 @@ enum TodayItemDataModel: Identifiable, Equatable {
         }
     }
 }
+
+extension TodayItemDataModel {
+    func mapToToDoResponse() -> ToDoListTotalResponseDataTest? {
+        switch self {
+        case .todo(let todo):
+            return todo.mapToToDoItem()
+        case .schedule:
+            return nil
+        }
+    }
+}

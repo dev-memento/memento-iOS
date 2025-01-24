@@ -31,9 +31,26 @@ struct TodayView: View {
                             .padding(.leading, 50)
                             .padding(.bottom, 17)
                         
+//                        ForEach($viewModel.todayItems, id: \.wrappedValue.id) { item in
+//                            createTodayListItemView(for: item)
+//                        }
+                        
                         ForEach($viewModel.todayItems, id: \.wrappedValue.id) { item in
-                            createTodayListItemView(for: item)
-                        }
+                                        TodayListItemView(
+                                            item: item,
+                                            isHighlighted: isTopPriorityItem(at: item.wrappedValue),
+                                            isArrow: viewModel.todayItems.first?.id == item.wrappedValue.id,
+                                            backgroundColor: Color.mainNavy,
+                                            onTodoTap: { todo in
+                                                // ToDo 셀 탭 이벤트 처리
+                                                print("Tapped ToDo: \(todo.toDoTitle)")
+                                            },
+                                            onScheduleTap: { schedule in
+                                                // Schedule 셀 탭 이벤트 처리
+                                                print("Tapped Schedule: \(schedule.description)")
+                                            }
+                                        )
+                                    }
                         
                         WindDownFooterView(windDownTime: viewModel.windDownTime)
                             .padding(.leading, 50)
@@ -139,6 +156,7 @@ struct TodayView: View {
                     height: UIScreen.main.bounds.height
                 )
                 .onAppear {
+                    viewModel.getToDoListTotalAPI()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                         aiPlottingButtonpPressed = false
                     }
@@ -211,11 +229,22 @@ struct TodayListItemView: View {
                 .padding(.trailing, 5)
                 .opacity(isArrow ? 1 : 0)
             
-            // ScheduleListCell 추가
+            if case .todo(let todo) = item {
+                ToDoListCell(
+                    toDoList: todo.mapToToDoItem(),
+                    isHighlighted: isHighlighted,
+                    backgroundColor: backgroundColor
+                )
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    onTodoTap(todo)
+                }
+            }
+
             if case .schedule(let schedule) = item {
                 ScheduleListCell(schedule: schedule)
                     .contentShape(Rectangle())
-                    .padding(.trailing, -20) 
+                    .padding(.trailing, -20)
                     .onTapGesture {
                         onScheduleTap(schedule)
                     }
