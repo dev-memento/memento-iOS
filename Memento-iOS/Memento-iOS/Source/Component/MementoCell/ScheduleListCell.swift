@@ -10,7 +10,6 @@ import SwiftUI
 import MDSKit
 
 struct ScheduleListCell: View {
-    
     var schedule: ScheduleTotalResponseDataTest
     
     // 현재 시간에 맞춰 일정 완료 여부
@@ -24,11 +23,10 @@ struct ScheduleListCell: View {
         }
         return Date() > endDate
     }
-    
     var body: some View {
         HStack(spacing: 10) {
+            // Hex 코드가 제대로 넘어오는지 확인
             ColorTagView(colorType: schedule.tagColorCode)
-
             IconView()
 
             VStack(alignment: .leading, spacing: 8) {
@@ -65,8 +63,6 @@ struct ScheduleTitleView: View {
 }
 
 struct TimeInfoView: View {
-//    var startDate: String
-//    var endDate: String
     var scheduleType: String
     var durationTime: String
 
@@ -75,8 +71,6 @@ struct TimeInfoView: View {
             if let scheduleImage = scheduleIconName(for: scheduleType) {
                 scheduleImage
             }
-
-//            Text(formattedTime(startDate: startDate, endDate: endDate))
             Text(durationTime)
                 .applyFont(.detail_r_12)
                 .foregroundColor(Color.gray05)
