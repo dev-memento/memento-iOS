@@ -29,8 +29,7 @@ final class WeeklyCalendarViewModel: ObservableObject {
          mEventDataSource: MEventDatasource,
          scheduleService: ScheduleAPIServiceProtocol,
          tagService: TagAPIServiceProtocol,
-         toDoListService: ToDoListAPIServiceProtocol
-         tagService: TagAPIServiceProtocol,
+         toDoListService: ToDoListAPIServiceProtocol,
          userUptimeService: UserUptimeAPIServiceProtocol) {
         
         self.mCallendarDataSource = mCalendarDataSource

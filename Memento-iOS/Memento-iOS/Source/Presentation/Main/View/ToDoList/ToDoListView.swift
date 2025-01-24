@@ -131,12 +131,3 @@ struct ToDoListDateView: View {
         }
     }
 }
-
-
-#Preview {
-    ToDoListView(viewModel: .init(mCalendarDataSource: .init(),
-                                  mEventDataSource: .init(),
-                                  scheduleService: ScheduleAPIService(),
-                                  tagService: TagAPIService(),
-                                  toDoListService: ToDoListAPIService()))
-}

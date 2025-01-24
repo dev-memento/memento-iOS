@@ -110,11 +110,3 @@ struct ToDoListWeeklyCalendarView: View {
         }
     }
 }
-
-#Preview {
-    ToDoListWeeklyCalendarView(viewModel: .init(mCalendarDataSource: .init(),
-                                                mEventDataSource: .init(),
-                                                scheduleService: ScheduleAPIService(),
-                                                tagService: TagAPIService(),
-                                                toDoListService: ToDoListAPIService()))
-}

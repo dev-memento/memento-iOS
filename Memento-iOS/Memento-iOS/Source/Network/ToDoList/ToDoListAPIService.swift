@@ -12,7 +12,6 @@ import Moya
 
 protocol ToDoListAPIServiceProtocol {
     func getToDoList(completion: @escaping (NetworkResult<BaseDTO<ToDoListTotalResponseData>>) -> Void)
-    func getToDoDetail(id: Int, completion: @escaping (NetworkResult<BaseDTO<ToDoListTotalResponseData>>) -> Void)
 }
 
 extension ToDoListAPIServiceProtocol {
@@ -44,21 +43,6 @@ final class ToDoListAPIService: BaseAPIService, ToDoListAPIServiceProtocol {
                     )
                     completion(networkResult)
                 }
-            }
-        }
-    }
-    
-    func getToDoDetail(id: Int, completion: @escaping (NetworkResult<BaseDTO<ToDoListTotalResponseData>>) -> Void) {
-        provider.request(.getToDoDetail(id: id)) { result in
-            switch result {
-            case .success(let response):
-                let networkResult: NetworkResult<BaseDTO<ToDoListTotalResponseData>> = self.fetchNetworkResult(
-                    statusCode: response.statusCode,
-                    data: response.data
-                )
-                completion(networkResult)
-            case .failure(let error):
-                print(error.localizedDescription)
             }
         }
     }
