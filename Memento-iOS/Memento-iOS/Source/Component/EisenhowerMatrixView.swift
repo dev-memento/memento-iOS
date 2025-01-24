@@ -14,6 +14,7 @@ struct EisenhowerMatrixView: View {
         ("Important X\nUrgent O", .medium),
         ("Important X\nUrgent X", .low)
     ]
+    let viewType: ViewType
     let source: String
     
     @Binding var externalPriority: Priority
@@ -25,7 +26,8 @@ struct EisenhowerMatrixView: View {
         GridItem(.fixed(146))
     ]
     
-    init(source: String, externalPriority: Binding<Priority>) {
+    init(viewType: ViewType, source: String, externalPriority: Binding<Priority>) {
+        self.viewType = viewType
         self.source = source
         self._externalPriority = externalPriority
         self._selectedPriority = State(initialValue: externalPriority.wrappedValue)
@@ -65,16 +67,27 @@ struct EisenhowerMatrixView: View {
 }
 
 struct HeaderView: View {
+
+    let viewType: ViewType
+
     var body: some View {
         HStack {
-            Button {
-                // Action
-            } label: {
-                Text("Cancel")
-                    .applyFont(.body_r_16)
-                    .foregroundStyle(Color.red)
+            switch viewType {
+            case .add:
+                Button {
+                    presentationMode.wrappedValue.dismiss()
+                } label: {
+                    Image(.btn_back)
+                }
+            case .edit:
+                Button {
+                } label: {
+                    Text("Cancel")
+                        .applyFont(.body_r_16)
+                        .foregroundStyle(Color.red)
+                }
+                .frame(width: 84, height: 48)
             }
-            .frame(width: 84, height: 48)
             
             Spacer()
             
@@ -92,75 +105,86 @@ struct HeaderView: View {
 }
 
 struct TodoItemView: View {
+
+    let viewType: ViewType
     @Binding var priority: Priority
     
     var body: some View {
-        HStack(alignment: .top) {
-            Button {
-                // Action
-            } label: {
-                Image(.ic_checkbox)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 20, height: 20)
+        switch viewType {
+        case .add:
+            HStack {
+                Spacer()
+                PriorityLabel(priority: priority)
             }
-            .padding(.leading, 24)
-            
-            VStack(alignment: .leading, spacing: 12) {
-                Text("UXUI 과제 피그마 어디어디페이지에 몇시까지 제출하고 카톡으로")
-                    .lineLimit(2)
-                    .multilineTextAlignment(.leading)
-                    .applyFont(.body_b_16)
-                    .foregroundStyle(Color.white)
-                    .frame(maxWidth: 212, alignment: .leading)
-                
-                VStack(alignment: .leading, spacing: 6) {
-                    HStack(spacing: 13) {
-                        Text("Deadline")
-                            .applyFont(.detail_r_12)
-                            .foregroundColor(.gray05)
-                            .padding(.trailing, 54)
-                        
-                        HStack(spacing: 3) {
-                            Image(.ic_deadline)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 17, height: 17)
-                            Text("Today")
+            .padding(.horizontal)
+        case .edit:
+            HStack(alignment: .top) {
+                Button {
+                    // Action
+                } label: {
+                    Image(.ic_checkbox)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 20, height: 20)
+                }
+                .padding(.leading, 24)
+
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("UXUI 과제 피그마 어디어디페이지에 몇시까지 제출하고 카톡으로")
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+                        .applyFont(.body_b_16)
+                        .foregroundStyle(Color.white)
+                        .frame(maxWidth: 212, alignment: .leading)
+
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack(spacing: 13) {
+                            Text("Deadline")
                                 .applyFont(.detail_r_12)
-                                .foregroundColor(.grayWhite)
+                                .foregroundColor(.gray05)
+                                .padding(.trailing, 54)
+
+                            HStack(spacing: 3) {
+                                Image(.ic_deadline)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 17, height: 17)
+                                Text("Today")
+                                    .applyFont(.detail_r_12)
+                                    .foregroundColor(.grayWhite)
+                            }
                         }
-                    }
-                    
-                    HStack(spacing: 40) {
-                        Text(StringLiteral.Alert.tag)
-                            .applyFont(.detail_r_12)
-                            .foregroundColor(.gray05)
-                            .padding(.trailing, 54)
-                        
-                        HStack(spacing: 3) {
-                            Image(.ic_tag)
-                                .resizable()
-                                .scaledToFit()
-                                .colorMultiply(Color.blue)
-                                .frame(width: 17, height: 17)
-                            
-                            Text("SOPT")
+
+                        HStack(spacing: 40) {
+                            Text(StringLiteral.Alert.tag)
                                 .applyFont(.detail_r_12)
-                                .foregroundColor(.grayWhite)
+                                .foregroundColor(.gray05)
+                                .padding(.trailing, 54)
+
+                            HStack(spacing: 3) {
+                                Image(.ic_tag)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .colorMultiply(Color.blue)
+                                    .frame(width: 17, height: 17)
+
+                                Text("SOPT")
+                                    .applyFont(.detail_r_12)
+                                    .foregroundColor(.grayWhite)
+                            }
                         }
                     }
                 }
+                .frame(width: 212)
+                .frame(minHeight: 76)
+                .padding(.horizontal, 10)
+
+                Spacer()
+
+                PriorityLabel(priority: priority)
+
+                Spacer()
             }
-            .frame(width: 212)
-            .frame(minHeight: 76)
-            .padding(.horizontal, 10)
-            
-            Spacer()
-            
-            PriorityLabel(priority: priority)
-            
-            Spacer()
         }
     }
 }
