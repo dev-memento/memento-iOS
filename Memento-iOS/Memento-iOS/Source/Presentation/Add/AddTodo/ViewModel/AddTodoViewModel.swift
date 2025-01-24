@@ -16,6 +16,7 @@ final class AddTodoViewModel: ObservableObject {
     @Published var priorityUrgency: Double?
     @Published var priorityImportance: Double?
 
+    private let defaultPriorityValue = 0.0
     private let todoAPIService: TodoAPIServiceProtocol = TodoAPIService()
 
     func createTodo() {
@@ -24,8 +25,8 @@ final class AddTodoViewModel: ObservableObject {
             description: description,
             endDate: endDate,
             tagId: tagId,
-            priorityUrgency: priorityUrgency,
-            priorityImportance: priorityImportance
+            priorityUrgency: priorityUrgency ?? defaultPriorityValue,
+            priorityImportance: priorityImportance ?? defaultPriorityValue
         ) { result in
             switch result {
             case .success(let response):
