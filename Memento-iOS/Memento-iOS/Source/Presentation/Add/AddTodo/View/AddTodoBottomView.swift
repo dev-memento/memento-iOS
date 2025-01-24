@@ -10,7 +10,7 @@ import SwiftUI
 import MDSKit
 
 struct AddTodoBottomView: View {
-
+    @Environment(\.dismiss) var dismiss
     // MARK: - Properties
 
     @ObservedObject var viewModel: AddTodoTextViewModel
@@ -121,7 +121,9 @@ struct AddTodoBottomView: View {
 
     private var enterButton: some View {
         Button(action: {
-            todoViewModel.createTodo()
+            todoViewModel.createTodo {
+                dismiss()
+            }
         }) {
             Image(
                 viewModel.isTextEmpty

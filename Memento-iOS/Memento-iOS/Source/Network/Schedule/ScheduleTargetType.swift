@@ -14,6 +14,7 @@ enum ScheduleTargetType {
     case getSchedulesAllDay
     case getSchedules
     case getSchedulesDetail
+    case postCreateSchedule(body: PostCreateScheduleRequest)
 }
 
 extension ScheduleTargetType: BaseTargetType {
@@ -34,7 +35,12 @@ extension ScheduleTargetType: BaseTargetType {
     }
     
     var requestBodyParameter: Codable? {
-        return nil
+        switch self {
+        case .postCreateSchedule(let body):
+            return body
+        default:
+            return nil
+        }
     }
     
     var path: String {
@@ -42,6 +48,11 @@ extension ScheduleTargetType: BaseTargetType {
     }
     
     var method: Moya.Method {
-        return .get
+        switch self {
+        case .postCreateSchedule(_):
+            return .post
+        default:
+            return .get
+        }
     }
 }
