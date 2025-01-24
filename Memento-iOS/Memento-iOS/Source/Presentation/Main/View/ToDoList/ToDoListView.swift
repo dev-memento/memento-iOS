@@ -33,6 +33,12 @@ struct ToDoListView: View {
                                     backgroundColor: Color.grayBlack,
                                     onTodoTap: { selectedItem in },
                                     onCheckChanged: { isChecked in
+                                        if isChecked {
+                                            if let index = viewModel.toDoListItemDict[date]?.firstIndex(where: { $0.id == event.id }) {
+                                                viewModel.toDoListItemDict[date]?.remove(at: index)
+                                                viewModel.toDoListItemDict[date]?.append(event)
+                                            }
+                                        }
                                         viewModel.updateToDoCompletion(toDoId: event.id)
                                     }
                                 )
@@ -72,12 +78,19 @@ struct ToDoListView: View {
     }
     
     private func isTopPriorityItem(at item: ToDoListDataModel, items: [ToDoListDataModel]) -> Bool {
+        // Check if the item is not checked
         guard !item.isChecked else { return false }
+
+        // Find the index of the current item
         guard let currentIndex = items.firstIndex(where: { $0 == item }) else {
             return false
         }
-        let uncheckedCount = items.prefix(upTo: currentIndex).filter { !$0.isChecked }.count
-        return uncheckedCount == 0
+
+        // Find the first unchecked item (before the current item)
+        let firstUncheckedItemIndex = items.prefix(upTo: currentIndex).firstIndex { !$0.isChecked }
+        
+        // If the current item is the first unchecked one in the list, return true
+        return firstUncheckedItemIndex == nil
     }
     
     private func makeMonthDate(month: String) -> String {
