@@ -42,6 +42,7 @@
 				Source/Component/CustomTextEditor.swift,
 				Source/Component/EisenhowerMatrixView.swift,
 				Source/Component/NeonAnimationView.swift,
+				Source/Component/RefreshAnimationView.swift,
 				Source/Data/MCalendarEventList.swift,
 				Source/Data/MEventDataSource.swift,
 				Source/Network/AI/DTO/Request/PrioritizationRequest.swift,

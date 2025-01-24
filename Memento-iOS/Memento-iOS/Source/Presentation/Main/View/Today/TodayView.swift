@@ -18,12 +18,11 @@ struct TodayView: View {
     
     @State private var showTodoAlert = false
     @State private var showScheduleAlert = false
-    @State private var isButtonPressed: Bool = false // 버튼 상태를 나타내는 변수
+    @State private var aiPlottingButtonpPressed: Bool = false // 버튼 상태를 나타내는 변수
     
     var body: some View {
         ZStack {
             if viewModel.todayItems.isEmpty {
-                // Empty 상태일 경우 EmptyView 표시
                 EmptyView()
             } else {
                 ScrollView {
@@ -98,17 +97,17 @@ struct TodayView: View {
             }
             // 플로팅 버튼
             VStack {
-                Spacer() // 위쪽 여백을 채워 아래로 밀기
+                Spacer()
                 HStack {
-                    Spacer() // 왼쪽 여백을 채워 오른쪽으로 밀기
+                    Spacer()
                     ZStack {
                         Circle()
                             .frame(width: 52, height: 52)
-                            .foregroundColor(isButtonPressed ? Color.mainGreen : Color.gray09) // 3항 연산자로 색상 변경
+                            .foregroundColor(aiPlottingButtonpPressed ? Color.mainGreen : Color.gray09)
                         
                         Button {
                             print("눌림")
-                            isButtonPressed.toggle() // 상태 변경
+                            aiPlottingButtonpPressed.toggle()
                             let apiService = PrioritizationAPIService()
                             let request = PrioritizationRequest(targetDate: "2025-01-24")
                             
@@ -125,11 +124,19 @@ struct TodayView: View {
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 26, height: 26)
-                                .foregroundColor(isButtonPressed ? .white : .black) // 이미지 색상 변경
+                                .foregroundColor(aiPlottingButtonpPressed ? .white : .black)
                         }
                     }
-                    .padding(21) // 버튼과 화면 가장자리 간격 설정
+                    .padding(21)
                 }
+            }
+        }
+        .overlay {
+            if aiPlottingButtonpPressed {
+                NeonAnimationView(
+                    width: UIScreen.main.bounds.width * 0.95,
+                    height: UIScreen.main.bounds.height
+                )
             }
         }
     }
