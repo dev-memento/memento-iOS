@@ -11,11 +11,11 @@ import Moya
 // MARK: - ToDoListAPIServiceProtocol
 
 protocol ToDoListAPIServiceProtocol {
-    func getToDoList(completion: @escaping (NetworkResult<ToDoListResponseDTO>) -> Void)
+    func getToDoList(completion: @escaping (NetworkResult<BaseDTO<ToDoListTotalResponseData>>) -> Void)
 }
 
 extension ToDoListAPIServiceProtocol {
-    typealias ToDoListResponseDTO = BaseDTO<[ToDoListTotalResponseData]>
+    typealias ToDoListResponseDTO = BaseDTO<ToDoListTotalResponseData>
 }
 
 // MARK: - ToDoListAPIService
@@ -25,11 +25,11 @@ final class ToDoListAPIService: BaseAPIService, ToDoListAPIServiceProtocol {
     private let provider = MoyaProvider<ToDoListTargetType>(plugins: [MoyaPlugin.shared])
     
     // To-Do List API 연결
-    func getToDoList(completion: @escaping (NetworkResult<ToDoListResponseDTO>) -> Void) {
+    func getToDoList(completion: @escaping (NetworkResult<BaseDTO<ToDoListTotalResponseData>>) -> Void) {
         provider.request(.getToDoList) { result in
             switch result {
             case .success(let response):
-                let networkResult: NetworkResult<ToDoListResponseDTO> = self.fetchNetworkResult(
+                let networkResult: NetworkResult<BaseDTO<ToDoListTotalResponseData>> = self.fetchNetworkResult(
                     statusCode: response.statusCode,
                     data: response.data
                 )
@@ -37,8 +37,10 @@ final class ToDoListAPIService: BaseAPIService, ToDoListAPIServiceProtocol {
                 completion(networkResult)
             case .failure(let error):
                 if let response = error.response {
-                    let networkResult: NetworkResult<ToDoListResponseDTO> = self.fetchNetworkResult(statusCode: response.statusCode,
-                                                                                                    data: response.data)
+                    let networkResult: NetworkResult<BaseDTO<ToDoListTotalResponseData>> = self.fetchNetworkResult(
+                        statusCode: response.statusCode,
+                        data: response.data
+                    )
                     completion(networkResult)
                 }
             }
