@@ -15,18 +15,21 @@ final class AddTodoViewModel: ObservableObject {
     @Published var tagId: Int?
     @Published var priorityUrgency: Double?
     @Published var priorityImportance: Double?
+    @Published var selectedPriority: Priority = .none
 
     private let defaultPriorityValue = 0.0
     private let todoAPIService: TodoAPIServiceProtocol = TodoAPIService()
 
     func createTodo() {
+        let (priorityUrgency, priorityImportance) = getPriorityValues()
+
         todoAPIService.createTodo(
             startDate: startDate,
             description: description,
             endDate: endDate,
             tagId: tagId,
-            priorityUrgency: priorityUrgency ?? defaultPriorityValue,
-            priorityImportance: priorityImportance ?? defaultPriorityValue
+            priorityUrgency: priorityUrgency,
+            priorityImportance: priorityImportance
         ) { result in
             switch result {
             case .success(let response):
@@ -42,5 +45,9 @@ final class AddTodoViewModel: ObservableObject {
                 print("DEBUG: Error - 에러 발생")
             }
         }
+    }
+
+    private func getPriorityValues() -> (Double, Double) {
+        return selectedPriority.getPriorityValues()
     }
 }
