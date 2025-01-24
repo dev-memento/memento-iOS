@@ -8,7 +8,7 @@
 import Foundation
 
 struct ScheduleTotalResponseData: Codable, Equatable {
-    let data: [ScheduleTotalResponseDataTest]
+    let scheduleWithOrderInfos: [ScheduleTotalResponseDataTest]
 }
 
 struct ScheduleTotalResponseDataTest: Codable, Equatable {
