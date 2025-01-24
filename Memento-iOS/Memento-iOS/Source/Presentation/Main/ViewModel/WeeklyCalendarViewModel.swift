@@ -64,6 +64,15 @@ final class WeeklyCalendarViewModel: ObservableObject {
                                                             weekday: .fri)
     
     private var cancellable = Set<AnyCancellable>()
+    
+    
+    private let dateFormatter = DateFormatter()
+    func filteredTargetEvent(_ date: MCalendarDataModel) -> [ToDoListDataModel] {
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        return toDoListItems.filter {
+            dateFormatter.date(from: $0.date)! == date.date()!
+        }
+    }
 }
 
 extension WeeklyCalendarViewModel {
@@ -147,6 +156,7 @@ extension WeeklyCalendarViewModel {
                                 id: item.id,
                                 colorType: item.tagColor,
                                 toDoTitle: item.description,
+                                date: item.startDate,
                                 dueDate: item.endDate,
                                 priorityType: Priority(rawValue: item.priorityType) ?? .low,
                                 isChecked: item.isCompleted
@@ -162,7 +172,7 @@ extension WeeklyCalendarViewModel {
             }
         }
     }
-
+    
     
 }
 
