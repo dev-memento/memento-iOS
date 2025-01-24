@@ -15,7 +15,7 @@ final class WeeklyCalendarViewModel: ObservableObject {
     
     @Published var schedules: [ScheduleTotalResponseData] = []
     @Published var tag: [TagResponseData] = []
-    @Published var toDoList: [ToDoListTotalResponseData] = []
+    @Published var toDoList: [ToDoListTotalResponseDataTest] = []
     private let scheduleService: ScheduleAPIServiceProtocol
     private let tagService: TagAPIServiceProtocol
     private let toDoListService: ToDoListAPIServiceProtocol
@@ -140,8 +140,18 @@ extension WeeklyCalendarViewModel {
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
-                    if let toDoData = response?.data as? [ToDoListTotalResponseData] {
+                    if let toDoData = response?.data.toDoGetResponses {
                         self?.toDoList = toDoData
+                        self?.toDoListItems = toDoData.map { item in
+                            ToDoListDataModel(
+                                id: item.id,
+                                colorType: item.tagColor,
+                                toDoTitle: item.description,
+                                dueDate: item.endDate,
+                                priorityType: Priority(rawValue: item.priorityType) ?? .low,
+                                isChecked: item.isCompleted
+                            )
+                        }
                     } else {
                         print("데이터변환 실패")
                         self?.toDoListItems = []
@@ -152,6 +162,7 @@ extension WeeklyCalendarViewModel {
             }
         }
     }
+
     
 }
 
