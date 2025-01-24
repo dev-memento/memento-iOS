@@ -174,7 +174,9 @@ struct TodayView: View {
                     scheduleType: schedule.scheduleType,
                     order: schedule.order,
                     tagName: schedule.tagName,
-                    tagColorCode: schedule.tagColorCode)
+                    tagColorCode: schedule.tagColorCode
+                )
+                showScheduleAlert = true
             }
         )
         .padding(.horizontal)
