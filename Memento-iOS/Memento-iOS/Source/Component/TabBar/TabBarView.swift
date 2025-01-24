@@ -11,7 +11,8 @@ struct TabBarView: View {
         mCalendarDataSource: MCalendarDataSource(),
         mEventDataSource: MEventDatasource(),
         scheduleService: ScheduleAPIService(),
-        tagService: TagAPIService()
+        tagService: TagAPIService(),
+        userUptimeService: UserUptimeAPIService()
     )
     
     init() {

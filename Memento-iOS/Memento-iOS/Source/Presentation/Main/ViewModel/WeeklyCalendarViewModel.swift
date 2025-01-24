@@ -16,20 +16,24 @@ final class WeeklyCalendarViewModel: ObservableObject {
     @Published var schedules: [ScheduleTotalResponseDataTest] = []
     @Published var tag: [TagResponseData] = []
     @Published var allday: [ScheduleAllDayResponseDataTest] = []
-    
+    @Published var wakeUpTime: String = "8 AM"
+    @Published var windDownTime: String = "11 PM"
+
     private let scheduleService: ScheduleAPIServiceProtocol
     private let tagService: TagAPIServiceProtocol
+    private let userUptimeService: UserUptimeAPIServiceProtocol
     
     init(mCalendarDataSource: MCalendarDataSource,
          mEventDataSource: MEventDatasource,
          scheduleService: ScheduleAPIServiceProtocol,
-         tagService: TagAPIServiceProtocol) {
+         tagService: TagAPIServiceProtocol,
+         userUptimeService: UserUptimeAPIServiceProtocol) {
         
         self.mCallendarDataSource = mCalendarDataSource
         self.mEventDataSource = mEventDataSource
         self.scheduleService = scheduleService
         self.tagService = tagService
-        
+        self.userUptimeService = userUptimeService
         
         makeDummyEvent()
         addOffsetDebounce()
@@ -180,6 +184,26 @@ extension WeeklyCalendarViewModel {
                 }
             default:
                 print("ERROR")
+            }
+        }
+    }
+    
+    func userUptimeAPI() {
+        userUptimeService.fetchUptime{ result in
+            switch result {
+            case .success(let response):
+                print("시간 가져오기 성공")
+                // 추가 작업 필요 시 여기에 작성
+                if let wakeUpTime = response?.data.wakeUpTime, let windDownTime = response?.data.windDownTime {
+                    self.wakeUpTime = wakeUpTime
+                    self.windDownTime = wakeUpTime
+                    print("시간 가져오기 성공 \(self.wakeUpTime) \(self.windDownTime)")
+                } else {
+                    self.wakeUpTime = "8 AM"
+                    self.windDownTime = "11 PM"
+                }
+            default:
+                print("시간 가져오기 실패")
             }
         }
     }

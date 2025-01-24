@@ -45,7 +45,8 @@ enum TabBarItem: CaseIterable {
                         mCalendarDataSource: MCalendarDataSource(),
                         mEventDataSource: MEventDatasource(),
                         scheduleService: ScheduleAPIService(),
-                        tagService: TagAPIService()
+                        tagService: TagAPIService(),
+                        userUptimeService: UserUptimeAPIService()
                     )))
         case .todo:
 //            return AnyView(TodayWeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
