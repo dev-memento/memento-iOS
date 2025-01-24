@@ -9,7 +9,7 @@ import SwiftUI
 import MDSKit
 
 struct ToDoListCell: View {
-    var toDoList: ToDoListTotalResponseDataTest
+    @State var toDoList: ToDoListTotalResponseDataTest
     
     var isHighlighted: Bool
     var backgroundColor: Color
@@ -20,9 +20,11 @@ struct ToDoListCell: View {
         HStack(spacing: 10) {
             ColorTagView(colorType: toDoList.tagColor)
             
-            CheckBoxView(isChecked: toDoList.isCompleted) {
-                onCheckChanged(!toDoList.isCompleted)
+            CheckBoxView(toDoList: $toDoList) {
+                toDoList.isCompleted.toggle()
+                onCheckChanged(toDoList.isCompleted)
             }
+            
             
             VStack(alignment: .leading) {
                 ToDoTitleView(title: toDoList.description, isChecked: toDoList.isCompleted)
@@ -57,12 +59,12 @@ struct ToDoListCell: View {
 }
 
 struct CheckBoxView: View {
-    var isChecked: Bool
+    @Binding var toDoList: ToDoListTotalResponseDataTest
     var onCheckChanged: () -> Void
     
     var body: some View {
         VStack {
-            Image(isChecked ? .btn_check_selected_square : .btn_check_unselected_square)
+            Image(toDoList.isCompleted ? .btn_check_selected_square : .btn_check_unselected_square)
                 .onTapGesture {
                     onCheckChanged()
                 }

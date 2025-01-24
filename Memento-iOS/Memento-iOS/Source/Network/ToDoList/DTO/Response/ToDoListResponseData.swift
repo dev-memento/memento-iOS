@@ -15,7 +15,7 @@ struct ToDoListTotalResponseDataTest: Codable, Equatable {
     let description: String
     let startDate: String
     let endDate: String
-    let isCompleted: Bool
+    var isCompleted: Bool
     let priorityValue: Double
     let priorityType: String
     let tagName: String

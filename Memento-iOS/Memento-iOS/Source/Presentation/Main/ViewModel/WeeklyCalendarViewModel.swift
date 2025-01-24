@@ -222,7 +222,7 @@ extension WeeklyCalendarViewModel {
             case .success(let response):
                 DispatchQueue.main.async {
                     if response?.data != nil {
-                        if let index = self?.toDoListItems.firstIndex(where: { $0.id == toDoId }) {
+                        if let index = self?.toDoList.firstIndex(where: { $0.id == toDoId }) {
                             self?.toDoListItems[index].isChecked.toggle()
                         }
                     }
