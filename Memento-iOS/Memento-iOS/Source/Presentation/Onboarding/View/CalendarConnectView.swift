@@ -6,8 +6,6 @@
 //
 
 import SwiftUI
-import EventKit
-
 import MDSKit
 
 struct CalendarConnectView: View {
@@ -69,20 +67,23 @@ private struct CalendarConnectHeaderView: View {
 
 // MARK: - CalendarConnectButtons
 
+
 private struct CalendarConnectButtons: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
-
+    @State private var isAppleCalendarButtonDisabled = false // 버튼 비활성화 상태
+    @State private var showSuccessMessage = false // 성공 메시지 표시 상태
+    
     var body: some View {
         VStack(alignment: .center, spacing: 18) {
             Button {
-               
+                // 구글 캘린더 연동 버튼 동작
             } label: {
                 HStack(spacing: 8) {
                     Image(.img_google)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 24, height: 24)
-
+                    
                     Text(OnboardingCalendarConnectText.connectGoogleCalendar)
                         .font(.system(size: 16))
                         .foregroundColor(.white)
@@ -93,16 +94,29 @@ private struct CalendarConnectButtons: View {
             .frame(height: 46)
             .padding(.horizontal, 16)
             .background(Color.gray10)
-
+            
             Button {
+                // 버튼 비활성화
+                isAppleCalendarButtonDisabled = true
+                
+                // 캘린더 연동 API 호출
                 Task {
                     do {
-                        // Fetch events from the calendar
-                        let events = try await fetchEventsForTwoYears()
-                        // Print the events in a readable format
-                        printEvents(events)
+                        try await viewModel.submitEventsToAPI()
+                        
+                        // 성공 표시
+                        withAnimation(.easeInOut) {
+                            showSuccessMessage = true
+                        }
+                        
+                        // 10초 후 성공 메시지 숨기기
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            showSuccessMessage = false
+                        }
+                        
                     } catch {
                         print("Failed to fetch events: \(error.localizedDescription)")
+                        isAppleCalendarButtonDisabled = false // 실패 시 다시 활성화
                     }
                 }
             } label: {
@@ -111,7 +125,7 @@ private struct CalendarConnectButtons: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 24, height: 24)
-
+                    
                     Text(OnboardingCalendarConnectText.connectAppleCalendar)
                         .font(.system(size: 16))
                         .foregroundColor(.white)
@@ -121,8 +135,46 @@ private struct CalendarConnectButtons: View {
             .frame(maxWidth: 343)
             .frame(height: 46)
             .padding(.horizontal, 16)
-            .background(Color.gray10)
-
+            .background(isAppleCalendarButtonDisabled ? Color.gray : Color.gray10)
+            .disabled(isAppleCalendarButtonDisabled) // 버튼 비활성화
+            
+        }
+        .overlay {
+            if showSuccessMessage {
+                VStack {
+                    ZStack {
+                        VStack(spacing: 16) {
+                            // 아이콘
+                            Image(systemName: "checkmark.circle.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 40, height: 40)
+                                .foregroundColor(.mainGreen)
+                            
+                            // 메시지
+                            Text("연동 성공!")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundColor(.gray02)
+                                .padding(.horizontal, 16)
+                                .multilineTextAlignment(.center)
+                        }
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.gray09)
+                                .shadow(radius: 10)
+                        )
+                    }
+                }
+                .transition(.opacity)
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                        withAnimation {
+                            showSuccessMessage = false
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -134,7 +186,15 @@ private struct AppStartButton: View {
 
     var body: some View {
         Button {
-            viewModel.navigateToNext(.calendarConnect)
+            // 1. 먼저 데이터 전송
+            viewModel.submitOnboardingData()
+            
+            // 2. 약간의 딜레이 후 화면 전환
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                withAnimation(.easeInOut) {
+                    viewModel.mementoStart = true
+                }
+            }
         } label: {
             Text(OnboardingCalendarConnectText.startMementoButton)
                 .applyFont(.body_b_16)
@@ -145,61 +205,8 @@ private struct AppStartButton: View {
         .background(Color.mainGreen)
         .frame(height: 50)
         .cornerRadius(2)
-    }
-}
-
-func fetchEventsForTwoYears() async throws -> [EKEvent] {
-    let store = EKEventStore()
-    
-    // 권한 요청
-    guard try await store.requestFullAccessToEvents() else {
-        throw NSError(domain: "CalendarAccessError", code: 1, userInfo: [NSLocalizedDescriptionKey: "캘린더 접근 권한이 없습니다."])
-    }
-    
-    // 현재 날짜 계산
-    let currentDate = Date()
-    
-    // -1년 및 +1년 날짜 계산
-    guard let startDate = Calendar.current.date(byAdding: .year, value: -1, to: currentDate),
-          let endDate = Calendar.current.date(byAdding: .year, value: 1, to: currentDate) else {
-        throw NSError(domain: "DateCalculationError", code: 2, userInfo: [NSLocalizedDescriptionKey: "날짜 계산에 실패했습니다."])
-    }
-    
-    // 이벤트 조건 생성
-    let predicate = store.predicateForEvents(withStart: startDate, end: endDate, calendars: nil)
-    
-    // 이벤트 가져오기
-    let events = store.events(matching: predicate)
-    return events.sorted { $0.startDate < $1.startDate }
-}
-
-func printEvents(_ events: [EKEvent]) {
-    guard !events.isEmpty else {
-        print("이번 달에 등록된 일정이 없습니다.")
-        return
-    }
-    
-    for event in events {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        
-        let startDate = formatter.string(from: event.startDate)
-        let endDate = formatter.string(from: event.endDate)
-        
-        print("""
-        제목: \(event.title ?? "제목 없음") (타입: \(type(of: event.title)))
-        시작: \(startDate) (타입: \(type(of: startDate)))
-        종료: \(endDate) (타입: \(type(of: endDate)))
-        위치: \(event.location ?? "위치 정보 없음") (타입: \(type(of: event.location)))
-        참석자: \(event.attendees?.map { $0.name ?? "참석자 이름 없음" }.joined(separator: ", ") ?? "참석자 없음") (타입: \(type(of: event.attendees)))
-        알림: \(event.alarms?.map { $0.relativeOffset.description }.joined(separator: ", ") ?? "알림 없음") (타입: \(type(of: event.alarms)))
-        반복 여부: \(event.recurrenceRules != nil ? "반복 이벤트" : "단일 이벤트") (타입: \(type(of: event.recurrenceRules)))
-        올데이 여부: \(event.isAllDay ? "올데이 일정" : "시간 지정 일정") (타입: \(type(of: event.isAllDay)))
-        노트: \(event.notes ?? "노트 없음") (타입: \(type(of: event.notes)))
-        URL: \(event.url?.absoluteString ?? "URL 없음") (타입: \(type(of: event.url)))
-        --------------
-        """)
+        // 3. 중복 탭 방지
+        .disabled(viewModel.mementoStart)
     }
 }
 

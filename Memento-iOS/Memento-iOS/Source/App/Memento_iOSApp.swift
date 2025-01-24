@@ -34,12 +34,21 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct MementoApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject private var onboardingViewModel = OnboardingViewModel(authViewModel: AuthViewModel())
-
+    private var appState = AppState()
+    @State var showLottieAnimation: Bool = true
+    
     var body: some Scene {
         WindowGroup {
-            LoginView()
-                .environmentObject(onboardingViewModel)
+            if showLottieAnimation {
+                SplashScreenView(showLottieAnimation: $showLottieAnimation)
+            } else {
+                if appState.isLoggedIn {
+                    TabBarView()
+                } else {
+                    LoginView()
+                        .environmentObject(onboardingViewModel)
+                }
+            }
         }
     }
 }
-

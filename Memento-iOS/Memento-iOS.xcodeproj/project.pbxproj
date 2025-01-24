@@ -15,6 +15,7 @@
 		8351D78E2D30575E008336BE /* MDSKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8351D78D2D30575E008336BE /* MDSKit */; };
 		839405562D2D041300F3A2CF /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 839405552D2D041300F3A2CF /* Moya */; };
 		9DBC14972D36434200A022A9 /* MCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 9DBC14962D36434200A022A9 /* MCalendar */; };
+		9DBD045A2D4315270045DD70 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 9DBD04592D4315270045DD70 /* Lottie */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,16 +43,34 @@
 				Source/Component/CustomTextEditor.swift,
 				Source/Component/EisenhowerMatrixView.swift,
 				Source/Component/NeonAnimationView.swift,
+				Source/Component/RefreshAnimationView.swift,
 				Source/Data/MCalendarEventList.swift,
 				Source/Data/MEventDataSource.swift,
+				Source/Network/AI/DTO/Request/PrioritizationRequest.swift,
+				Source/Network/AI/DTO/Response/PrioritizationResponse.swift,
+				Source/Network/AI/PrioritizationAPIService.swift,
+				Source/Network/AI/TargetType/PrioritizationTargetType.swift,
 				Source/Network/Base/TokenRefreshPlugin.swift,
+				Source/Network/Onboarding/AppleSchedulesAPIService.swift,
 				Source/Network/Onboarding/DTO/Request/LoginRequest.swift,
 				"Source/Network/Onboarding/DTO/Response /LoginResponse.swift",
+				"Source/Network/Onboarding/DTO/Response /UserUptimeResponse.swift",
+				Source/Network/Onboarding/DTO/TargetType/AppleSchedulesTargetType.swift,
+				Source/Network/Onboarding/DTO/TargetType/TokenRefreshType.swift,
+				Source/Network/Onboarding/DTO/TargetType/UserInfoTargetType.swift,
+				Source/Network/Onboarding/DTO/TargetType/UserUptimeTargetType.swift,
 				Source/Network/Onboarding/LoginAPIService.swift,
 				Source/Network/Onboarding/TokenRefreshType.swift,
 				Source/Network/ToDoList/DTO/Response/ToDoListResponseData.swift,
 				Source/Network/ToDoList/ToDoListAPIService.swift,
 				Source/Network/ToDoList/ToDoListTargetType.swift,
+				Source/Network/Onboarding/UserInfoAPIService.swift,
+				Source/Network/Onboarding/UserUptimeAPIService.swift,
+				Source/Network/Schedule/DTO/Request/PostCreateScheduleRequest.swift,
+				Source/Network/Schedule/DTO/Response/PostCreateScheduleResponseData.swift,
+				Source/Network/Todo/DTO/Request/TodoRequest.swift,
+				Source/Network/Todo/TodoAPIService.swift,
+				Source/Network/Todo/TodoTargetType.swift,
 				Source/Presentation/Add/AddSchedule/Model/DateTimeSelection.swift,
 				Source/Presentation/Add/AddSchedule/View/AddEventTitleView.swift,
 				Source/Presentation/Add/AddSchedule/View/AddScheduleView.swift,
@@ -59,6 +78,7 @@
 				Source/Presentation/Add/AddSchedule/View/DateTimePickerSectionView.swift,
 				Source/Presentation/Add/AddSchedule/View/DateTimePickerView.swift,
 				Source/Presentation/Add/AddSchedule/ViewModel/AddEventTitleViewModel.swift,
+				Source/Presentation/Add/AddSchedule/ViewModel/AddScheduleViewModel.swift,
 				Source/Presentation/Add/AddTodo/View/AddDeadlineView.swift,
 				Source/Presentation/Add/AddTodo/View/AddTodoBottomView.swift,
 				Source/Presentation/Add/AddTodo/View/AddTodoHeaderView.swift,
@@ -66,6 +86,7 @@
 				Source/Presentation/Add/AddTodo/View/AddTodoView.swift,
 				Source/Presentation/Add/AddTodo/ViewModel/AddTodoHeaderViewModel.swift,
 				Source/Presentation/Add/AddTodo/ViewModel/AddTodoTextViewModel.swift,
+				Source/Presentation/Add/AddTodo/ViewModel/AddTodoViewModel.swift,
 				Source/Presentation/Add/BrainDump/View/BrainDumpView.swift,
 				Source/Presentation/Add/Common/PickerButton/View/PickerButton.swift,
 				Source/Presentation/Add/Common/PickerButton/ViewModel/BasePickerViewModel.swift,
@@ -82,9 +103,11 @@
 				Source/Presentation/Add/Common/Tag/View/TagPickerButton.swift,
 				Source/Presentation/Add/Common/Tag/View/TagPickerSheetView.swift,
 				Source/Presentation/Add/Common/Tag/View/TagView.swift,
+				Source/Presentation/Add/Common/ViewType/ViewType.swift,
 				Source/Presentation/Main/View/DragAndDrop/DropViewDelegate.swift,
 				Source/Presentation/Main/View/ToDoList/ToDoListWeeklyCalendarView.swift,
 				"Source/Presentation/Onboarding/View/Launch Screen.storyboard",
+				Source/Presentation/Onboarding/ViewModel/AppState.swift,
 				Source/Presentation/Onboarding/ViewModel/AuthViewModel.swift,
 				Source/Presentation/Onboarding/ViewModel/OnboardingViewModel.swift,
 				Source/Utils/DynamicPresentationDetent.swift,
@@ -119,6 +142,7 @@
 			files = (
 				2F459C3E2D37C88600EDD537 /* GoogleSignIn in Frameworks */,
 				9DBC14972D36434200A022A9 /* MCalendar in Frameworks */,
+				9DBD045A2D4315270045DD70 /* Lottie in Frameworks */,
 				8351D78E2D30575E008336BE /* MDSKit in Frameworks */,
 				8351D78B2D305724008336BE /* MDSKit in Frameworks */,
 				2F459C402D37C88600EDD537 /* GoogleSignInSwift in Frameworks */,
@@ -194,6 +218,7 @@
 				2F459C3F2D37C88600EDD537 /* GoogleSignInSwift */,
 				2F459C422D37C91B00EDD537 /* FirebaseCore */,
 				9DBC14962D36434200A022A9 /* MCalendar */,
+				9DBD04592D4315270045DD70 /* Lottie */,
 			);
 			productName = "Memento-iOS";
 			productReference = 830F3C562D2A73BD00254FDE /* Memento-iOS.app */;
@@ -229,6 +254,7 @@
 				2F459C392D37C83800EDD537 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				2F459C3C2D37C88600EDD537 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				9DBC14952D36434200A022A9 /* XCRemoteSwiftPackageReference "memento-calendar" */,
+				9DBD04582D4315270045DD70 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 830F3C572D2A73BD00254FDE /* Products */;
@@ -406,6 +432,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -440,6 +467,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -518,6 +546,14 @@
 				minimumVersion = 1.0.4;
 			};
 		};
+		9DBD04582D4315270045DD70 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -559,6 +595,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9DBC14952D36434200A022A9 /* XCRemoteSwiftPackageReference "memento-calendar" */;
 			productName = MCalendar;
+		};
+		9DBD04592D4315270045DD70 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9DBD04582D4315270045DD70 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

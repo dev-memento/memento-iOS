@@ -80,11 +80,11 @@ private struct WorkSelectionHeaderView: View {
 private struct CategoryListView: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
     @FocusState var isTextFieldFocused: Bool
-    
+
     var body: some View {
         ForEach(Category.mockData) { category in
             HStack {
-                SelectionIndicator(isSelected: viewModel.workSelectionData.selectedCategory == category.name)
+                SelectionIndicator(isSelected: viewModel.workSelectionData.selectedCategory == CategoryType.from(name: category.name))
                 Text(category.name)
                     .applyFont(.body_b_14)
                     .foregroundColor(Color.gray06)
@@ -100,9 +100,9 @@ private struct CategoryListView: View {
             }
         }
     }
-    
+
     private func selectCategory(_ name: String) {
-        viewModel.workSelectionData.selectedCategory = name
+        viewModel.workSelectionData.selectedCategory = CategoryType.from(name: name)
         viewModel.workSelectionData.customCategory = ""
         isTextFieldFocused = false
     }
@@ -116,7 +116,10 @@ private struct CustomCategoryInputView: View {
     
     var body: some View {
         HStack {
-            SelectionIndicator(isSelected: viewModel.workSelectionData.selectedCategory == "Other" || !viewModel.workSelectionData.customCategory.isEmpty)
+            SelectionIndicator(
+                isSelected: viewModel.workSelectionData.selectedCategory == CategoryType.other.rawValue
+                    || !viewModel.workSelectionData.customCategory.isEmpty
+            )
             
             VStack(alignment: .leading, spacing: 0) {
                 TextField(
@@ -126,8 +129,13 @@ private struct CustomCategoryInputView: View {
                 .focused($isTextFieldFocused)
                 .onChange(of: isTextFieldFocused) { newValue in
                     if newValue {
-                        viewModel.workSelectionData.selectedCategory = "Other"
+                        viewModel.workSelectionData.selectedCategory = CategoryType.other.rawValue
                     }
+                }
+                .onChange(of: viewModel.workSelectionData.customCategory) { newValue in
+                    viewModel.workSelectionData.selectedCategory = newValue.isEmpty
+                        ? nil
+                        : CategoryType.other.rawValue
                 }
                 .foregroundColor((isTextFieldFocused || !viewModel.workSelectionData.customCategory.isEmpty) ? .white : .gray08)
                 .applyFont(.body_b_14)
@@ -147,7 +155,7 @@ private struct CustomCategoryInputView: View {
         .background(.black)
         .contentShape(Rectangle())
         .onTapGesture {
-            viewModel.workSelectionData.selectedCategory = "Other"
+            viewModel.workSelectionData.selectedCategory = CategoryType.other.rawValue
             isTextFieldFocused = true
         }
     }

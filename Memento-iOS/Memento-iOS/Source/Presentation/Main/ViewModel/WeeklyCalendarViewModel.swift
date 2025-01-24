@@ -13,38 +13,42 @@ import MCalendar
 
 final class WeeklyCalendarViewModel: ObservableObject {
     
-    @Published var schedules: [ScheduleTotalResponseData] = []
+    @Published var schedules: [ScheduleTotalResponseDataTest] = []
     @Published var tag: [TagResponseData] = []
     @Published var toDoList: [ToDoListTotalResponseDataTest] = []
+    @Published var allday: [ScheduleAllDayResponseDataTest] = []
+    @Published var wakeUpTime: String = "8 AM"
+    @Published var windDownTime: String = "11 PM"
+
     private let scheduleService: ScheduleAPIServiceProtocol
     private let tagService: TagAPIServiceProtocol
     private let toDoListService: ToDoListAPIServiceProtocol
+    private let userUptimeService: UserUptimeAPIServiceProtocol
     
     init(mCalendarDataSource: MCalendarDataSource,
          mEventDataSource: MEventDatasource,
          scheduleService: ScheduleAPIServiceProtocol,
          tagService: TagAPIServiceProtocol,
          toDoListService: ToDoListAPIServiceProtocol
-    ) {
+         tagService: TagAPIServiceProtocol,
+         userUptimeService: UserUptimeAPIServiceProtocol) {
         
         self.mCallendarDataSource = mCalendarDataSource
         self.mEventDataSource = mEventDataSource
         self.scheduleService = scheduleService
         self.tagService = tagService
         self.toDoListService = toDoListService
-        
+        self.userUptimeService = userUptimeService
         
         makeDummyEvent()
         addOffsetDebounce()
+        bindSelectedDateSubject()
+        setSendNotificationObserver()
     }
     
-    @Published var allDayItems: [AllDayListDataModel] = [
-        .init(colorType: "mementoRed", allDayTitle: "김가현 땅스부대찌개에서 부대찌개 사오고 자기가 하나부터 열까지 다 끌ㅎ인척하던데 진짜 양심이 있는거냐 미친거야 미친거냐 미친거임?미친걸까 미친 ㅋㅋ "),
-        .init(colorType: "mementoOrange", allDayTitle: "지금은수요일새벽5시반"),
-        .init(colorType: "mementoLightGreen", allDayTitle: "마라샹궈먹었능데마싯다.."),
-        .init(colorType: "mementoOrange", allDayTitle: "오늘커피6샷마심레전드"),
-        .init(colorType: "mementoMint", allDayTitle: "보라매공원보라매공원보라매공원")
-    ]
+    deinit {
+        removeObserver()
+    }
     
     @Published var todayItems: [TodayItemDataModel] = []
     
@@ -80,6 +84,37 @@ final class WeeklyCalendarViewModel: ObservableObject {
         return toDoListItems.filter {
             dateFormatter.date(from: $0.date)! == date.date()!
         }
+    }
+    
+    private func bindSelectedDateSubject() {
+        $selectedDate
+            .removeDuplicates()
+            .debounce(for: .seconds(0.2), scheduler: RunLoop.main)
+            .sink(receiveValue: { [weak self] newDate in
+                guard let self else { return }
+                if let date = newDate.date() {
+                    self.onDateSelected(date: date)
+                }
+            })
+            .store(in: &cancellable)
+    }
+    
+    func setSendNotificationObserver() {
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(didReceiveNotification),
+                                               name: .init("postScheduleComplete"),
+                                               object: nil)
+    }
+    
+    func removeObserver() {
+        NotificationCenter.default.removeObserver(self,
+                                                  name: .init("postScheduleComplete"),
+                                                  object: nil)
+    }
+    
+    @objc
+    private func didReceiveNotification() {
+        self.getSchedulesTotalAPI()
     }
 }
 
@@ -128,7 +163,7 @@ extension WeeklyCalendarViewModel {
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
-                    if let scheduleData = response?.data as? [ScheduleTotalResponseData] {
+                    if let scheduleData = response?.data.scheduleWithOrderInfos {
                         self?.schedules = scheduleData
                     } else {
                         print("데이터변환 실패")
@@ -183,5 +218,124 @@ extension WeeklyCalendarViewModel {
     }
     
     
+    
+    func getSchedulesAllDayAPI() {
+        scheduleService.getSchedulesAllDays { [weak self] result in
+            switch result {
+            case .success(let response):
+                DispatchQueue.main.async {
+                    if let scheduleData = response?.data.allDaySchedulesList {
+                        self?.allday = scheduleData
+                    } else {
+                        self?.allday = []
+                    }
+                }
+            default:
+                print("ERROR")
+            }
+        }
+    }
+    
+    func userUptimeAPI() {
+        userUptimeService.fetchUptime{ result in
+            switch result {
+            case .success(let response):
+                print("시간 가져오기 성공")
+                // 추가 작업 필요 시 여기에 작성
+                if let wakeUpTime = response?.data.wakeUpTime, let windDownTime = response?.data.windDownTime {
+                    self.wakeUpTime = wakeUpTime
+                    self.windDownTime = wakeUpTime
+                    print("시간 가져오기 성공 \(self.wakeUpTime) \(self.windDownTime)")
+                } else {
+                    self.wakeUpTime = "8 AM"
+                    self.windDownTime = "11 PM"
+                }
+            default:
+                print("시간 가져오기 실패")
+            }
+        }
+    }
 }
 
+extension Date {
+    /// 예) 2025-01-12 15:00 이면 → 2025-01-12 23:59:59
+    var endOfDay: Date {
+        let start = self.startOfDay
+        // start + 1일 - 1초 (즉 다음날 0시 직전)
+        return Calendar.current.date(byAdding: DateComponents(day: 1, second: -1), to: start)!
+    }
+}
+
+extension WeeklyCalendarViewModel {
+    func filterSchedules(for date: Date) {
+        // 1) "하루의 시작"과 "하루의 끝" 구하기
+        let dayStart = date.startOfDay
+        let dayEnd = date.endOfDay
+        
+        // 2) schedules 배열에서 일정이 하루라도 겹치는 것만 필터링
+        todayItems = schedules.filter { schedule in
+            guard
+                let start = toDateFromString(schedule.startDate),
+                let end   = toDateFromString(schedule.endDate)
+            else {
+                print("💔날짜 변환 실패 \(schedule)💔")
+                return false
+            }
+            
+            // 3) 일정이 [dayStart, dayEnd] 범위와 겹치는지 확인
+            //    일정의 시작 ≤ dayEnd && 일정의 끝 ≥ dayStart
+            return start <= dayEnd && end >= dayStart
+        }
+        .map {
+            TodayItemDataModel.schedule(
+                .init(
+                    id: $0.id,
+                    description: $0.description,
+                    startDate: $0.startDate,
+                    endDate: $0.endDate,
+                    timeDuration: $0.timeDuration,
+                    isAllDay: $0.isAllDay,
+                    scheduleType: $0.scheduleType,
+                    order: $0.order,
+                    tagName: $0.tagName,
+                    tagColorCode: $0.tagColorCode
+                )
+            )
+        }
+    }
+    
+    private func toDateFromString(_ date: String) -> Date? {
+        if let date1 = date.toDate() {
+            return date1
+        } else {
+            if let date2 = date.toDateForNotContainMiliseconds() {
+                return date2
+            } else {
+                return nil
+            }
+        }
+    }
+        
+}
+
+extension String {
+    func toDate() -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
+        return formatter.date(from: self)
+    }
+    
+    func toDateForNotContainMiliseconds() -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        return formatter.date(from: self)
+    }
+}
+
+
+extension WeeklyCalendarViewModel {
+    func onDateSelected(date: Date) {
+        print("선택한 날짜: \(date)")
+        filterSchedules(for: date)
+    }
+}

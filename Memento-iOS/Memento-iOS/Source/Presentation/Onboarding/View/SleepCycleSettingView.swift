@@ -74,9 +74,14 @@ private struct SleepCycleSettingHeaderView: View {
                 .applyFont(.head_b_40)
                 .foregroundColor(.gray07)
             
-            Text(OnboardingSleepCycleText.sleepCycleSettingHeaderTitle)
-                .applyFont(.title_b_24)
-                .foregroundColor(.white)
+            VStack(alignment: .leading, spacing: 5){
+                Text(OnboardingSleepCycleText.sleepCycleSettingHeaderTitle)
+                    .applyFont(.title_b_24)
+                    .foregroundColor(.white)
+                Text(OnboardingSleepCycleText.sleepCycleSettingHeaderTitle2)
+                    .applyFont(.title_b_24)
+                    .foregroundColor(.white)
+            }
         }
     }
 }

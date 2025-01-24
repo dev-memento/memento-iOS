@@ -30,7 +30,8 @@ enum StringLiteral {
         
         enum SleepCycleSettingView {
             static let oneStepTitle = "1"
-            static let sleepCycleSettingHeaderTitle = "Set your\nwake-up and\nwind-down hours."
+            static let sleepCycleSettingHeaderTitle = "하루를 시작하는 시간과"
+            static let sleepCycleSettingHeaderTitle2 = "끝내는 시간을 설정합니다."
             static let wakeUpTitle = "Wake-up"
             static let windDownTitle = "Wind-down"
             static let defaultTime = "00:00 AM"
@@ -38,12 +39,12 @@ enum StringLiteral {
         
         enum WorkSelectionView {
             static let twoStepTitle = "2"
-            static let workSelectionHeaderTitle = "What do you do for work?"
+            static let workSelectionHeaderTitle = "어떤 일을 하시나요?"
         }
         
         enum WorkPreferenceView {
             static let threeStepTitle = "3"
-            static let workPreferenceHeaderTitle = "Discover how you work best."
+            static let workPreferenceHeaderTitle = "어떤 방식으로 업무를 하시나요?"
             static let yes = "Yes"
             static let no = "No"
             static let surveyQuestion1 = "하루를 시작할 때 중요한 일을 먼저 처리하는 것을 선호하시나요?"
@@ -54,7 +55,7 @@ enum StringLiteral {
         }
         
         enum CalendarConnectView {
-            static let calendarConnectHeaderTitle = "Connect your calendar\nfor seamless scheduling."
+            static let calendarConnectHeaderTitle = "기존의 사용하던 캘린더로부터 일정을 불러옵니다."
             static let connectGoogleCalendar = "Connect Google Calendar"
             static let connectAppleCalendar = "Connect Apple Calendar"
             static let startMementoButton = "Start MEMENTO"

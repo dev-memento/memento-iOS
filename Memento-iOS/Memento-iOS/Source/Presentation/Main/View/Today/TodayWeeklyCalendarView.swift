@@ -13,7 +13,6 @@ import MCalendar
 struct TodayWeeklyCalendarView: View {
     @ObservedObject var viewModel: WeeklyCalendarViewModel
     
-    // Scroll value
     @State private var scrollTarget: Int? = nil
     @State private var userInteractionFlag: Bool = false
     
@@ -86,7 +85,9 @@ struct TodayWeeklyCalendarView: View {
         }
         .onAppear {
             viewModel.getTagsAPI()
-//            viewModel.getSchedulesTotalAPI()
+            viewModel.getSchedulesTotalAPI()
+            viewModel.getSchedulesAllDayAPI()
+            viewModel.userUptimeAPI()
             viewModel.makeDummyEvent()
             makeIndex()
         }
@@ -105,6 +106,11 @@ struct TodayWeeklyCalendarView: View {
                             mCallendarDatasource: viewModel.mCallendarDataSource,
                             selectedDateCompletion: { date in
             viewModel.selectedDate = date
+            // MCalendarDataModel -> Date 변환
+            if let selectedDate = date.date() {
+                viewModel.filterSchedules(for: selectedDate) 
+            } else { return }
+            print(date, "❤️")
             makeIndex()
         })
         .setWeekDayFont(MWeekDayOptions.allDays,
@@ -137,7 +143,7 @@ struct TodayWeeklyCalendarView: View {
     @ViewBuilder
     private func pageView(for item: MCalendarEventList) -> some View {
         VStack(spacing: 8) {
-            AllDayListView(items: viewModel.allDayItems)
+            AllDayListView(items: viewModel.allday)
                 .padding(.vertical, 4)
             
             todayList(item: item)
@@ -152,9 +158,12 @@ struct TodayWeeklyCalendarView: View {
     }
 }
 
-//#Preview {
-//    TodayWeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
-//        mCalendarDataSource: MCalendarDataSource(),
-//        mEventDataSource: MEventDatasource(),
-//        scheduleService: ScheduleAPIService(), tagService: TagAPIServiceProtocol as! TagAPIServiceProtocol))
-//}
+#Preview {
+    TodayWeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
+        mCalendarDataSource: MCalendarDataSource(),
+        mEventDataSource: MEventDatasource(),
+        scheduleService: ScheduleAPIService(),
+        tagService: TagAPIService(),
+        userUptimeService: UserUptimeAPIService()
+    ))
+}

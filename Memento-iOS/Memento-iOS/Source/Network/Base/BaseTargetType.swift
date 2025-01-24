@@ -50,20 +50,28 @@ extension BaseTargetType {
     }
     
     var headers: [String: String]? {
+        let keychainManager = TokenKeychainManager.shared
+        
         var header = ["Content-Type": "application/json"]
         
         switch headerType {
         case .socialTokenHeader(let socialToken):
             header["Authorization"] = "Bearer \(socialToken)"
-        
+            
         case .accessTokenHeader:
-            // 나중에 추가
-            break
-        
+            if let accessToken = try? keychainManager.getAccessToken() {
+                return ["Authorization": "Bearer \(accessToken)", "Content-Type": "application/json"]
+            } else {
+                print("[ERROR] 액세스 토큰 로드 실패")
+                return nil
+            }
         case .refreshTokenHeader:
-            // 나중에 추가
-            break
-        
+            if let refreshToken = try? keychainManager.getRefreshToken() {
+                return ["Authorization": "Bearer \(refreshToken)", "Content-Type": "application/json"]
+            } else {
+                print("[ERROR] 리프레시 토큰 로드 실패")
+                return nil
+            }
         case .tokenHealthHeader:
             // 나중에 추가
             // Access Token 또는 Refresh Token의 상태 확인 및 구분
@@ -75,7 +83,7 @@ extension BaseTargetType {
         
         return header
     }
-
+    
     var task: Task {
         if let queryParameter {
             return .requestParameters(parameters: queryParameter, encoding: URLEncoding.default)

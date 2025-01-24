@@ -13,8 +13,14 @@ final class AddTodoPickerButtonViewModel: BasePickerViewModel {
     
     // MARK: - Properties
     
-    @Published var selectedDate: Date = Date()
-    @Published var selectedTag: Tag = Tag.mockData.first ?? Tag(color: .gray02, title: "Untitled")
+    @Published var selectedDate: Date = Date() {
+        didSet {
+            updateFormattedPickerTitle()
+        }
+    }
+
+    @Published var selectedTag: Tag = Tag(tagId: 1, color: .gray05, title: "Untitled")
+    @Published var formattedPickerTitle: String = "Today"
 
     let pickerType: AddTodoPickerButtonType
 
@@ -23,19 +29,16 @@ final class AddTodoPickerButtonViewModel: BasePickerViewModel {
     init(type: AddTodoPickerButtonType = .tag) {
         self.pickerType = type
         super.init()
+        updateFormattedPickerTitle()
     }
 
     // MARK: - Computed properties
 
-    var formattedPickerTitle: String {
-        switch pickerType {
-        case .tag:
-            return selectedTag.title.isEmpty ? "Untitled" : selectedTag.title
-        case .date, .deadline:
-            return Calendar.current.isDateInToday(selectedDate)
-                ? "Today"
-                : selectedDate.formattedDate(with: "MMM d")
-        }
+    var isoFormattedDate: String {
+        let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.timeZone = TimeZone.current
+        isoFormatter.formatOptions = [.withFullDate]
+        return isoFormatter.string(from: selectedDate)
     }
 
     // MARK: - Override methods
@@ -43,6 +46,22 @@ final class AddTodoPickerButtonViewModel: BasePickerViewModel {
     override func dismiss() {
         super.dismiss()
         setPressedState(false)
+    }
+
+    // MARK: - Private Methods
+
+    private func updateFormattedPickerTitle() {
+        switch pickerType {
+        case .tag:
+            formattedPickerTitle = selectedTag.title
+        case .date, .deadline:
+            let calendar = Calendar.current
+            if calendar.isDateInToday(selectedDate) {
+                formattedPickerTitle = "Today"
+            } else {
+                formattedPickerTitle = selectedDate.formattedDate(with: "MMM d")
+            }
+        }
     }
 }
 

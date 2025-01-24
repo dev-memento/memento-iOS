@@ -28,13 +28,9 @@ struct TagPickerButton: View {
                     .fill(viewModel.selectedTag.color)
                     .frame(width: 14, height: 14)
 
-                Text(
-                    viewModel.selectedTag.title.isEmpty
-                    ? "Untitled"
-                    : viewModel.selectedTag.title
-                )
-                .applyFont(.body_r_14)
-                .foregroundColor(.gray02)
+                Text(viewModel.selectedTag.title)
+                    .applyFont(.body_r_14)
+                    .foregroundColor(.gray02)
             }
             .frame(width: 200, height: 36)
             .background(isPressed ? Color.gray07 : Color.gray09)

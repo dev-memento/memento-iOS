@@ -10,16 +10,18 @@ import SwiftUI
 import MDSKit
 
 struct AddTodoBottomView: View {
-
+    @Environment(\.dismiss) var dismiss
     // MARK: - Properties
 
     @ObservedObject var viewModel: AddTodoTextViewModel
+    @ObservedObject var todoViewModel: AddTodoViewModel
+    @StateObject var bottomViewModel: AddTodoPickerButtonViewModel
     @State private var isDeadlinePresented: Bool = false
     @State private var isTagPresented: Bool = false
     @State private var isMatrixPresented: Bool = false
     @State private var selectedDateText: String = "Today"
     @State private var selectedTagColor: Color = .gray05
-    @StateObject private var deadlineViewModel = AddTodoPickerButtonViewModel(type: .deadline)
+    @State private var selectedPriority: Priority = .none
     @StateObject private var tagViewModel = AddTodoPickerButtonViewModel(type: .tag)
 
     // MARK: - Body
@@ -33,6 +35,18 @@ struct AddTodoBottomView: View {
             enterButton
         }
         .padding(.bottom, 20)
+        .onChange(of: viewModel.text) { _, newText in
+            todoViewModel.description = newText
+        }
+        .onChange(of: bottomViewModel.selectedDate) { _, newDate in
+            todoViewModel.endDate = bottomViewModel.isoFormattedDate
+        }
+        .onChange(of: bottomViewModel.selectedTag) { _, newTag in
+            todoViewModel.tagId = newTag.tagId
+        }
+        .onChange(of: selectedPriority) { _, newValue in
+            todoViewModel.selectedPriority = newValue
+        }
     }
 
     // MARK: - UI Components
@@ -44,7 +58,7 @@ struct AddTodoBottomView: View {
             HStack {
                 Image(.ic_deadline)
 
-                Text(deadlineViewModel.formattedPickerTitle)
+                Text(bottomViewModel.formattedPickerTitle)
                     .applyFont(.detail_r_12)
             }
             .frame(maxWidth: .infinity)
@@ -55,7 +69,7 @@ struct AddTodoBottomView: View {
         .clipShape(RoundedRectangle(cornerRadius: 2))
         .sheet(isPresented: $isDeadlinePresented) {
             AddDeadlineView(
-                viewModel: deadlineViewModel,
+                viewModel: bottomViewModel,
                 selectedDateText: $selectedDateText
             )
             .presentationDetents(
@@ -69,14 +83,14 @@ struct AddTodoBottomView: View {
             isTagPresented.toggle()
         }) {
             Circle()
-                .fill(Color(tagViewModel.selectedTag.color))
+                .fill(Color(bottomViewModel.selectedTag.color))
                 .frame(width: 10, height: 10)
         }
         .frame(width: 42, height: 42)
         .background(Color.gray09)
         .clipShape(RoundedRectangle(cornerRadius: 2))
         .sheet(isPresented: $isTagPresented) {
-            AddTagView(viewModel: tagViewModel)
+            AddTagView(viewModel: bottomViewModel)
                 .presentationDetents(
                     DynamicPresentationDetent.dynamicDetent(
                         for: AddTodoPickerButtonType.tag
@@ -89,7 +103,7 @@ struct AddTodoBottomView: View {
         Button(action: {
             isMatrixPresented.toggle()
         }) {
-            Image(.matrix_none)
+            Image(getPriorityImage(selectedPriority))
                 .frame(width: 26, height: 26)
                 .padding(8)
                 .background(Color.gray09)
@@ -98,14 +112,18 @@ struct AddTodoBottomView: View {
         .frame(width: 42, height: 42)
         .sheet(isPresented: $isMatrixPresented) {
             EisenhowerMatrixView(
+                viewType: .add,
                 source: "",
-                externalPriority: .constant(.none)
+                externalPriority: $selectedPriority
             )
         }
     }
 
     private var enterButton: some View {
         Button(action: {
+            todoViewModel.createTodo {
+                dismiss()
+            }
         }) {
             Image(
                 viewModel.isTextEmpty
@@ -115,10 +133,16 @@ struct AddTodoBottomView: View {
         }
         .disabled(viewModel.isTextEmpty)
     }
-}
 
-// MARK: - Preview
+    // MARK: - Helpers
 
-#Preview {
-    AddTodoBottomView(viewModel: AddTodoTextViewModel())
+    private func getPriorityImage(_ priority: Priority) -> MDSImageName {
+        switch priority {
+        case .immediate: return .matrix_immediate
+        case .high: return .matrix_high
+        case .medium: return .matrix_medium
+        case .low: return .matrix_low
+        case .none: return .matrix_none
+        }
+    }
 }

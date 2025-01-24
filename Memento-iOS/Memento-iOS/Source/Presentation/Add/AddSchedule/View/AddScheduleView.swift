@@ -10,18 +10,16 @@ import SwiftUI
 import MDSKit
 
 struct AddScheduleView: View {
-
+    @Environment(\.dismiss) var dismiss
     // MARK: - Properties
-
-    @StateObject private var eventTitleViewModel = AddEventTitleViewModel()
-    @StateObject private var pickerViewModel = AddSchedulePickerButtonViewModel()
+    @StateObject private var addScheduleViewModel: AddScheduleViewModel = .init(scheduleApiService: .init())
+    @StateObject private var eventTitleViewModel: AddEventTitleViewModel = .init()
+    @StateObject private var pickerViewModel: AddSchedulePickerButtonViewModel = .init()
 
     // MARK: - Body
-
     var body: some View {
         ZStack {
             Color.gray10.ignoresSafeArea()
-
             VStack {
                 AddEventTitleView(viewModel: eventTitleViewModel)
                 DateTimePickerView(viewModel: pickerViewModel)
@@ -39,6 +37,13 @@ struct AddScheduleView: View {
         HStack {
             Spacer()
             Button(action: {
+                addScheduleViewModel.postAddSchedule(description: eventTitleViewModel.title,
+                                                     startDate: pickerViewModel.startsDate.formattedDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),
+                                                     endDate: pickerViewModel.endsDate.formattedDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),
+                                                     isAllDay: pickerViewModel.isAllDay,
+                                                     tagID: pickerViewModel.selectedTag.tagId) {
+                    dismiss()
+                }
             }) {
                 Image(
                     eventTitleViewModel.isTitleEmpty
@@ -54,8 +59,3 @@ struct AddScheduleView: View {
     }
 }
 
-// MARK: - Preview
-
-#Preview {
-    AddScheduleView()
-}

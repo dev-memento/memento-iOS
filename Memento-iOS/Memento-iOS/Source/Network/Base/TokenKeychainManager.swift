@@ -80,25 +80,48 @@ final class TokenKeychainManager {
         }
     }
     
-    // MARK: - 토큰 관련 메서드
+    // MARK: - Access Token
+    
     func saveAccessToken(_ token: String) throws {
         try save(key: "AccessToken", value: token)
     }
+    
+    func getAccessToken() throws -> String? {
+        return try load(key: "AccessToken")
+    }
+    
+    // MARK: - Refresh Token
     
     func saveRefreshToken(_ token: String) throws {
         try save(key: "RefreshToken", value: token)
     }
     
-    func loadAccessToken() throws -> String? {
-        return try load(key: "AccessToken")
-    }
-    
-    func loadRefreshToken() throws -> String? {
+    func getRefreshToken() throws -> String? {
         return try load(key: "RefreshToken")
     }
+    
+    // MARK: - Token Management
     
     func clearTokens() throws {
         try delete(key: "AccessToken")
         try delete(key: "RefreshToken")
+    }
+    
+    func removeAllTokens() throws {
+        try delete(key: "AccessToken")
+        try delete(key: "RefreshToken")
+    }
+    
+    // MARK: - Token Validation
+    
+    func hasValidToken() -> Bool {
+        do {
+            if let accessToken = try getAccessToken(), !accessToken.isEmpty {
+                return true
+            }
+            return false
+        } catch {
+            return false
+        }
     }
 }

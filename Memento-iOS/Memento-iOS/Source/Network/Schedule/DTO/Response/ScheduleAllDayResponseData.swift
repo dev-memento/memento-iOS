@@ -5,7 +5,13 @@
 //  Created by Kimgahyun on 1/21/25.
 //
 
-struct ScheduleAllDayResponseData: Codable {
+import Foundation
+
+struct ScheduleAllDayResponseData: Codable, Equatable {
+    let allDaySchedulesList: [ScheduleAllDayResponseDataTest]
+}
+
+struct ScheduleAllDayResponseDataTest: Codable, Equatable {
     let id: Int
     let description: String
     let startDate: String
