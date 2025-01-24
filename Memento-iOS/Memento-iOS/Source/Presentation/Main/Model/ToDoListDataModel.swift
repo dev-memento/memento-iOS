@@ -18,9 +18,9 @@ struct ToDoListDataModel: Identifiable, Equatable, Hashable {
     func mapToToDoItem() -> ToDoListTotalResponseDataTest {
         return .init(id: id,
                      groupId: "",
-                     description: "",
+                     description: toDoTitle,
                      startDate: "",
-                     endDate: "",
+                     endDate: dueDate,
                      isCompleted: false,
                      priorityValue: 1,
                      priorityType: priorityType.title,
