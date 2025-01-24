@@ -44,7 +44,14 @@ extension ScheduleTargetType: BaseTargetType {
     }
     
     var path: String {
-        return utilPath.rawValue
+        switch self {
+        case .getSchedulesTotal:
+            return utilPath.rawValue + "/total"
+        case .getSchedulesAllDay:
+            return utilPath.rawValue + "/all-days"
+        default:
+            return utilPath.rawValue
+        }
     }
     
     var method: Moya.Method {
