@@ -255,10 +255,3 @@ struct FooterTextView: View {
             .padding(.top, 18)
     }
 }
-
-#Preview {
-    EisenhowerMatrixView(
-        source: "SOPT",
-        externalPriority: .constant(.immediate)
-    )
-}
