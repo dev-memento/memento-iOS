@@ -16,6 +16,7 @@ protocol ScheduleAPIServiceProtocol {
     func getSchedulesAllDays(completion: @escaping (NetworkResult<ScheduleAllDayResponseDTO>) -> Void)
     func getSchedules(completion: @escaping (NetworkResult<ScheduleResponseDTO>) -> Void)
     func getSchedulesDetail(completion: @escaping (NetworkResult<ScheduleDetailResponseDTO>) -> Void)
+    func postCreateSchedule(bodyParam: PostCreateScheduleRequest, completion: @escaping (NetworkResult<PostCreateScheduleResponseDTO>) -> Void)
 }
 
 extension ScheduleAPIServiceProtocol {
@@ -23,6 +24,7 @@ extension ScheduleAPIServiceProtocol {
     typealias ScheduleAllDayResponseDTO = BaseDTO<ScheduleAllDayResponseData>
     typealias ScheduleResponseDTO = BaseDTO<ScheduleResponseData>
     typealias ScheduleDetailResponseDTO = BaseDTO<ScheduleDetailResponseData>
+    typealias PostCreateScheduleResponseDTO = BaseDTO<PostCreateScheduleResponseData?>
 }
 
 // MARK: - ScheduleAPIService
@@ -100,6 +102,27 @@ final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
                 }
             }
         }
+    }
+    
+    func postCreateSchedule(bodyParam: PostCreateScheduleRequest,
+                            completion: @escaping (NetworkResult<PostCreateScheduleResponseDTO>) -> Void) {
+        provider.request(.postCreateSchedule(body: bodyParam),
+                         completion: { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .success(let response):
+                let networkResult: NetworkResult<PostCreateScheduleResponseDTO> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
+                print(networkResult.stateDescription)
+                completion(networkResult)
+            case .failure(let error):
+                if let response = error.response {
+                    let networkResult: NetworkResult<PostCreateScheduleResponseDTO> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
+                    completion(networkResult)
+                }
+                
+            }
+            
+        })
     }
    
 }
