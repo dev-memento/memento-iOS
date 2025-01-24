@@ -217,20 +217,14 @@ extension WeeklyCalendarViewModel {
     }
     
     func updateToDoCompletion(toDoId: Int) {
-        guard let todoItem = toDoListItems.first(where: { $0.id == toDoId }) else { return }
-        
-        let newCompletionState = !todoItem.isChecked
-        
         toDoListService.updateToDoCompletion(toDoId: toDoId) { [weak self] result in
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
                     if response?.data != nil {
                         if let index = self?.toDoListItems.firstIndex(where: { $0.id == toDoId }) {
-                            self?.toDoListItems[index].isChecked = newCompletionState
+                            self?.toDoListItems[index].isChecked.toggle()
                         }
-                    } else {
-                        print("ToDo 완료 상태 변경 실패")
                     }
                 }
             default:
