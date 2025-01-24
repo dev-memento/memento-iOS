@@ -12,11 +12,11 @@ struct SplashScreenView: View {
     
     var body: some View {
         LottieView(animationName: "memento_logo_animation", loopMode: .playOnce) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 appState.showLottieAnimation = false
             }
         }
         .edgesIgnoringSafeArea(.all)
-        .background(Color.black)
+        .background(Color.grayBlack)
     }
 }
