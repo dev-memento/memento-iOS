@@ -61,6 +61,8 @@ extension ScheduleTargetType: BaseTargetType {
         switch self {
         case .postCreateSchedule(_):
             return .post
+        case .deleteSchedule:
+            return .delete
         default:
             return .get
         }
