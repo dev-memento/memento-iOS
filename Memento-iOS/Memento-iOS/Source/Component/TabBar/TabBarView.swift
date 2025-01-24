@@ -54,7 +54,7 @@ struct TabBarView: View {
                 // 여기서도 동일한 ViewModel을 사용하거나
                 // 다른 ViewModel을 쓰고 싶다면 추가로 선언해도 됩니다.
                 VStack {
-                    Text("Todo View")
+                    ToDoListView(viewModel: calendarViewModel)
                 }
                 .tabItem {
                     selectedTab == .todo
