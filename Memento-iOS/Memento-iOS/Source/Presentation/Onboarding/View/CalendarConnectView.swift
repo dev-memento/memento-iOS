@@ -67,20 +67,23 @@ private struct CalendarConnectHeaderView: View {
 
 // MARK: - CalendarConnectButtons
 
+
 private struct CalendarConnectButtons: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
-
+    @State private var isAppleCalendarButtonDisabled = false // 버튼 비활성화 상태
+    @State private var showSuccessMessage = false // 성공 메시지 표시 상태
+    
     var body: some View {
         VStack(alignment: .center, spacing: 18) {
             Button {
-               
+                // 구글 캘린더 연동 버튼 동작
             } label: {
                 HStack(spacing: 8) {
                     Image(.img_google)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 24, height: 24)
-
+                    
                     Text(OnboardingCalendarConnectText.connectGoogleCalendar)
                         .font(.system(size: 16))
                         .foregroundColor(.white)
@@ -91,13 +94,29 @@ private struct CalendarConnectButtons: View {
             .frame(height: 46)
             .padding(.horizontal, 16)
             .background(Color.gray10)
-
+            
             Button {
+                // 버튼 비활성화
+                isAppleCalendarButtonDisabled = true
+                
+                // 캘린더 연동 API 호출
                 Task {
                     do {
-                     try await viewModel.submitEventsToAPI()
+                        try await viewModel.submitEventsToAPI()
+                        
+                        // 성공 표시
+                        withAnimation(.easeInOut) {
+                            showSuccessMessage = true
+                        }
+                        
+                        // 10초 후 성공 메시지 숨기기
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            showSuccessMessage = false
+                        }
+                        
                     } catch {
                         print("Failed to fetch events: \(error.localizedDescription)")
+                        isAppleCalendarButtonDisabled = false // 실패 시 다시 활성화
                     }
                 }
             } label: {
@@ -106,7 +125,7 @@ private struct CalendarConnectButtons: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 24, height: 24)
-
+                    
                     Text(OnboardingCalendarConnectText.connectAppleCalendar)
                         .font(.system(size: 16))
                         .foregroundColor(.white)
@@ -116,8 +135,46 @@ private struct CalendarConnectButtons: View {
             .frame(maxWidth: 343)
             .frame(height: 46)
             .padding(.horizontal, 16)
-            .background(Color.gray10)
-
+            .background(isAppleCalendarButtonDisabled ? Color.gray : Color.gray10)
+            .disabled(isAppleCalendarButtonDisabled) // 버튼 비활성화
+            
+        }
+        .overlay {
+            if showSuccessMessage {
+                VStack {
+                    ZStack {
+                        VStack(spacing: 16) {
+                            // 아이콘
+                            Image(systemName: "checkmark.circle.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 40, height: 40)
+                                .foregroundColor(.mainGreen)
+                            
+                            // 메시지
+                            Text("연동 성공!")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundColor(.gray02)
+                                .padding(.horizontal, 16)
+                                .multilineTextAlignment(.center)
+                        }
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.gray09)
+                                .shadow(radius: 10)
+                        )
+                    }
+                }
+                .transition(.opacity)
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                        withAnimation {
+                            showSuccessMessage = false
+                        }
+                    }
+                }
+            }
         }
     }
 }

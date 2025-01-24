@@ -18,30 +18,30 @@ struct TodayView: View {
     
     @State private var showTodoAlert = false
     @State private var showScheduleAlert = false
+    @State private var aiPlottingButtonpPressed: Bool = false // 버튼 상태를 나타내는 변수
     
     var body: some View {
         ZStack {
             if viewModel.todayItems.isEmpty {
-                        // Empty 상태일 경우 EmptyView 표시
-                        EmptyView()
-                    } else {
-                        ScrollView {
-                            VStack(spacing: 8) {
-                                WakeUpHeaderView(wakeUpTime: "8 AM")
-                                    .padding(.leading, 50)
-                                    .padding(.bottom, 17)
-                                
-                                ForEach($viewModel.todayItems, id: \.wrappedValue.id) { item in
-                                    createTodayListItemView(for: item)
-                                }
-                                
-                                WindDownFooterView(windDownTime: "11 PM")
-                                    .padding(.leading, 50)
-                                    .padding(.top, 17)
-                            }
+                EmptyView()
+            } else {
+                ScrollView {
+                    VStack(spacing: 8) {
+                        WakeUpHeaderView(wakeUpTime: "8 AM")
+                            .padding(.leading, 50)
+                            .padding(.bottom, 17)
+                        
+                        ForEach($viewModel.todayItems, id: \.wrappedValue.id) { item in
+                            createTodayListItemView(for: item)
                         }
-                        .background(Color.grayBlack)
+                        
+                        WindDownFooterView(windDownTime: "11 PM")
+                            .padding(.leading, 50)
+                            .padding(.top, 17)
                     }
+                }
+                .background(Color.grayBlack)
+            }
             
             if showTodoAlert, let todo = selectTodo {
                 let todoBinding = Binding<Bool>(
@@ -95,14 +95,62 @@ struct TodayView: View {
                 .background(Color.black.opacity(0.4))
                 .edgesIgnoringSafeArea(.all)
             }
+            // 플로팅 버튼
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    ZStack {
+                        Circle()
+                            .frame(width: 52, height: 52)
+                            .foregroundColor(aiPlottingButtonpPressed ? Color.mainGreen : Color.gray09)
+                        
+                        Button {
+                            print("눌림")
+                            aiPlottingButtonpPressed.toggle()
+                            let apiService = PrioritizationAPIService()
+                            let request = PrioritizationRequest(targetDate: "2025-01-24")
+                            
+                            apiService.fetchPrioritization(request: request) { result in
+                                switch result {
+                                case .success(let response):
+                                    print("fetchPrioritization 성공")
+                                default:
+                                    print("fetchPrioritization 실패:")
+                                }
+                            }
+                        } label: {
+                            Image(.ic_prio)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 26, height: 26)
+                                .foregroundColor(aiPlottingButtonpPressed ? .white : .black)
+                        }
+                    }
+                    .padding(21)
+                }
+            }
+        }
+        .overlay {
+            if aiPlottingButtonpPressed {
+                NeonAnimationView(
+                    width: UIScreen.main.bounds.width * 0.97,
+                    height: UIScreen.main.bounds.height
+                )
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                        aiPlottingButtonpPressed = false
+                    }
+                }
+            }
         }
     }
-     
+    
     private func createTodayListItemView(for item: Binding<TodayItemDataModel>) -> some View {
         let currentItem = item.wrappedValue
         let isArrow = currentItem == viewModel.todayItems.first
         let isHighlighted = isTopPriorityItem(at: currentItem)
-
+        
         return TodayListItemView(
             item: item,
             isHighlighted: isHighlighted,
@@ -133,8 +181,8 @@ struct TodayView: View {
         }
         .onDrop(of: [.text], delegate: DropViewDelegate(item: item, draggedItem: $viewModel.dragTodayItem, onDrop: viewModel.dropActionForToday))
     }
-
-
+    
+    
     private func isTopPriorityItem(at item: TodayItemDataModel) -> Bool {
         guard case .todo(let todo) = item, !todo.isChecked else { return false }
         let uncheckedItems = viewModel.todayItems.filter {
@@ -147,14 +195,14 @@ struct TodayView: View {
 
 struct TodayListItemView: View {
     @Binding var item: TodayItemDataModel
-
+    
     var isHighlighted: Bool
     var isArrow: Bool
     var backgroundColor: Color
-
+    
     var onTodoTap: (ToDoListDataModel) -> Void
     var onScheduleTap: (ScheduleTotalResponseDataTest) -> Void
-
+    
     var body: some View {
         HStack {
             Image(.ic_progress)
