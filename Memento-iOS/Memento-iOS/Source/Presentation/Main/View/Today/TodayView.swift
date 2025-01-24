@@ -11,7 +11,7 @@ import MDSKit
 import MCalendar
 
 struct TodayView: View {
-    @ObservedObject var viewModel: WeeklyCalendarViewModel
+    @StateObject var viewModel: WeeklyCalendarViewModel
     
     @State private var selectTodo: ToDoListDataModel?
     @State private var selectSchedule: ScheduleTotalResponseDataTest?
@@ -22,28 +22,29 @@ struct TodayView: View {
     var body: some View {
         ZStack {
             if viewModel.todayItems.isEmpty {
-                        // Empty 상태일 경우 EmptyView 표시
-                        EmptyView()
-                    } else {
-                        ScrollView {
-                            VStack(spacing: 8) {
-                                WakeUpHeaderView(wakeUpTime: "8 AM")
-                                    .padding(.leading, 50)
-                                    .padding(.bottom, 17)
-                                
-                                ForEach($viewModel.todayItems, id: \.wrappedValue.id) { item in
-                                    createTodayListItemView(for: item)
-                                }
-                                
-                                WindDownFooterView(windDownTime: "11 PM")
-                                    .padding(.leading, 50)
-                                    .padding(.top, 17)
-                            }
+                // Empty 상태일 경우 EmptyView 표시
+                EmptyView()
+            } else {
+                ScrollView {
+                    VStack(spacing: 8) {
+                        WakeUpHeaderView(wakeUpTime: "8 AM")
+                            .padding(.leading, 50)
+                            .padding(.bottom, 17)
+                        
+                        ForEach($viewModel.todayItems, id: \.wrappedValue.id) { item in
+                            createTodayListItemView(for: item)
                         }
-                        .background(Color.grayBlack)
+                        
+                        WindDownFooterView(windDownTime: "11 PM")
+                            .padding(.leading, 50)
+                            .padding(.top, 17)
                     }
+                }
+                .background(Color.grayBlack)
+            }
             
-            if showTodoAlert, let todo = selectTodo {
+            if showTodoAlert,
+               let todo = selectTodo {
                 let todoBinding = Binding<Bool>(
                     get: {
                         if let index = viewModel.todayItems.firstIndex(where: { $0.id == todo.id }),
@@ -97,12 +98,12 @@ struct TodayView: View {
             }
         }
     }
-     
+    
     private func createTodayListItemView(for item: Binding<TodayItemDataModel>) -> some View {
         let currentItem = item.wrappedValue
         let isArrow = currentItem == viewModel.todayItems.first
         let isHighlighted = isTopPriorityItem(at: currentItem)
-
+        
         return TodayListItemView(
             item: item,
             isHighlighted: isHighlighted,
@@ -134,7 +135,7 @@ struct TodayView: View {
         .onDrop(of: [.text], delegate: DropViewDelegate(item: item, draggedItem: $viewModel.dragTodayItem, onDrop: viewModel.dropActionForToday))
     }
 
-
+    
     private func isTopPriorityItem(at item: TodayItemDataModel) -> Bool {
         guard case .todo(let todo) = item, !todo.isChecked else { return false }
         let uncheckedItems = viewModel.todayItems.filter {
@@ -147,14 +148,14 @@ struct TodayView: View {
 
 struct TodayListItemView: View {
     @Binding var item: TodayItemDataModel
-
+    
     var isHighlighted: Bool
     var isArrow: Bool
     var backgroundColor: Color
-
+    
     var onTodoTap: (ToDoListDataModel) -> Void
     var onScheduleTap: (ScheduleTotalResponseDataTest) -> Void
-
+    
     var body: some View {
         HStack {
             Image(.ic_progress)
@@ -177,10 +178,3 @@ struct TodayListItemView: View {
         .background(backgroundColor)
     }
 }
-
-//#Preview{
-//    TodayView(viewModel: WeeklyCalendarViewModel(
-//        mCalendarDataSource: MCalendarDataSource(),
-//        mEventDataSource: MEventDatasource()
-//    ))
-//}
