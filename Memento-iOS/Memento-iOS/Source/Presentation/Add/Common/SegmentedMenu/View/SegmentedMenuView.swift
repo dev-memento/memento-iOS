@@ -12,7 +12,6 @@ import MDSKit
 struct SegmentedMenuView: View {
 
     // MARK: - Properties
-
     @StateObject private var viewModel = SegmentedMenuViewModel()
 
     // MARK: - Body

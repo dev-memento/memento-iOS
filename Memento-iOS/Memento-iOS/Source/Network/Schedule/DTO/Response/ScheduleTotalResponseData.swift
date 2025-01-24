@@ -23,3 +23,4 @@ struct ScheduleTotalResponseDataTest: Codable, Equatable {
     let tagName: String
     let tagColorCode: String
 }
+
