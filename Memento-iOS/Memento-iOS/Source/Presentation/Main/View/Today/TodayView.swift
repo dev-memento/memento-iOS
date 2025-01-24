@@ -63,6 +63,7 @@ struct TodayView: View {
                 )
                 
                 ToDoAlertView(
+                    todoId: todo.id,
                     todoTitle: todo.toDoTitle,
                     deadline: todo.dueDate,
                     tag: "Work",
@@ -73,7 +74,8 @@ struct TodayView: View {
                     },
                     onEdit: {
                         showTodoAlert = false
-                    }
+                    },
+                    todoAPIService: TodoAPIService()
                 )
                 .background(Color.black.opacity(0.4))
                 .edgesIgnoringSafeArea(.all)
