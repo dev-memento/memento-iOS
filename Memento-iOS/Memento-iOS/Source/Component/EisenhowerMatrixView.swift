@@ -40,10 +40,12 @@ struct EisenhowerMatrixView: View {
                 .ignoresSafeArea()
             
             VStack {
-                HeaderView()
-                
-                TodoItemView(priority: $selectedPriority)
-                
+                HeaderView(viewType: viewType, onDone: {
+                    externalPriority = selectedPriority
+                })
+
+                TodoItemView(viewType: viewType, priority: $selectedPriority)
+
                 MatrixGridView(
                     priorities: $priorities,
                     selectedPriority: $selectedPriority,
@@ -57,18 +59,14 @@ struct EisenhowerMatrixView: View {
                 Spacer()
             }
         }
-        .onChange(of: selectedPriority) { newValue in
-            externalPriority = newValue  // 외부 Priority 업데이트
-        }
-        .onChange(of: externalPriority) { newValue in
-            selectedPriority = newValue  // 외부 Priority 변경 시 내부 상태 업데이트
-        }
     }
 }
 
 struct HeaderView: View {
 
     let viewType: ViewType
+    let onDone: () -> Void
+    @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
         HStack {
@@ -81,6 +79,7 @@ struct HeaderView: View {
                 }
             case .edit:
                 Button {
+                    presentationMode.wrappedValue.dismiss()
                 } label: {
                     Text("Cancel")
                         .applyFont(.body_r_16)
@@ -92,7 +91,8 @@ struct HeaderView: View {
             Spacer()
             
             Button {
-                // Action
+                onDone()
+                presentationMode.wrappedValue.dismiss()
             } label: {
                 Text("Done")
                     .applyFont(.body_r_16)
