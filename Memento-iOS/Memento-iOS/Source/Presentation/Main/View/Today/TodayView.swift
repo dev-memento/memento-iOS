@@ -215,6 +215,7 @@ struct TodayListItemView: View {
             if case .schedule(let schedule) = item {
                 ScheduleListCell(schedule: schedule)
                     .contentShape(Rectangle())
+                    .padding(.trailing, -20) 
                     .onTapGesture {
                         onScheduleTap(schedule)
                     }
@@ -223,6 +224,6 @@ struct TodayListItemView: View {
             Spacer()
         }
         .padding(.horizontal)
-        .background(backgroundColor)
+        .background(.clear)
     }
 }
