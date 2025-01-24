@@ -27,7 +27,7 @@ struct TodayView: View {
             } else {
                 ScrollView {
                     VStack(spacing: 8) {
-                        WakeUpHeaderView(wakeUpTime: "8 AM")
+                        WakeUpHeaderView(wakeUpTime: viewModel.wakeUpTime)
                             .padding(.leading, 50)
                             .padding(.bottom, 17)
                         
@@ -35,7 +35,7 @@ struct TodayView: View {
                             createTodayListItemView(for: item)
                         }
                         
-                        WindDownFooterView(windDownTime: "11 PM")
+                        WindDownFooterView(windDownTime: viewModel.windDownTime)
                             .padding(.leading, 50)
                             .padding(.top, 17)
                     }

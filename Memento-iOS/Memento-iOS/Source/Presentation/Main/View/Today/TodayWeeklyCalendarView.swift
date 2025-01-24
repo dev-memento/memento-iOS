@@ -87,6 +87,7 @@ struct TodayWeeklyCalendarView: View {
             viewModel.getTagsAPI()
             viewModel.getSchedulesTotalAPI()
             viewModel.getSchedulesAllDayAPI()
+            viewModel.userUptimeAPI()
             viewModel.makeDummyEvent()
             makeIndex()
         }
@@ -162,6 +163,7 @@ struct TodayWeeklyCalendarView: View {
         mCalendarDataSource: MCalendarDataSource(),
         mEventDataSource: MEventDatasource(),
         scheduleService: ScheduleAPIService(),
-        tagService: TagAPIService()
+        tagService: TagAPIService(),
+        userUptimeService: UserUptimeAPIService()
     ))
 }
