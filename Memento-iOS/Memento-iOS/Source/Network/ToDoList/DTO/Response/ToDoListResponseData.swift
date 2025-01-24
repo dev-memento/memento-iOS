@@ -5,8 +5,8 @@
 //  Created by 이세민 on 1/23/25.
 //
 
-struct ToDoListTotalResponseData: Codable, Equatable {
-    let data: [ToDoListTotalResponseDataTest]
+struct ToDoListTotalResponseData: Codable {
+    let toDoGetResponses: [ToDoListTotalResponseDataTest]
 }
 
 struct ToDoListTotalResponseDataTest: Codable, Equatable {
@@ -16,7 +16,7 @@ struct ToDoListTotalResponseDataTest: Codable, Equatable {
     let startDate: String
     let endDate: String
     let isCompleted: Bool
-    let priorityValue: Int
+    let priorityValue: Double
     let priorityType: String
     let tagName: String
     let tagColor: String
