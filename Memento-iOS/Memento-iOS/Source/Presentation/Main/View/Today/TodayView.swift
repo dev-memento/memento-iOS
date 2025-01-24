@@ -18,11 +18,11 @@ struct TodayView: View {
     
     @State private var showTodoAlert = false
     @State private var showScheduleAlert = false
+    @State private var aiPlottingButtonpPressed: Bool = false // 버튼 상태를 나타내는 변수
     
     var body: some View {
         ZStack {
             if viewModel.todayItems.isEmpty {
-                // Empty 상태일 경우 EmptyView 표시
                 EmptyView()
             } else {
                 ScrollView {
@@ -95,6 +95,54 @@ struct TodayView: View {
                 )
                 .background(Color.black.opacity(0.4))
                 .edgesIgnoringSafeArea(.all)
+            }
+            // 플로팅 버튼
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    ZStack {
+                        Circle()
+                            .frame(width: 52, height: 52)
+                            .foregroundColor(aiPlottingButtonpPressed ? Color.mainGreen : Color.gray09)
+                        
+                        Button {
+                            print("눌림")
+                            aiPlottingButtonpPressed.toggle()
+                            let apiService = PrioritizationAPIService()
+                            let request = PrioritizationRequest(targetDate: "2025-01-24")
+                            
+                            apiService.fetchPrioritization(request: request) { result in
+                                switch result {
+                                case .success(let response):
+                                    print("fetchPrioritization 성공")
+                                default:
+                                    print("fetchPrioritization 실패:")
+                                }
+                            }
+                        } label: {
+                            Image(.ic_prio)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 26, height: 26)
+                                .foregroundColor(aiPlottingButtonpPressed ? .white : .black)
+                        }
+                    }
+                    .padding(21)
+                }
+            }
+        }
+        .overlay {
+            if aiPlottingButtonpPressed {
+                NeonAnimationView(
+                    width: UIScreen.main.bounds.width * 0.97,
+                    height: UIScreen.main.bounds.height
+                )
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                        aiPlottingButtonpPressed = false
+                    }
+                }
             }
         }
     }

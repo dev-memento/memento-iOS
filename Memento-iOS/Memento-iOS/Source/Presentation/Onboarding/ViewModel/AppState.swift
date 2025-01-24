@@ -9,7 +9,6 @@ import Foundation
 
 class AppState: ObservableObject {
     @Published var isLoggedIn: Bool = false
-      @Published var showLottieAnimation: Bool = true
     
     init() {
         do {
