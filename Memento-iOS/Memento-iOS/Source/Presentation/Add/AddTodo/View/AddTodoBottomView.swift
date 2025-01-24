@@ -122,6 +122,7 @@ struct AddTodoBottomView: View {
     private var enterButton: some View {
         Button(action: {
             todoViewModel.createTodo {
+                postMakeScheduleNotiFication()
                 dismiss()
             }
         }) {
@@ -132,6 +133,11 @@ struct AddTodoBottomView: View {
             )
         }
         .disabled(viewModel.isTextEmpty)
+    }
+    func postMakeScheduleNotiFication() {
+        NotificationCenter.default.post(name: NSNotification.Name("postScheduleComplete"),
+                                        object: nil,
+                                        userInfo: nil)
     }
 
     // MARK: - Helpers

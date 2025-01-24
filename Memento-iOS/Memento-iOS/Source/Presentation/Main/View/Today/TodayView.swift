@@ -34,7 +34,7 @@ struct TodayView: View {
                         ForEach($viewModel.todayItems, id: \.wrappedValue.id) { item in
                             createTodayListItemView(for: item)
                         }
-                        
+
                         WindDownFooterView(windDownTime: viewModel.windDownTime)
                             .padding(.leading, 50)
                             .padding(.top, 17)
@@ -210,12 +210,23 @@ struct TodayListItemView: View {
                 .padding(.leading, -10)
                 .padding(.trailing, 5)
                 .opacity(isArrow ? 1 : 0)
-            
-            // ScheduleListCell 추가
-            if case .schedule(let schedule) = item {
+
+            switch item {
+            case .todo(let todo):
+                ToDoListCell(
+                    toDoList: todo.mapToToDoItem(),
+                    isHighlighted: isHighlighted,
+                    backgroundColor: backgroundColor
+                )
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    onTodoTap(todo)
+                }
+                
+            case .schedule(let schedule):
                 ScheduleListCell(schedule: schedule)
                     .contentShape(Rectangle())
-                    .padding(.trailing, -20) 
+                    .padding(.trailing, -20)
                     .onTapGesture {
                         onScheduleTap(schedule)
                     }

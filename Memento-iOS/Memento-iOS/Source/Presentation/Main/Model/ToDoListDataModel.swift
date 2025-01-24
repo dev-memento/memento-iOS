@@ -8,7 +8,7 @@
 import Foundation
 
 struct ToDoListDataModel: Identifiable, Equatable, Hashable {
-    var id = Int()
+    var id: Int
     var colorType: String
     var toDoTitle: String
     var date: String
