@@ -23,6 +23,7 @@ struct TabBarView: View {
         
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
+        
     }
     
     var body: some View {
@@ -80,6 +81,10 @@ struct TabBarView: View {
             SegmentedMenuView()
                 .presentationDetents([.fraction(0.8)])
                 .presentationDragIndicator(.hidden)
+        }
+        .onAppear {
+            calendarViewModel.getToDoListTotalAPI()
+            calendarViewModel.getSchedulesTotalAPI()
         }
     }
 }
