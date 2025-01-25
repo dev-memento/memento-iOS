@@ -57,17 +57,25 @@ struct ToDoListView: View {
                 viewModel.getToDoListTotalAPI()
             }
             
-            if showTodoAlert {
+            if showTodoAlert, let todo = selectedItem {
                 ToDoAlertView(
-                    todoId: selectedItem?.mapToToDoItem().id ?? 1,
-                    todoTitle: selectedItem?.mapToToDoItem().description ?? "",
-                    deadline: selectedItem?.mapToToDoItem().endDate ?? "",
-                    tag: selectedItem?.mapToToDoItem().tagColor ?? "",
-                    priority: selectedItem?.priorityType ?? .none,
+                    todoId: todo.mapToToDoItem().id,
+                    todoTitle: todo.mapToToDoItem().description,
+                    deadline: todo.mapToToDoItem().endDate ?? "",
+                    tag: todo.mapToToDoItem().tagColor ?? "",
+                    priority: todo.priorityType ?? .none,
                     isChecked: $isChecked,
                     onDelete: {
-                        viewModel.getToDoListTotalAPI()
+                        if let date = viewModel.toDoListItemDict.first(where: { $0.value.contains(where: { $0.id == selectedItem?.id }) })?.key,
+                           let index = viewModel.toDoListItemDict[date]?.firstIndex(where: { $0.id == selectedItem?.id }) {
+                            viewModel.toDoListItemDict[date]?.remove(at: index)
+                            
+                            if viewModel.toDoListItemDict[date]?.isEmpty == true {
+                                viewModel.toDoListItemDict.removeValue(forKey: date)
+                            }
+                        }
                         showTodoAlert = false
+                        viewModel.getToDoListTotalAPI()
                     },
                     onEdit: {
                         showTodoAlert = false
@@ -77,6 +85,7 @@ struct ToDoListView: View {
                 .background(Color.black.opacity(0.4))
                 .edgesIgnoringSafeArea(.all)
             }
+            
         }
     }
     
