@@ -125,7 +125,7 @@ struct ScheduleAlertView: View {
     private func deleteSchedule() {
         isLoading = true
         scheduleAPIService.deleteSchedule(scheduleId: scheduleId) { result in
-            print("DEBUG: Requesting DELETE for Todo ID: \(scheduleId)")
+            print("DEBUG: Requesting DELETE for Schedule ID: \(scheduleId)")
             DispatchQueue.main.async {
                 isLoading = false
                 switch result {
