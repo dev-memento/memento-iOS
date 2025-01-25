@@ -10,6 +10,7 @@ import Foundation
 import Moya
 
 protocol TodoAPIServiceProtocol {
+    func deleteTodo(todoId: Int, completion: @escaping (NetworkResult<Void>) -> Void)
     func createTodo(
         startDate: String,
         description: String,
@@ -24,6 +25,28 @@ protocol TodoAPIServiceProtocol {
 final class TodoAPIService: BaseAPIService, TodoAPIServiceProtocol {
 
     private let provider = MoyaProvider<TodoTargetType>(plugins: [MoyaPlugin.shared])
+
+    func deleteTodo(todoId: Int, completion: @escaping (NetworkResult<Void>) -> Void) {
+        provider.request(.deleteTodo(todoId: todoId)) { result in
+            print("DEBUG: Requesting DELETE for Todo ID: \(todoId)")
+            switch result {
+            case .success(let response):
+                let result: NetworkResult<Void> = self.fetchNetworkResult(
+                    statusCode: response.statusCode
+                )
+                print("DEBUG: \(result.stateDescription)")
+                completion(result)
+            case .failure(let error):
+                if let response = error.response {
+                    let result: NetworkResult<Void> = self.fetchNetworkResult(
+                        statusCode: response.statusCode
+                    )
+                    print("DEBUG: \(result.stateDescription)")
+                    completion(result)
+                }
+            }
+        }
+    }
 
     func createTodo(
         startDate: String,

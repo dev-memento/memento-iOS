@@ -8,6 +8,7 @@
 import Moya
 
 enum TodoTargetType {
+    case deleteTodo(todoId: Int)
     case createTodo(
         startDate: String,
         description: String,
@@ -33,15 +34,27 @@ extension TodoTargetType: BaseTargetType {
     }
 
     var path: String {
-        return utilPath.rawValue
+        switch self {
+        case .deleteTodo(let todoId):
+            return "\(utilPath.rawValue)/\(todoId)"
+        case .createTodo:
+            return utilPath.rawValue
+        }
     }
 
     var method: Moya.Method {
-        return .post
+        switch self {
+        case .deleteTodo:
+            return .delete
+        case .createTodo:
+            return .post
+        }
     }
 
     var requestBodyParameter: Codable? {
         switch self {
+        case .deleteTodo:
+            return nil
         case .createTodo(
             let startDate,
             let description,
