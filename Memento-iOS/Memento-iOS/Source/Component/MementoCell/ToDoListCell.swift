@@ -25,7 +25,6 @@ struct ToDoListCell: View {
                 onCheckChanged(toDoList.isCompleted)
             }
             
-            
             VStack(alignment: .leading) {
                 ToDoTitleView(title: toDoList.description, isChecked: toDoList.isCompleted)
                 DueDateView(endDate: toDoList.endDate, toDoType: toDoList.toDoType)

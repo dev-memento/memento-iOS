@@ -78,19 +78,11 @@ struct ToDoListView: View {
     }
     
     private func isTopPriorityItem(at item: ToDoListDataModel, items: [ToDoListDataModel]) -> Bool {
-        // Check if the item is not checked
         guard !item.isChecked else { return false }
-
-        // Find the index of the current item
-        guard let currentIndex = items.firstIndex(where: { $0 == item }) else {
-            return false
-        }
-
-        // Find the first unchecked item (before the current item)
-        let firstUncheckedItemIndex = items.prefix(upTo: currentIndex).firstIndex { !$0.isChecked }
         
-        // If the current item is the first unchecked one in the list, return true
-        return firstUncheckedItemIndex == nil
+        let uncheckedItems = items.filter { !$0.isChecked }
+        
+        return uncheckedItems.first == item
     }
     
     private func makeMonthDate(month: String) -> String {
