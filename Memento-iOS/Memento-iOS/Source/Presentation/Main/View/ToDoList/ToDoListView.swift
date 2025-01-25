@@ -31,7 +31,16 @@ struct ToDoListView: View {
                                     item: event.mapToToDoItem(),
                                     isHighlighted: isTopPriorityItem(at: event, items: events),
                                     backgroundColor: Color.grayBlack,
-                                    onTodoTap: { selectedItem in }
+                                    onTodoTap: { selectedItem in },
+                                    onCheckChanged: { isChecked in
+                                        if isChecked {
+                                            if let index = viewModel.toDoListItemDict[date]?.firstIndex(where: { $0.id == event.id }) {
+                                                viewModel.toDoListItemDict[date]?.remove(at: index)
+                                                viewModel.toDoListItemDict[date]?.append(event)
+                                            }
+                                        }
+                                        viewModel.updateToDoCompletion(toDoId: event.id)
+                                    }
                                 )
                                 .onTapGesture {
                                     selectedItem = event
@@ -73,11 +82,10 @@ struct ToDoListView: View {
     
     private func isTopPriorityItem(at item: ToDoListDataModel, items: [ToDoListDataModel]) -> Bool {
         guard !item.isChecked else { return false }
-        guard let currentIndex = items.firstIndex(where: { $0 == item }) else {
-            return false
-        }
-        let uncheckedCount = items.prefix(upTo: currentIndex).filter { !$0.isChecked }.count
-        return uncheckedCount == 0
+        
+        let uncheckedItems = items.filter { !$0.isChecked }
+        
+        return uncheckedItems.first == item
     }
     
     private func makeMonthDate(month: String) -> String {
@@ -133,4 +141,39 @@ struct ToDoListDateView: View {
             .padding(.bottom, 8)
         }
     }
+}
+
+struct ToDoListItemView: View {
+    var item: ToDoListTotalResponseDataTest
+    
+    var isHighlighted: Bool
+    var backgroundColor: Color
+    
+    var onTodoTap: (ToDoListTotalResponseData) -> Void
+    var onCheckChanged: (Bool) -> Void
+    
+    var body: some View {
+        VStack(spacing: 10) {
+            ToDoListCell(
+                toDoList: item,
+                isHighlighted: isHighlighted,
+                backgroundColor: backgroundColor,
+                onCheckChanged: onCheckChanged
+            )
+        }
+        .padding(.bottom, 8)
+    }
+}
+
+#Preview {
+    ToDoListWeeklyCalendarView(
+        viewModel: WeeklyCalendarViewModel(
+            mCalendarDataSource: MCalendarDataSource(),
+            mEventDataSource: MEventDatasource(),
+            scheduleService: ScheduleAPIService(),
+            tagService: TagAPIService(),
+            toDoListService: ToDoListAPIService(),
+            userUptimeService: UserUptimeAPIService()
+        )
+    )
 }

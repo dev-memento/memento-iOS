@@ -12,10 +12,7 @@ import Moya
 
 protocol ToDoListAPIServiceProtocol {
     func getToDoList(completion: @escaping (NetworkResult<BaseDTO<ToDoListTotalResponseData>>) -> Void)
-}
-
-extension ToDoListAPIServiceProtocol {
-    typealias ToDoListResponseDTO = BaseDTO<ToDoListTotalResponseData>
+    func updateToDoCompletion(toDoId: Int, completion: @escaping (NetworkResult<BaseDTO<ToDoListCompletedResponseData>>) -> Void)
 }
 
 // MARK: - ToDoListAPIService
@@ -38,6 +35,28 @@ final class ToDoListAPIService: BaseAPIService, ToDoListAPIServiceProtocol {
             case .failure(let error):
                 if let response = error.response {
                     let networkResult: NetworkResult<BaseDTO<ToDoListTotalResponseData>> = self.fetchNetworkResult(
+                        statusCode: response.statusCode,
+                        data: response.data
+                    )
+                    completion(networkResult)
+                }
+            }
+        }
+    }
+    
+    // To-Do List 완료 여부 API 연결
+    func updateToDoCompletion(toDoId: Int, completion: @escaping (NetworkResult<BaseDTO<ToDoListCompletedResponseData>>) -> Void) {
+        provider.request(.updateToDoCompletion(toDoId: toDoId)) { result in
+            switch result {
+            case .success(let response):
+                let networkResult: NetworkResult<BaseDTO<ToDoListCompletedResponseData>> = self.fetchNetworkResult(
+                    statusCode: response.statusCode,
+                    data: response.data
+                )
+                completion(networkResult)
+            case .failure(let error):
+                if let response = error.response {
+                    let networkResult: NetworkResult<BaseDTO<ToDoListCompletedResponseData>> = self.fetchNetworkResult(
                         statusCode: response.statusCode,
                         data: response.data
                     )

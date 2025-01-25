@@ -11,6 +11,7 @@ import Moya
 
 enum ToDoListTargetType {
     case getToDoList
+    case updateToDoCompletion(toDoId: Int)
 }
 
 extension ToDoListTargetType: BaseTargetType {
@@ -23,11 +24,16 @@ extension ToDoListTargetType: BaseTargetType {
     }
     
     var pathParameter: String? {
-        return .none
+        switch self {
+        case .updateToDoCompletion(let toDoId):
+            return "/\(toDoId)/completion"
+        default:
+            return nil
+        }
     }
     
     var queryParameter: [String: Any]? {
-        return .none
+        return nil
     }
     
     var requestBodyParameter: Codable? {
@@ -35,10 +41,20 @@ extension ToDoListTargetType: BaseTargetType {
     }
     
     var path: String {
-        return utilPath.rawValue
+        switch self {
+        case .getToDoList:
+            return utilPath.rawValue
+        case .updateToDoCompletion:
+            return "\(utilPath.rawValue)\(pathParameter ?? "")"
+        }
     }
     
     var method: Moya.Method {
-        return .get
+        switch self {
+        case .getToDoList:
+            return .get
+        case .updateToDoCompletion:
+            return .patch
+        }
     }
 }
