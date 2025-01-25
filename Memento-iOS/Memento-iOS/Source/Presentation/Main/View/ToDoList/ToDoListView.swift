@@ -59,17 +59,20 @@ struct ToDoListView: View {
             
             if showTodoAlert {
                 ToDoAlertView(
+                    todoId: selectedItem?.mapToToDoItem().id ?? 1,
                     todoTitle: selectedItem?.mapToToDoItem().description ?? "",
                     deadline: selectedItem?.mapToToDoItem().endDate ?? "",
                     tag: selectedItem?.mapToToDoItem().tagColor ?? "",
                     priority: selectedItem?.priorityType ?? .none,
                     isChecked: $isChecked,
                     onDelete: {
+                        viewModel.getToDoListTotalAPI()
                         showTodoAlert = false
                     },
                     onEdit: {
                         showTodoAlert = false
-                    }
+                    },
+                    todoAPIService: TodoAPIService()
                 )
                 .background(Color.black.opacity(0.4))
                 .edgesIgnoringSafeArea(.all)

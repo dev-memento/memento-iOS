@@ -64,7 +64,6 @@
 				Source/Network/Onboarding/UserUptimeAPIService.swift,
 				Source/Network/Schedule/DTO/Request/PostCreateScheduleRequest.swift,
 				Source/Network/Schedule/DTO/Response/PostCreateScheduleResponseData.swift,
-				Source/Network/Todo/DTO/Request/TodoRequest.swift,
 				Source/Network/Todo/TodoAPIService.swift,
 				Source/Network/Todo/TodoTargetType.swift,
 				Source/Network/ToDoList/DTO/Response/ToDoListResponseData.swift,

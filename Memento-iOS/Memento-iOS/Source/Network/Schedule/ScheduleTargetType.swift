@@ -15,6 +15,7 @@ enum ScheduleTargetType {
     case getSchedules
     case getSchedulesDetail
     case postCreateSchedule(body: PostCreateScheduleRequest)
+    case deleteSchedule(scheduleId: Int)
 }
 
 extension ScheduleTargetType: BaseTargetType {
@@ -49,6 +50,8 @@ extension ScheduleTargetType: BaseTargetType {
             return utilPath.rawValue + "/total"
         case .getSchedulesAllDay:
             return utilPath.rawValue + "/all-days"
+        case .deleteSchedule(let scheduleId):
+            return utilPath.rawValue + "/\(scheduleId)"
         default:
             return utilPath.rawValue
         }
@@ -58,6 +61,8 @@ extension ScheduleTargetType: BaseTargetType {
         switch self {
         case .postCreateSchedule(_):
             return .post
+        case .deleteSchedule:
+            return .delete
         default:
             return .get
         }

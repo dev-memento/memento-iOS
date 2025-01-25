@@ -15,7 +15,7 @@ enum TodayItemDataModel: Identifiable, Equatable {
     var id: Int {
         switch self {
         case .todo(let todo):
-            return todo.id.hashValue
+            return todo.id
         case .schedule(let schedule):
             return schedule.id
         }
@@ -34,6 +34,17 @@ enum TodayItemDataModel: Identifiable, Equatable {
             if case .todo = self {
                 self = .todo(newValue)
             }
+        }
+    }
+}
+
+extension TodayItemDataModel {
+    func mapToToDoResponse() -> ToDoListTotalResponseDataTest? {
+        switch self {
+        case .todo(let todo):
+            return todo.mapToToDoItem()
+        case .schedule:
+            return nil
         }
     }
 }

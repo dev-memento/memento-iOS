@@ -11,7 +11,7 @@ import MDSKit
 import MCalendar
 
 struct TodayView: View {
-    @StateObject var viewModel: WeeklyCalendarViewModel
+    @ObservedObject var viewModel: WeeklyCalendarViewModel
     
     @State private var selectTodo: ToDoListDataModel?
     @State private var selectSchedule: ScheduleTotalResponseDataTest?
@@ -34,7 +34,7 @@ struct TodayView: View {
                         ForEach($viewModel.todayItems, id: \.wrappedValue.id) { item in
                             createTodayListItemView(for: item)
                         }
-                        
+
                         WindDownFooterView(windDownTime: viewModel.windDownTime)
                             .padding(.leading, 50)
                             .padding(.top, 17)
@@ -63,6 +63,7 @@ struct TodayView: View {
                 )
                 
                 ToDoAlertView(
+                    todoId: todo.id,
                     todoTitle: todo.toDoTitle,
                     deadline: todo.dueDate,
                     tag: "Work",
@@ -73,7 +74,8 @@ struct TodayView: View {
                     },
                     onEdit: {
                         showTodoAlert = false
-                    }
+                    },
+                    todoAPIService: TodoAPIService()
                 )
                 .background(Color.black.opacity(0.4))
                 .edgesIgnoringSafeArea(.all)
@@ -81,17 +83,27 @@ struct TodayView: View {
             
             if showScheduleAlert, let schedule = selectSchedule {
                 ScheduleAlertView(
+                    scheduleId: schedule.id,
                     scheduleTitle: schedule.description,
                     startDate: schedule.startDate,
                     endDate: schedule.endDate,
                     tag: "SOPT",
                     source: "Notion",
                     onDelete: {
+                        if let index = viewModel.todayItems.firstIndex(where: {
+                            if case .schedule(let s) = $0 {
+                                return s.id == schedule.id
+                            }
+                            return false
+                        }) {
+                            viewModel.todayItems.remove(at: index)
+                        }
                         showScheduleAlert = false
                     },
                     onEdit: {
                         showScheduleAlert = false
-                    }
+                    },
+                    scheduleAPIService: ScheduleAPIService()
                 )
                 .background(Color.black.opacity(0.4))
                 .edgesIgnoringSafeArea(.all)
@@ -172,7 +184,9 @@ struct TodayView: View {
                     scheduleType: schedule.scheduleType,
                     order: schedule.order,
                     tagName: schedule.tagName,
-                    tagColorCode: schedule.tagColorCode)
+                    tagColorCode: schedule.tagColorCode
+                )
+                showScheduleAlert = true
             }
         )
         .padding(.horizontal)
@@ -210,12 +224,23 @@ struct TodayListItemView: View {
                 .padding(.leading, -10)
                 .padding(.trailing, 5)
                 .opacity(isArrow ? 1 : 0)
-            
-            // ScheduleListCell 추가
-            if case .schedule(let schedule) = item {
+
+            switch item {
+            case .todo(let todo):
+                ToDoListCell(
+                    toDoList: todo.mapToToDoItem(),
+                    isHighlighted: isHighlighted,
+                    backgroundColor: backgroundColor
+                )
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    onTodoTap(todo)
+                }
+                
+            case .schedule(let schedule):
                 ScheduleListCell(schedule: schedule)
                     .contentShape(Rectangle())
-                    .padding(.trailing, -20) 
+                    .padding(.trailing, -20)
                     .onTapGesture {
                         onScheduleTap(schedule)
                     }

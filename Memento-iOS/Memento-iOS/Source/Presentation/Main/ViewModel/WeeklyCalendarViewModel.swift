@@ -43,6 +43,7 @@ final class WeeklyCalendarViewModel: ObservableObject {
         addOffsetDebounce()
         bindSelectedDateSubject()
         setSendNotificationObserver()
+        preProcessingForAllEvents()
     }
     
     deinit {
@@ -68,9 +69,55 @@ final class WeeklyCalendarViewModel: ObservableObject {
     
     private var cancellable = Set<AnyCancellable>()
     
+    @Published var getAllTodoList: Bool = false
+    @Published var getAllScheduleList: Bool = false
+    
     
     private let dateFormatter = DateFormatter()
     @Published var toDoListItemDict: [MCalendarDataModel: [ToDoListDataModel]] = [:]
+    
+    private func preProcessingForAllEvents() {
+        Publishers.CombineLatest($getAllTodoList, $getAllScheduleList)
+            .filter { $0 && $1 }
+            .sink { [weak self] _ in
+                guard let self else { return }
+                self.mapToTodayItemList()
+            }
+            .store(in: &cancellable)
+    }
+    
+    func mapToTodayItemList() {
+//        todayItems = schedules.map { .schedule(
+//            .init(
+//                id: $0.id,
+//                description: $0.description,
+//                startDate: $0.startDate,
+//                endDate: $0.endDate,
+//                timeDuration: $0.timeDuration,
+//                isAllDay: $0.isAllDay,
+//                scheduleType: $0.scheduleType,
+//                order: $0.order,
+//                tagName: $0.tagName,
+//                tagColorCode: $0.tagColorCode
+//            )
+//        )}
+//        
+//        todayItems = toDoListItems.map {
+//            .todo(
+//                .init(
+//                    id: $0.id,
+//                    colorType: $0.colorType,
+//                    toDoTitle: $0.toDoTitle,
+//                    date: $0.date,
+//                    dueDate: $0.dueDate,
+//                    priorityType: $0.priorityType,
+//                    isChecked: $0.isChecked
+//                )
+//            )
+//        }
+        getAllTodoList = false
+        getAllScheduleList = false
+    }
     
     func preprocessingForEventDate() {
         for date in mCallendarDataSource.wholeMonthDate {
@@ -113,7 +160,8 @@ final class WeeklyCalendarViewModel: ObservableObject {
     
     @objc
     private func didReceiveNotification() {
-        self.getSchedulesTotalAPI()
+
+        self.getAllEvents()
     }
 }
 
@@ -157,6 +205,11 @@ extension WeeklyCalendarViewModel {
 }
 
 extension WeeklyCalendarViewModel {
+    func getAllEvents() {
+        getSchedulesTotalAPI()
+        getToDoListTotalAPI()
+    }
+    
     func getSchedulesTotalAPI() {
         scheduleService.getSchedulesTotal { [weak self] result in
             switch result {
@@ -164,6 +217,7 @@ extension WeeklyCalendarViewModel {
                 DispatchQueue.main.async {
                     if let scheduleData = response?.data.scheduleWithOrderInfos {
                         self?.schedules = scheduleData
+                        self?.getAllScheduleList = true
                     } else {
                         print("데이터변환 실패")
                         self?.schedules = []
@@ -204,6 +258,7 @@ extension WeeklyCalendarViewModel {
                                 isChecked: item.isCompleted
                             )
                         }
+                        self?.getAllTodoList = true
                     } else {
                         print("데이터변환 실패")
                         self?.toDoListItems = []
@@ -283,12 +338,13 @@ extension Date {
 
 extension WeeklyCalendarViewModel {
     func filterSchedules(for date: Date) {
+        todayItems = []
         // 1) "하루의 시작"과 "하루의 끝" 구하기
         let dayStart = date.startOfDay
         let dayEnd = date.endOfDay
         
         // 2) schedules 배열에서 일정이 하루라도 겹치는 것만 필터링
-        todayItems = schedules.filter { schedule in
+        let scheudle = schedules.filter { schedule in
             guard
                 let start = toDateFromString(schedule.startDate),
                 let end   = toDateFromString(schedule.endDate)
@@ -317,6 +373,36 @@ extension WeeklyCalendarViewModel {
                 )
             )
         }
+        
+        let today = toDoListItems.filter { todoItem in
+            guard
+                let start = makeDateToString(todoItem.date),
+                let end   = makeDateToString(todoItem.dueDate)
+            else {
+                print("💔날짜 변환 실패 \(todoItem)💔")
+                return false
+            }
+            
+            // 3) 일정이 [dayStart, dayEnd] 범위와 겹치는지 확인
+            //    일정의 시작 ≤ dayEnd && 일정의 끝 ≥ dayStart
+            return start <= dayEnd && end >= dayStart
+        }
+        .map {
+            TodayItemDataModel
+                .todo(
+                    .init(
+                        id: $0.id,
+                        colorType: $0.colorType,
+                        toDoTitle: $0.toDoTitle,
+                        date: $0.date,
+                        dueDate: $0.dueDate,
+                        priorityType: $0.priorityType,
+                        isChecked: $0.isChecked
+                    )
+                )
+        }
+        todayItems.append(contentsOf: scheudle)
+        todayItems.append(contentsOf: today)
     }
     
     private func toDateFromString(_ date: String) -> Date? {
@@ -331,6 +417,12 @@ extension WeeklyCalendarViewModel {
         }
     }
     
+    private func makeDateToString(_ date: String) -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.date(from: date)
+    }
+        
 }
 
 extension String {

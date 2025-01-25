@@ -25,7 +25,7 @@ final class AddTodoViewModel: ObservableObject {
         todoAPIService.createTodo(
             startDate: startDate,
             description: description,
-            endDate: endDate,
+            endDate: startDate,
             tagId: tagId,
             priorityUrgency: priorityUrgency,
             priorityImportance: priorityImportance

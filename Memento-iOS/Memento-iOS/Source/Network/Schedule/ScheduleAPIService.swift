@@ -17,6 +17,7 @@ protocol ScheduleAPIServiceProtocol {
     func getSchedules(completion: @escaping (NetworkResult<ScheduleResponseDTO>) -> Void)
     func getSchedulesDetail(completion: @escaping (NetworkResult<ScheduleDetailResponseDTO>) -> Void)
     func postCreateSchedule(bodyParam: PostCreateScheduleRequest, completion: @escaping (NetworkResult<PostCreateScheduleResponseDTO>) -> Void)
+    func deleteSchedule(scheduleId: Int, completion: @escaping (NetworkResult<Void>) -> Void)
 }
 
 extension ScheduleAPIServiceProtocol {
@@ -124,5 +125,26 @@ final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
             
         })
     }
-   
+
+    func deleteSchedule(scheduleId: Int, completion: @escaping (NetworkResult<Void>) -> Void) {
+        provider.request(.deleteSchedule(scheduleId: scheduleId)) { result in
+            print("DEBUG: Requesting DELETE for Schedule ID: \(scheduleId)")
+            switch result {
+            case .success(let response):
+                let result: NetworkResult<Void> = self.fetchNetworkResult(
+                    statusCode: response.statusCode
+                )
+                print("DEBUG: \(result.stateDescription)")
+                completion(result)
+            case .failure(let error):
+                if let response = error.response {
+                    let result: NetworkResult<Void> = self.fetchNetworkResult(
+                        statusCode: response.statusCode
+                    )
+                    print("DEBUG: \(result.stateDescription)")
+                    completion(result)
+                }
+            }
+        }
+    }
 }

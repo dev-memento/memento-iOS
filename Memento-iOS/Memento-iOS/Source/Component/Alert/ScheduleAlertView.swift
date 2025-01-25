@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ScheduleAlertView: View {
+
+    let scheduleId: Int
     let scheduleTitle: String
     let startDate: String
     let endDate: String
@@ -16,7 +18,10 @@ struct ScheduleAlertView: View {
     
     var onDelete: () -> Void
     var onEdit: () -> Void
-    
+    var scheduleAPIService: ScheduleAPIServiceProtocol
+
+    @State private var isLoading: Bool = false
+
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -104,7 +109,7 @@ struct ScheduleAlertView: View {
             Spacer()
             
             HStack(spacing: 15) {
-                DeleteButton(onDelete: onDelete)
+                DeleteButton(onDelete: deleteSchedule)
                 EditButton(onEdit: onEdit)
             }
             .padding(.bottom, 26)
@@ -114,10 +119,36 @@ struct ScheduleAlertView: View {
         .background(Color.gray10)
         .cornerRadius(2)
     }
+
+    // MARK: - API
+
+    private func deleteSchedule() {
+        isLoading = true
+        scheduleAPIService.deleteSchedule(scheduleId: scheduleId) { result in
+            print("DEBUG: Requesting DELETE for Schedule ID: \(scheduleId)")
+            DispatchQueue.main.async {
+                isLoading = false
+                switch result {
+                case .success:
+                    onDelete()
+                    print("DEBUG: Schedule 삭제 성공")
+                case .badRequest:
+                    print("DEBUG: 잘못된 요청입니다. - Schedule 삭제 실패")
+                case .notFound:
+                    print("DEBUG: 잘못된 요청입니다. - Schedule 삭제 실패")
+                case .serverError:
+                    print("DEBUG: 내부 서버 에러 - Schedule 삭제 실패")
+                default:
+                    print("DEBUG: 알 수 없는 에러 - Schedule 삭제 실패")
+                }
+            }
+        }
+    }
 }
 
 #Preview {
     ScheduleAlertView(
+        scheduleId: 1,
         scheduleTitle: "UXUI 과제",
         startDate: "Jan 31, 2025  8PM",
         endDate: "Jan 31, 2025  11PM",
@@ -128,6 +159,7 @@ struct ScheduleAlertView: View {
         },
         onEdit: {
             print("Edit button tapped")
-        }
+        },
+        scheduleAPIService: ScheduleAPIService()
     )
 }

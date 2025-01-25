@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct ToDoAlertView: View {
-    
+
+    let todoId: Int
     let todoTitle: String
     let deadline: String
     let tag: String
@@ -18,7 +19,10 @@ struct ToDoAlertView: View {
     
     var onDelete: () -> Void
     var onEdit: () -> Void
-    
+    var todoAPIService: TodoAPIServiceProtocol
+
+    @State private var isLoading: Bool = false
+
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -94,7 +98,7 @@ struct ToDoAlertView: View {
             Spacer()
             
             HStack(spacing: 15) {
-                DeleteButton(onDelete: onDelete)
+                DeleteButton(onDelete: deleteTodo)
                 EditButton(onEdit: onEdit)
             }
             .padding(.bottom, 26)
@@ -103,5 +107,32 @@ struct ToDoAlertView: View {
         .frame(width: 343, height: 300)
         .background(Color.gray10)
         .cornerRadius(2)
+    }
+
+    // MARK: - API
+
+    private func deleteTodo() {
+        isLoading = true
+        todoAPIService.deleteTodo(todoId: todoId) { result in
+            print("DEBUG: Requesting DELETE for Todo ID: \(todoId)")
+            DispatchQueue.main.async {
+                isLoading = false
+                switch result {
+                case .success:
+                    onDelete()
+                    print("DEBUG: Todo 삭제 성공")
+                case .badRequest:
+                    print("DEBUG: 잘못된 요청입니다. - Todo 삭제 실패")
+                case .unAuthorized:
+                    print("DEBUG: 유효하지 않은 토큰입니다. - Todo 삭제 실패")
+                case .notFound:
+                    print("DEBUG: 잘못된 요청입니다. - Todo 삭제 실패")
+                case .serverError:
+                    print("DEBUG: 내부 서버 에러 - Todo 삭제 실패")
+                default:
+                    print("DEBUG: 알 수 없는 에러 - Todo 삭제 실패")
+                }
+            }
+        }
     }
 }

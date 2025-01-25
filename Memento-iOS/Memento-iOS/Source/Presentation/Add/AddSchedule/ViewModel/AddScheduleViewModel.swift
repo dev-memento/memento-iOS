@@ -28,7 +28,6 @@ final class AddScheduleViewModel: ObservableObject {
     }
     
     func postMakeScheduleNotiFication() {
-        print("ㅇㅇㅇㅇㅇ====ㅇㅇㅇㅇㅇ")
         NotificationCenter.default.post(name: NSNotification.Name("postScheduleComplete"),
                                         object: nil,
                                         userInfo: nil)
