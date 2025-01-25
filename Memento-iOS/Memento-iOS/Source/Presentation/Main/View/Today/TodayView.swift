@@ -243,6 +243,7 @@ struct TodayListItemView: View {
                     onCheckChanged: onCheckChanged
                 )
                 .contentShape(Rectangle())
+                .padding(.trailing, -20)
                 .onTapGesture {
                     onTodoTap(todo)
                 }
