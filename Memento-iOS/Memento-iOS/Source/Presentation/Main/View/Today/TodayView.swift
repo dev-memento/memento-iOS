@@ -233,6 +233,7 @@ struct TodayListItemView: View {
                     backgroundColor: backgroundColor
                 )
                 .contentShape(Rectangle())
+                .padding(.trailing, -20)
                 .onTapGesture {
                     onTodoTap(todo)
                 }
