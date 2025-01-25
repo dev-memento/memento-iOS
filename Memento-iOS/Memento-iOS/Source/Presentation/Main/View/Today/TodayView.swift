@@ -34,7 +34,7 @@ struct TodayView: View {
                         ForEach($viewModel.todayItems, id: \.wrappedValue.id) { item in
                             createTodayListItemView(for: item)
                         }
-
+                        
                         WindDownFooterView(windDownTime: viewModel.windDownTime)
                             .padding(.leading, 50)
                             .padding(.top, 17)
@@ -187,6 +187,13 @@ struct TodayView: View {
                     tagColorCode: schedule.tagColorCode
                 )
                 showScheduleAlert = true
+            }, onCheckChanged: { isChecked in
+                if let index = viewModel.todayItems.firstIndex(where: { $0.id == currentItem.id }),
+                   case .todo(var todo) = viewModel.todayItems[index] {
+                    todo.isChecked = isChecked
+                    viewModel.todayItems[index] = .todo(todo)
+                    viewModel.updateToDoCompletion(toDoId: todo.id)
+                }
             }
         )
         .padding(.horizontal)
@@ -196,7 +203,7 @@ struct TodayView: View {
         }
         .onDrop(of: [.text], delegate: DropViewDelegate(item: item, draggedItem: $viewModel.dragTodayItem, onDrop: viewModel.dropActionForToday))
     }
-
+    
     
     private func isTopPriorityItem(at item: TodayItemDataModel) -> Bool {
         guard case .todo(let todo) = item, !todo.isChecked else { return false }
@@ -218,19 +225,22 @@ struct TodayListItemView: View {
     var onTodoTap: (ToDoListDataModel) -> Void
     var onScheduleTap: (ScheduleTotalResponseDataTest) -> Void
     
+    var onCheckChanged: (Bool) -> Void
+    
     var body: some View {
         HStack {
             Image(.ic_progress)
                 .padding(.leading, -10)
                 .padding(.trailing, 5)
                 .opacity(isArrow ? 1 : 0)
-
+            
             switch item {
             case .todo(let todo):
                 ToDoListCell(
                     toDoList: todo.mapToToDoItem(),
                     isHighlighted: isHighlighted,
-                    backgroundColor: backgroundColor
+                    backgroundColor: backgroundColor,
+                    onCheckChanged: onCheckChanged
                 )
                 .contentShape(Rectangle())
                 .onTapGesture {
