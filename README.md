@@ -13,9 +13,15 @@
 <br>
 
 #  Developers
-| [<img width="25" height="25" src="https://github.com/user-attachments/assets/101a205e-11db-4e17-af4e-b461bc11fe8f"><br>@mcrkgus](https://github.com/mcrkgus) | [<img width="25" height="25" src="https://github.com/user-attachments/assets/d36daa41-fe3b-4d44-90a8-11814efc296f"><br>@jeonguk29](https://github.com/jeonguk29) | [<img width="25" height="25" src="https://github.com/user-attachments/assets/25e92f00-9d4a-4808-b4f2-697d1423a62f"><br>@sem-git](https://github.com/sem-git) | [<img width="25" height="25" src="https://github.com/user-attachments/assets/70e84f9b-66c1-4fc3-b2b2-54ce668a41d2"><br>@rafa-e1](https://github.com/rafa-e1) | [<img width="25" height="25" src="https://github.com/user-attachments/assets/d2b4e52c-8cc7-464e-b00a-273c0d0816b9"><br>@parkikbum](https://github.com/parkikbum) |
-|:---:|:---:|:---:|:---:|:---:|
-|<img width="250" alt="mcrkgus" src="https://github.com/user-attachments/assets/8d31c11f-3478-4482-b6a9-73a4fc1bc420">|<img width="250" alt="jeonguk29" src="https://github.com/user-attachments/assets/2fbc1d56-33a3-4e40-b10a-9466eb44666e">|<img width="250" alt="sem-git" src="https://github.com/user-attachments/assets/df094df5-da54-47b9-b77c-d6f5c298eb00">|<img width="250" alt="rafa-e1" src="https://github.com/user-attachments/assets/2dbe05cc-d3a6-406d-9a45-991e3bf7044c">|<img width="250" alt="parkikbum" src="https://github.com/user-attachments/assets/944978c5-eaaf-4ac7-9936-09492a194dca">|
+| [<img width="25" height="25" src="https://github.com/user-attachments/assets/101a205e-11db-4e17-af4e-b461bc11fe8f"><br>@mcrkgus](https://github.com/mcrkgus) | [<img width="25" height="25" src="https://github.com/user-attachments/assets/d36daa41-fe3b-4d44-90a8-11814efc296f"><br>@jeonguk29](https://github.com/jeonguk29) | [<img width="25" height="25" src="https://github.com/user-attachments/assets/25e92f00-9d4a-4808-b4f2-697d1423a62f"><br>@sem-git](https://github.com/sem-git) |
+|:---:|:---:|:---:|
+|<img width="250" alt="mcrkgus" src="https://github.com/user-attachments/assets/8d31c11f-3478-4482-b6a9-73a4fc1bc420">|<img width="250" alt="jeonguk29" src="https://github.com/user-attachments/assets/2fbc1d56-33a3-4e40-b10a-9466eb44666e">|<img width="250" alt="sem-git" src="https://github.com/user-attachments/assets/df094df5-da54-47b9-b77c-d6f5c298eb00">|
+| `Splash`<br>`투데이`<br>`탭 바` | `온보딩`<br>`회원가입/로그인`<br>`브레인 덤프`<br>`아이젠하워`<br> | `투두 리스트`<br> |
+
+| [<img width="25" height="25" src="https://github.com/user-attachments/assets/70e84f9b-66c1-4fc3-b2b2-54ce668a41d2"><br>@rafa-e1](https://github.com/rafa-e1) | [<img width="25" height="25" src="https://github.com/user-attachments/assets/d2b4e52c-8cc7-464e-b00a-273c0d0816b9"><br>@parkikbum](https://github.com/parkikbum) | [<img width="25" height="25" src="https://github.com/user-attachments/assets/077607bd-5ee2-4411-adf3-efb53e892b5b"><br>@Memento](https://github.com/orgs/dev-memento/repositories)
+|:---:|:---:|:---:|
+|<img width="250" alt="rafa-e1" src="https://github.com/user-attachments/assets/2dbe05cc-d3a6-406d-9a45-991e3bf7044c">|<img width="250" alt="parkikbum" src="https://github.com/user-attachments/assets/944978c5-eaaf-4ac7-9936-09492a194dca">|<img width="250" alt="Memento" src="https://github.com/user-attachments/assets/8997057e-711a-418f-99dc-05be6d34e2c2">|
+| `투두/일정 생성 및 삭제` | [`Memento Design System`](https://github.com/dev-memento/memento-design-system-iOS])<br>[`Memento Calendar`](https://github.com/dev-memento/memento-calendar)<br>[`Mac App`](https://github.com/dev-memento/memento-app-mac) | - |
 
 <br>
 
