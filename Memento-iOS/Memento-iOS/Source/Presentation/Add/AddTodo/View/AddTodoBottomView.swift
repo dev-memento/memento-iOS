@@ -26,6 +26,7 @@ struct AddTodoBottomView: View {
             Spacer()
             enterButton
         }
+        .padding(.bottom, 20)
     }
 
     // MARK: - UI Components
@@ -59,8 +60,8 @@ struct AddTodoBottomView: View {
                     )
                     .colorScheme(.dark)
                     .datePickerStyle(.graphical)
-                    .frame(width: 320)
                     .tint(.mementoBlue)
+                    .padding([.horizontal, .bottom], 10)
                 }
             }
         }
@@ -68,7 +69,7 @@ struct AddTodoBottomView: View {
 
     private var tagButton: some View {
         Button(action: {
-            viewModel.showTagPicker = true
+            viewModel.showTagPicker.toggle()
         }) {
             Circle()
                 .fill(Color(viewModel.selectedTag.color))
@@ -78,7 +79,7 @@ struct AddTodoBottomView: View {
         .background(Color.gray09)
         .clipShape(RoundedRectangle(cornerRadius: 2))
         .sheet(isPresented: $viewModel.showTagPicker) {
-            VStack {
+            SheetContainer(type: .addTodo(.tag)) {
                 SheetHeaderView {
                     viewModel.showTagPicker = false
                 }
@@ -97,17 +98,13 @@ struct AddTodoBottomView: View {
                 .padding([.horizontal, .bottom], 10)
                 .scrollDisabled(Tag.mockData.count <= 3)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.gray09)
-            .presentationCornerRadius(0)
-            .presentationDragIndicator(.hidden)
             .applyDynamicSheetForTagCount()
         }
     }
 
     private var matrixButton: some View {
         Button(action: {
-            viewModel.showPriorityPicker = true
+            viewModel.showPriorityPicker.toggle()
         }) {
             Image(viewModel.getPriorityImage(viewModel.selectedPriority))
                 .frame(width: 26, height: 26)

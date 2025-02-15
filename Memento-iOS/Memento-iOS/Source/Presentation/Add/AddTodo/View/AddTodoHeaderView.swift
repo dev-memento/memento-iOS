@@ -42,7 +42,7 @@ struct AddTodoHeaderView: View {
                     .colorScheme(.dark)
                     .datePickerStyle(.graphical)
                     .tint(.mementoBlue)
-                    .padding([.horizontal, .bottom], 20)
+                    .padding([.horizontal, .bottom], 10)
                 }
             }
 
