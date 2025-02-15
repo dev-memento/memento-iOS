@@ -13,8 +13,8 @@ struct AddTodoHeaderView: View {
     
     // MARK: - Properties
     
-    @ObservedObject var viewModel: AddTodoHeaderViewModel
-    
+    @ObservedObject var viewModel: AddTodoViewModel
+
     // MARK: - Body
     
     var body: some View {
@@ -23,26 +23,25 @@ struct AddTodoHeaderView: View {
                 .foregroundColor(.gray07)
                 .applyFont(.body_b_18)
             
-            Button(viewModel.formattedDate) {
-                viewModel.showDatePicker = true
+            Button(viewModel.formattedStartDate) {
+                viewModel.showStartDatePicker = true
             }
             .foregroundColor(.gray04)
             .applyFont(.body_b_18)
-            .sheet(isPresented: $viewModel.showDatePicker) {
-                SheetContainer(type: AddTodoPickerButtonType.date) {
+            .sheet(isPresented: $viewModel.showStartDatePicker) {
+                SheetContainer(type: .addTodo(.date)) {
                     VStack {
                         SheetHeaderView {
-                            viewModel.showDatePicker = false
+                            viewModel.showStartDatePicker = false
                         }
                         
                         DatePicker(
                             "",
-                            selection: $viewModel.selectedDate,
+                            selection: $viewModel.startDate,
                             displayedComponents: .date
                         )
                         .colorScheme(.dark)
                         .datePickerStyle(.graphical)
-                        .frame(width: 320)
                         .transition(.move(edge: .bottom))
                         .tint(.mementoBlue)
                     }
@@ -52,10 +51,4 @@ struct AddTodoHeaderView: View {
             Spacer()
         }
     }
-}
-
-// MARK: - Preview
-
-#Preview {
-    AddTodoHeaderView(viewModel: AddTodoHeaderViewModel())
 }
