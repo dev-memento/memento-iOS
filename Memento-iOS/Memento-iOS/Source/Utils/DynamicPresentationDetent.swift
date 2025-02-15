@@ -54,12 +54,13 @@ struct DynamicPresentationDetent {
         in category: DeviceSizeCategory
     ) -> CGFloat {
         switch (type, category) {
-        case (.date, .small): return 0.6
-        case (.date, .medium): return 0.53
-        case (.date, .large): return 0.5
-        case (.tag, .small), (.priority, .small): return 0.43
-        case (.tag, .medium), (.priority, .medium): return 0.36
-        case (.tag, .large), (.priority, .large): return 0.33
+        case (.date, .small): return 0.65
+        case (.date, .medium): return 0.58
+        case (.date, .large): return 0.55
+        case (.tag, _): return 0
+        case (.priority, .small): return 0.8
+        case (.priority, .medium): return 0.73
+        case (.priority, .large): return 0.7
         }
     }
 

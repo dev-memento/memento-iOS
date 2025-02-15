@@ -95,7 +95,7 @@ struct AddTodoBottomView: View {
                 .listStyle(PlainListStyle())
                 .ignoresSafeArea()
                 .padding([.horizontal, .bottom], 10)
-                .scrollDisabled(Tag.mockData.count <= 4)
+                .scrollDisabled(Tag.mockData.count <= 3)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.gray09)
