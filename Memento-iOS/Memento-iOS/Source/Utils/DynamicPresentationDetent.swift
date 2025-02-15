@@ -57,10 +57,7 @@ struct DynamicPresentationDetent {
         case (.date, .small): return 0.65
         case (.date, .medium): return 0.58
         case (.date, .large): return 0.55
-        case (.tag, _): return 0
-        case (.priority, .small): return 0.8
-        case (.priority, .medium): return 0.73
-        case (.priority, .large): return 0.7
+        default: return 0
         }
     }
 
