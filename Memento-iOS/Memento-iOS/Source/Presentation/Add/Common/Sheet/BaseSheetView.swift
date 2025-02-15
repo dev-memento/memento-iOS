@@ -28,55 +28,7 @@ struct BaseSheetView: View {
     }
 
     var body: some View {
-        SheetContainer(type: type) {
-            VStack(spacing: 0) {
-                SheetHeaderView {
-                    switch type {
-                    case .time:
-                        let calendar = Calendar.current
-                        let hour = calendar.component(.hour, from: selection)
-                        let minute = calendar.component(.minute, from: selection)
-
-                        if let newDate = calendar.date(bySettingHour: hour, minute: minute, second: 0, of: selection) {
-                            selection = newDate
-                        }
-                    case .tag:
-                        isPresented = true
-                    default:
-                        break
-                    }
-                    onDismiss?()
-                    isPresented = false
-                }
-
-                switch type {
-                case .date:
-                    DatePicker(
-                        "날짜 선택",
-                        selection: $selection,
-                        in: dateRange,
-                        displayedComponents: .date
-                    )
-                    .colorScheme(.dark)
-                    .datePickerStyle(.graphical)
-                    .frame(width: 320)
-                    .transition(.move(edge: .bottom))
-                    .tint(.mementoBlue)
-
-                case .time:
-                    DatePicker(
-                        "",
-                        selection: $selection,
-                        displayedComponents: .hourAndMinute
-                    )
-                    .labelsHidden()
-                    .colorScheme(.dark)
-                    .datePickerStyle(.wheel)
-                    .environment(\.locale, Locale(identifier: "en_US"))
-
-                case .tag: EmptyView()
-                }
-            }
-        }
+        // TODO: 다음 리팩토링 대상
+        EmptyView()
     }
 }
