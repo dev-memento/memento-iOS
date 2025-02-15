@@ -13,13 +13,13 @@ struct AddTodoTextView: View {
 
     // MARK: - Properties
 
-    @ObservedObject var viewModel: AddTodoTextViewModel
+    @ObservedObject var viewModel: AddTodoViewModel
     @FocusState private var isFocused: Bool
 
     // MARK: - Body
 
     var body: some View {
-        TextField("", text: $viewModel.text, axis: .vertical)
+        TextField("", text: $viewModel.description, axis: .vertical)
             .applyFont(.body_b_16)
             .tint(.mainGreen)
             .foregroundStyle(Color.grayWhite)
@@ -27,14 +27,8 @@ struct AddTodoTextView: View {
             .textFieldStyle(.plain)
             .focused($isFocused)
             .onAppear { isFocused = true }
-            .onChange(of: viewModel.text) { _, newText in
+            .onChange(of: viewModel.description) { _, newText in
                 viewModel.limitTextLength(newText)
             }
     }
-}
-
-// MARK: - Preview
-
-#Preview {
-    AddTodoTextView(viewModel: AddTodoTextViewModel())
 }
