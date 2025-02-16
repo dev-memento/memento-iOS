@@ -68,7 +68,7 @@ final class OnboardingViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var mementoStart: Bool = false
     
-    var authViewModel: AuthViewModel
+    let authViewModel: AuthViewModel
     let userInfoAPIService = UserInfoAPIService()
     let userUptimeAPIService = UserUptimeAPIService()
     
@@ -79,45 +79,6 @@ final class OnboardingViewModel: ObservableObject {
         self.authViewModel = authViewModel
         setupAuthStateSubscription()
         checkAuthenticationStatus()
-    }
-    
-    // MARK: - Submit Onboarding Data
-    
-    /// 온보딩 데이터를 서버로 전송
-    func submitOnboardingData() {
-        // 온보딩 데이터 생성
-        let onboardingData = OnboardingData(
-            sleepCycle: sleepCycleData,
-            workSelection: workSelectionData,
-            workPreference: workPreferenceData
-        )
-        
-        submitToServer(onboardingData)
-    }
-    
-    /// 서버로 데이터 전송 로직
-    func submitToServer(_ data: OnboardingData) {
-        // OnboardingData를 UserInfoRequest로 변환
-        let userInfoRequest = UserInfoRequest(onboardingData: data)
-        
-        userInfoAPIService.updateUserInfo(request: userInfoRequest) { result in
-            switch result {
-            case .success(let response):
-                print("온보딩 데이터 전송 성공: \(response?.message)")
-                // 추가 작업 필요 시 여기에 작성
-            default:
-                print("회원 개인 정보 업데이트 실패")
-            }
-        }
-        //        userUptimeAPIService.fetchUptime{ result in
-        //            switch result {
-        //            case .success(let response):
-        //                print("시간 가져오기 성공")
-        //                // 추가 작업 필요 시 여기에 작성
-        //            default:
-        //                print("시간 가져오기 실패")
-        //            }
-        //        }
     }
     
     // 토큰 체크 메서드 추가
@@ -194,6 +155,38 @@ extension OnboardingViewModel {
     func updateCategory(categoryName: String) {
         let transformedCategory = CategoryType.from(name: categoryName)
         workSelectionData.selectedCategory = transformedCategory
+    }
+}
+
+// MARK: - Onboarding Data Submission
+
+extension OnboardingViewModel {
+    
+    /// 온보딩 데이터를 서버로 전송
+    func submitOnboardingData() {
+        // 온보딩 데이터 생성
+        let onboardingData = OnboardingData(
+            sleepCycle: sleepCycleData,
+            workSelection: workSelectionData,
+            workPreference: workPreferenceData
+        )
+        
+        submitToServer(onboardingData)
+    }
+    
+    /// 서버로 데이터 전송 로직
+    func submitToServer(_ data: OnboardingData) {
+        // OnboardingData를 UserInfoRequest로 변환
+        let userInfoRequest = UserInfoRequest(onboardingData: data)
+        
+        userInfoAPIService.updateUserInfo(request: userInfoRequest) { result in
+            switch result {
+            case .success(let response):
+                print("온보딩 데이터 전송 성공: \(response?.message)")
+            default:
+                print("회원 개인 정보 업데이트 실패")
+            }
+        }
     }
 }
 
