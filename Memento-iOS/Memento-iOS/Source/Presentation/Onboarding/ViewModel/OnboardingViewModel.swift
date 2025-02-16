@@ -193,32 +193,17 @@ extension OnboardingViewModel {
 //MARK: - APPLE 캘린더 연동
 
 extension OnboardingViewModel {
-
+    
     func submitEventsToAPI() async {
         do {
-            // 캘린더 이벤트 가져오기
-            let events = try await fetchEventsForTwoYears()
-            print("[DEBUG] 이벤트 가져오기 성공: \(events.count)개")
-            
-            // 이벤트를 AppleSchedule 형식으로 변환
-            let appleSchedules = events.map { event -> AppleSchedule in
-                let dateFormatter = ISO8601DateFormatter()
-                return AppleSchedule(
-                    description: event.title ?? "제목 없음",
-                    startDate: dateFormatter.string(from: event.startDate),
-                    endDate: dateFormatter.string(from: event.endDate),
-                    isAllDay: event.isAllDay
-                )
-            }
-            
-            // API 요청 생성
+            let events = try await CalendarService.shared.fetchEventsForTwoYears()
+            let appleSchedules = events.map(CalendarService.convertToAppleSchedule)
             let request = AppleScheduleListRequest(events: appleSchedules)
-            
-            // API 호출
             let apiService = AppleSchedulesAPIService()
+            
             apiService.submitSchedules(request: request) { result in
                 switch result {
-                case .success(let response):
+                case .success:
                     print("[INFO] 스케줄 전송 성공")
                 default:
                     print("[INFO] 스케줄 전송 실패")
@@ -226,61 +211,6 @@ extension OnboardingViewModel {
             }
         } catch {
             print("[ERROR] 이벤트 가져오기 실패: \(error.localizedDescription)")
-        }
-    }
-    
-    func fetchEventsForTwoYears() async throws -> [EKEvent] {
-        let store = EKEventStore()
-        
-        // 권한 요청
-        guard try await store.requestFullAccessToEvents() else {
-            throw NSError(domain: "CalendarAccessError", code: 1, userInfo: [NSLocalizedDescriptionKey: "캘린더 접근 권한이 없습니다."])
-        }
-        
-        // 현재 날짜 계산
-        let currentDate = Date()
-        
-        // -1년 및 +1년 날짜 계산
-        guard let startDate = Calendar.current.date(byAdding: .year, value: -1, to: currentDate),
-              let endDate = Calendar.current.date(byAdding: .year, value: 1, to: currentDate) else {
-            throw NSError(domain: "DateCalculationError", code: 2, userInfo: [NSLocalizedDescriptionKey: "날짜 계산에 실패했습니다."])
-        }
-        
-        // 이벤트 조건 생성
-        let predicate = store.predicateForEvents(withStart: startDate, end: endDate, calendars: nil)
-        
-        // 이벤트 가져오기
-        let events = store.events(matching: predicate)
-        return events.sorted { $0.startDate < $1.startDate }
-    }
-    
-    func printEvents(_ events: [EKEvent]) {
-        guard !events.isEmpty else {
-            print("이번 달에 등록된 일정이 없습니다.")
-            return
-        }
-        
-        for event in events {
-            let formatter = DateFormatter()
-            formatter.dateStyle = .medium
-            formatter.timeStyle = .short
-            
-            let startDate = formatter.string(from: event.startDate)
-            let endDate = formatter.string(from: event.endDate)
-            
-            print("""
-            제목: \(event.title ?? "제목 없음") (타입: \(type(of: event.title)))
-            시작: \(startDate) (타입: \(type(of: startDate)))
-            종료: \(endDate) (타입: \(type(of: endDate)))
-            위치: \(event.location ?? "위치 정보 없음") (타입: \(type(of: event.location)))
-            참석자: \(event.attendees?.map { $0.name ?? "참석자 이름 없음" }.joined(separator: ", ") ?? "참석자 없음") (타입: \(type(of: event.attendees)))
-            알림: \(event.alarms?.map { $0.relativeOffset.description }.joined(separator: ", ") ?? "알림 없음") (타입: \(type(of: event.alarms)))
-            반복 여부: \(event.recurrenceRules != nil ? "반복 이벤트" : "단일 이벤트") (타입: \(type(of: event.recurrenceRules)))
-            올데이 여부: \(event.isAllDay ? "올데이 일정" : "시간 지정 일정") (타입: \(type(of: event.isAllDay)))
-            노트: \(event.notes ?? "노트 없음") (타입: \(type(of: event.notes)))
-            URL: \(event.url?.absoluteString ?? "URL 없음") (타입: \(type(of: event.url)))
-            --------------
-            """)
         }
     }
 }

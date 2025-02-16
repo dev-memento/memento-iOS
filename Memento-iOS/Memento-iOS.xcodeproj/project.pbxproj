@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2F017AF72D5D81AA003B2BA9 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2F017AF62D5D81AA003B2BA9 /* Config.xcconfig */; };
 		2F459C3B2D37C83800EDD537 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 2F459C3A2D37C83800EDD537 /* FirebaseAuth */; };
 		2F459C3E2D37C88600EDD537 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 2F459C3D2D37C88600EDD537 /* GoogleSignIn */; };
 		2F459C402D37C88600EDD537 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 2F459C3F2D37C88600EDD537 /* GoogleSignInSwift */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2F017AF62D5D81AA003B2BA9 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		2F45BA0D2D3F927000EEC829 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		763750FF2D42AB8000A31BA8 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		830F3C562D2A73BD00254FDE /* Memento-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Memento-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -52,13 +54,13 @@
 				Source/Network/AI/TargetType/PrioritizationTargetType.swift,
 				Source/Network/Base/TokenRefreshPlugin.swift,
 				Source/Network/Onboarding/AppleSchedulesAPIService.swift,
+				Source/Network/Onboarding/CalendarService.swift,
 				Source/Network/Onboarding/DTO/Request/LoginRequest.swift,
 				"Source/Network/Onboarding/DTO/Response /LoginResponse.swift",
 				"Source/Network/Onboarding/DTO/Response /UserUptimeResponse.swift",
 				Source/Network/Onboarding/DTO/TargetType/AppleSchedulesTargetType.swift,
 				Source/Network/Onboarding/DTO/TargetType/TokenRefreshType.swift,
 				Source/Network/Onboarding/DTO/TargetType/UserInfoTargetType.swift,
-				Source/Network/Onboarding/DTO/TargetType/UserUptimeTargetType.swift,
 				Source/Network/Onboarding/LoginAPIService.swift,
 				Source/Network/Onboarding/UserInfoAPIService.swift,
 				Source/Network/Onboarding/UserUptimeAPIService.swift,
@@ -173,6 +175,7 @@
 			children = (
 				763750FF2D42AB8000A31BA8 /* Config.xcconfig */,
 				2F45BA0D2D3F927000EEC829 /* Config.xcconfig */,
+				2F017AF62D5D81AA003B2BA9 /* Config.xcconfig */,
 				9D57D6E32D3AA104002AB064 /* Memento-iOS */,
 				2F459C412D37C91B00EDD537 /* Frameworks */,
 				830F3C572D2A73BD00254FDE /* Products */,
@@ -269,6 +272,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F017AF72D5D81AA003B2BA9 /* Config.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
