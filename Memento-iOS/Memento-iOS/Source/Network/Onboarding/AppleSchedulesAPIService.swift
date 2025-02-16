@@ -11,7 +11,7 @@ import Moya
 // MARK: - AppleSchedulesAPIServiceProtocol
 
 protocol AppleSchedulesAPIServiceProtocol {
-    func submitSchedules(request: AppleScheduleListRequest, completion: @escaping (NetworkResult<BaseDTO<[String: String]>>) -> Void)
+    func submitSchedules(request: AppleScheduleListRequest, completion: @escaping (NetworkResult<EmptyDTO>) -> Void)
 }
 
 // MARK: - AppleSchedulesAPIService
@@ -20,13 +20,13 @@ final class AppleSchedulesAPIService: BaseAPIService, AppleSchedulesAPIServicePr
     private let provider = MoyaProvider<AppleSchedulesTargetType>(plugins: [MoyaPlugin.shared, TokenRefreshPlugin()])
 
     /// 스케줄 생성하기 API 호출
-    func submitSchedules(request: AppleScheduleListRequest, completion: @escaping (NetworkResult<BaseDTO<[String: String]>>) -> Void) {
+    func submitSchedules(request: AppleScheduleListRequest, completion: @escaping (NetworkResult<EmptyDTO>) -> Void) {
         provider.request(.schedule(request: request)) { [weak self] result in
             guard let self = self else { return }
 
             switch result {
             case .success(let response):
-                let networkResult: NetworkResult<BaseDTO<[String: String]>> = self.fetchNetworkResult(
+                let networkResult: NetworkResult<EmptyDTO> = self.fetchNetworkResult(
                     statusCode: response.statusCode,
                     data: response.data
                 )
@@ -34,13 +34,11 @@ final class AppleSchedulesAPIService: BaseAPIService, AppleSchedulesAPIServicePr
 
             case .failure(let error):
                 if let response = error.response {
-                    let networkResult: NetworkResult<BaseDTO<[String: String]>> = self.fetchNetworkResult(
+                    let networkResult: NetworkResult<EmptyDTO> = self.fetchNetworkResult(
                         statusCode: response.statusCode,
                         data: response.data
                     )
                     completion(networkResult)
-                } else {
-                    completion(.networkFail)
                 }
             }
         }
