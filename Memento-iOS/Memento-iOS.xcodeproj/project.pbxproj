@@ -106,6 +106,7 @@
 				Source/Presentation/Add/Common/ViewType/ViewType.swift,
 				Source/Presentation/Main/View/DragAndDrop/DropViewDelegate.swift,
 				Source/Presentation/Main/View/ToDoList/ToDoListWeeklyCalendarView.swift,
+				Source/Presentation/Main/ViewModel/ToDoListViewModel.swift,
 				"Source/Presentation/Onboarding/View/Launch Screen.storyboard",
 				Source/Presentation/Onboarding/ViewModel/AppState.swift,
 				Source/Presentation/Onboarding/ViewModel/AuthViewModel.swift,

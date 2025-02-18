@@ -10,7 +10,7 @@ import MDSKit
 import MCalendar
 
 struct ToDoListView: View {
-    @ObservedObject var viewModel: WeeklyCalendarViewModel
+    @ObservedObject var viewModel: ToDoListViewModel
     
     @State private var showTodoAlert = false
     @State private var selectedItem: ToDoListDataModel?
@@ -21,33 +21,7 @@ struct ToDoListView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     ForEach(viewModel.mCallendarDataSource.wholeMonthDate, id: \.self) { date in
-                        ToDoListDateView(date: "\(makeMonthDate(month: date.month)) \(date.day)")
-                            .padding(.bottom, 8)
-                            .id(date)
-                        
-                        if let events = viewModel.toDoListItemDict[date] {
-                            ForEach(events, id: \.self) { event in
-                                ToDoListItemView(
-                                    item: event.mapToToDoItem(),
-                                    isHighlighted: isTopPriorityItem(at: event, items: events),
-                                    backgroundColor: Color.grayBlack,
-                                    onTodoTap: { selectedItem in },
-                                    onCheckChanged: { isChecked in
-                                        if isChecked {
-                                            if let index = viewModel.toDoListItemDict[date]?.firstIndex(where: { $0.id == event.id }) {
-                                                viewModel.toDoListItemDict[date]?.remove(at: index)
-                                                viewModel.toDoListItemDict[date]?.append(event)
-                                            }
-                                        }
-                                        viewModel.updateToDoCompletion(toDoId: event.id)
-                                    }
-                                )
-                                .onTapGesture {
-                                    selectedItem = event
-                                    showTodoAlert = true
-                                }
-                            }
-                        }
+                        renderToDoList(for: date)
                     }
                     Spacer()
                 }
@@ -88,6 +62,46 @@ struct ToDoListView: View {
             
         }
     }
+    
+    /// 특정 날짜에 대한 할 일 목록을 렌더링하는 함수
+    @ViewBuilder
+    private func renderToDoList(for date: MCalendarDataModel) -> some View {
+        ToDoListDateView(date: "\(makeMonthDate(month: date.month)) \(date.day)")
+            .padding(.bottom, 8)
+            .id(date)
+
+        if let events = viewModel.toDoListItemDict[date] {
+            ForEach(events, id: \.self) { event in
+                renderToDoItem(event: event, date: date, events: events)
+            }
+        }
+    }
+    
+    /// 개별 할 일 아이템을 렌더링하는 함수
+    @ViewBuilder
+    private func renderToDoItem(event: ToDoListDataModel, date: MCalendarDataModel, events: [ToDoListDataModel]) -> some View {
+        ToDoListItemView(
+            item: event.mapToToDoItem(),
+            isHighlighted: isTopPriorityItem(at: event, items: events),
+            backgroundColor: Color.grayBlack,
+            onTodoTap: { selectedItem in },
+            onCheckChanged: { isChecked in
+                if isChecked {
+                    if let index = viewModel.toDoListItemDict[date]?.firstIndex(where: { $0.id == event.id }) {
+                        viewModel.toDoListItemDict[date]?.remove(at: index)
+                        viewModel.toDoListItemDict[date]?.append(event)
+                    }
+                }
+                viewModel.updateToDoCompletion(toDoId: event.id, date: date)
+            }
+        )
+        .onTapGesture {
+            selectedItem = event
+            showTodoAlert = true
+        }
+    }
+
+
     
     private func isTopPriorityItem(at item: ToDoListDataModel, items: [ToDoListDataModel]) -> Bool {
         guard !item.isChecked else { return false }
@@ -174,15 +188,3 @@ struct ToDoListItemView: View {
     }
 }
 
-#Preview {
-    ToDoListWeeklyCalendarView(
-        viewModel: WeeklyCalendarViewModel(
-            mCalendarDataSource: MCalendarDataSource(),
-            mEventDataSource: MEventDatasource(),
-            scheduleService: ScheduleAPIService(),
-            tagService: TagAPIService(),
-            toDoListService: ToDoListAPIService(),
-            userUptimeService: UserUptimeAPIService()
-        )
-    )
-}

@@ -11,7 +11,7 @@ import MDSKit
 import MCalendar
 
 struct ToDoListWeeklyCalendarView: View {
-    @ObservedObject var viewModel: WeeklyCalendarViewModel
+    @ObservedObject var viewModel: ToDoListViewModel
     
     @State private var scrollTarget: MCalendarDataModel? = nil
     @State private var userInteractionFlag: Bool = false
