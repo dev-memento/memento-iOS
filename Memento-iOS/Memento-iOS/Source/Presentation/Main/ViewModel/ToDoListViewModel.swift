@@ -20,6 +20,8 @@ final class ToDoListViewModel: ObservableObject {
     
     // MARK: - Properties
     let mCallendarDataSource: MCalendarDataSource
+    private var cachedToDoList: [ToDoListDataModel] = [] // 캐싱 데이터 저장
+    private var isCacheValid: Bool = false // 캐시가 유효한지 체크
     
     // MARK: - Dependencies
     private let toDoListService: ToDoListAPIServiceProtocol
@@ -102,13 +104,23 @@ final class ToDoListViewModel: ObservableObject {
         }
     }
     
-    func getToDoListTotalAPI() {
+    // MARK: - API 호출 + 캐싱
+    func getToDoListTotalAPI(forceRefresh: Bool = false) {
+        // ✅ 캐싱된 데이터가 있고, 강제 새로고침이 아니라면 API 호출 생략
+        if !forceRefresh, isCacheValid {
+            print("[CACHE] 기존 데이터 사용")
+            self.toDoListItems = cachedToDoList
+            preprocessingForEventDate()
+            return
+        }
+        
+        // ✅ API 호출
         toDoListService.getToDoList { [weak self] result in
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
                     if let toDoData = response?.data.toDoGetResponses {
-                        self?.toDoListItems = toDoData.map { item in
+                        let mappedData = toDoData.map { item in
                             ToDoListDataModel(
                                 id: item.id,
                                 colorType: item.tagColor,
@@ -119,9 +131,15 @@ final class ToDoListViewModel: ObservableObject {
                                 isChecked: item.isCompleted
                             )
                         }
+                        
+                        // ✅ 데이터 업데이트 & 캐싱 저장
+                        self?.toDoListItems = mappedData
+                        self?.cachedToDoList = mappedData
+                        self?.isCacheValid = true  // ✅ 캐시 유효화
+                        
                         self?.preprocessingForEventDate()
                     } else {
-                        print("데이터변환 실패")
+                        print("데이터 변환 실패")
                         self?.toDoListItems = []
                     }
                 }

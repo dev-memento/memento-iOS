@@ -28,7 +28,10 @@ struct ToDoListView: View {
             }
             .background(Color.grayBlack)
             .onAppear {
-                viewModel.getToDoListTotalAPI()
+                viewModel.getToDoListTotalAPI()  // ✅ 캐싱된 데이터 먼저 표시
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    viewModel.getToDoListTotalAPI(forceRefresh: true)  // ✅ 최신 데이터 갱신
+                }
             }
             
             if showTodoAlert, let todo = selectedItem {
