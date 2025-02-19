@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2F017AF72D5D81AA003B2BA9 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2F017AF62D5D81AA003B2BA9 /* Config.xcconfig */; };
 		2F459C3B2D37C83800EDD537 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 2F459C3A2D37C83800EDD537 /* FirebaseAuth */; };
 		2F459C3E2D37C88600EDD537 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 2F459C3D2D37C88600EDD537 /* GoogleSignIn */; };
 		2F459C402D37C88600EDD537 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 2F459C3F2D37C88600EDD537 /* GoogleSignInSwift */; };
@@ -20,8 +19,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		2F017AF62D5D81AA003B2BA9 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
-		2F45BA0D2D3F927000EEC829 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		763750FF2D42AB8000A31BA8 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		830F3C562D2A73BD00254FDE /* Memento-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Memento-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -174,8 +171,6 @@
 			isa = PBXGroup;
 			children = (
 				763750FF2D42AB8000A31BA8 /* Config.xcconfig */,
-				2F45BA0D2D3F927000EEC829 /* Config.xcconfig */,
-				2F017AF62D5D81AA003B2BA9 /* Config.xcconfig */,
 				9D57D6E32D3AA104002AB064 /* Memento-iOS */,
 				2F459C412D37C91B00EDD537 /* Frameworks */,
 				830F3C572D2A73BD00254FDE /* Products */,
@@ -272,7 +267,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2F017AF72D5D81AA003B2BA9 /* Config.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -291,7 +285,6 @@
 /* Begin XCBuildConfiguration section */
 		830F3C622D2A73BF00254FDE /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2F45BA0D2D3F927000EEC829 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -357,7 +350,6 @@
 		};
 		830F3C632D2A73BF00254FDE /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2F45BA0D2D3F927000EEC829 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -416,7 +408,6 @@
 		};
 		830F3C652D2A73BF00254FDE /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2F45BA0D2D3F927000EEC829 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -451,7 +442,6 @@
 		};
 		830F3C662D2A73BF00254FDE /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2F45BA0D2D3F927000EEC829 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
