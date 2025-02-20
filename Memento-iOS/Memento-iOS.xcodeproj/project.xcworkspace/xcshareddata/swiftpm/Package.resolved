@@ -141,8 +141,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/dev-memento/memento-calendar.git",
       "state" : {
-        "revision" : "4504eccfe0672ca6a3226c76a6222479abb4afde",
-        "version" : "1.0.4"
+        "revision" : "1b5e3d414be27c6268e44ef902b133e9cbd41234",
+        "version" : "1.0.6"
       }
     },
     {
