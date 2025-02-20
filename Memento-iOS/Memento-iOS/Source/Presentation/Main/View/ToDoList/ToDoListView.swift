@@ -19,7 +19,7 @@ struct ToDoListView: View {
     var body: some View {
         ZStack {
             ScrollView {
-                VStack(spacing: 0) {
+                LazyVStack(spacing: 0) {
                     ForEach(viewModel.mCallendarDataSource.wholeMonthDate, id: \.self) { date in
                         renderToDoList(for: date)
                     }
@@ -69,16 +69,24 @@ struct ToDoListView: View {
     /// 특정 날짜에 대한 할 일 목록을 렌더링하는 함수
     @ViewBuilder
     private func renderToDoList(for date: MCalendarDataModel) -> some View {
-        ToDoListDateView(date: "\(makeMonthDate(month: date.month)) \(date.day)")
-            .padding(.bottom, 8)
-            .id(date)
-
-        if let events = viewModel.toDoListItemDict[date] {
-            ForEach(events, id: \.self) { event in
-                renderToDoItem(event: event, date: date, events: events)
+        VStack(alignment: .leading, spacing: 8) {
+            ToDoListDateView(date: "\(makeMonthDate(month: date.month)) \(date.day)")
+                .padding(.bottom, 8)
+                .id(date)
+            
+            if let events = viewModel.toDoListItemDict[date], !events.isEmpty {
+                ForEach(events, id: \.self) { event in
+                    renderToDoItem(event: event, date: date, events: events)
+                }
+            } else {
+                Text("No tasks for this date") // ✅ 기본 View 추가
+                    .foregroundColor(.gray)
+                    .padding()
             }
         }
     }
+
+
     
     /// 개별 할 일 아이템을 렌더링하는 함수
     @ViewBuilder
@@ -103,8 +111,7 @@ struct ToDoListView: View {
             showTodoAlert = true
         }
     }
-
-
+    
     
     private func isTopPriorityItem(at item: ToDoListDataModel, items: [ToDoListDataModel]) -> Bool {
         guard !item.isChecked else { return false }

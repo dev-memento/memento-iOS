@@ -92,12 +92,6 @@ final class ToDoListViewModel: ObservableObject {
         return uncheckedItems.first == item
     }
     
-    func preprocessingForEventDate() {
-        for date in wholeMonthDate {
-            toDoListItemDict[date] = filteredTargetEvent(date)
-        }
-    }
-    
     private func filteredTargetEvent(_ date: MCalendarDataModel) -> [ToDoListDataModel] {
         return toDoListItems.filter {
             dateFormatter.date(from: $0.date)! == date.date()!
@@ -106,19 +100,26 @@ final class ToDoListViewModel: ObservableObject {
     
     // MARK: - API 호출 + 캐싱
     func getToDoListTotalAPI(forceRefresh: Bool = false) {
-        // ✅ 캐싱된 데이터가 있고, 강제 새로고침이 아니라면 API 호출 생략
         if !forceRefresh, isCacheValid {
             print("[CACHE] 기존 데이터 사용")
             self.toDoListItems = cachedToDoList
-            preprocessingForEventDate()
+            preprocessingForEventDate()  // ✅ 기존 캐시 데이터를 UI에 반영
             return
         }
-        
-        // ✅ API 호출
-        toDoListService.getToDoList { [weak self] result in
-            switch result {
-            case .success(let response):
-                DispatchQueue.main.async {
+
+        // ✅ 캐싱된 데이터 먼저 적용 (이전 UI 문제 해결)
+        DispatchQueue.main.async {
+            self.toDoListItems = self.cachedToDoList
+            self.preprocessingForEventDate()
+        }
+
+        // ✅ API 호출을 비동기로 실행하여 UI 블로킹 방지
+        DispatchQueue.global(qos: .userInitiated).async {
+            self.toDoListService.getToDoList { [weak self] result in
+                guard let self = self else { return }
+
+                switch result {
+                case .success(let response):
                     if let toDoData = response?.data.toDoGetResponses {
                         let mappedData = toDoData.map { item in
                             ToDoListDataModel(
@@ -131,23 +132,76 @@ final class ToDoListViewModel: ObservableObject {
                                 isChecked: item.isCompleted
                             )
                         }
-                        
-                        // ✅ 데이터 업데이트 & 캐싱 저장
-                        self?.toDoListItems = mappedData
-                        self?.cachedToDoList = mappedData
-                        self?.isCacheValid = true  // ✅ 캐시 유효화
-                        
-                        self?.preprocessingForEventDate()
-                    } else {
-                        print("데이터 변환 실패")
-                        self?.toDoListItems = []
+
+                        DispatchQueue.main.async {
+                            self.toDoListItems = mappedData
+                            self.cachedToDoList = mappedData
+                            self.isCacheValid = true
+                            self.preprocessingForEventDate()
+                        }
                     }
+                default:
+                    print("[ERROR] 데이터 가져오기 실패")
                 }
-            default:
-                print("ERROR")
             }
         }
     }
+
+    // MARK: - 날짜별 ToDo 그룹화
+    private func preprocessingForEventDate() {
+        DispatchQueue.global(qos: .userInitiated).async {
+            // ✅ localToDoList에 데이터를 복사하여 Thread-Safe하게 처리
+            let localToDoList = self.toDoListItems
+            var groupedToDos: [MCalendarDataModel: [ToDoListDataModel]] = [:]
+            let calendar = Calendar.current
+
+            for todo in localToDoList {
+                if let todoDate = self.dateFormatter.date(from: todo.date) {
+                    let components = calendar.dateComponents([.year, .month, .day, .weekday], from: todoDate)
+                    
+                    if let year = components.year,
+                       let month = components.month,
+                       let day = components.day,
+                       let weekday = components.weekday {
+                        
+                        let weekDayOption = self.convertToMWeekDayOptions(from: weekday)  // ✅ 변환 함수 사용
+                        
+                        let dateModel = MCalendarDataModel(
+                            year: "\(year)",
+                            month: "\(month)",
+                            day: "\(day)",
+                            weekday: weekDayOption
+                        )
+                        
+                        groupedToDos[dateModel, default: []].append(todo)
+                    }
+                }
+            }
+
+            // ✅ UI 업데이트는 반드시 메인 스레드에서 실행
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                self.toDoListItemDict = groupedToDos  // ✅ 한 번에 딕셔너리 업데이트
+                print("🚀 toDoListItemDict 업데이트됨: \(self.toDoListItemDict.count)개의 날짜 데이터")
+            }
+        }
+    }
+
+    
+    /// ✅ `Calendar`의 `weekday` 값을 `MWeekDayOptions`으로 변환하는 함수
+    private func convertToMWeekDayOptions(from weekday: Int) -> MWeekDayOptions {
+        switch weekday {
+        case 1: return .sun  // ✅ 일요일 (Calendar 기준 1 → MWeekDayOptions 기준 0)
+        case 2: return .mon  // ✅ 월요일
+        case 3: return .tue  // ✅ 화요일
+        case 4: return .wed  // ✅ 수요일
+        case 5: return .thu  // ✅ 목요일
+        case 6: return .fri  // ✅ 금요일
+        case 7: return .sat  // ✅ 토요일
+        default: return .mon  // ✅ 기본값 (예외 처리)
+        }
+    }
+    
     
     func updateToDoCompletion(toDoId: Int, date: MCalendarDataModel) {
         toDoListService.updateToDoCompletion(toDoId: toDoId) { [weak self] result in
