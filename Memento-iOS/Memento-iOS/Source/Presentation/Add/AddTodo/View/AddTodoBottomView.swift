@@ -69,7 +69,7 @@ struct AddTodoBottomView: View {
 
     private var tagButton: some View {
         Button(action: {
-            viewModel.showTagPicker.toggle()
+            viewModel.showTagPicker = true
         }) {
             Circle()
                 .fill(Color(viewModel.selectedTag.color))
@@ -104,7 +104,7 @@ struct AddTodoBottomView: View {
 
     private var matrixButton: some View {
         Button(action: {
-            viewModel.showPriorityPicker.toggle()
+            viewModel.showPriorityPicker = true
         }) {
             Image(viewModel.getPriorityImage(viewModel.selectedPriority))
                 .frame(width: 26, height: 26)
