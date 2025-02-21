@@ -18,19 +18,7 @@ struct TagListView<ViewModel: BasePickerViewModel & TagSelectable>: View {
     // MARK: - Body
 
     var body: some View {
-        List {
-            ForEach(Tag.mockData) { tag in
-                TagListItem(tag: tag, viewModel: viewModel)
-                    .listRowBackground(
-                        viewModel.selectedTag.tagId == tag.tagId
-                        ? Color.gray08
-                        : Color.clear
-                    )
-            }
-        }
-        .listStyle(PlainListStyle())
-        .ignoresSafeArea()
-        .padding([.horizontal, .bottom], 10)
-        .scrollDisabled(Tag.mockData.count <= 4)
+        // TODO: 다음 리팩토링 대상
+        EmptyView()
     }
 }

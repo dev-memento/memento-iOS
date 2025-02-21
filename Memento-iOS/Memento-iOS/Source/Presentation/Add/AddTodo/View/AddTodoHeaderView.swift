@@ -10,52 +10,43 @@ import SwiftUI
 import MDSKit
 
 struct AddTodoHeaderView: View {
-    
+
     // MARK: - Properties
-    
-    @ObservedObject var viewModel: AddTodoHeaderViewModel
-    
+
+    @ObservedObject var viewModel: AddTodoViewModel
+
     // MARK: - Body
-    
+
     var body: some View {
         HStack {
             Text("Add to-do,")
                 .foregroundColor(.gray07)
                 .applyFont(.body_b_18)
-            
-            Button(viewModel.formattedDate) {
-                viewModel.showDatePicker = true
+
+            Button(viewModel.formattedStartDate) {
+                viewModel.showStartDatePicker = true
             }
             .foregroundColor(.gray04)
             .applyFont(.body_b_18)
-            .sheet(isPresented: $viewModel.showDatePicker) {
-                SheetContainer(type: AddTodoPickerButtonType.date) {
-                    VStack {
-                        SheetHeaderView {
-                            viewModel.showDatePicker = false
-                        }
-                        
-                        DatePicker(
-                            "",
-                            selection: $viewModel.selectedDate,
-                            displayedComponents: .date
-                        )
-                        .colorScheme(.dark)
-                        .datePickerStyle(.graphical)
-                        .frame(width: 320)
-                        .transition(.move(edge: .bottom))
-                        .tint(.mementoBlue)
+            .sheet(isPresented: $viewModel.showStartDatePicker) {
+                SheetContainer(type: .addTodo(.date)) {
+                    SheetHeaderView {
+                        viewModel.showStartDatePicker = false
                     }
+
+                    DatePicker(
+                        "",
+                        selection: $viewModel.startDate,
+                        displayedComponents: .date
+                    )
+                    .colorScheme(.dark)
+                    .datePickerStyle(.graphical)
+                    .tint(.mementoBlue)
+                    .padding([.horizontal, .bottom], 10)
                 }
             }
-            
+
             Spacer()
         }
     }
-}
-
-// MARK: - Preview
-
-#Preview {
-    AddTodoHeaderView(viewModel: AddTodoHeaderViewModel())
 }

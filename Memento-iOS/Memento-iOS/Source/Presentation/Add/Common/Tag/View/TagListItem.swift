@@ -9,18 +9,18 @@ import SwiftUI
 
 import MDSKit
 
-struct TagListItem<ViewModel: BasePickerViewModel & TagSelectable>: View {
+struct TagListItem: View {
 
     // MARK: - Properties
 
     let tag: Tag
-    @ObservedObject var viewModel: ViewModel
+    @ObservedObject var viewModel: AddTodoViewModel
 
     // MARK: - Body
 
     var body: some View {
         Button(action: {
-            viewModel.updateSelectedTag(tag)
+            viewModel.selectedTag = tag
         }) {
             HStack {
                 Circle()
@@ -29,10 +29,8 @@ struct TagListItem<ViewModel: BasePickerViewModel & TagSelectable>: View {
 
                 Text(tag.title)
                     .applyFont(.body_r_14)
-                    .foregroundColor(
-                        viewModel.selectedTag.id == tag.id
-                        ? .gray02
-                        : .gray07
+                    .foregroundStyle(
+                        viewModel.selectedTag.id == tag.id ? Color.gray02 : .gray07
                     )
 
                 Spacer()

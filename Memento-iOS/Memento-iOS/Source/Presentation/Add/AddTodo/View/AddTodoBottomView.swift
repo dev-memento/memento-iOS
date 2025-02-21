@@ -10,19 +10,11 @@ import SwiftUI
 import MDSKit
 
 struct AddTodoBottomView: View {
-    @Environment(\.dismiss) var dismiss
+
     // MARK: - Properties
 
-    @ObservedObject var viewModel: AddTodoTextViewModel
-    @ObservedObject var todoViewModel: AddTodoViewModel
-    @StateObject var bottomViewModel: AddTodoPickerButtonViewModel
-    @State private var isDeadlinePresented: Bool = false
-    @State private var isTagPresented: Bool = false
-    @State private var isMatrixPresented: Bool = false
-    @State private var selectedDateText: String = "Today"
-    @State private var selectedTagColor: Color = .gray05
-    @State private var selectedPriority: Priority = .none
-    @StateObject private var tagViewModel = AddTodoPickerButtonViewModel(type: .tag)
+    @Environment(\.dismiss) var dismiss
+    @ObservedObject var viewModel: AddTodoViewModel
 
     // MARK: - Body
 
@@ -35,30 +27,18 @@ struct AddTodoBottomView: View {
             enterButton
         }
         .padding(.bottom, 20)
-        .onChange(of: viewModel.text) { _, newText in
-            todoViewModel.description = newText
-        }
-        .onChange(of: bottomViewModel.selectedDate) { _, newDate in
-            todoViewModel.endDate = bottomViewModel.isoFormattedDate
-        }
-        .onChange(of: bottomViewModel.selectedTag) { _, newTag in
-            todoViewModel.tagId = newTag.tagId
-        }
-        .onChange(of: selectedPriority) { _, newValue in
-            todoViewModel.selectedPriority = newValue
-        }
     }
 
     // MARK: - UI Components
 
     private var deadlineButton: some View {
         Button(action: {
-            isDeadlinePresented.toggle()
+            viewModel.showEndDatePicker = true
         }) {
             HStack {
                 Image(.ic_deadline)
 
-                Text(bottomViewModel.formattedPickerTitle)
+                Text(viewModel.formattedEndDate)
                     .applyFont(.detail_r_12)
             }
             .frame(maxWidth: .infinity)
@@ -67,62 +47,85 @@ struct AddTodoBottomView: View {
         .frame(width: 86, height: 41)
         .background(Color.gray09)
         .clipShape(RoundedRectangle(cornerRadius: 2))
-        .sheet(isPresented: $isDeadlinePresented) {
-            AddDeadlineView(
-                viewModel: bottomViewModel,
-                selectedDateText: $selectedDateText
-            )
-            .presentationDetents(
-                DynamicPresentationDetent.dynamicDetent(for: .deadline)
-            )
+        .sheet(isPresented: $viewModel.showEndDatePicker) {
+            SheetContainer(type: .addTodo(.date)) {
+                VStack {
+                    SheetHeaderView {
+                        viewModel.showEndDatePicker = false
+                    }
+                    DatePicker(
+                        "",
+                        selection: $viewModel.endDate,
+                        displayedComponents: .date
+                    )
+                    .colorScheme(.dark)
+                    .datePickerStyle(.graphical)
+                    .tint(.mementoBlue)
+                    .padding([.horizontal, .bottom], 10)
+                }
+            }
         }
     }
 
     private var tagButton: some View {
         Button(action: {
-            isTagPresented.toggle()
+            viewModel.showTagPicker = true
         }) {
             Circle()
-                .fill(Color(bottomViewModel.selectedTag.color))
+                .fill(Color(viewModel.selectedTag.color))
                 .frame(width: 10, height: 10)
         }
         .frame(width: 42, height: 42)
         .background(Color.gray09)
         .clipShape(RoundedRectangle(cornerRadius: 2))
-        .sheet(isPresented: $isTagPresented) {
-            AddTagView(viewModel: bottomViewModel)
-                .presentationDetents(
-                    DynamicPresentationDetent.dynamicDetent(
-                        for: AddTodoPickerButtonType.tag
-                    )
-                )
+        .sheet(isPresented: $viewModel.showTagPicker) {
+            SheetContainer(type: .addTodo(.tag)) {
+                SheetHeaderView {
+                    viewModel.showTagPicker = false
+                }
+                List {
+                    ForEach(Tag.mockData) { tag in
+                        TagListItem(tag: tag, viewModel: viewModel)
+                            .listRowBackground(
+                                viewModel.selectedTag.tagId == tag.tagId
+                                ? Color.gray08
+                                : Color.clear
+                            )
+                    }
+                }
+                .listStyle(PlainListStyle())
+                .ignoresSafeArea()
+                .padding([.horizontal, .bottom], 10)
+                .scrollDisabled(Tag.mockData.count <= 3)
+            }
+            .applyDynamicSheetForTagCount()
         }
     }
 
     private var matrixButton: some View {
         Button(action: {
-            isMatrixPresented.toggle()
+            viewModel.showPriorityPicker = true
         }) {
-            Image(getPriorityImage(selectedPriority))
+            Image(viewModel.getPriorityImage(viewModel.selectedPriority))
                 .frame(width: 26, height: 26)
                 .padding(8)
                 .background(Color.gray09)
                 .cornerRadius(2)
         }
         .frame(width: 42, height: 42)
-        .sheet(isPresented: $isMatrixPresented) {
+        .sheet(isPresented: $viewModel.showPriorityPicker) {
             EisenhowerMatrixView(
                 viewType: .add,
                 source: "",
-                externalPriority: $selectedPriority
+                viewModel: viewModel
             )
         }
     }
 
     private var enterButton: some View {
         Button(action: {
-            todoViewModel.createTodo {
-                postMakeScheduleNotiFication()
+            viewModel.createTodo {
+                viewModel.postMakeScheduleNotiFication()
                 dismiss()
             }
         }) {
@@ -133,22 +136,5 @@ struct AddTodoBottomView: View {
             )
         }
         .disabled(viewModel.isTextEmpty)
-    }
-    func postMakeScheduleNotiFication() {
-        NotificationCenter.default.post(name: NSNotification.Name("postScheduleComplete"),
-                                        object: nil,
-                                        userInfo: nil)
-    }
-
-    // MARK: - Helpers
-
-    private func getPriorityImage(_ priority: Priority) -> MDSImageName {
-        switch priority {
-        case .immediate: return .matrix_immediate
-        case .high: return .matrix_high
-        case .medium: return .matrix_medium
-        case .low: return .matrix_low
-        case .none: return .matrix_none
-        }
     }
 }
