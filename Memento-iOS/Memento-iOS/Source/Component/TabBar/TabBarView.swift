@@ -3,10 +3,13 @@ import SwiftUI
 import MCalendar
 
 struct TabBarView: View {
+
     @State private var selectedTab: TabBarItem = .today
-    @State private var isAdditionSheetPresented: Bool = false
     @State private var previousTab: TabBarItem = .today
-    
+    @State private var segmentedViewHeight: CGFloat = .zero
+    @GestureState private var translation: CGFloat = .zero
+
+    @StateObject var segmentedViewModel = SegmentedMenuViewModel()
     @StateObject var calendarViewModel = WeeklyCalendarViewModel(
         mCalendarDataSource: MCalendarDataSource(),
         mEventDataSource: MEventDatasource(),
@@ -15,7 +18,7 @@ struct TabBarView: View {
         toDoListService: ToDoListAPIService(),
         userUptimeService: UserUptimeAPIService()
     )
-    
+
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
@@ -39,20 +42,26 @@ struct TabBarView: View {
                     .tag(TabBarItem.today)
                 
                 // 가운데 Addition 탭
-                AddView()
+                Color.clear
                     .tabItem {
                         selectedTab == .addition
                         ? TabBarItem.addition.selectedItem
                         : TabBarItem.addition.normalItem
                     }
                     .tag(TabBarItem.addition)
-                    .onChange(of: selectedTab) { newValue in
+                    .onAppear {
+                        segmentedViewModel.isPresented = true
+                        selectedTab = previousTab
+                    }
+                    .onChange(of: selectedTab) { _, newValue in
                         if newValue == .addition {
-                            isAdditionSheetPresented = true
+                            withAnimation {
+                                segmentedViewModel.isPresented = true
+                            }
                             selectedTab = previousTab
                         }
                     }
-                
+
                 ToDoListWeeklyCalendarView(viewModel: calendarViewModel)
                     .tabItem {
                         selectedTab == .todo
@@ -60,42 +69,52 @@ struct TabBarView: View {
                         : TabBarItem.todo.normalItem
                     }
                     .tag(TabBarItem.todo)
-                    .onChange(of: selectedTab) { newValue in
-                        if newValue != .addition {
-                            previousTab = newValue
-                        }
-                    }
             }
-            
-            // 시트 반투명 배경
-            if isAdditionSheetPresented {
+
+            if segmentedViewModel.isPresented {
                 Color.black.opacity(0.5)
-                    .ignoresSafeArea()
-                    .transition(.opacity)
+                    .ignoresSafeArea(.all)
                     .onTapGesture {
-                        isAdditionSheetPresented = false
+                        dismissKeyboard()
+                        segmentedViewModel.isPresented = false
+                        segmentedViewModel.selectedButton = .checkbox
                     }
+                    .zIndex(1)
+
+                SegmentedMenuView(viewModel: segmentedViewModel, sheetHeight: $segmentedViewHeight)
+                    .zIndex(2)
+                    .offset(y: translation)
+                    .gesture(
+                        DragGesture()
+                            .updating($translation) { value, state, _ in
+                                if value.translation.height > 0 {
+                                    state = value.translation.height
+                                }
+                            }
+                            .onEnded { value in
+                                if value.translation.height > segmentedViewHeight / 3 {
+                                    dismissKeyboard()
+                                    segmentedViewModel.isPresented = false
+                                    segmentedViewModel.selectedButton = .checkbox
+                                }
+                            }
+                    )
+                    .transition(.move(edge: .bottom))
+                    .animation(.spring, value: segmentedViewModel.isPresented)
             }
-        }
-        .sheet(isPresented: $isAdditionSheetPresented) {
-            SegmentedMenuView()
-                .presentationDetents([.fraction(0.8)])
-                .presentationDragIndicator(.hidden)
         }
         .onAppear {
             calendarViewModel.getToDoListTotalAPI()
             calendarViewModel.getSchedulesTotalAPI()
         }
     }
-}
 
-
-struct AddView: View {
-    var body: some View {
-        Color.clear
+    private func dismissKeyboard() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil,
+            from: nil,
+            for: nil
+        )
     }
-}
-
-#Preview {
-    TabBarView()
 }
