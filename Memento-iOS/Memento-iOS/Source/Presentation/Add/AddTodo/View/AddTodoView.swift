@@ -21,8 +21,6 @@ struct AddTodoView: View {
         VStack {
             AddTodoHeaderView(viewModel: viewModel)
             AddTodoTextView(viewModel: viewModel)
-            Spacer()
-            AddTodoBottomView(viewModel: viewModel)
         }
         .padding(.horizontal)
         .background(Color.gray10)

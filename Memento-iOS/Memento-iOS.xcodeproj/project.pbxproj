@@ -76,7 +76,6 @@
 				Source/Presentation/Add/AddSchedule/View/DateTimePickerView.swift,
 				Source/Presentation/Add/AddSchedule/ViewModel/AddEventTitleViewModel.swift,
 				Source/Presentation/Add/AddSchedule/ViewModel/AddScheduleViewModel.swift,
-				Source/Presentation/Add/AddTodo/View/AddTodoBottomView.swift,
 				Source/Presentation/Add/AddTodo/View/AddTodoHeaderView.swift,
 				Source/Presentation/Add/AddTodo/View/AddTodoTextView.swift,
 				Source/Presentation/Add/AddTodo/View/AddTodoView.swift,
