@@ -12,22 +12,44 @@ import MDSKit
 struct SegmentedMenuView: View {
 
     // MARK: - Properties
-    @StateObject private var viewModel = SegmentedMenuViewModel()
+
+    @ObservedObject private var viewModel: SegmentedMenuViewModel
+    @Binding var sheetHeight: CGFloat
+    @State private var keyboardHeight: CGFloat = 0
+
+    // MARK: - Initializer
+
+    init(viewModel: SegmentedMenuViewModel, sheetHeight: Binding<CGFloat>) {
+        self.viewModel = viewModel
+        self._sheetHeight = sheetHeight
+    }
 
     // MARK: - Body
 
     var body: some View {
-        ZStack {
-            Color.gray10
-                .ignoresSafeArea()
+        GeometryReader { geometry in
+            let screenHeight = geometry.size.height
+            let calculatedSheetHeight = screenHeight * 0.8
 
             VStack {
-                menuButtonsView
                 Spacer()
-                contentView
+                VStack {
+                    menuButtonsView
+                    contentView
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: calculatedSheetHeight)
+                .background(Color.gray10)
+                .shadow(radius: 10)
+                .transition(.move(edge: .bottom))
+                .offset(y: keyboardHeight > 0 ? 0 : 0)
             }
-            .padding(.top)
+            .frame(maxWidth: .infinity, alignment: .bottom)
+            .onAppear {
+                sheetHeight = calculatedSheetHeight
+            }
         }
+        .ignoresSafeArea(.all, edges: .bottom)
     }
 }
 
@@ -48,7 +70,8 @@ private extension SegmentedMenuView {
                 .clipShape(Capsule())
                 .frame(width: 125, height: 45)
         )
-        .padding(.bottom, 5)
+        .padding(.top, 20)
+        .padding(.bottom, 10)
     }
 
     @ViewBuilder
@@ -91,10 +114,4 @@ private extension SegmentedMenuView {
             BrainDumpView()
         }
     }
-}
-
-// MARK: - Preview
-
-#Preview {
-    SegmentedMenuView()
 }
