@@ -9,7 +9,8 @@ import Foundation
 import Moya
 
 enum UserInfoTargetType {
-    case user(request: UserInfoRequest)
+    case updateUserInfo(request: UserInfoRequest)
+    case getUserUptime
 }
 
 extension UserInfoTargetType: BaseTargetType {
@@ -28,8 +29,10 @@ extension UserInfoTargetType: BaseTargetType {
     
     var path: String {
         switch self {
-        case .user:
+        case .updateUserInfo:
             return "\(utilPath.rawValue)/personal-info"
+        case .getUserUptime:
+            return "\(utilPath.rawValue)/personal-info/uptime"
         }
     }
     
@@ -39,8 +42,10 @@ extension UserInfoTargetType: BaseTargetType {
     
     var requestBodyParameter: Codable? {
         switch self {
-        case .user(let request):
-            return request // 수정된 부분
+        case .updateUserInfo(let request):
+            return request
+        case .getUserUptime:
+            return nil
         }
     }
     

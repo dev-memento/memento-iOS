@@ -26,18 +26,29 @@ final class LoginAPIService: BaseAPIService, LoginAPIServiceProtocol {
     
     /// 로그인 API 호출
     func login(provider: String, idToken: String, completion: @escaping (NetworkResult<LoginResponseDTO>) -> Void) {
-        self.provider.request(.login(provider: provider, idToken: idToken)) { result in
+        self.provider.request(.login(provider: provider, idToken: idToken)) { [weak self] result in
+            guard let self = self else { return }
+            
             switch result {
             case .success(let response):
-                let networkResult: NetworkResult<LoginResponseDTO> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
+                let networkResult: NetworkResult<LoginResponseDTO> = self.fetchNetworkResult(
+                    statusCode: response.statusCode,
+                    data: response.data
+                )
                 print(networkResult.stateDescription)
                 completion(networkResult)
+                
             case .failure(let error):
                 if let response = error.response {
-                    let networkResult: NetworkResult<LoginResponseDTO> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
+                    let networkResult: NetworkResult<LoginResponseDTO> = self.fetchNetworkResult(
+                        statusCode: response.statusCode,
+                        data: response.data
+                    )
                     completion(networkResult)
                 }
             }
         }
     }
 }
+
+
