@@ -16,46 +16,34 @@ struct EisenhowerMatrixView: View {
     ]
     let viewType: ViewType
     let source: String
-    
-    @Binding var externalPriority: Priority
-    @State private var selectedPriority: Priority
-    @State private var priorities: [Priority]
-    
+    @ObservedObject var viewModel: AddTodoViewModel
+
     private let gridItem = [
         GridItem(.fixed(146)),
         GridItem(.fixed(146))
     ]
-    
-    init(viewType: ViewType, source: String, externalPriority: Binding<Priority>) {
-        self.viewType = viewType
-        self.source = source
-        self._externalPriority = externalPriority
-        self._selectedPriority = State(initialValue: externalPriority.wrappedValue)
-        self._priorities = State(initialValue: [.immediate, .high, .medium, .low])
-    }
-    
+
     var body: some View {
         ZStack {
             Color.gray10
                 .ignoresSafeArea()
-            
+
             VStack {
                 HeaderView(viewType: viewType, onDone: {
-                    externalPriority = selectedPriority
+                    viewModel.showPriorityPicker = false
                 })
 
-                TodoItemView(viewType: viewType, priority: $selectedPriority)
+                TodoItemView(viewType: viewType, priority: $viewModel.selectedPriority)
 
                 MatrixGridView(
-                    priorities: $priorities,
-                    selectedPriority: $selectedPriority,
+                    selectedPriority: $viewModel.selectedPriority,
                     gridItem: gridItem,
                     items: items
                 )
                 .padding(.top, 12)
-                
+
                 FooterTextView()
-                
+
                 Spacer()
             }
         }
@@ -87,9 +75,9 @@ struct HeaderView: View {
                 }
                 .frame(width: 84, height: 48)
             }
-            
+
             Spacer()
-            
+
             Button {
                 onDone()
                 presentationMode.wrappedValue.dismiss()
@@ -108,7 +96,7 @@ struct TodoItemView: View {
 
     let viewType: ViewType
     @Binding var priority: Priority
-    
+
     var body: some View {
         switch viewType {
         case .add:
@@ -190,11 +178,10 @@ struct TodoItemView: View {
 }
 
 struct MatrixGridView: View {
-    @Binding var priorities: [Priority]
     @Binding var selectedPriority: Priority
     let gridItem: [GridItem]
     let items: [(String, Priority)]
-    
+
     var body: some View {
         VStack(alignment: .leading){
             VStack(spacing: 1){
@@ -203,27 +190,27 @@ struct MatrixGridView: View {
                     .padding(.top, 16)
                     .frame(maxWidth: .infinity, alignment: .center)
                     .applyFont(.detail_r_12)
-                
+
                 Image(.ic_prio_arrow_v)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 300, height: 12)
             }
             HStack() {
-                
+
                 HStack(spacing: -19){
                     Text("Importance")
                         .foregroundColor(.gray04)
                         .rotationEffect(.degrees(-90))
                         .applyFont(.detail_r_12)
-                    
+
                     Image(.ic_prio_arrow_h)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 12, height: 260)
                 }
                 LazyVGrid(columns: gridItem, spacing: 8) {
-                    ForEach(priorities.indices, id: \.self) { index in
+                    ForEach(items.indices, id: \.self) { index in
                         Button {
                             selectedPriority = items[index].1
                         } label: {
