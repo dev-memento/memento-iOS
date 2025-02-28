@@ -19,9 +19,38 @@ struct ToDoListView: View {
     var body: some View {
         ZStack {
             ScrollView {
-                LazyVStack(spacing: 0) {
+                VStack(spacing: 0) {
                     ForEach(viewModel.mCallendarDataSource.wholeMonthDate, id: \.self) { date in
-                        renderToDoList(for: date)
+                        ToDoListDateView(date: "\(makeMonthDate(month: date.month)) \(date.day)")
+                            .padding(.bottom, 8)
+                            .id(date)
+                        if let events = viewModel.toDoListItemDict[date], !events.isEmpty {
+                            ForEach(events, id: \.self) { event in
+                                ToDoListItemView(
+                                    item: event.mapToToDoItem(),
+                                    isHighlighted: isTopPriorityItem(at: event, items: events),
+                                    backgroundColor: Color.grayBlack,
+                                    onTodoTap: { selectedItem in },
+                                    onCheckChanged: { isChecked in
+                                        if isChecked {
+                                            if let index = viewModel.toDoListItemDict[date]?.firstIndex(where: { $0.id == event.id }) {
+                                                viewModel.toDoListItemDict[date]?.remove(at: index)
+                                                viewModel.toDoListItemDict[date]?.append(event)
+                                            }
+                                        }
+                                        viewModel.updateToDoCompletion(toDoId: event.id, date: date)
+                                    }
+                                )
+                                .onTapGesture {
+                                    selectedItem = event
+                                    showTodoAlert = true
+                                }
+                            }
+                        } else {
+                            Text("No tasks for this date")
+                                .foregroundColor(.gray)
+                                .padding()
+                        }
                     }
                     Spacer()
                 }
@@ -65,53 +94,6 @@ struct ToDoListView: View {
             
         }
     }
-    
-    /// 특정 날짜에 대한 할 일 목록을 렌더링하는 함수
-    @ViewBuilder
-    private func renderToDoList(for date: MCalendarDataModel) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            ToDoListDateView(date: "\(makeMonthDate(month: date.month)) \(date.day)")
-                .padding(.bottom, 8)
-                .id(date)
-            
-            if let events = viewModel.toDoListItemDict[date], !events.isEmpty {
-                ForEach(events, id: \.self) { event in
-                    renderToDoItem(event: event, date: date, events: events)
-                }
-            } else {
-                Text("No tasks for this date") // ✅ 기본 View 추가
-                    .foregroundColor(.gray)
-                    .padding()
-            }
-        }
-    }
-
-
-    
-    /// 개별 할 일 아이템을 렌더링하는 함수
-    @ViewBuilder
-    private func renderToDoItem(event: ToDoListDataModel, date: MCalendarDataModel, events: [ToDoListDataModel]) -> some View {
-        ToDoListItemView(
-            item: event.mapToToDoItem(),
-            isHighlighted: isTopPriorityItem(at: event, items: events),
-            backgroundColor: Color.grayBlack,
-            onTodoTap: { selectedItem in },
-            onCheckChanged: { isChecked in
-                if isChecked {
-                    if let index = viewModel.toDoListItemDict[date]?.firstIndex(where: { $0.id == event.id }) {
-                        viewModel.toDoListItemDict[date]?.remove(at: index)
-                        viewModel.toDoListItemDict[date]?.append(event)
-                    }
-                }
-                viewModel.updateToDoCompletion(toDoId: event.id, date: date)
-            }
-        )
-        .onTapGesture {
-            selectedItem = event
-            showTodoAlert = true
-        }
-    }
-    
     
     private func isTopPriorityItem(at item: ToDoListDataModel, items: [ToDoListDataModel]) -> Bool {
         guard !item.isChecked else { return false }
