@@ -171,6 +171,7 @@ struct ToDoListItemView: View {
         VStack(spacing: 10) {
             ToDoListCell(
                 toDoList: item,
+                toDoListCompleted: ToDoListCompletedResponseData(id: item.id, isCompleted: item.isCompleted),
                 isHighlighted: isHighlighted,
                 backgroundColor: backgroundColor,
                 onCheckChanged: onCheckChanged
