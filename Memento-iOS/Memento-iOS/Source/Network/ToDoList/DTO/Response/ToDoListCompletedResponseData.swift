@@ -7,5 +7,5 @@
 
 struct ToDoListCompletedResponseData: Codable {
     let id: Int
-    let isCompleted: Bool
+    var isCompleted: Bool
 }
