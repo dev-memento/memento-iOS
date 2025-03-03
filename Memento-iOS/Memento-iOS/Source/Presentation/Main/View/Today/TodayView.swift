@@ -237,7 +237,12 @@ struct TodayListItemView: View {
             switch item {
             case .todo(let todo):
                 ToDoListCell(
-                    toDoList: todo.mapToToDoItem(),
+                    toDoList: todo
+                        .mapToToDoItem(),
+                    toDoListCompleted: ToDoListCompletedResponseData(
+                        id: todo.id,
+                        isCompleted: todo.isChecked
+                    ),
                     isHighlighted: isHighlighted,
                     backgroundColor: backgroundColor,
                     onCheckChanged: onCheckChanged
