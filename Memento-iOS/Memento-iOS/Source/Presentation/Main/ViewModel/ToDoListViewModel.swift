@@ -107,6 +107,7 @@ extension ToDoListViewModel {
                         if let index = self?.toDoList.firstIndex(where: { $0.id == toDoId }) {
                             self?.toDoListItems[index].isChecked.toggle()
                         }
+                        self?.getToDoListTotalAPI()
                     }
                 }
             default:
