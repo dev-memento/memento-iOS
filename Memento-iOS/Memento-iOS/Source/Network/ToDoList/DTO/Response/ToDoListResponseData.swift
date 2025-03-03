@@ -21,5 +21,5 @@ struct ToDoListTotalResponseDataTest: Codable, Equatable {
     let tagName: String
     let tagColor: String
     let toDoType: String
-    let orderNum: Int
+    let orderNum: Double
 }
