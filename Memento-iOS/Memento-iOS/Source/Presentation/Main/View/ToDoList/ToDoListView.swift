@@ -38,7 +38,7 @@ struct ToDoListView: View {
                                                 viewModel.toDoListItemDict[date]?.append(event)
                                             }
                                         }
-                                        viewModel.updateToDoCompletion(toDoId: event.id, date: date)
+                                        viewModel.updateToDoCompletion(toDoId: event.id)
                                     }
                                 )
                                 .onTapGesture {
@@ -58,9 +58,9 @@ struct ToDoListView: View {
             .background(Color.grayBlack)
             .onAppear {
                 viewModel.getToDoListTotalAPI()  // ✅ 캐싱된 데이터 먼저 표시
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    viewModel.getToDoListTotalAPI(forceRefresh: true)  // ✅ 최신 데이터 갱신
-                }
+                //                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                //                    viewModel.getToDoListTotalAPI(forceRefresh: true)  // ✅ 최신 데이터 갱신
+                //                }
             }
             
             if showTodoAlert, let todo = selectedItem {
