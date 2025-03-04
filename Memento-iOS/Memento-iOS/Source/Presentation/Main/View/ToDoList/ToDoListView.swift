@@ -76,6 +76,8 @@ struct ToDoListView: View {
                                let index = viewModel.toDoListItemDict[date]?.firstIndex(where: { $0.id == todo.id }) {
                                 viewModel.toDoListItemDict[date]?[index].isChecked = newValue
                                 viewModel.updateToDoCompletion(toDoId: todo.id)
+                                
+                                selectedItem?.isChecked = newValue
                             }
                         }
                     ),
