@@ -10,21 +10,16 @@ import MDSKit
 
 struct ToDoListCell: View {
     var toDoList: ToDoListTotalResponseDataTest
-    @State var toDoListCompleted: ToDoListCompletedResponseData
+    @Binding var toDoListCompleted: ToDoListCompletedResponseData
     
     var isHighlighted: Bool
     var backgroundColor: Color
-    
-    var onCheckChanged: (Bool) -> Void
     
     var body: some View {
         HStack(spacing: 10) {
             ColorTagView(colorType: toDoList.tagColor)
             
-            CheckBoxView(toDoListCompleted: $toDoListCompleted) {
-                toDoListCompleted.isCompleted.toggle()
-                onCheckChanged(toDoListCompleted.isCompleted)
-            }
+            CheckBoxView(isChecked: $toDoListCompleted.isCompleted)
             
             VStack(alignment: .leading) {
                 ToDoTitleView(title: toDoList.description, isChecked: toDoListCompleted.isCompleted)
@@ -59,14 +54,13 @@ struct ToDoListCell: View {
 }
 
 struct CheckBoxView: View {
-    @Binding var toDoListCompleted: ToDoListCompletedResponseData
-    var onCheckChanged: () -> Void
+    @Binding var isChecked: Bool
     
     var body: some View {
         VStack {
-            Image(toDoListCompleted.isCompleted ? .btn_check_selected_square : .btn_check_unselected_square)
+            Image(isChecked ? .btn_check_selected_square : .btn_check_unselected_square)
                 .onTapGesture {
-                    onCheckChanged()
+                    isChecked.toggle()
                 }
             Spacer()
         }
