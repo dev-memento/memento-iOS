@@ -14,7 +14,6 @@ struct ToDoListView: View {
     
     @State private var showTodoAlert = false
     @State private var selectedItem: ToDoListDataModel?
-    @State private var isChecked = false
     
     var body: some View {
         ZStack {
@@ -70,7 +69,16 @@ struct ToDoListView: View {
                     deadline: todo.mapToToDoItem().endDate ?? "",
                     tag: todo.mapToToDoItem().tagColor ?? "",
                     priority: todo.priorityType ?? .none,
-                    isChecked: $isChecked,
+                    isChecked: Binding(
+                        get: { todo.isChecked },
+                        set: { newValue in
+                            if let date = viewModel.toDoListItemDict.first(where: { $0.value.contains(where: { $0.id == todo.id }) })?.key,
+                               let index = viewModel.toDoListItemDict[date]?.firstIndex(where: { $0.id == todo.id }) {
+                                viewModel.toDoListItemDict[date]?[index].isChecked = newValue
+                                viewModel.updateToDoCompletion(toDoId: todo.id)
+                            }
+                        }
+                    ),
                     onDelete: {
                         if let date = viewModel.toDoListItemDict.first(where: { $0.value.contains(where: { $0.id == selectedItem?.id }) })?.key,
                            let index = viewModel.toDoListItemDict[date]?.firstIndex(where: { $0.id == selectedItem?.id }) {
