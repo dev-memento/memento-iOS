@@ -28,18 +28,18 @@ struct ToDoListView: View {
                             ForEach(events, id: \.self) { event in
                                 ToDoListItemView(
                                     item: event.mapToToDoItem(),
-                                    isHighlighted: isTopPriorityItem(at: event, items: events),
-                                    backgroundColor: Color.grayBlack,
-                                    onTodoTap: { selectedItem in },
-                                    onCheckChanged: { isChecked in
-                                        if isChecked {
+                                    isChecked: Binding(
+                                        get: { event.isChecked },
+                                        set: { newValue in
                                             if let index = viewModel.toDoListItemDict[date]?.firstIndex(where: { $0.id == event.id }) {
-                                                viewModel.toDoListItemDict[date]?.remove(at: index)
-                                                viewModel.toDoListItemDict[date]?.append(event)
+                                                viewModel.toDoListItemDict[date]?[index].isChecked = newValue
+                                                viewModel.updateToDoCompletion(toDoId: event.id)
                                             }
                                         }
-                                        viewModel.updateToDoCompletion(toDoId: event.id)
-                                    }
+                                    ),
+                                    isHighlighted: isTopPriorityItem(at: event, items: events),
+                                    backgroundColor: Color.grayBlack,
+                                    onTodoTap: { selectedItem in }
                                 )
                                 .onTapGesture {
                                     selectedItem = event
@@ -160,21 +160,31 @@ struct ToDoListDateView: View {
 
 struct ToDoListItemView: View {
     var item: ToDoListTotalResponseDataTest
+    @Binding var isChecked: Bool
     
     var isHighlighted: Bool
     var backgroundColor: Color
     
     var onTodoTap: (ToDoListTotalResponseData) -> Void
-    var onCheckChanged: (Bool) -> Void
+    
+    private var toDoListCompletedBinding: Binding<ToDoListCompletedResponseData> {
+        Binding<ToDoListCompletedResponseData>(
+            get: {
+                ToDoListCompletedResponseData(id: item.id, isCompleted: isChecked)
+            },
+            set: { newValue in
+                isChecked = newValue.isCompleted
+            }
+        )
+    }
     
     var body: some View {
         VStack(spacing: 10) {
             ToDoListCell(
                 toDoList: item,
-                toDoListCompleted: ToDoListCompletedResponseData(id: item.id, isCompleted: item.isCompleted),
+                toDoListCompleted: toDoListCompletedBinding,
                 isHighlighted: isHighlighted,
-                backgroundColor: backgroundColor,
-                onCheckChanged: onCheckChanged
+                backgroundColor: backgroundColor
             )
         }
         .padding(.bottom, 8)
