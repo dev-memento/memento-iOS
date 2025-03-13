@@ -18,7 +18,12 @@ struct TabBarView: View {
         toDoListService: ToDoListAPIService(),
         userUptimeService: UserUptimeAPIService()
     )
-
+    
+    @StateObject var todolistViewModel = ToDoListViewModel(
+        toDoListService: ToDoListAPIService(),
+        calendarDataSource: MCalendarDataSource()
+    )
+    
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
@@ -26,7 +31,6 @@ struct TabBarView: View {
         
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
-        
     }
     
     var body: some View {
@@ -61,8 +65,8 @@ struct TabBarView: View {
                             selectedTab = previousTab
                         }
                     }
-
-                ToDoListWeeklyCalendarView(viewModel: calendarViewModel)
+                
+                ToDoListWeeklyCalendarView(viewModel: todolistViewModel)
                     .tabItem {
                         selectedTab == .todo
                         ? TabBarItem.todo.selectedItem

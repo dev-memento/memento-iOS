@@ -307,23 +307,23 @@ extension WeeklyCalendarViewModel {
     }
     
     func userUptimeAPI() {
-        userUptimeService.fetchUptime{ result in
-            switch result {
-            case .success(let response):
-                print("시간 가져오기 성공")
-                // 추가 작업 필요 시 여기에 작성
-                if let wakeUpTime = response?.data.wakeUpTime, let windDownTime = response?.data.windDownTime {
-                    self.wakeUpTime = wakeUpTime
-                    self.windDownTime = wakeUpTime
-                    print("시간 가져오기 성공 \(self.wakeUpTime) \(self.windDownTime)")
-                } else {
-                    self.wakeUpTime = "8 AM"
-                    self.windDownTime = "11 PM"
-                }
-            default:
-                print("시간 가져오기 실패")
-            }
-        }
+//        userUptimeService.fetchUptime{ result in
+//            switch result {
+//            case .success(let response):
+//                print("시간 가져오기 성공")
+//                // 추가 작업 필요 시 여기에 작성
+//                if let wakeUpTime = response?.data.wakeUpTime, let windDownTime = response?.data.windDownTime {
+//                    self.wakeUpTime = wakeUpTime
+//                    self.windDownTime = wakeUpTime
+//                    print("시간 가져오기 성공 \(self.wakeUpTime) \(self.windDownTime)")
+//                } else {
+//                    self.wakeUpTime = "8 AM"
+//                    self.windDownTime = "11 PM"
+//                }
+//            default:
+//                print("시간 가져오기 실패")
+//            }
+//        }
     }
 }
 

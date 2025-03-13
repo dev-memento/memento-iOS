@@ -11,18 +11,18 @@ class AppState: ObservableObject {
     @Published var isLoggedIn: Bool = false
     
     init() {
-        do {
-            try TokenKeychainManager.shared.clearTokens()
-        } catch {
-            
-        }
-        //checkToken()
+//        do {
+//            try TokenKeychainManager.shared.clearTokens()
+//        } catch {
+//            
+//        }
+        checkToken()
     }
     
     func checkToken() {
         do {
             // AccessToken 확인
-            if let accessToken = try TokenKeychainManager.shared.getRefreshToken(), !accessToken.isEmpty {
+            if let accessToken = try TokenKeychainManager.shared.getAccessToken(), !accessToken.isEmpty {
                 isLoggedIn = true
             } else {
                 isLoggedIn = false
