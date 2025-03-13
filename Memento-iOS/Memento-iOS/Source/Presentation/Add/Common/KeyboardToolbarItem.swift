@@ -1,25 +1,21 @@
 //
-//  AddTodoBottomView.swift
+//  KeyboardToolbarItem.swift
 //  Memento-iOS
 //
-//  Created by RAFA on 1/18/25.
+//  Created by RAFA on 2/23/25.
 //
 
 import SwiftUI
 
 import MDSKit
 
-struct AddTodoBottomView: View {
+struct KeyboardToolbarItem: View {
 
-    // MARK: - Properties
-
-    @Environment(\.dismiss) var dismiss
     @ObservedObject var viewModel: AddTodoViewModel
-
-    // MARK: - Body
+    @Environment(\.dismiss) var dismiss
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack {
             deadlineButton
             tagButton
             matrixButton
@@ -27,11 +23,12 @@ struct AddTodoBottomView: View {
             enterButton
         }
         .padding(.bottom, 20)
+        .padding(.horizontal, 15)
+        .frame(width: UIScreen.main.bounds.width)
+        .background(Color.gray10.ignoresSafeArea(.all))
     }
 
-    // MARK: - UI Components
-
-    private var deadlineButton: some View {
+    var deadlineButton: some View {
         Button(action: {
             viewModel.showEndDatePicker = true
         }) {
@@ -41,7 +38,6 @@ struct AddTodoBottomView: View {
                 Text(viewModel.formattedEndDate)
                     .applyFont(.detail_r_12)
             }
-            .frame(maxWidth: .infinity)
             .foregroundStyle(Color.gray02)
         }
         .frame(width: 86, height: 41)
@@ -67,7 +63,7 @@ struct AddTodoBottomView: View {
         }
     }
 
-    private var tagButton: some View {
+    var tagButton: some View {
         Button(action: {
             viewModel.showTagPicker = true
         }) {
@@ -102,7 +98,7 @@ struct AddTodoBottomView: View {
         }
     }
 
-    private var matrixButton: some View {
+    var matrixButton: some View {
         Button(action: {
             viewModel.showPriorityPicker = true
         }) {
@@ -122,7 +118,7 @@ struct AddTodoBottomView: View {
         }
     }
 
-    private var enterButton: some View {
+    var enterButton: some View {
         Button(action: {
             viewModel.createTodo {
                 viewModel.postMakeScheduleNotiFication()
