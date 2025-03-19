@@ -9,24 +9,20 @@ import SwiftUI
 import MDSKit
 
 struct ToDoListCell: View {
-    @State var toDoList: ToDoListTotalResponseDataTest
+    var toDoList: ToDoListTotalResponseDataTest
+    @Binding var toDoListCompleted: ToDoListCompletedResponseData
     
     var isHighlighted: Bool
     var backgroundColor: Color
-    
-    var onCheckChanged: (Bool) -> Void
     
     var body: some View {
         HStack(spacing: 10) {
             ColorTagView(colorType: toDoList.tagColor)
             
-            CheckBoxView(toDoList: $toDoList) {
-                toDoList.isCompleted.toggle()
-                onCheckChanged(toDoList.isCompleted)
-            }
+            CheckBoxView(isChecked: $toDoListCompleted.isCompleted)
             
             VStack(alignment: .leading) {
-                ToDoTitleView(title: toDoList.description, isChecked: toDoList.isCompleted)
+                ToDoTitleView(title: toDoList.description, isChecked: toDoListCompleted.isCompleted)
                 DueDateView(endDate: toDoList.endDate, toDoType: toDoList.toDoType)
             }
             
@@ -36,7 +32,7 @@ struct ToDoListCell: View {
         }
         .frame(height: 68)
         .background(highlightedBackground)
-        .opacity(toDoList.isCompleted ? 0.5 : 1.0)
+        .opacity(toDoListCompleted.isCompleted ? 0.5 : 1.0)
     }
     
     private var highlightedBackground: some View {
@@ -58,14 +54,13 @@ struct ToDoListCell: View {
 }
 
 struct CheckBoxView: View {
-    @Binding var toDoList: ToDoListTotalResponseDataTest
-    var onCheckChanged: () -> Void
+    @Binding var isChecked: Bool
     
     var body: some View {
         VStack {
-            Image(toDoList.isCompleted ? .btn_check_selected_square : .btn_check_unselected_square)
+            Image(isChecked ? .btn_check_selected_square : .btn_check_unselected_square)
                 .onTapGesture {
-                    onCheckChanged()
+                    isChecked.toggle()
                 }
             Spacer()
         }

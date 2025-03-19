@@ -235,12 +235,25 @@ struct TodayListItemView: View {
                 .opacity(isArrow ? 1 : 0)
             
             switch item {
-            case .todo(let todo):
+            case .todo(var todo):
                 ToDoListCell(
-                    toDoList: todo.mapToToDoItem(),
+                    toDoList: todo
+                        .mapToToDoItem(),
+                    //                    toDoListCompleted: ToDoListCompletedResponseData(
+                    //                        id: todo.id,
+                    //                        isCompleted: todo.isChecked
+                    //                    ),
+                    toDoListCompleted: Binding<ToDoListCompletedResponseData>(
+                        get: {
+                            ToDoListCompletedResponseData(id: todo.id, isCompleted: todo.isChecked)
+                        },
+                        set: { newValue in
+                            todo.isChecked = newValue.isCompleted
+                            onCheckChanged(newValue.isCompleted)
+                        }
+                    ),
                     isHighlighted: isHighlighted,
-                    backgroundColor: backgroundColor,
-                    onCheckChanged: onCheckChanged
+                    backgroundColor: backgroundColor
                 )
                 .contentShape(Rectangle())
                 .padding(.trailing, -20)

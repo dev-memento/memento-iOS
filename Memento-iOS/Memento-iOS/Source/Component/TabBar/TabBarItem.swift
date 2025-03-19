@@ -52,7 +52,12 @@ enum TabBarItem: CaseIterable {
         case .todo:
             return AnyView(
                 ToDoListWeeklyCalendarView(
-                    viewModel: ToDoListViewModel(toDoListService: ToDoListAPIService(), calendarDataSource: MCalendarDataSource())
+                    viewModel: ToDoListViewModel(
+                        tagService: TagAPIService(),
+                        toDoListService: ToDoListAPIService(),
+                        mCallendarDataSource: MCalendarDataSource(),
+                        mEventDataSource: MEventDatasource()
+                    )
                 )
             )
         case .addition:
