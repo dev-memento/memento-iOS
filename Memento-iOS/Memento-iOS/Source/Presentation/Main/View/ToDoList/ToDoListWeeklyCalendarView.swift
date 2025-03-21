@@ -12,7 +12,7 @@ import MCalendar
 
 struct ToDoListWeeklyCalendarView: View {
     @ObservedObject var viewModel: ToDoListViewModel
-    
+    @StateObject private var settingViewModel = SettingViewModel()
     @State private var scrollTarget: MCalendarDataModel? = nil
     @State private var userInteractionFlag: Bool = false
     
@@ -44,6 +44,7 @@ struct ToDoListWeeklyCalendarView: View {
                         .padding(.trailing, 17)
                         NavigationLink { 
                             SettingView()
+                                .environmentObject(settingViewModel)
                                 .navigationBarBackButtonHidden()
                         } label: {
                             Image(.ic_settings)
