@@ -9,29 +9,54 @@ import SwiftUI
 import MDSKit
 
 struct SettingView: View {
+    @EnvironmentObject var viewModel: SettingViewModel
+    
     var body: some View {
-        VStack {
-            CustomNavigationBar(
-                title: "Sttings",
-                showBackButton: true,
-                showSkipButton: false,
-                backButtonAction: {
-                   
+        NavigationStack(path: $viewModel.navigationPath) {
+            VStack {
+                CustomNavigationBar(
+                    title: "Sttings",
+                    showBackButton: true,
+                    showSkipButton: false,
+                    backButtonAction: {
+                        
+                    }
+                )
+                .padding(.top, 25)
+                
+                UserInfoCard()
+                
+                GeneralSettingsSection()
+                
+                AdditionalSettingsSection()
+                
+                AccountSettingsSection()
+                
+                Spacer()
+                
+                
+            }
+            .navigationDestination(for: SettingNavigationDestination.self) { destination in
+                switch destination {
+                case .Tag:
+                    EmptyView()
+                        .navigationBarBackButtonHidden()
+                case .Time:
+                    TimeView()
+                        .environmentObject(viewModel)
+                        .navigationBarBackButtonHidden()
+                case .Integrations:
+                    IntegrationsView()
+                        .environmentObject(viewModel)
+                        .navigationBarBackButtonHidden()
+                case .Terms:
+                    CalendarConnectView()
+                        .environmentObject(viewModel)
+                        .navigationBarBackButtonHidden()
+                case .Feedback:
+                    EmptyView()
                 }
-            )
-            .padding(.top, 25)
-            
-            UserInfoCard()
-            
-            GeneralSettingsSection()
-            
-            AdditionalSettingsSection()
-            
-            AccountSettingsSection()
-            
-            Spacer()
-            
-            
+            }
         }
     }
 }
@@ -62,47 +87,62 @@ struct UserInfoCard: View {
 }
 
 struct GeneralSettingsSection: View {
+    @EnvironmentObject var viewModel: SettingViewModel
+
     var body: some View {
         VStack {
             HStack {
                 Text("Notifications")
                     .applyFont(.body_r_14)
                     .foregroundColor(Color.gray05)
-                
+
                 Spacer()
-                
+
                 Button {
-                    
+                    // 알림 설정 버튼 액션
                 } label: {
                     Image(.btn_setting_on)
                 }
-                
             }
             .padding(.horizontal, 26)
             .padding(.top, 16)
-            
-            HStack {
-                Text("Tag")
-                    .applyFont(.body_r_14)
-                    .foregroundColor(Color.gray05)
-                
-                Spacer()
-                
+
+            // ✅ Tag 화면으로 이동
+            Button {
+                viewModel.navigateToNext(.Tag)
+            } label: {
+                HStack {
+                    Text("Tag")
+                        .applyFont(.body_r_14)
+                        .foregroundColor(Color.gray05)
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right") // 네비게이션 아이콘 추가
+                        .foregroundColor(.gray05)
+                }
+                .padding(.vertical, 15)
+                .padding(.horizontal, 26)
             }
-            .padding(.top, 15)
-            .padding(.horizontal, 26)
-            
-            HStack {
-                Text("Time")
-                    .applyFont(.body_r_14)
-                    .foregroundColor(Color.gray05)
-                
-                Spacer()
-                
+
+            // ✅ Time 화면으로 이동
+            Button {
+                viewModel.navigateToNext(.Time)
+            } label: {
+                HStack {
+                    Text("Time")
+                        .applyFont(.body_r_14)
+                        .foregroundColor(Color.gray05)
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(.gray05)
+                }
+                .padding(.vertical, 15)
+                .padding(.horizontal, 26)
             }
-            .padding(.top, 15)
-            .padding(.horizontal, 26)
-            
+
             Divider().background(Color.gray09)
                 .padding(.top, 13)
                 .padding(.horizontal, 26)
@@ -110,54 +150,72 @@ struct GeneralSettingsSection: View {
     }
 }
 
-
 struct AdditionalSettingsSection: View {
+    @EnvironmentObject var viewModel: SettingViewModel
+
     var body: some View {
         VStack {
-            HStack {
-                Text("Integrations")
-                    .applyFont(.body_r_14)
-                    .foregroundColor(Color.gray05)
-                
-                Spacer()
+            // ✅ Integrations 화면으로 이동
+            Button {
+                viewModel.navigateToNext(.Integrations)
+            } label: {
+                HStack {
+                    Text("Integrations")
+                        .applyFont(.body_r_14)
+                        .foregroundColor(Color.gray05)
 
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(.gray05)
+                }
+                .padding(.vertical, 15)
+                .padding(.horizontal, 26)
             }
-            .padding(.top, 15)
-            .padding(.horizontal, 26)
-            
+
             Divider().background(Color.gray09)
-            .padding(.top, 13)
-            .padding(.horizontal, 26)
-            
-            
-            
-            HStack {
-                Text("Feedback")
-                    .applyFont(.body_r_14)
-                    .foregroundColor(Color.gray05)
-                
-                Spacer()
+                .padding(.top, 13)
+                .padding(.horizontal, 26)
 
-            }
-            .padding(.top, 15)
-            .padding(.horizontal, 26)
-            
-            HStack {
-                Text("Terms")
-                    .applyFont(.body_r_14)
-                    .foregroundColor(Color.gray05)
-                
-                Spacer()
+            // ✅ Feedback 화면으로 이동
+            Button {
+                viewModel.navigateToNext(.Feedback)
+            } label: {
+                HStack {
+                    Text("Feedback")
+                        .applyFont(.body_r_14)
+                        .foregroundColor(Color.gray05)
 
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(.gray05)
+                }
+                .padding(.vertical, 15)
+                .padding(.horizontal, 26)
             }
-            .padding(.top, 15)
-            .padding(.horizontal, 26)
-            
-            
+
+            // ✅ Terms 화면으로 이동
+            Button {
+                viewModel.navigateToNext(.Terms)
+            } label: {
+                HStack {
+                    Text("Terms")
+                        .applyFont(.body_r_14)
+                        .foregroundColor(Color.gray05)
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(.gray05)
+                }
+                .padding(.vertical, 15)
+                .padding(.horizontal, 26)
+            }
+
             Divider().background(Color.gray09)
-            .padding(.top, 13)
-            .padding(.horizontal, 26)
-            
+                .padding(.top, 13)
+                .padding(.horizontal, 26)
         }
     }
 }
