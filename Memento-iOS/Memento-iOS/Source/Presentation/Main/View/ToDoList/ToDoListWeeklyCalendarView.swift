@@ -17,56 +17,62 @@ struct ToDoListWeeklyCalendarView: View {
     @State private var userInteractionFlag: Bool = false
     
     var body: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 0) {
-                if let date = viewModel.selectedDate.date() {
-                    Text("\(date.makeTodayMonthForMMM()) \(date.makeTodayDayString())")
-                        .foregroundStyle(.white)
-                        .applyFont(.suiteExtraBold(size: 32),
-                                   lineHeight: 36)
-                        .onTapGesture {
-                            let date = Date()
-                            viewModel.mCallendarDataSource.moveOtherWeekday(targetDate: date)
-                            if let targetDateModel = date.makeTargetDate() {
-                                viewModel.selectedDate = targetDateModel
+        NavigationView {
+            VStack(spacing: 0) {
+                HStack(spacing: 0) {
+                    if let date = viewModel.selectedDate.date() {
+                        Text("\(date.makeTodayMonthForMMM()) \(date.makeTodayDayString())")
+                            .foregroundStyle(.white)
+                            .applyFont(.suiteExtraBold(size: 32),
+                                       lineHeight: 36)
+                            .onTapGesture {
+                                let date = Date()
+                                viewModel.mCallendarDataSource.moveOtherWeekday(targetDate: date)
+                                if let targetDateModel = date.makeTargetDate() {
+                                    viewModel.selectedDate = targetDateModel
+                                }
+                            }
+                            .padding(.leading, 22)
+                        Spacer()
+                        VStack {
+                            Text("\(date.makeTodayYearString())")
+                                .foregroundStyle(Color.gray07)
+                                .applyFont(.detail_b_12)
+                                .padding(.top, 11)
+                            Spacer()
+                        }
+                        .padding(.trailing, 17)
+                        NavigationLink { 
+                            SettingView()
+                        } label: {
+                            Image(.ic_settings)
+                                .resizable()
+                                .frame(width: 26, height: 26)
+                                .padding(.trailing, 34)
+                        }
+                    }
+                }
+                .frame(height: 56)
+                
+                calendarView()
+                    .background(Color.grayBlack)
+                
+                ScrollViewReader { proxy in
+                    ToDoListView(viewModel: viewModel)
+                        .scrollContentBackground(.hidden)
+                        .padding(.vertical, 4)
+                        .onChange(of: scrollTarget) {
+                            withAnimation {
+                                proxy.scrollTo(scrollTarget, anchor: .top)
                             }
                         }
-                        .padding(.leading, 22)
-                    Spacer()
-                    VStack {
-                        Text("\(date.makeTodayYearString())")
-                            .foregroundStyle(Color.gray07)
-                            .applyFont(.detail_b_12)
-                            .padding(.top, 11)
-                        Spacer()
-                    }
-                    .padding(.trailing, 17)
-                    Image(.ic_settings)
-                        .resizable()
-                        .frame(width: 26, height: 26)
-                        .padding(.trailing, 34)
                 }
             }
-            .frame(height: 56)
-            
-            calendarView()
-                .background(Color.grayBlack)
-            
-            ScrollViewReader { proxy in
-                ToDoListView(viewModel: viewModel)
-                    .scrollContentBackground(.hidden)
-                    .padding(.vertical, 4)
-                    .onChange(of: scrollTarget) {
-                        withAnimation {
-                            proxy.scrollTo(scrollTarget, anchor: .top)
-                        }
-                    }
+            .onAppear {
+                makeIndex()
             }
+            .background(Color.grayBlack)
         }
-        .onAppear {
-            makeIndex()
-        }
-        .background(Color.grayBlack)
     }
     
     @ViewBuilder

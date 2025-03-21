@@ -17,70 +17,77 @@ struct TodayWeeklyCalendarView: View {
     @State private var userInteractionFlag: Bool = false
     
     var body: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 0) {
-                if let date = viewModel.selectedDate.date() {
-                    Text("\(date.makeTodayMonthForMMM()) \(date.makeTodayDayString())")
-                        .foregroundStyle(.white)
-                        .applyFont(.suiteExtraBold(size: 32),
-                                   lineHeight: 36)
-                        .onTapGesture {
-                            let date = Date()
-                            viewModel.mCallendarDataSource.moveOtherWeekday(targetDate: date)
-                            if let targetDateModel = date.makeTargetDate() {
-                                viewModel.selectedDate = targetDateModel
-                                makeIndex()
+        NavigationView {
+            VStack(spacing: 0) {
+                HStack(spacing: 0) {
+                    if let date = viewModel.selectedDate.date() {
+                        Text("\(date.makeTodayMonthForMMM()) \(date.makeTodayDayString())")
+                            .foregroundStyle(.white)
+                            .applyFont(.suiteExtraBold(size: 32),
+                                       lineHeight: 36)
+                            .onTapGesture {
+                                let date = Date()
+                                viewModel.mCallendarDataSource.moveOtherWeekday(targetDate: date)
+                                if let targetDateModel = date.makeTargetDate() {
+                                    viewModel.selectedDate = targetDateModel
+                                    makeIndex()
+                                }
                             }
-                        }
-                        .padding(.leading, 22)
-                    Spacer()
-                    VStack {
-                        Text("\(date.makeTodayYearString())") // 2025
-                            .foregroundStyle(Color.gray07)
-                            .applyFont(.detail_b_12)
-                            .padding(.top, 11)
+                            .padding(.leading, 22)
                         Spacer()
-                    }
-                    .padding(.trailing, 17)
-                    Image(.ic_settings)
-                        .resizable()
-                        .frame(width: 26, height: 26)
-                        .padding(.trailing, 34)
-                }
-            }
-            .frame(height: 56)
-            
-            calendarView()
-                .background(Color.grayBlack)
-                .allowsHitTesting(userInteractionFlag)
-            
-            ScrollViewReader { proxy in
-                OffsetObservableScrollView(.horizontal,
-                                           showsIndicators: false,
-                                           scrollOffset: $viewModel.currentOffset,
-                                           content: { view in
-                    LazyHStack(spacing: 0) {
-                        ForEach(viewModel.mEventDataSource.eventList.indices, id: \.self) { index in
-                            let item = viewModel.mEventDataSource.eventList[index]
-                            pageView(for: item)
-                                .frame(width: UIScreen.main.bounds.width)
-                                .id(index)
+                        VStack {
+                            Text("\(date.makeTodayYearString())") // 2025
+                                .foregroundStyle(Color.gray07)
+                                .applyFont(.detail_b_12)
+                                .padding(.top, 11)
+                            Spacer()
+                        }
+                        .padding(.trailing, 17)
+    
+                        NavigationLink {
+                            SettingView()
+                        } label: {
+                            Image(.ic_settings)
+                                .resizable()
+                                .frame(width: 26, height: 26)
+                                .padding(.trailing, 34)
                         }
                     }
-                })
-                .onChange(of: scrollTarget) {
-                    userInteractionFlag = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        userInteractionFlag = true
-                        if let target = scrollTarget {
-                            withAnimation {
-                                proxy.scrollTo(target, anchor: .center)
+                }
+                .frame(height: 56)
+                
+                calendarView()
+                    .background(Color.grayBlack)
+                    .allowsHitTesting(userInteractionFlag)
+                
+                ScrollViewReader { proxy in
+                    OffsetObservableScrollView(.horizontal,
+                                               showsIndicators: false,
+                                               scrollOffset: $viewModel.currentOffset,
+                                               content: { view in
+                        LazyHStack(spacing: 0) {
+                            ForEach(viewModel.mEventDataSource.eventList.indices, id: \.self) { index in
+                                let item = viewModel.mEventDataSource.eventList[index]
+                                pageView(for: item)
+                                    .frame(width: UIScreen.main.bounds.width)
+                                    .id(index)
+                            }
+                        }
+                    })
+                    .onChange(of: scrollTarget) {
+                        userInteractionFlag = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            userInteractionFlag = true
+                            if let target = scrollTarget {
+                                withAnimation {
+                                    proxy.scrollTo(target, anchor: .center)
+                                }
                             }
                         }
                     }
+                    .scrollTargetBehavior(.paging)
+                    .scrollContentBackground(.hidden)
                 }
-                .scrollTargetBehavior(.paging)
-                .scrollContentBackground(.hidden)
             }
         }
         .onAppear {
