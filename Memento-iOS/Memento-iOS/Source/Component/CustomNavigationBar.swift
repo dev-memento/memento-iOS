@@ -37,8 +37,7 @@ struct CustomNavigationBar: View {
     // MARK: - Body
     
     var body: some View {
-        HStack(alignment: .center) {
-            // Back Button
+        HStack {
             if showBackButton {
                 Button(action: backButtonAction) {
                     Image(.btn_back)
@@ -47,29 +46,34 @@ struct CustomNavigationBar: View {
                         .frame(width: 48, height: 48)
                         .foregroundColor(.gray06)
                 }
+            } else {
+                Spacer()
+                    .frame(width: 48)
             }
-            
-            // Title
+
             if let title = title {
                 Text(title)
                     .applyFont(.body_b_16)
                     .foregroundColor(.white)
+                    .frame(maxWidth: .infinity, alignment: .center)
             }
-            
-            Spacer()
-            
-            // Skip Button
+
             if showSkipButton {
                 Button(action: skipButtonAction) {
                     Text("Skip")
                         .applyFont(.body_b_14)
                         .foregroundColor(.gray06)
                 }
+                .frame(width: 48)
+            } else {
+                Spacer()
+                    .frame(width: 48)
             }
         }
         .frame(height: 48)
     }
 }
+
 
 // MARK: - Preview
 
