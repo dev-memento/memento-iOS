@@ -46,6 +46,7 @@ struct TodayWeeklyCalendarView: View {
     
                         NavigationLink {
                             SettingView()
+                                .navigationBarBackButtonHidden()
                         } label: {
                             Image(.ic_settings)
                                 .resizable()

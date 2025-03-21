@@ -44,6 +44,7 @@ struct ToDoListWeeklyCalendarView: View {
                         .padding(.trailing, 17)
                         NavigationLink { 
                             SettingView()
+                                .navigationBarBackButtonHidden()
                         } label: {
                             Image(.ic_settings)
                                 .resizable()
