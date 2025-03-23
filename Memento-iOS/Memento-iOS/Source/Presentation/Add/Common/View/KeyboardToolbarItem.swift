@@ -80,12 +80,30 @@ struct KeyboardToolbarItem: View {
                 }
                 List {
                     ForEach(Tag.mockData) { tag in
-                        TagListItem(tag: tag, viewModel: viewModel)
-                            .listRowBackground(
-                                viewModel.selectedTag.tagId == tag.tagId
-                                ? Color.gray08
-                                : Color.clear
-                            )
+                        Button(action: {
+                            viewModel.selectedTag = tag
+                        }) {
+                            HStack {
+                                Circle()
+                                    .fill(tag.color)
+                                    .frame(width: 12, height: 12)
+
+                                Text(tag.title)
+                                    .applyFont(.body_r_14)
+                                    .foregroundStyle(
+                                        viewModel.selectedTag.id == tag.id
+                                        ? Color.gray02
+                                        : .gray07
+                                    )
+
+                                Spacer()
+                            }
+                        }
+                        .listRowBackground(
+                            viewModel.selectedTag.tagId == tag.tagId
+                            ? Color.gray08
+                            : Color.clear
+                        )
                     }
                 }
                 .listStyle(PlainListStyle())
@@ -109,11 +127,13 @@ struct KeyboardToolbarItem: View {
         }
         .frame(width: 42, height: 42)
         .sheet(isPresented: $viewModel.showPriorityPicker) {
-            EisenhowerMatrixView(
-                viewType: .add,
-                source: "",
-                viewModel: viewModel
-            )
+            SheetContainer(type: .addTodo(.priority)) {
+                AddTodoPriorityView(
+                    viewType: .add,
+                    source: "",
+                    viewModel: viewModel
+                )
+            }
         }
     }
 
