@@ -8,15 +8,13 @@
 import Foundation
 
 enum StringLiteral {
-    
-    enum Priority {
-        static let immediate = "Immediate"
-        static let high = "High"
-        static let medium = "Medium"
-        static let low = "Low"
-        static let none = "None"
+
+    enum Common {
+        static let tag = "Tag"
+        static let starts = "Starts"
+        static let ends = "Ends"
     }
-    
+
     enum Onboarding {
         
         enum LoginView {
@@ -66,18 +64,32 @@ enum StringLiteral {
     
     enum Alert {
         static let deadline = "Deadline"
-        static let tag = "Tag"
         static let priority = "Priority"
         static let delete = "Delete"
         static let edit = "Edit"
-        static let start = "Starts"
-        static let end = "Ends"
         static let from = "From"
     }
     
     enum Today {
         static let wakeUp = "Wake up"
         static let windDown = "Wind down"
+    }
+
+    enum Priority {
+        static let immediate = "Immediate"
+        static let high = "High"
+        static let medium = "Medium"
+        static let low = "Low"
+        static let none = "None"
+    }
+
+    enum AddTodo {
+        static let title = "Add to-do, "
+        static let today = "Today"
+    }
+
+    enum AddSchedule {
+        static let allDay = "All-day"
     }
 
     enum AddEvent {
