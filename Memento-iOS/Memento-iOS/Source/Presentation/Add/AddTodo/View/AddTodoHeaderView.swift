@@ -30,9 +30,7 @@ struct AddTodoHeaderView: View {
             .applyFont(.body_b_18)
             .sheet(isPresented: $viewModel.showStartDatePicker) {
                 SheetContainer(type: .addTodo(.date)) {
-                    SheetHeaderView {
-                        viewModel.showStartDatePicker = false
-                    }
+                    SheetOKButton { viewModel.showStartDatePicker = false }
 
                     DatePicker(
                         "",

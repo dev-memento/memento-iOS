@@ -91,7 +91,6 @@
 				Source/Presentation/Add/Common/SegmentedMenu/ViewModel/SegmentedMenuViewModel.swift,
 				Source/Presentation/Add/Common/Sheet/BaseSheetView.swift,
 				Source/Presentation/Add/Common/Sheet/SheetContainer.swift,
-				Source/Presentation/Add/Common/Sheet/SheetHeaderView.swift,
 				Source/Presentation/Add/Common/Tag/Model/Tag.swift,
 				Source/Presentation/Add/Common/Tag/View/TagListItem.swift,
 				Source/Presentation/Add/Common/Tag/View/TagView.swift,

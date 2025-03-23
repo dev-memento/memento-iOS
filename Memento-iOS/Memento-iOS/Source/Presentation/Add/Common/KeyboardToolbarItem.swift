@@ -46,9 +46,8 @@ struct KeyboardToolbarItem: View {
         .sheet(isPresented: $viewModel.showEndDatePicker) {
             SheetContainer(type: .addTodo(.date)) {
                 VStack {
-                    SheetHeaderView {
-                        viewModel.showEndDatePicker = false
-                    }
+                    SheetOKButton { viewModel.showEndDatePicker = false }
+
                     DatePicker(
                         "",
                         selection: $viewModel.endDate,
@@ -76,7 +75,7 @@ struct KeyboardToolbarItem: View {
         .clipShape(RoundedRectangle(cornerRadius: 2))
         .sheet(isPresented: $viewModel.showTagPicker) {
             SheetContainer(type: .addTodo(.tag)) {
-                SheetHeaderView {
+                SheetOKButton {
                     viewModel.showTagPicker = false
                 }
                 List {
