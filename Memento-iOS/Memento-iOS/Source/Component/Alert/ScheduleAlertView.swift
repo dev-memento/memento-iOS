@@ -37,7 +37,7 @@ struct ScheduleAlertView: View {
             .padding(.leading, 16)
             
             HStack {
-                Text(StringLiteral.Alert.start)
+                Text(StringLiteral.Common.starts)
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
                     .padding(.trailing, 42)
@@ -52,7 +52,7 @@ struct ScheduleAlertView: View {
             .padding(.leading, 46)
             
             HStack {
-                Text(StringLiteral.Alert.end)
+                Text(StringLiteral.Common.ends)
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
                     .padding(.trailing, 48)
@@ -67,7 +67,7 @@ struct ScheduleAlertView: View {
             .padding(.leading, 46)
             
             HStack {
-                Text(StringLiteral.Alert.tag)
+                Text(StringLiteral.Common.tag)
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
                     .padding(.trailing, 54)

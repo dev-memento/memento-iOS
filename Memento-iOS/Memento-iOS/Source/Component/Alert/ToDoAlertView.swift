@@ -63,7 +63,7 @@ struct ToDoAlertView: View {
             
             
             HStack {
-                Text(StringLiteral.Alert.tag)
+                Text(StringLiteral.Common.tag)
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
                     .padding(.trailing, 54)

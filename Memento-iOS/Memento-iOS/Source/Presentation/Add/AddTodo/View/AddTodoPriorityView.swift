@@ -144,7 +144,7 @@ struct TodoItemView: View {
                         }
 
                         HStack(spacing: 40) {
-                            Text(StringLiteral.Alert.tag)
+                            Text(StringLiteral.Common.tag)
                                 .applyFont(.detail_r_12)
                                 .foregroundColor(.gray05)
                                 .padding(.trailing, 54)

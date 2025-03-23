@@ -19,7 +19,7 @@ struct AddTodoHeaderView: View {
 
     var body: some View {
         HStack {
-            Text("Add to-do,")
+            Text(StringLiteral.AddTodo.title)
                 .foregroundColor(.gray07)
                 .applyFont(.body_b_18)
 
