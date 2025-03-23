@@ -43,14 +43,3 @@ struct AddEventTitleView: View {
         }
     }
 }
-
-// MARK: - Preview
-
-#Preview {
-    ZStack {
-        Color.gray10
-            .ignoresSafeArea()
-
-        AddEventTitleView(viewModel: AddEventTitleViewModel())
-    }
-}

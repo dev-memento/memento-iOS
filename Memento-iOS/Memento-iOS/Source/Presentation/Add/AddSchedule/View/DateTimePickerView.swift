@@ -41,9 +41,3 @@ struct DateTimePickerView: View {
         }
     }
 }
-
-// MARK: - Preview
-
-#Preview {
-    DateTimePickerView()
-}
