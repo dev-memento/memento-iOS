@@ -25,7 +25,23 @@ extension Date {
     func makeCurrentDate() -> String {
         return self.formattedDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX", timeZone: TimeZone(abbreviation: "UTC")!)
     }
-    
+
+    func roundedToNearestHalfHour() -> Date {
+        let calendar = Calendar.current
+        let minute = calendar.component(.minute, from: self)
+        let components = calendar.dateComponents([.year, .month, .hour], from: self)
+
+        guard let baseHour = calendar.date(from: components) else { return self }
+
+        if minute <= 15 {
+            return baseHour
+        } else if minute <= 45 {
+            return calendar.date(byAdding: .minute, value: 30, to: baseHour) ?? baseHour
+        } else {
+            return calendar.date(byAdding: .hour, value: 1, to: baseHour) ?? baseHour
+        }
+    }
+
     /// 문자열 날짜를 특정 포맷 날짜로 반환
     static func dateFromString(_ dateString: String, format: String = "yyyy-MM-dd HH:mm:ss.SSSSSS") -> Date? {
         let dateFormatter = DateFormatter()

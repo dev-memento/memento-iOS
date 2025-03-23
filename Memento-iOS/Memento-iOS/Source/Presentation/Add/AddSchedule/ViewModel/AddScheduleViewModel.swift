@@ -46,12 +46,15 @@ final class AddScheduleViewModel: ObservableObject {
     // MARK: - Initializer
 
     init(scheduleApiService: ScheduleAPIService = ScheduleAPIService()) {
-        let now = Date()
+        guard let (roundedStart, roundedEnd) = Self.makeRoundedStartAndEnd() else {
+            fatalError("DEBUG: 시간 계산에 실패했습니다.")
+        }
+
         self.scheduleApiService = scheduleApiService
-        self.startsDate = now
-        self.endsDate = now
-        self.selectedStartTime = now
-        self.selectedEndTime = now
+        self.startsDate = roundedStart
+        self.selectedStartTime = roundedStart
+        self.endsDate = roundedEnd
+        self.selectedEndTime = roundedEnd
         self.isAllDay = false
         self.selectedTag = Tag.mockData.first ?? Tag(tagId: 0, color: .gray02, title: "Untitled")
     }
@@ -154,9 +157,10 @@ final class AddScheduleViewModel: ObservableObject {
             selectedStartTime = startsDate.startOfDay
             selectedEndTime = endsDate.startOfDay
         } else {
-            let now = Date()
-            selectedStartTime = now
-            selectedEndTime = now
+            guard let (roundedStart, roundedEnd) = Self.makeRoundedStartAndEnd() else { return }
+
+            selectedStartTime = roundedStart
+            selectedEndTime = roundedEnd
         }
     }
 
@@ -175,5 +179,14 @@ final class AddScheduleViewModel: ObservableObject {
 
         let combinedDate = calendar.date(from: components) ?? date
         return combinedDate.formattedDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    }
+
+    private static func makeRoundedStartAndEnd() -> (Date, Date)? {
+        let start = Date().roundedToNearestHalfHour()
+        guard let end = Calendar.current.date(byAdding: .hour, value: 2, to: start) else {
+            return nil
+        }
+
+        return (start, end)
     }
 }
