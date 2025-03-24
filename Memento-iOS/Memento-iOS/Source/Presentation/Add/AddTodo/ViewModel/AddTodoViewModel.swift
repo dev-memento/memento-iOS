@@ -9,7 +9,7 @@ import SwiftUI
 
 import MDSKit
 
-final class AddTodoViewModel: ObservableObject {
+final class AddTodoViewModel: ObservableObject, TagSelectable {
 
     // MARK: - Properties
 

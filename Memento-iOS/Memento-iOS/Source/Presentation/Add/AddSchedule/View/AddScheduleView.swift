@@ -181,35 +181,12 @@ struct AddScheduleView: View {
                 .cornerRadius(2)
             }
             .sheet(isPresented: $viewModel.isTagPressed) {
-                SheetContainer(type: .addSchedule(.tag)) {
-                    SheetOKButton { viewModel.dismissTagPicker() }
-
-                    List {
-                        ForEach(Tag.mockData) { tag in
-                            Button(action: {
-                                viewModel.selectedTag = tag
-                            }) {
-                                HStack {
-                                    Circle()
-                                        .fill(tag.color)
-                                        .frame(width: 12, height: 12)
-
-                                    Text(tag.title)
-                                        .applyFont(.body_r_14)
-                                        .foregroundStyle(viewModel.selectedTag.id == tag.id ? Color.gray02 : .gray07)
-
-                                    Spacer()
-                                }
-                            }
-                            .listRowBackground(viewModel.selectedTag.tagId == tag.tagId ? Color.gray08 : Color.clear)
-                        }
-                    }
-                    .listStyle(PlainListStyle())
-                    .ignoresSafeArea()
-                    .padding([.horizontal, .bottom], 10)
-                    .scrollDisabled(Tag.mockData.count <= 3)
-                }
-                .applyDynamicSheetForTagCount()
+                TagPickerSheet(
+                    viewModel: viewModel,
+                    isPresented: $viewModel.isTagPressed,
+                    type: .addSchedule(.tag),
+                    tagList: Tag.mockData
+                )
             }
         }
     }

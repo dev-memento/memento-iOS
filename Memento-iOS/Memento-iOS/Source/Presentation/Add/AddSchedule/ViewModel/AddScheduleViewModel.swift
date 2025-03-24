@@ -2,7 +2,7 @@ import SwiftUI
 
 import MDSKit
 
-final class AddScheduleViewModel: ObservableObject {
+final class AddScheduleViewModel: ObservableObject, TagSelectable {
 
     // MARK: - Dependencies
 
