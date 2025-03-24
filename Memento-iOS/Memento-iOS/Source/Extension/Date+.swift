@@ -33,13 +33,9 @@ extension Date {
 
         guard let baseHour = calendar.date(from: components) else { return self }
 
-        if minute <= 15 {
-            return baseHour
-        } else if minute <= 45 {
-            return calendar.date(byAdding: .minute, value: 30, to: baseHour) ?? baseHour
-        } else {
-            return calendar.date(byAdding: .hour, value: 1, to: baseHour) ?? baseHour
-        }
+        let roundedMinutes = (minute + 15) / 30 * 30
+
+        return calendar.date(byAdding: .minute, value: roundedMinutes, to: baseHour) ?? self
     }
 
     /// 문자열 날짜를 특정 포맷 날짜로 반환
