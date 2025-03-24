@@ -181,7 +181,7 @@ struct AddScheduleView: View {
                 .cornerRadius(2)
             }
             .sheet(isPresented: $viewModel.isTagPressed) {
-                VStack {
+                SheetContainer(type: .addSchedule(.tag)) {
                     SheetOKButton { viewModel.dismissTagPicker() }
 
                     List {
@@ -201,9 +201,7 @@ struct AddScheduleView: View {
                                     Spacer()
                                 }
                             }
-                            .listRowBackground(
-                                viewModel.selectedTag.tagId == tag.tagId ? Color.gray08 : Color.clear
-                            )
+                            .listRowBackground(viewModel.selectedTag.tagId == tag.tagId ? Color.gray08 : Color.clear)
                         }
                     }
                     .listStyle(PlainListStyle())
@@ -211,10 +209,6 @@ struct AddScheduleView: View {
                     .padding([.horizontal, .bottom], 10)
                     .scrollDisabled(Tag.mockData.count <= 3)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color.gray09)
-                .presentationCornerRadius(0)
-                .presentationDragIndicator(.hidden)
                 .applyDynamicSheetForTagCount()
             }
         }
