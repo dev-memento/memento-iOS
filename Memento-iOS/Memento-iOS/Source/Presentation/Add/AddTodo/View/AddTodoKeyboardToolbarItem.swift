@@ -1,5 +1,5 @@
 //
-//  KeyboardToolbarItem.swift
+//  AddTodoKeyboardToolbarItem.swift
 //  Memento-iOS
 //
 //  Created by RAFA on 2/23/25.
@@ -9,7 +9,7 @@ import SwiftUI
 
 import MDSKit
 
-struct KeyboardToolbarItem: View {
+struct AddTodoKeyboardToolbarItem: View {
 
     @ObservedObject var viewModel: AddTodoViewModel
     @Environment(\.dismiss) var dismiss
