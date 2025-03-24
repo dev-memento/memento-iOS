@@ -131,9 +131,7 @@ final class AddTodoViewModel: ObservableObject {
     }
 
     private func formattedDate(for date: Date) -> String {
-        return Calendar.current.isDateInToday(date)
-        ? StringLiteral.AddTodo.today
-        : date.formattedDate(with: "MMM d")
+        return Calendar.current.isDateInToday(date) ? StringLiteral.AddTodo.today : date.formattedDate(with: "MMM d")
     }
 
     private func getPriorityValues() -> (Double, Double) {

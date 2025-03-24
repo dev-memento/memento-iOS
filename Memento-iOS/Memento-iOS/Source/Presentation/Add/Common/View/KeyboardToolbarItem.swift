@@ -90,20 +90,12 @@ struct KeyboardToolbarItem: View {
 
                                 Text(tag.title)
                                     .applyFont(.body_r_14)
-                                    .foregroundStyle(
-                                        viewModel.selectedTag.id == tag.id
-                                        ? Color.gray02
-                                        : .gray07
-                                    )
+                                    .foregroundStyle(viewModel.selectedTag.id == tag.id ? Color.gray02 : .gray07)
 
                                 Spacer()
                             }
                         }
-                        .listRowBackground(
-                            viewModel.selectedTag.tagId == tag.tagId
-                            ? Color.gray08
-                            : Color.clear
-                        )
+                        .listRowBackground(viewModel.selectedTag.tagId == tag.tagId ? Color.gray08 : Color.clear)
                     }
                 }
                 .listStyle(PlainListStyle())
@@ -144,11 +136,7 @@ struct KeyboardToolbarItem: View {
                 dismiss()
             }
         }) {
-            Image(
-                viewModel.isTextEmpty
-                ? .btn_enter_disabled
-                : .btn_enter_active
-            )
+            Image(viewModel.isTextEmpty ? .btn_enter_disabled : .btn_enter_active)
         }
         .disabled(viewModel.isTextEmpty)
     }

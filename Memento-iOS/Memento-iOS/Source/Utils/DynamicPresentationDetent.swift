@@ -15,9 +15,9 @@ private enum DeviceSizeCategory {
         let height = UIScreen.main.bounds.height
 
         switch height {
-        case ..<812   : return .small  // SE
+        case ..<812: return .small  // SE
         case 812..<875: return .medium // mini, pro
-        default       : return .large  // plus, max
+        default: return .large  // plus, max
         }
     }
 }
@@ -50,15 +50,15 @@ struct DynamicPresentationDetent {
         switch subtype {
         case .date:
             switch device {
-            case .small : return AddTodoDateFraction.small
+            case .small: return AddTodoDateFraction.small
             case .medium: return AddTodoDateFraction.medium
-            case .large : return AddTodoDateFraction.large
+            case .large: return AddTodoDateFraction.large
             }
         case .priority:
             switch device {
-            case .small : return AddTodoPriorityFraction.small
+            case .small: return AddTodoPriorityFraction.small
             case .medium: return AddTodoPriorityFraction.medium
-            case .large : return AddTodoPriorityFraction.large
+            case .large: return AddTodoPriorityFraction.large
             }
         default: return 0
         }
@@ -71,15 +71,15 @@ struct DynamicPresentationDetent {
         switch subtype {
         case .date:
             switch device {
-            case .small : return AddScheduleDateFraction.small
+            case .small: return AddScheduleDateFraction.small
             case .medium: return AddScheduleDateFraction.medium
-            case .large : return AddScheduleDateFraction.large
+            case .large: return AddScheduleDateFraction.large
             }
         case .time:
             switch device {
-            case .small : return AddScheduleTimeFraction.small
+            case .small: return AddScheduleTimeFraction.small
             case .medium: return AddScheduleTimeFraction.medium
-            case .large : return AddScheduleTimeFraction.large
+            case .large: return AddScheduleTimeFraction.large
             }
         default: return 0
         }

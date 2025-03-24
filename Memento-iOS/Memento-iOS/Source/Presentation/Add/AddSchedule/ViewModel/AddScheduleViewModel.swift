@@ -10,38 +10,38 @@ final class AddScheduleViewModel: ObservableObject {
 
     // MARK: - Input
 
-    @Published var title      : String = ""
+    @Published var title: String = ""
     @Published var selectedTag: Tag
-    @Published var isAllDay   : Bool { didSet { updateTimesForAllDayStatus() } }
+    @Published var isAllDay: Bool { didSet { updateTimesForAllDayStatus() } }
 
     // MARK: - Date & Time
 
-    @Published var startsDate       : Date
-    @Published var endsDate         : Date
+    @Published var startsDate: Date
+    @Published var endsDate: Date
     @Published var selectedStartTime: Date
-    @Published var selectedEndTime  : Date
+    @Published var selectedEndTime: Date
 
     // MARK: - Sheet State
 
     @Published var isStartDatePressed: Bool = false
     @Published var isStartTimePressed: Bool = false
-    @Published var isEndDatePressed  : Bool = false
-    @Published var isEndTimePressed  : Bool = false
-    @Published var isTagPressed      : Bool = false
+    @Published var isEndDatePressed: Bool = false
+    @Published var isEndTimePressed: Bool = false
+    @Published var isTagPressed: Bool = false
 
     @Published var isStartDatePickerPresented: Bool = false
-    @Published var isEndDatePickerPresented  : Bool = false
+    @Published var isEndDatePickerPresented: Bool = false
     @Published var isStartTimePickerPresented: Bool = false
-    @Published var isEndTimePickerPresented  : Bool = false
-    @Published var isTagPickerPresented      : Bool = false
+    @Published var isEndTimePickerPresented: Bool = false
+    @Published var isTagPickerPresented: Bool = false
 
     // MARK: - Computed Properties
 
-    var isTitleEmpty      : Bool   { title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    var isTitleEmpty: Bool { title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
     var formattedStartDate: String { startsDate.formattedDate(with: "MMM d, yyyy") }
-    var formattedEndDate  : String { endsDate.formattedDate(with: "MMM d, yyyy") }
+    var formattedEndDate: String { endsDate.formattedDate(with: "MMM d, yyyy") }
     var formattedStartTime: String { formatTimeString(selectedStartTime) }
-    var formattedEndTime  : String { formatTimeString(selectedEndTime) }
+    var formattedEndTime: String { formatTimeString(selectedEndTime) }
 
     // MARK: - Initializer
 
@@ -94,10 +94,10 @@ final class AddScheduleViewModel: ObservableObject {
         switch type {
         case .start:
             isStartDatePickerPresented = true
-            isStartDatePressed         = true
+            isStartDatePressed = true
         case .end:
             isEndDatePickerPresented = true
-            isEndDatePressed         = true
+            isEndDatePressed = true
         }
     }
 
@@ -105,10 +105,10 @@ final class AddScheduleViewModel: ObservableObject {
         switch type {
         case .start:
             isStartDatePickerPresented = false
-            isStartDatePressed         = false
+            isStartDatePressed = false
         case .end:
             isEndDatePickerPresented = false
-            isEndDatePressed         = false
+            isEndDatePressed = false
         }
     }
 
@@ -118,10 +118,10 @@ final class AddScheduleViewModel: ObservableObject {
         switch type {
         case .start:
             isStartTimePickerPresented = true
-            isStartTimePressed         = true
+            isStartTimePressed = true
         case .end:
             isEndTimePickerPresented = true
-            isEndTimePressed         = true
+            isEndTimePressed = true
         }
     }
 
@@ -129,21 +129,21 @@ final class AddScheduleViewModel: ObservableObject {
         switch type {
         case .start:
             isStartTimePickerPresented = false
-            isStartTimePressed         = false
+            isStartTimePressed = false
         case .end:
             isEndTimePickerPresented = false
-            isEndTimePressed         = false
+            isEndTimePressed = false
         }
     }
 
     func presentTagPicker() {
         isTagPickerPresented = true
-        isTagPressed         = true
+        isTagPressed = true
     }
 
     func dismissTagPicker() {
         isTagPickerPresented = false
-        isTagPressed         = false
+        isTagPressed = false
     }
 
     func toggleAllDay() {

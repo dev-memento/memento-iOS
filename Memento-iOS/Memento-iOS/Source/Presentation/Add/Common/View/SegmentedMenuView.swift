@@ -82,20 +82,12 @@ private extension SegmentedMenuView {
             ZStack {
                 if viewModel.selectedButton == type {
                     Circle()
-                        .fill(
-                            viewModel.selectedButton == type
-                            ? Color.grayBlack
-                            : Color.clear
-                        )
+                        .fill(viewModel.selectedButton == type ? Color.grayBlack : Color.clear)
                 }
 
                 Image(type.image)
                     .renderingMode(.template)
-                    .foregroundColor(
-                        viewModel.selectedButton == type
-                        ? .grayWhite
-                        : .gray07
-                    )
+                    .foregroundColor(viewModel.selectedButton == type ? .grayWhite : .gray07)
             }
             .frame(width: 36, height: 36)
         }

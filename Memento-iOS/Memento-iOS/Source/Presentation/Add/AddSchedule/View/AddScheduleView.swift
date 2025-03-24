@@ -66,11 +66,11 @@ struct AddScheduleView: View {
     }
 
     private func dateTimePickerSection(type: AddScheduleSectionType) -> some View {
-        let title           = (type == .start) ? StringLiteral.Common.starts   : StringLiteral.Common.ends
-        let formattedDate   = (type == .start) ? viewModel.formattedStartDate  : viewModel.formattedEndDate
-        let formattedTime   = (type == .start) ? viewModel.formattedStartTime  : viewModel.formattedEndTime
-        let dateBinding     = (type == .start) ? $viewModel.startsDate         : $viewModel.endsDate
-        let timeBinding     = (type == .start) ? $viewModel.selectedStartTime  : $viewModel.selectedEndTime
+        let title = (type == .start) ? StringLiteral.Common.starts : StringLiteral.Common.ends
+        let formattedDate = (type == .start) ? viewModel.formattedStartDate : viewModel.formattedEndDate
+        let formattedTime = (type == .start) ? viewModel.formattedStartTime : viewModel.formattedEndTime
+        let dateBinding = (type == .start) ? $viewModel.startsDate : $viewModel.endsDate
+        let timeBinding = (type == .start) ? $viewModel.selectedStartTime : $viewModel.selectedEndTime
         let isDatePresented = (type == .start) ? $viewModel.isStartDatePressed : $viewModel.isEndDatePressed
         let isTimePresented = (type == .start) ? $viewModel.isStartTimePressed : $viewModel.isEndTimePressed
 
@@ -147,10 +147,8 @@ struct AddScheduleView: View {
             Spacer()
             Button(action: viewModel.toggleAllDay) {
                 HStack {
-                    Image(
-                        viewModel.isAllDay
-                        ? .btn_check_selected_square
-                        : .btn_check_unselected_square)
+                    Image(viewModel.isAllDay ? .btn_check_selected_square : .btn_check_unselected_square)
+
                     Text(StringLiteral.AddSchedule.allDay)
                         .applyFont(.body_r_14)
                         .foregroundColor(Color.gray05)
@@ -198,19 +196,13 @@ struct AddScheduleView: View {
 
                                     Text(tag.title)
                                         .applyFont(.body_r_14)
-                                        .foregroundStyle(
-                                            viewModel.selectedTag.id == tag.id
-                                            ? Color.gray02
-                                            : .gray07
-                                        )
+                                        .foregroundStyle(viewModel.selectedTag.id == tag.id ? Color.gray02 : .gray07)
 
                                     Spacer()
                                 }
                             }
                             .listRowBackground(
-                                viewModel.selectedTag.tagId == tag.tagId
-                                ? Color.gray08
-                                : Color.clear
+                                viewModel.selectedTag.tagId == tag.tagId ? Color.gray08 : Color.clear
                             )
                         }
                     }
@@ -235,11 +227,7 @@ struct AddScheduleView: View {
             Button {
                 viewModel.postAddSchedule { dismiss() }
             } label: {
-                Image(
-                    viewModel.isTitleEmpty
-                    ? .btn_enter_disabled
-                    : .btn_enter_active
-                )
+                Image( viewModel.isTitleEmpty ? .btn_enter_disabled : .btn_enter_active)
             }
             .padding(.trailing)
             .padding(.bottom, 40)
