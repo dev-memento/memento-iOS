@@ -75,9 +75,8 @@ struct AddTodoKeyboardToolbarItem: View {
         .clipShape(RoundedRectangle(cornerRadius: 2))
         .sheet(isPresented: $viewModel.showTagPicker) {
             SheetContainer(type: .addTodo(.tag)) {
-                SheetOKButton {
-                    viewModel.showTagPicker = false
-                }
+                SheetOKButton { viewModel.showTagPicker = false }
+
                 List {
                     ForEach(Tag.mockData) { tag in
                         Button(action: {
