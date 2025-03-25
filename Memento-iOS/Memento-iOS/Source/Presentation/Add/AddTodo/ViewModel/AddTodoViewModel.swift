@@ -126,11 +126,15 @@ final class AddTodoViewModel: ObservableObject, TagSelectable {
     }
 
     private func updateFormattedDate() {
-        formattedStartDate = formattedDate(for: startDate)
-        formattedEndDate = formattedDate(for: endDate)
+        formattedStartDate = formattedStartDate(for: startDate)
+        formattedEndDate = formattedEndDate(for: endDate)
     }
 
-    private func formattedDate(for date: Date) -> String {
+    private func formattedStartDate(for date: Date) -> String {
+        return Calendar.current.isDateInToday(date) ? StringLiteral.AddTodo.today : date.formattedDate(with: "MMM d, yyyy")
+    }
+
+    private func formattedEndDate(for date: Date) -> String {
         return Calendar.current.isDateInToday(date) ? StringLiteral.AddTodo.today : date.formattedDate(with: "MMM d")
     }
 
