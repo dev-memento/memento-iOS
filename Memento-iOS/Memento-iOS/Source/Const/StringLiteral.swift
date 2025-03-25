@@ -84,7 +84,7 @@ enum StringLiteral {
     }
 
     enum AddTodo {
-        static let title = "Add to-do, "
+        static let title = "Add to-do,"
         static let today = "Today"
     }
 
