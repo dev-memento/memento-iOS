@@ -23,6 +23,7 @@ struct AddScheduleView: View {
             Color.gray10.ignoresSafeArea()
 
             VStack {
+                toggleSection
                 titleInputSection
                 dateTimePickerSection(type: .start)
                 dateTimePickerSection(type: .end)
@@ -36,6 +37,10 @@ struct AddScheduleView: View {
     }
 
     // MARK: - UI Components
+
+    private var toggleSection: some View {
+        CustomToggleView(isOn: $viewModel.isNaturalLanguageInputEnabled)
+    }
 
     private var titleInputSection: some View {
         VStack {

@@ -45,6 +45,8 @@ struct AddTodoHeaderView: View {
             }
 
             Spacer()
+
+            CustomToggleView(isOn: $viewModel.isNaturalLanguageInputEnabled)
         }
     }
 }
