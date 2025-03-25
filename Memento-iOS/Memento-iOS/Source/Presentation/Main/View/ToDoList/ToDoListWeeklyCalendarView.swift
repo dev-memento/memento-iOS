@@ -15,7 +15,8 @@ struct ToDoListWeeklyCalendarView: View {
     @StateObject private var settingViewModel = SettingViewModel()
     @State private var scrollTarget: MCalendarDataModel? = nil
     @State private var userInteractionFlag: Bool = false
-    
+    @State private var isSettingPresented = false
+
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
@@ -42,10 +43,8 @@ struct ToDoListWeeklyCalendarView: View {
                             Spacer()
                         }
                         .padding(.trailing, 17)
-                        NavigationLink { 
-                            SettingView()
-                                .environmentObject(settingViewModel)
-                                .navigationBarBackButtonHidden()
+                        Button {
+                            isSettingPresented = true
                         } label: {
                             Image(.ic_settings)
                                 .resizable()
@@ -69,6 +68,10 @@ struct ToDoListWeeklyCalendarView: View {
                             }
                         }
                 }
+            }
+            .fullScreenCover(isPresented: $isSettingPresented) {
+                SettingView()
+                    .environmentObject(settingViewModel)
             }
             .onAppear {
                 makeIndex()

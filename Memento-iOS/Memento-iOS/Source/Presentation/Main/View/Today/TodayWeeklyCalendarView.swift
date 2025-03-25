@@ -15,7 +15,8 @@ struct TodayWeeklyCalendarView: View {
     @StateObject private var settingViewModel = SettingViewModel()
     @State private var scrollTarget: Int? = nil
     @State private var userInteractionFlag: Bool = false
-    
+    @State private var isSettingPresented = false
+
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
@@ -44,10 +45,8 @@ struct TodayWeeklyCalendarView: View {
                         }
                         .padding(.trailing, 17)
     
-                        NavigationLink {
-                            SettingView()
-                                .environmentObject(settingViewModel)
-                                .navigationBarBackButtonHidden()
+                        Button {
+                            isSettingPresented = true
                         } label: {
                             Image(.ic_settings)
                                 .resizable()
@@ -91,6 +90,10 @@ struct TodayWeeklyCalendarView: View {
                     .scrollContentBackground(.hidden)
                 }
             }
+        }
+        .fullScreenCover(isPresented: $isSettingPresented) {
+            SettingView()
+                .environmentObject(settingViewModel)
         }
         .onAppear {
             viewModel.getTagsAPI()
