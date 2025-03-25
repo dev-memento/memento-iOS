@@ -44,15 +44,19 @@ struct LoginView: View {
                         case .sleepCycleSetting:
                             SleepCycleSettingView()
                                 .navigationBarBackButtonHidden()
+                                .environmentObject(viewModel)
                         case .workSelection:
                             WorkSelectionView()
                                 .navigationBarBackButtonHidden()
+                                .environmentObject(viewModel)
                         case .workPreference:
                             WorkPreferenceView()
                                 .navigationBarBackButtonHidden()
+                                .environmentObject(viewModel)
                         case .calendarConnect:
                             CalendarConnectView()
                                 .navigationBarBackButtonHidden()
+                                .environmentObject(viewModel) 
                         }
                     }
                 }

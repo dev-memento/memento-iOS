@@ -49,7 +49,6 @@ struct OnboardingData {
     let workPreference: WorkPreferenceData
 }
 
-
 // MARK: - OnboardingViewModel Core
 
 @MainActor
