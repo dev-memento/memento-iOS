@@ -44,7 +44,6 @@ struct AddScheduleView: View {
                     Text(StringLiteral.AddEvent.title)
                         .foregroundColor(.gray07)
                         .applyFont(.body_b_18)
-                        .padding(.vertical, 11)
                 }
 
                 TextField("", text: $viewModel.title)
@@ -53,10 +52,9 @@ struct AddScheduleView: View {
                     .applyFont(.body_b_18)
                     .autocorrectionDisabled(true)
                     .textInputAutocapitalization(.never)
-                    .padding(.vertical, 11)
             }
-            .frame(height: 27)
-            .padding(.vertical, 11)
+            .frame(height: 24)
+            .padding(.vertical, 8)
 
             Divider()
                 .frame(height: 2)
