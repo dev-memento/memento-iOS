@@ -22,6 +22,8 @@ final class AddTodoViewModel: ObservableObject, TagSelectable {
     @Published var showTagPicker: Bool = false
     @Published var showPriorityPicker: Bool = false
 
+    @Published var isNaturalLanguageInputEnabled: Bool = false
+
     @Published var startDate: Date = Date() {
         didSet { updateFormattedDate() }
     }

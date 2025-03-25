@@ -13,6 +13,7 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     @Published var title: String = ""
     @Published var selectedTag: Tag
     @Published var isAllDay: Bool { didSet { updateTimesForAllDayStatus() } }
+    @Published var isNaturalLanguageInputEnabled: Bool = false
 
     // MARK: - Date & Time
 
