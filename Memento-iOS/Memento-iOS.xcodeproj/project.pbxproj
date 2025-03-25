@@ -80,6 +80,7 @@
 				Source/Presentation/Add/Common/Model/Tag.swift,
 				Source/Presentation/Add/Common/Model/ViewType.swift,
 				Source/Presentation/Add/Common/View/CustomToggleStyle.swift,
+				Source/Presentation/Add/Common/View/CustomToggleView.swift,
 				Source/Presentation/Add/Common/View/SegmentedMenuView.swift,
 				Source/Presentation/Add/Common/View/SheetContainer.swift,
 				Source/Presentation/Add/Common/View/TagPickerSheet.swift,
