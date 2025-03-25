@@ -13,6 +13,7 @@ enum StringLiteral {
         static let tag = "Tag"
         static let starts = "Starts"
         static let ends = "Ends"
+        static let toggleButtonTitle = "자연어로 입력"
     }
 
     enum Onboarding {
