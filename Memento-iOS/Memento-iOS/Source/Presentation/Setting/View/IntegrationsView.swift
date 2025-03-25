@@ -9,6 +9,8 @@ import SwiftUI
 import MDSKit
 
 struct IntegrationsView: View {
+    @EnvironmentObject var viewModel: SettingViewModel
+    
     var body: some View {
         VStack{
             CustomNavigationBar(
@@ -16,14 +18,14 @@ struct IntegrationsView: View {
                 showBackButton: true,
                 showSkipButton: false,
                 backButtonAction: {
-                   
+                    viewModel.navigateBack()
                 }
             )
             .padding(.top, 25)
             
             
             ConnectedCalendarView()
-                .padding(.top, 12)
+                .padding(.top, 25)
                 .padding(.bottom, 26)
             
             CalendarConnectButtons()

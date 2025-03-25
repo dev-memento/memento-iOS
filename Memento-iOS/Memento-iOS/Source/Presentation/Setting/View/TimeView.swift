@@ -15,12 +15,26 @@ struct TimeView: View {
     
     var body: some View {
         VStack {
+            CustomNavigationBar(
+                title: "Time",
+                showBackButton: true,
+                showSkipButton: false,
+                backButtonAction: {
+                    viewModel.navigateBack()
+                }
+            )
+            .padding(.top, 25)
+            
             TimeSelectionView(
                 wakeUpTime: $viewModel.wakeUpTime,
                 windDownTime: $viewModel.sleepTime,
                 isPickerPresented: $isPickerPresented,
                 selectedTimeType: $selectedTimeType
             )
+            .padding(.horizontal, 16)
+            .padding(.top, 25)
+            
+            Spacer()
         }
         .sheet(isPresented: $isPickerPresented) {
             TimePickerView(
