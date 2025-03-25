@@ -98,12 +98,8 @@ private extension SegmentedMenuView {
     @ViewBuilder
     var contentView: some View {
         switch viewModel.selectedButton {
-        case .checkbox:
-            AddTodoView()
-        case .event:
-            AddScheduleView()
-        case .brain:
-            BrainDumpView()
+        case .checkbox: AddTodoView()
+        case .event: AddScheduleView()
         }
     }
 }

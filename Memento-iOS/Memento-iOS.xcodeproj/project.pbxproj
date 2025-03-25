@@ -76,7 +76,6 @@
 				Source/Presentation/Add/AddTodo/View/AddTodoTextView.swift,
 				Source/Presentation/Add/AddTodo/View/AddTodoView.swift,
 				Source/Presentation/Add/AddTodo/ViewModel/AddTodoViewModel.swift,
-				Source/Presentation/Add/BrainDump/View/BrainDumpView.swift,
 				Source/Presentation/Add/Common/Model/SegmentedMenuType.swift,
 				Source/Presentation/Add/Common/Model/Tag.swift,
 				Source/Presentation/Add/Common/Model/ViewType.swift,
