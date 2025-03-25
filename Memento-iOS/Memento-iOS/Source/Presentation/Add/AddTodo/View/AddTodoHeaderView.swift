@@ -21,13 +21,13 @@ struct AddTodoHeaderView: View {
         HStack {
             Text(StringLiteral.AddTodo.title)
                 .foregroundColor(.gray07)
-                .applyFont(.body_b_18)
+                .applyFont(.body_r_14)
 
             Button(viewModel.formattedStartDate) {
                 viewModel.showStartDatePicker = true
             }
             .foregroundColor(.gray04)
-            .applyFont(.body_b_18)
+            .applyFont(.body_r_14)
             .sheet(isPresented: $viewModel.showStartDatePicker) {
                 SheetContainer(type: .addTodo(.date)) {
                     SheetOKButton { viewModel.showStartDatePicker = false }
