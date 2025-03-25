@@ -104,6 +104,8 @@
 				Source/Presentation/Onboarding/ViewModel/OnboardingViewModel.swift,
 				Source/Presentation/Setting/View/IntegrationsView.swift,
 				Source/Presentation/Setting/View/SettingView.swift,
+				Source/Presentation/Setting/View/TimeView.swift,
+				Source/Presentation/Setting/ViewModel/SettingViewModel.swift,
 				Source/Utils/DynamicPresentationDetent.swift,
 			);
 			target = 830F3C552D2A73BD00254FDE /* Memento-iOS */;
