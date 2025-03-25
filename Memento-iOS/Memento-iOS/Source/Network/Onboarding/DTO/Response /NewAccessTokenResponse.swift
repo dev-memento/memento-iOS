@@ -7,8 +7,12 @@
 
 import Foundation
 
-struct NewAccessTokenResponse: Codable {
+struct NewAccessTokenResponse: Decodable {
+    let message: String
+    let data: TokenData
+}
+
+struct TokenData: Decodable {
     let accessToken: String
     let refreshToken: String
-    let isNewUser: Bool
 }
