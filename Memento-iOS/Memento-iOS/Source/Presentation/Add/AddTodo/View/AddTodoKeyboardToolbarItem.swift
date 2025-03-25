@@ -1,5 +1,5 @@
 //
-//  KeyboardToolbarItem.swift
+//  AddTodoKeyboardToolbarItem.swift
 //  Memento-iOS
 //
 //  Created by RAFA on 2/23/25.
@@ -9,7 +9,7 @@ import SwiftUI
 
 import MDSKit
 
-struct KeyboardToolbarItem: View {
+struct AddTodoKeyboardToolbarItem: View {
 
     @ObservedObject var viewModel: AddTodoViewModel
     @Environment(\.dismiss) var dismiss
@@ -46,9 +46,8 @@ struct KeyboardToolbarItem: View {
         .sheet(isPresented: $viewModel.showEndDatePicker) {
             SheetContainer(type: .addTodo(.date)) {
                 VStack {
-                    SheetHeaderView {
-                        viewModel.showEndDatePicker = false
-                    }
+                    SheetOKButton { viewModel.showEndDatePicker = false }
+
                     DatePicker(
                         "",
                         selection: $viewModel.endDate,
@@ -75,26 +74,12 @@ struct KeyboardToolbarItem: View {
         .background(Color.gray09)
         .clipShape(RoundedRectangle(cornerRadius: 2))
         .sheet(isPresented: $viewModel.showTagPicker) {
-            SheetContainer(type: .addTodo(.tag)) {
-                SheetHeaderView {
-                    viewModel.showTagPicker = false
-                }
-                List {
-                    ForEach(Tag.mockData) { tag in
-                        TagListItem(tag: tag, viewModel: viewModel)
-                            .listRowBackground(
-                                viewModel.selectedTag.tagId == tag.tagId
-                                ? Color.gray08
-                                : Color.clear
-                            )
-                    }
-                }
-                .listStyle(PlainListStyle())
-                .ignoresSafeArea()
-                .padding([.horizontal, .bottom], 10)
-                .scrollDisabled(Tag.mockData.count <= 3)
-            }
-            .applyDynamicSheetForTagCount()
+            TagPickerSheet(
+                viewModel: viewModel,
+                isPresented: $viewModel.showTagPicker,
+                type: .addTodo(.tag),
+                tagList: Tag.mockData
+            )
         }
     }
 
@@ -110,11 +95,13 @@ struct KeyboardToolbarItem: View {
         }
         .frame(width: 42, height: 42)
         .sheet(isPresented: $viewModel.showPriorityPicker) {
-            EisenhowerMatrixView(
-                viewType: .add,
-                source: "",
-                viewModel: viewModel
-            )
+            SheetContainer(type: .addTodo(.priority)) {
+                AddTodoPriorityView(
+                    viewType: .add,
+                    source: "",
+                    viewModel: viewModel
+                )
+            }
         }
     }
 
@@ -125,11 +112,7 @@ struct KeyboardToolbarItem: View {
                 dismiss()
             }
         }) {
-            Image(
-                viewModel.isTextEmpty
-                ? .btn_enter_disabled
-                : .btn_enter_active
-            )
+            Image(viewModel.isTextEmpty ? .btn_enter_disabled : .btn_enter_active)
         }
         .disabled(viewModel.isTextEmpty)
     }

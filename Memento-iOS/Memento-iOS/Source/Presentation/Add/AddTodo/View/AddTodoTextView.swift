@@ -56,7 +56,7 @@ struct AddTodoTextView: View {
         }
         .toolbar {
             ToolbarItem(placement: .keyboard) {
-                KeyboardToolbarItem(viewModel: viewModel)
+                AddTodoKeyboardToolbarItem(viewModel: viewModel)
             }
         }
     }

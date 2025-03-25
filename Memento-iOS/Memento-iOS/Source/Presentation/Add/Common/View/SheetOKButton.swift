@@ -1,5 +1,5 @@
 //
-//  SheetHeaderView.swift
+//  SheetOKButton.swift
 //  Memento-iOS
 //
 //  Created by RAFA on 1/18/25.
@@ -9,7 +9,7 @@ import SwiftUI
 
 import MDSKit
 
-struct SheetHeaderView: View {
+struct SheetOKButton: View {
 
     let action: () -> Void
 
@@ -20,7 +20,6 @@ struct SheetHeaderView: View {
                 .applyFont(.body_r_14)
                 .foregroundColor(Color.gray04)
                 .padding(.top, 20)
-                .padding(.bottom, 10)
                 .padding(.trailing, 22)
         }
     }
