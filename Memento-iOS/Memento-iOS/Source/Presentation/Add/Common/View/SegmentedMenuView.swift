@@ -15,7 +15,6 @@ struct SegmentedMenuView: View {
 
     @ObservedObject private var viewModel: SegmentedMenuViewModel
     @Binding var sheetHeight: CGFloat
-    @State private var keyboardHeight: CGFloat = 0
 
     // MARK: - Initializer
 
@@ -41,12 +40,9 @@ struct SegmentedMenuView: View {
                 .frame(height: calculatedSheetHeight)
                 .background(Color.gray10)
                 .transition(.move(edge: .bottom))
-                .offset(y: keyboardHeight > 0 ? 0 : 0)
             }
             .frame(maxWidth: .infinity, alignment: .bottom)
-            .onAppear {
-                sheetHeight = calculatedSheetHeight
-            }
+            .onAppear { sheetHeight = calculatedSheetHeight }
         }
         .ignoresSafeArea(.all, edges: .bottom)
     }
