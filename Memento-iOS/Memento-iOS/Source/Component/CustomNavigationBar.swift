@@ -7,7 +7,6 @@
 
 import SwiftUI
 import MDSKit
-
 struct CustomNavigationBar: View {
     
     // MARK: - Properties
@@ -38,6 +37,7 @@ struct CustomNavigationBar: View {
     
     var body: some View {
         HStack {
+            // 왼쪽 버튼
             if showBackButton {
                 Button(action: backButtonAction) {
                     Image(.btn_back)
@@ -47,17 +47,20 @@ struct CustomNavigationBar: View {
                         .foregroundColor(.gray06)
                 }
             } else {
-                Spacer()
-                    .frame(width: 48)
+                Spacer().frame(width: 48)
             }
 
+            // 중앙 타이틀 (없을 경우에도 공간 유지)
             if let title = title {
                 Text(title)
                     .applyFont(.body_b_16)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, alignment: .center)
+            } else {
+                Spacer().frame(maxWidth: .infinity) // 🔥 중앙 정렬용 빈 공간 확보
             }
 
+            // 오른쪽 버튼
             if showSkipButton {
                 Button(action: skipButtonAction) {
                     Text("Skip")
@@ -66,35 +69,9 @@ struct CustomNavigationBar: View {
                 }
                 .frame(width: 48)
             } else {
-                Spacer()
-                    .frame(width: 48)
+                Spacer().frame(width: 48)
             }
         }
         .frame(height: 48)
-    }
-}
-
-
-// MARK: - Preview
-
-#Preview {
-    VStack(spacing: 20) {
-        CustomNavigationBar(
-            showBackButton: true,
-            showSkipButton: true,
-            backButtonAction: {},
-            skipButtonAction: {}
-        )
-        .padding()
-        .background(Color.black)
-        
-        CustomNavigationBar(
-            title: "Title",
-            showBackButton: true,
-            showSkipButton: false,
-            backButtonAction: {}
-        )
-        .padding()
-        .background(Color.black)
     }
 }
