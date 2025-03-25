@@ -24,7 +24,7 @@ protocol TodoAPIServiceProtocol {
 
 final class TodoAPIService: BaseAPIService, TodoAPIServiceProtocol {
 
-    private let provider = MoyaProvider<TodoTargetType>(plugins: [MoyaPlugin.shared])
+    private let provider = MoyaProvider<TodoTargetType>(plugins: [MoyaPlugin.shared, TokenRefreshPlugin()])
 
     func deleteTodo(todoId: Int, completion: @escaping (NetworkResult<Void>) -> Void) {
         provider.request(.deleteTodo(todoId: todoId)) { result in

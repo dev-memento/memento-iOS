@@ -19,7 +19,7 @@ protocol ToDoListAPIServiceProtocol {
 
 final class ToDoListAPIService: BaseAPIService, ToDoListAPIServiceProtocol {
     
-    private let provider = MoyaProvider<ToDoListTargetType>(plugins: [MoyaPlugin.shared])
+    private let provider = MoyaProvider<ToDoListTargetType>(plugins: [MoyaPlugin.shared, TokenRefreshPlugin()])
     
     // To-Do List API 연결
     func getToDoList(completion: @escaping (NetworkResult<BaseDTO<ToDoListTotalResponseData>>) -> Void) {
