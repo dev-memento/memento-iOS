@@ -4,44 +4,29 @@
 //
 //  Created by 정정욱 on 1/22/25.
 //
-
 import Foundation
 import Moya
 
 final class TokenRefreshPlugin: PluginType {
-    private let keychainManager = TokenKeychainManager.shared
-    private let tokenRefreshProvider = MoyaProvider<TokenRefreshType>(plugins: [MoyaPlugin.shared])
+    private let keychain = TokenKeychainManager.shared
+    private let provider = MoyaProvider<TokenRefreshType>(plugins: [MoyaPlugin.shared])
     private var isRefreshing = false
     private var refreshQueue: [(Bool) -> Void] = []
 
-    func process(_ result: Result<Response, MoyaError>, target: TargetType) -> Result<Response, MoyaError> {
-        print("TokenRefreshPlugin - process called")  // 디버깅용 로그
-        
-        switch result {
-        case .failure(let error):
-            if let response = error.response, response.statusCode == 401 {
-                print("TokenRefreshPlugin - 401 error detected")  // 디버깅용 로그
-                
-                handleTokenRefresh { [weak self] success in
-                    guard let self = self else { return }
-                    
-                    if success {
-                        print("Token successfully refreshed. Retrying request...")
-                        self.retryMoyaRequest(target: target)
-                    } else {
-                        print("Token refresh failed.")
-                    }
-                }
-            }
-        case .success(let response):
-            print("TokenRefreshPlugin - Success response: \(response.statusCode)")  // 디버깅용 로그
+    // MARK: - 감지된 401 처리
+    func didReceive(_ result: Result<Response, MoyaError>, target: TargetType) {
+        guard case let .success(response) = result, response.statusCode == 401 else { return }
+
+        print("🔐 [TokenRefreshPlugin] 401 detected. Starting refresh...")
+
+        handleTokenRefresh { success in
+            print(success ? "✅ Token refreshed." : "❌ Token refresh failed.")
+            // 재시도는 외부에서 해야 함
         }
-        
-        return result
     }
 
-
-    private func handleTokenRefresh(completion: @escaping (Bool) -> Void) {
+    // MARK: - 토큰 리프레시 처리
+    func handleTokenRefresh(completion: @escaping (Bool) -> Void) {
         guard !isRefreshing else {
             refreshQueue.append(completion)
             return
@@ -50,59 +35,46 @@ final class TokenRefreshPlugin: PluginType {
         isRefreshing = true
 
         do {
-            guard let refreshToken = try keychainManager.getRefreshToken() else {
-                print("[ERROR] No Refresh Token Available")
+            guard let refreshToken = try keychain.getRefreshToken() else {
+                print("[ERROR] No refresh token found.")
                 completeRefresh(success: false)
                 return
             }
 
-            tokenRefreshProvider.request(.auth(refreshToken: refreshToken)) { [weak self] result in
-                guard let self = self else { return }
+            provider.request(.auth(refreshToken: refreshToken)) { [weak self] result in
+                guard let self else { return }
 
                 switch result {
                 case .success(let response):
-                    if (200..<300).contains(response.statusCode) {
-                        do {
-                            let decodedResponse = try JSONDecoder().decode(NewAccessTokenResponse.self, from: response.data)
-                            try self.keychainManager.saveAccessToken(decodedResponse.accessToken)
-                            try self.keychainManager.saveRefreshToken(decodedResponse.refreshToken)
-                            print("[INFO] Access Token successfully refreshed.")
-                            self.completeRefresh(success: true)
-                        } catch {
-                            print("[ERROR] Failed to decode token refresh response: \(error.localizedDescription)")
-                            self.completeRefresh(success: false)
-                        }
-                    } else {
-                        print("[ERROR] Token refresh failed with status code: \(response.statusCode)")
-                        self.completeRefresh(success: false)
-                    }
-
+                    self.processRefreshResponse(response)
                 case .failure(let error):
-                    print("[ERROR] Token refresh network error: \(error.localizedDescription)")
+                    print("[ERROR] Refresh request failed: \(error.localizedDescription)")
                     self.completeRefresh(success: false)
                 }
             }
+
         } catch {
-            print("[ERROR] Failed to load refresh token from Keychain: \(error.localizedDescription)")
+            print("[ERROR] Failed to load refresh token: \(error.localizedDescription)")
             completeRefresh(success: false)
         }
     }
 
-    private func retryMoyaRequest(target: TargetType) {
-        guard let moyaTarget = target as? UserInfoTargetType else {
-            print("[ERROR] Unable to retry request - invalid TargetType")
+    private func processRefreshResponse(_ response: Response) {
+        guard (200..<300).contains(response.statusCode) else {
+            print("[ERROR] Token refresh failed with status code: \(response.statusCode)")
+            completeRefresh(success: false)
             return
         }
 
-        let provider = MoyaProvider<UserInfoTargetType>(plugins: [self])
-
-        provider.request(moyaTarget) { result in
-            switch result {
-            case .success(let response):
-                print("[INFO] Retry request successful with status code: \(response.statusCode)")
-            case .failure(let error):
-                print("[ERROR] Retry request failed: \(error.localizedDescription)")
-            }
+        do {
+            let decoded = try JSONDecoder().decode(NewAccessTokenResponse.self, from: response.data)
+            try keychain.saveAccessToken(decoded.data.accessToken)
+            try keychain.saveRefreshToken(decoded.data.refreshToken)
+            print("[INFO] Access token refreshed successfully.")
+            completeRefresh(success: true)
+        } catch {
+            print("[ERROR] Failed to decode token refresh response: \(error)")
+            completeRefresh(success: false)
         }
     }
 
@@ -113,34 +85,38 @@ final class TokenRefreshPlugin: PluginType {
     }
 }
 
-extension TargetType {
-    func asURLRequest() throws -> URLRequest {
-        let url = try self.baseURL.appendingPathComponent(self.path)
-        var request = URLRequest(url: url)
-        request.httpMethod = self.method.rawValue
+//MARK: 일단 만들긴 했지만 지금 사용은 하지 않음 위 로직으로만 동작
+// provider.requestWithTokenRefresh로 호출해야 아래 로직이 돌아감
+extension MoyaProvider {
+    func requestWithTokenRefresh(
+        _ target: Target,
+        retryCount: Int = 1,
+        completion: @escaping (Result<Response, MoyaError>) -> Void
+    ) {
+        self.request(target) { [weak self] result in
+            guard let self else { return }
 
-        switch self.task {
-        case .requestParameters(let parameters, let encoding):
-            request = try encoding.encode(request, with: parameters)
-        case .requestJSONEncodable(let encodable):
-            request.httpBody = try JSONEncoder().encode(encodable)
-        default:
-            break
+            switch result {
+            case .success(let response):
+                if response.statusCode == 401 && retryCount > 0 {
+                    print("🔄 [Moya] 401 detected, refreshing token...")
+
+                    TokenRefreshPlugin().handleTokenRefresh { success in
+                        if success {
+                            print("✅ Retry after refresh")
+                            self.requestWithTokenRefresh(target, retryCount: retryCount - 1, completion: completion)
+                        } else {
+                            print("❌ Token refresh failed")
+                            completion(.failure(.underlying(NSError(domain: "Token refresh failed", code: 401), nil)))
+                        }
+                    }
+                } else {
+                    completion(.success(response))
+                }
+
+            case .failure(let error):
+                completion(.failure(error))
+            }
         }
-
-        self.headers?.forEach { request.setValue($1, forHTTPHeaderField: $0) }
-        return request
     }
 }
-
-/*
- // 인증이 필요없는 API (로그인, 회원가입 등)
- let provider = MoyaProvider<LoginTargetType>(plugins: [MoyaPlugin.shared])
- 
- // 인증이 필요한 API
- let authenticatedProvider = MoyaProvider<UserTargetType>(
- plugins: [MoyaPlugin.shared, TokenRefreshPlugin()]
- )
- */
-
-
