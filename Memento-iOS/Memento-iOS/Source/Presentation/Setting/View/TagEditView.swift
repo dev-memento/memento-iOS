@@ -7,8 +7,10 @@
 
 import SwiftUI
 import MDSKit
-
+        
 struct TagEditView: View {
+    
+    @EnvironmentObject var viewModel: SettingViewModel
     let categories: [TagItem] = [
         TagItem(title: "Untitled", color: Color.gray05, isChevronVisible: false),
         TagItem(title: "Family", color: Color.mementoRed, isChevronVisible: true),
@@ -19,33 +21,55 @@ struct TagEditView: View {
     ]
 
     var body: some View {
-        VStack(spacing: 6) {
-            ForEach(categories) { item in
-                CategoryRowView(item: item)
-            }
-
-            // Add 버튼
-            Button(action: {
-                print("Add tapped")
-            }) {
-                HStack {
-                    Image(systemName: "plus")
-                        .foregroundColor(.gray05)
-                        .padding(.leading, 10)
-                    
-                    Text("Add")
-                        .foregroundColor(.gray05)
-                        .applyFont(.body_r_14)
-                    
-                    Spacer()
+        ScrollView(.vertical, showsIndicators: false) {
+            
+            CustomNavigationBar(
+                title: "Tag",
+                showBackButton: true,
+                showSkipButton: false,
+                backButtonAction: {
+                    viewModel.navigateBack()
                 }
-                .frame(height: 36)
-                .frame(maxWidth: .infinity)
-                .background(Color.gray10)
-                .cornerRadius(4)
+            )
+            .padding(.top, 25)
+            
+            VStack(spacing: 6) {
+                ForEach(categories) { item in
+                    // TagEditView.swift
+                    Button {
+                        viewModel.navigateToNext(.TagDetail(item, item.isChevronVisible))
+                    } label: {
+                        CategoryRowView(item: item)
+                    }
+
+                }
+                
+                // Add 버튼
+                Button(action: {
+                    viewModel.navigateToNext(.TagDetail(nil, false))
+                }) {
+                    HStack {
+                        Image(systemName: "plus")
+                            .foregroundColor(.gray05)
+                            .padding(.leading, 10)
+                        
+                        Text("Add")
+                            .foregroundColor(.gray05)
+                            .applyFont(.body_r_14)
+                        
+                        Spacer()
+                    }
+                    .frame(height: 36)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.gray10)
+                    .cornerRadius(4)
+                }
+                
+                Spacer()
             }
+            .padding(.top, 26)
+            .padding(.horizontal, 16)
         }
-        .padding(.horizontal, 16)
     }
 }
 

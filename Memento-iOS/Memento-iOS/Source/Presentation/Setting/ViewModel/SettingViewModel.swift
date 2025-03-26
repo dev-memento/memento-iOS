@@ -9,13 +9,13 @@ import Foundation
 
 // MARK: - Setting Destinations
 
-/// 온보딩 화면의 네비게이션 목적지를 정의
-enum SettingNavigationDestination: String, Hashable {
-    case Tag = "Tag"
-    case Time = "Time"
-    case Integrations = "Integrations"
-    case Feedback = "Feedback"
-    case Terms = "Terms"
+enum SettingNavigationDestination: Hashable {
+    case Tag
+    case TagDetail(TagItem?, Bool) 
+    case Time
+    case Integrations
+    case Feedback
+    case Terms
 }
 
 @MainActor

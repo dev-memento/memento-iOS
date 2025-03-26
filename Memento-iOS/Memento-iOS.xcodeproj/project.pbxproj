@@ -106,6 +106,7 @@
 				Source/Presentation/Setting/Model/TagItem.swift,
 				Source/Presentation/Setting/View/IntegrationsView.swift,
 				Source/Presentation/Setting/View/SettingView.swift,
+				Source/Presentation/Setting/View/TagDetailView.swift,
 				Source/Presentation/Setting/View/TagEditView.swift,
 				Source/Presentation/Setting/View/TimeView.swift,
 				Source/Presentation/Setting/ViewModel/SettingViewModel.swift,
