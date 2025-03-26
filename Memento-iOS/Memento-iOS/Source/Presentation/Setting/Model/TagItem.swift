@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct TagItem: Identifiable {
+struct TagItem: Identifiable, Hashable{
     let id = UUID()
-    let title: String
-    let color: Color
-    let isChevronVisible: Bool
+    var title: String
+    var color: Color
+    var isChevronVisible: Bool
 }

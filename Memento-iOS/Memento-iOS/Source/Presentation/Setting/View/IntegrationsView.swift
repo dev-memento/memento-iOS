@@ -82,7 +82,6 @@ private struct ConnectedCalendarView: View {
 }
 
 private struct CalendarConnectButtons: View {
-    
     var body: some View {
         VStack(spacing: 8) {
             HStack {
@@ -117,7 +116,6 @@ private struct CalendarConnectButtons: View {
             }
             .padding(.horizontal, 34)
             
-            
             Button {
                 // 구글 캘린더 연동 버튼 동작
             } label: {
@@ -138,8 +136,7 @@ private struct CalendarConnectButtons: View {
                 .background(Color.gray10)
                 .cornerRadius(4)
             }
-            .padding(.horizontal, 34)       // 버튼 주변에 패딩 적용
-            
+            .padding(.horizontal, 34)       
         }
     }
 }
