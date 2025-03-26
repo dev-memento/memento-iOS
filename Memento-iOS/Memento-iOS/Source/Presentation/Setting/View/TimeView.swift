@@ -89,7 +89,7 @@ private struct TimeSelectionView: View {
                 .foregroundColor(.white)
             
             Text(title)
-                .applyFont(.title_b_22)
+                .applyFont(.body_r_14)
                 .foregroundColor(.white)
             
             Spacer()

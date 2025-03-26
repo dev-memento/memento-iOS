@@ -24,7 +24,7 @@ struct TagEditDetailView: View {
     var body: some View {
         
         ScrollView(.vertical, showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading) {
                 CustomNavigationBar(
                     title: SettingsTagViewText.navigationTitle,
                     showBackButton: true,
@@ -35,7 +35,7 @@ struct TagEditDetailView: View {
                 )
                 .padding(.top, 25)
                 
-                VStack(alignment: .leading, spacing: 0) {
+                VStack(alignment: .leading) {
                     Text(SettingsTagViewText.tagName)
                         .applyFont(.detail_r_12)
                         .foregroundColor(.gray06)
@@ -73,7 +73,7 @@ struct TagEditDetailView: View {
                         .fill(Color.gray10)
                 )
                 .padding(.horizontal, 16)
-                
+                .padding(.top, 25)
                 // ✅ 아래 Delete 버튼은 바깥에 따로
                 if isNew {
                     Button {
