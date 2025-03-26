@@ -23,6 +23,7 @@ struct AddScheduleView: View {
             Color.gray10.ignoresSafeArea()
 
             VStack {
+                toggleSection
                 titleInputSection
                 dateTimePickerSection(type: .start)
                 dateTimePickerSection(type: .end)
@@ -37,6 +38,10 @@ struct AddScheduleView: View {
 
     // MARK: - UI Components
 
+    private var toggleSection: some View {
+        CustomToggleView(isOn: $viewModel.isNaturalLanguageInputEnabled)
+    }
+
     private var titleInputSection: some View {
         VStack {
             ZStack(alignment: .leading) {
@@ -44,7 +49,6 @@ struct AddScheduleView: View {
                     Text(StringLiteral.AddEvent.title)
                         .foregroundColor(.gray07)
                         .applyFont(.body_b_18)
-                        .padding(.vertical, 11)
                 }
 
                 TextField("", text: $viewModel.title)
@@ -53,10 +57,9 @@ struct AddScheduleView: View {
                     .applyFont(.body_b_18)
                     .autocorrectionDisabled(true)
                     .textInputAutocapitalization(.never)
-                    .padding(.vertical, 11)
             }
-            .frame(height: 27)
-            .padding(.vertical, 11)
+            .frame(height: 24)
+            .padding(.vertical, 8)
 
             Divider()
                 .frame(height: 2)
