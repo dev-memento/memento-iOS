@@ -9,7 +9,7 @@ import SwiftUI
 
 import MDSKit
 
-final class AddTodoViewModel: ObservableObject {
+final class AddTodoViewModel: ObservableObject, TagSelectable {
 
     // MARK: - Properties
 
@@ -22,6 +22,8 @@ final class AddTodoViewModel: ObservableObject {
     @Published var showTagPicker: Bool = false
     @Published var showPriorityPicker: Bool = false
 
+    @Published var isNaturalLanguageInputEnabled: Bool = false
+
     @Published var startDate: Date = Date() {
         didSet { updateFormattedDate() }
     }
@@ -30,8 +32,8 @@ final class AddTodoViewModel: ObservableObject {
         didSet { updateFormattedDate() }
     }
 
-    @Published var formattedStartDate: String = "Today"
-    @Published var formattedEndDate: String = "Today"
+    @Published var formattedStartDate: String = StringLiteral.AddTodo.today
+    @Published var formattedEndDate: String = StringLiteral.AddTodo.today
 
     @Published var selectedTag: Tag = Tag.mockData.first(
         where: { $0.tagId == 1 }
@@ -126,14 +128,16 @@ final class AddTodoViewModel: ObservableObject {
     }
 
     private func updateFormattedDate() {
-        formattedStartDate = formattedDate(for: startDate)
-        formattedEndDate = formattedDate(for: endDate)
+        formattedStartDate = formattedStartDate(for: startDate)
+        formattedEndDate = formattedEndDate(for: endDate)
     }
 
-    private func formattedDate(for date: Date) -> String {
-        return Calendar.current.isDateInToday(date)
-        ? "Today"
-        : date.formattedDate(with: "MMM d")
+    private func formattedStartDate(for date: Date) -> String {
+        return Calendar.current.isDateInToday(date) ? StringLiteral.AddTodo.today : date.formattedDate(with: "MMM d, yyyy")
+    }
+
+    private func formattedEndDate(for date: Date) -> String {
+        return Calendar.current.isDateInToday(date) ? StringLiteral.AddTodo.today : date.formattedDate(with: "MMM d")
     }
 
     private func getPriorityValues() -> (Double, Double) {

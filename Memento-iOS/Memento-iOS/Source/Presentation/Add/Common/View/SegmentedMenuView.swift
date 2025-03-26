@@ -15,7 +15,6 @@ struct SegmentedMenuView: View {
 
     @ObservedObject private var viewModel: SegmentedMenuViewModel
     @Binding var sheetHeight: CGFloat
-    @State private var keyboardHeight: CGFloat = 0
 
     // MARK: - Initializer
 
@@ -40,14 +39,10 @@ struct SegmentedMenuView: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: calculatedSheetHeight)
                 .background(Color.gray10)
-                .shadow(radius: 10)
                 .transition(.move(edge: .bottom))
-                .offset(y: keyboardHeight > 0 ? 0 : 0)
             }
             .frame(maxWidth: .infinity, alignment: .bottom)
-            .onAppear {
-                sheetHeight = calculatedSheetHeight
-            }
+            .onAppear { sheetHeight = calculatedSheetHeight }
         }
         .ignoresSafeArea(.all, edges: .bottom)
     }
@@ -60,7 +55,7 @@ private extension SegmentedMenuView {
     // MARK: Menu Buttons
 
     var menuButtonsView: some View {
-        HStack(spacing: 5) {
+        HStack {
             ForEach(SegmentedMenuType.allCases, id: \.self) { type in
                 configureMenuButton(type: type)
             }
@@ -68,7 +63,7 @@ private extension SegmentedMenuView {
         .background(
             Color.gray09
                 .clipShape(Capsule())
-                .frame(width: 125, height: 45)
+                .frame(width: 90, height: 48)
         )
         .padding(.top, 20)
         .padding(.bottom, 10)
@@ -82,22 +77,14 @@ private extension SegmentedMenuView {
             ZStack {
                 if viewModel.selectedButton == type {
                     Circle()
-                        .fill(
-                            viewModel.selectedButton == type
-                            ? Color.grayBlack
-                            : Color.clear
-                        )
+                        .fill(viewModel.selectedButton == type ? Color.grayBlack : Color.clear)
                 }
 
                 Image(type.image)
                     .renderingMode(.template)
-                    .foregroundColor(
-                        viewModel.selectedButton == type
-                        ? .grayWhite
-                        : .gray07
-                    )
+                    .foregroundColor(viewModel.selectedButton == type ? .grayWhite : .gray07)
             }
-            .frame(width: 36, height: 36)
+            .frame(width: 38, height: 38)
         }
     }
 
@@ -106,12 +93,8 @@ private extension SegmentedMenuView {
     @ViewBuilder
     var contentView: some View {
         switch viewModel.selectedButton {
-        case .checkbox:
-            AddTodoView()
-        case .event:
-            AddScheduleView()
-        case .brain:
-            BrainDumpView()
+        case .checkbox: AddTodoView()
+        case .event: AddScheduleView()
         }
     }
 }

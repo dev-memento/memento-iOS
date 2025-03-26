@@ -19,20 +19,18 @@ struct AddTodoHeaderView: View {
 
     var body: some View {
         HStack {
-            Text("Add to-do,")
+            Text(StringLiteral.AddTodo.title)
                 .foregroundColor(.gray07)
-                .applyFont(.body_b_18)
+                .applyFont(.body_r_14)
 
             Button(viewModel.formattedStartDate) {
                 viewModel.showStartDatePicker = true
             }
             .foregroundColor(.gray04)
-            .applyFont(.body_b_18)
+            .applyFont(.body_r_14)
             .sheet(isPresented: $viewModel.showStartDatePicker) {
                 SheetContainer(type: .addTodo(.date)) {
-                    SheetHeaderView {
-                        viewModel.showStartDatePicker = false
-                    }
+                    SheetOKButton { viewModel.showStartDatePicker = false }
 
                     DatePicker(
                         "",
@@ -47,6 +45,8 @@ struct AddTodoHeaderView: View {
             }
 
             Spacer()
+
+            CustomToggleView(isOn: $viewModel.isNaturalLanguageInputEnabled)
         }
     }
 }
