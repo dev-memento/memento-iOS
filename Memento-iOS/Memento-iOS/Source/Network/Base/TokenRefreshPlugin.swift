@@ -85,8 +85,6 @@ final class TokenRefreshPlugin: PluginType {
     }
 }
 
-//MARK: 일단 만들긴 했지만 지금 사용은 하지 않음 위 로직으로만 동작
-// provider.requestWithTokenRefresh로 호출해야 아래 로직이 돌아감
 extension MoyaProvider {
     func requestWithTokenRefresh(
         _ target: Target,
