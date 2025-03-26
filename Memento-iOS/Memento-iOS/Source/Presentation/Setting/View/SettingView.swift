@@ -16,7 +16,7 @@ struct SettingView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack {
                     CustomNavigationBar(
-                        title: "Sttings",
+                        title: SettingsViewText.navigationTitle,
                         showBackButton: true,
                         showSkipButton: false,
                         backButtonAction: {
@@ -42,7 +42,7 @@ struct SettingView: View {
                         TagEditView()
                             .navigationBarBackButtonHidden()
                     case .TagDetail(let tag, let isNew):
-                        TagDetailView(tag: tag, isNew: isNew)
+                        TagEditDetailView(tag: tag, isNew: isNew)
                             .environmentObject(viewModel)
                             .navigationBarBackButtonHidden()
                     case .Time:
@@ -64,11 +64,7 @@ struct SettingView: View {
             }
         }
     }
-    /*
-     네비게이션 로직 확인하기
-     TagDetailView 컬러 선택 로직 확인하기
-     */
-    
+
     struct UserInfoCard: View {
         var body: some View {
             HStack(spacing: 15) {
@@ -83,7 +79,7 @@ struct SettingView: View {
                 
                 Spacer()
             }
-            .padding(.vertical, 12)  // 상하 패딩 추가
+            .padding(.vertical, 12)
             .padding(.horizontal, 8)
             .background {
                 RoundedRectangle(cornerRadius: 4)
@@ -100,45 +96,43 @@ struct SettingView: View {
         var body: some View {
             VStack {
                 HStack {
-                    Text("Notifications")
+                    Text(SettingsViewText.notifications)
                         .applyFont(.body_r_14)
                         .foregroundColor(Color.gray05)
                     
                     Spacer()
                     
                     Button {
-                        // 알림 설정 버튼 액션
+                     
                     } label: {
                         Image(.btn_setting_on)
                     }
                 }
                 .padding(.horizontal, 26)
                 .padding(.top, 16)
-                
-                // ✅ Tag 화면으로 이동
+         
                 Button {
                     viewModel.navigateToNext(.Tag)
                 } label: {
                     HStack {
-                        Text("Tag")
+                        Text(SettingsViewText.tag)
                             .applyFont(.body_r_14)
                             .foregroundColor(Color.gray05)
                         
                         Spacer()
                         
-                        Image(systemName: "chevron.right") // 네비게이션 아이콘 추가
+                        Image(systemName: "chevron.right")
                             .foregroundColor(.gray05)
                     }
                     .padding(.vertical, 15)
                     .padding(.horizontal, 26)
                 }
                 
-                // ✅ Time 화면으로 이동
                 Button {
                     viewModel.navigateToNext(.Time)
                 } label: {
                     HStack {
-                        Text("Time")
+                        Text(SettingsViewText.time)
                             .applyFont(.body_r_14)
                             .foregroundColor(Color.gray05)
                         
@@ -163,12 +157,11 @@ struct SettingView: View {
         
         var body: some View {
             VStack {
-                // ✅ Integrations 화면으로 이동
                 Button {
                     viewModel.navigateToNext(.Integrations)
                 } label: {
                     HStack {
-                        Text("Integrations")
+                        Text(SettingsViewText.integrations)
                             .applyFont(.body_r_14)
                             .foregroundColor(Color.gray05)
                         
@@ -185,12 +178,11 @@ struct SettingView: View {
                     .padding(.top, 13)
                     .padding(.horizontal, 26)
                 
-                // ✅ Feedback 화면으로 이동
                 Button {
                     viewModel.navigateToNext(.Feedback)
                 } label: {
                     HStack {
-                        Text("Feedback")
+                        Text(SettingsViewText.feedback)
                             .applyFont(.body_r_14)
                             .foregroundColor(Color.gray05)
                         
@@ -203,12 +195,11 @@ struct SettingView: View {
                     .padding(.horizontal, 26)
                 }
                 
-                // ✅ Terms 화면으로 이동
                 Button {
                     viewModel.navigateToNext(.Terms)
                 } label: {
                     HStack {
-                        Text("Terms")
+                        Text(SettingsViewText.terms)
                             .applyFont(.body_r_14)
                             .foregroundColor(Color.gray05)
                         
@@ -232,23 +223,21 @@ struct SettingView: View {
         var body: some View {
             VStack {
                 HStack {
-                    Text("Logout")
+                    Text(SettingsViewText.logout)
                         .applyFont(.body_r_14)
                         .foregroundColor(Color.mementoRed)
                     
                     Spacer()
-                    
                 }
                 .padding(.top, 15)
                 .padding(.horizontal, 26)
                 
                 HStack {
-                    Text("Delete My account")
+                    Text(SettingsViewText.deleteAccount)
                         .applyFont(.body_r_14)
                         .foregroundColor(Color.mementoRed)
                     
                     Spacer()
-                    
                 }
                 .padding(.top, 15)
                 .padding(.horizontal, 26)

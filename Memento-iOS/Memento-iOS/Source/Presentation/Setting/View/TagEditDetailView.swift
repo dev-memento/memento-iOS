@@ -1,5 +1,5 @@
 //
-//  TagDetailView.swift
+//  TagEditDetailView.swift
 //  Memento-iOS
 //
 //  Created by 정정욱 on 3/26/25.
@@ -8,7 +8,7 @@
 import SwiftUI
 import MDSKit
 
-struct TagDetailView: View {
+struct TagEditDetailView: View {
     
     @EnvironmentObject var viewModel: SettingViewModel
     
@@ -96,7 +96,7 @@ struct TagDetailView: View {
 }
 
 #Preview {
-    TagDetailView(
+    TagEditDetailView(
         tag: TagItem(title: "Work", color: .mementoRed, isChevronVisible: true),
         isNew: false
     )

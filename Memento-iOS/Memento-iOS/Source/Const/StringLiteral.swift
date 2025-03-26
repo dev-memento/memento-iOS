@@ -83,6 +83,26 @@ enum StringLiteral {
     enum AddEvent {
         static let title = "Add your event"
     }
+    
+    enum Setting {
+        enum SettingView {
+            static let navigationTitle = "Settings"
+
+            // 섹션 타이틀
+            static let notifications = "Notifications"
+            static let tag = "Tag"
+            static let time = "Time"
+            static let integrations = "Integrations"
+            static let feedback = "Feedback"
+            static let terms = "Terms"
+
+            // 계정
+            static let logout = "Logout"
+            static let deleteAccount = "Delete my account"
+        }
+        
+    }
+
 }
 
 //MARK: typealias
@@ -93,3 +113,4 @@ typealias OnboardingWorkSelectionText = StringLiteral.Onboarding.WorkSelectionVi
 typealias OnboardingWorkPreferenceText = StringLiteral.Onboarding.WorkPreferenceView
 typealias OnboardingCalendarConnectText = StringLiteral.Onboarding.CalendarConnectView
 typealias OnboardingPublicText = StringLiteral.Onboarding
+typealias SettingsViewText = StringLiteral.Setting.SettingView
