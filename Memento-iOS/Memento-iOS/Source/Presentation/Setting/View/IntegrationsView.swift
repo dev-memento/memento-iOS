@@ -14,7 +14,7 @@ struct IntegrationsView: View {
     var body: some View {
         VStack{
             CustomNavigationBar(
-                title: "Integrations",
+                title: SettingsIntegrationsViewText.navigationTitle,
                 showBackButton: true,
                 showSkipButton: false,
                 backButtonAction: {
@@ -41,7 +41,7 @@ private struct ConnectedCalendarView: View {
     var body: some View {
         VStack(spacing: 8) {
             HStack {
-                Text("Connected")
+                Text(SettingsIntegrationsViewText.connnected)
                     .applyFont(.detail_r_12)
                     .foregroundColor(Color.gray05)
                 
@@ -59,7 +59,7 @@ private struct ConnectedCalendarView: View {
                         .frame(width: 20, height: 20)
                         .padding(.leading, 8)
                     
-                    Text("Apple Calendar")
+                    Text(SettingsIntegrationsViewText.appleCalendar)
                         .applyFont(.body_r_14)
                         .foregroundColor(Color.gray03)
                         .frame(maxWidth: .infinity, alignment: .center)
@@ -85,7 +85,7 @@ private struct CalendarConnectButtons: View {
     var body: some View {
         VStack(spacing: 8) {
             HStack {
-                Text("Add")
+                Text(SettingsIntegrationsViewText.add)
                     .applyFont(.detail_r_12)
                     .foregroundColor(Color.gray05)
                 
@@ -103,7 +103,7 @@ private struct CalendarConnectButtons: View {
                         .frame(width: 20, height: 20)
                         .padding(.leading, 8)
                     
-                    Text("Google Calendar")
+                    Text(SettingsIntegrationsViewText.googleCalendar)
                         .applyFont(.body_r_14)
                         .foregroundColor(Color.gray03)
                         .frame(maxWidth: .infinity, alignment: .center)
@@ -126,7 +126,7 @@ private struct CalendarConnectButtons: View {
                         .frame(width: 20, height: 20)
                         .padding(.leading, 8)
                     
-                    Text("Apple Calendar")
+                    Text(SettingsIntegrationsViewText.appleCalendar)
                         .applyFont(.body_r_14)
                         .foregroundColor(Color.gray03)
                         .frame(maxWidth: .infinity, alignment: .center)

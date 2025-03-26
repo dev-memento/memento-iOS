@@ -16,7 +16,7 @@ struct TimeView: View {
     var body: some View {
         VStack {
             CustomNavigationBar(
-                title: "Time",
+                title: SettingsTimeViewText.navigationTitle,
                 showBackButton: true,
                 showSkipButton: false,
                 backButtonAction: {
@@ -59,14 +59,14 @@ private struct TimeSelectionView: View {
             // 텍스트 수정 필요
             timeSelectionRow(
                 icon: .ic_wakeup,
-                title: OnboardingSleepCycleText.wakeUpTitle,
+                title: SettingsTimeViewText.wakeUpTitle,
                 time: wakeUpTime,
                 action: {
                     selectedTimeType = .wakeUp
                     isPickerPresented = true
                 }
             )
-            
+            /*
             timeSelectionRow(
                 icon: .ic_winddown,
                 title: OnboardingSleepCycleText.windDownTitle,
@@ -76,6 +76,7 @@ private struct TimeSelectionView: View {
                     isPickerPresented = true
                 }
             )
+             */
         }
     }
     

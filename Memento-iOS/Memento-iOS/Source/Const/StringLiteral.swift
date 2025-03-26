@@ -101,6 +101,27 @@ enum StringLiteral {
             static let deleteAccount = "Delete my account"
         }
         
+        enum TimeView {
+            static let navigationTitle = "Time"
+            static let wakeUpTitle = "Wake-up"
+        }
+        
+        enum TagView {
+            static let navigationTitle = "Tag"
+            static let add = "Add"
+            static let deleteTag = "Delete tag"
+            static let tagName = "Tag name"
+            static let enterTagName = "Enter tag name"
+            static let color = "Color"
+        }
+        
+        enum IntegrationsView {
+            static let navigationTitle = "Integrations"
+            static let connnected = "Connected"
+            static let add = "Add"
+            static let appleCalendar = "Apple Calendar"
+            static let googleCalendar = "Google Calendar"
+        }
     }
 
 }
@@ -113,4 +134,7 @@ typealias OnboardingWorkSelectionText = StringLiteral.Onboarding.WorkSelectionVi
 typealias OnboardingWorkPreferenceText = StringLiteral.Onboarding.WorkPreferenceView
 typealias OnboardingCalendarConnectText = StringLiteral.Onboarding.CalendarConnectView
 typealias OnboardingPublicText = StringLiteral.Onboarding
-typealias SettingsViewText = StringLiteral.Setting.SettingView
+typealias SettingsSettingViewText = StringLiteral.Setting.SettingView
+typealias SettingsTimeViewText = StringLiteral.Setting.TimeView
+typealias SettingsTagViewText = StringLiteral.Setting.TagView
+typealias SettingsIntegrationsViewText = StringLiteral.Setting.IntegrationsView

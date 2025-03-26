@@ -16,7 +16,7 @@ struct SettingView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack {
                     CustomNavigationBar(
-                        title: SettingsViewText.navigationTitle,
+                        title: SettingsSettingViewText.navigationTitle,
                         showBackButton: true,
                         showSkipButton: false,
                         backButtonAction: {
@@ -96,7 +96,7 @@ struct SettingView: View {
         var body: some View {
             VStack {
                 HStack {
-                    Text(SettingsViewText.notifications)
+                    Text(SettingsSettingViewText.notifications)
                         .applyFont(.body_r_14)
                         .foregroundColor(Color.gray05)
                     
@@ -115,7 +115,7 @@ struct SettingView: View {
                     viewModel.navigateToNext(.Tag)
                 } label: {
                     HStack {
-                        Text(SettingsViewText.tag)
+                        Text(SettingsSettingViewText.tag)
                             .applyFont(.body_r_14)
                             .foregroundColor(Color.gray05)
                         
@@ -132,7 +132,7 @@ struct SettingView: View {
                     viewModel.navigateToNext(.Time)
                 } label: {
                     HStack {
-                        Text(SettingsViewText.time)
+                        Text(SettingsSettingViewText.time)
                             .applyFont(.body_r_14)
                             .foregroundColor(Color.gray05)
                         
@@ -161,7 +161,7 @@ struct SettingView: View {
                     viewModel.navigateToNext(.Integrations)
                 } label: {
                     HStack {
-                        Text(SettingsViewText.integrations)
+                        Text(SettingsSettingViewText.integrations)
                             .applyFont(.body_r_14)
                             .foregroundColor(Color.gray05)
                         
@@ -182,7 +182,7 @@ struct SettingView: View {
                     viewModel.navigateToNext(.Feedback)
                 } label: {
                     HStack {
-                        Text(SettingsViewText.feedback)
+                        Text(SettingsSettingViewText.feedback)
                             .applyFont(.body_r_14)
                             .foregroundColor(Color.gray05)
                         
@@ -199,7 +199,7 @@ struct SettingView: View {
                     viewModel.navigateToNext(.Terms)
                 } label: {
                     HStack {
-                        Text(SettingsViewText.terms)
+                        Text(SettingsSettingViewText.terms)
                             .applyFont(.body_r_14)
                             .foregroundColor(Color.gray05)
                         
@@ -223,7 +223,7 @@ struct SettingView: View {
         var body: some View {
             VStack {
                 HStack {
-                    Text(SettingsViewText.logout)
+                    Text(SettingsSettingViewText.logout)
                         .applyFont(.body_r_14)
                         .foregroundColor(Color.mementoRed)
                     
@@ -233,7 +233,7 @@ struct SettingView: View {
                 .padding(.horizontal, 26)
                 
                 HStack {
-                    Text(SettingsViewText.deleteAccount)
+                    Text(SettingsSettingViewText.deleteAccount)
                         .applyFont(.body_r_14)
                         .foregroundColor(Color.mementoRed)
                     

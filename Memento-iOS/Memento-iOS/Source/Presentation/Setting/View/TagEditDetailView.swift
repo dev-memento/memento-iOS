@@ -26,7 +26,7 @@ struct TagEditDetailView: View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(alignment: .leading, spacing: 0) {
                 CustomNavigationBar(
-                    title: "Tag",
+                    title: SettingsTagViewText.navigationTitle,
                     showBackButton: true,
                     showSkipButton: false,
                     backButtonAction: {
@@ -36,15 +36,15 @@ struct TagEditDetailView: View {
                 .padding(.top, 25)
                 
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("Tag name")
+                    Text(SettingsTagViewText.tagName)
                         .applyFont(.detail_r_12)
                         .foregroundColor(.gray06)
                     
-                    TextField("Enter tag name", text: $tag.title)
+                    TextField(SettingsTagViewText.enterTagName, text: $tag.title)
                         .padding(.vertical, 8)
                         .overlay(Rectangle().frame(height: 1).offset(y: 10).foregroundColor(.gray08))
                     
-                    Text("Color")
+                    Text(SettingsTagViewText.color)
                         .applyFont(.detail_r_12)
                         .foregroundColor(.gray06)
                         .padding(.top, 30)
@@ -80,7 +80,7 @@ struct TagEditDetailView: View {
                         // Action
                         
                     } label: {
-                        Text("Delete tag")
+                        Text(SettingsTagViewText.deleteTag)
                             .applyFont(.body_r_14)
                             .foregroundColor(Color.mementoRed)
                         

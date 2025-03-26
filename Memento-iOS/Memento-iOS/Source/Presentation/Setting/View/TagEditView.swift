@@ -24,7 +24,7 @@ struct TagEditView: View {
         ScrollView(.vertical, showsIndicators: false) {
             
             CustomNavigationBar(
-                title: "Tag",
+                title: SettingsTagViewText.navigationTitle,
                 showBackButton: true,
                 showSkipButton: false,
                 backButtonAction: {
@@ -53,7 +53,7 @@ struct TagEditView: View {
                             .foregroundColor(.gray05)
                             .padding(.leading, 10)
                         
-                        Text("Add")
+                        Text(SettingsTagViewText.add)
                             .foregroundColor(.gray05)
                             .applyFont(.body_r_14)
                         
