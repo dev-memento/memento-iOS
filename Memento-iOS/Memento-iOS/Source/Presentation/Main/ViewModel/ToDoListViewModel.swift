@@ -81,7 +81,7 @@ extension ToDoListViewModel {
                                 toDoTitle: item.description,
                                 date: item.startDate,
                                 dueDate: item.endDate,
-                                priorityType: Priority(rawValue: item.priorityType) ?? .low,
+                                priorityType: Priority(rawValue: item.priorityType.lowercased()) ?? .none,
                                 isChecked: item.isCompleted,
                                 tagName: item.tagName
                             )

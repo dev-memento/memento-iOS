@@ -28,7 +28,7 @@ struct ToDoListCell: View {
             
             Spacer()
             
-            PriorityLabelView(priority: Priority(rawValue: toDoList.priorityType) ?? .none)
+            PriorityLabelView(priority: Priority(rawValue: toDoList.priorityType.lowercased()) ?? .none)
         }
         .frame(height: 68)
         .background(highlightedBackground)
