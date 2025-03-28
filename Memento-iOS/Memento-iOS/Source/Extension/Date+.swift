@@ -89,4 +89,19 @@ extension Date {
             return ""
         }
     }
+    
+    static func formatEndDate(_ endDate: String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        
+        if let date = dateFormatter.date(from: endDate) {
+            if Calendar.current.isDate(date, inSameDayAs: Date()) {
+                return "Today"
+            }
+            dateFormatter.dateFormat = "MMM dd"
+            return dateFormatter.string(from: date)
+        }
+        
+        return endDate
+    }
 }

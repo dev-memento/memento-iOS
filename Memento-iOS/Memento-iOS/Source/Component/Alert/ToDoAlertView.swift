@@ -52,7 +52,7 @@ struct ToDoAlertView: View {
                 HStack(spacing: 3) {
                     Image(.ic_deadline)
                         .foregroundColor(.gray05)
-                    Text(deadline)
+                    Text(Date.formatEndDate(deadline))
                         .applyFont(.detail_r_12)
                         .foregroundColor(.gray05)
                 }
