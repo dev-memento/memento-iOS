@@ -94,7 +94,7 @@ struct DueDateView: View {
                 .padding(.leading, toDoIconName(for: toDoType) == nil ? 0 : 10)
                 .foregroundColor(Color.gray05)
             
-            Text(endDate)
+            Text(formatEndDate(endDate))
                 .applyFont(.detail_r_12)
                 .foregroundColor(Color.gray05)
                 .padding(.leading, 1)
@@ -111,6 +111,21 @@ struct DueDateView: View {
         default:
             return nil
         }
+    }
+    
+    private func formatEndDate(_ endDate: String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        
+        if let date = dateFormatter.date(from: endDate) {
+            if Calendar.current.isDate(date, inSameDayAs: Date()) {
+                return "Today"
+            }
+            dateFormatter.dateFormat = "MMM dd"
+            return dateFormatter.string(from: date)
+        }
+        
+        return endDate
     }
 }
 
