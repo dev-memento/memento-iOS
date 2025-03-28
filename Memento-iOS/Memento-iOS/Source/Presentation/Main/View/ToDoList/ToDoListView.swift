@@ -13,6 +13,7 @@ struct ToDoListView: View {
     @ObservedObject var viewModel: ToDoListViewModel
     
     @State private var showTodoAlert = false
+    @State private var showEditSheet = false
     @State private var selectedItem: ToDoListDataModel?
     
     var body: some View {
@@ -92,13 +93,16 @@ struct ToDoListView: View {
                     },
                     onEdit: {
                         showTodoAlert = false
+                        showEditSheet = true
                     },
                     todoAPIService: TodoAPIService()
                 )
                 .background(Color.black.opacity(0.4))
                 .edgesIgnoringSafeArea(.all)
             }
-            
+        }
+        .sheet(isPresented: $showEditSheet) {
+            EmptyView()
         }
     }
     
