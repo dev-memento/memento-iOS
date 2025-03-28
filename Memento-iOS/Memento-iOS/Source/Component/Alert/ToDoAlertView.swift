@@ -13,6 +13,7 @@ struct ToDoAlertView: View {
     let todoTitle: String
     let deadline: String
     let tag: String
+    let tagName: String
     let priority: Priority
     
     @Binding var isChecked: Bool
@@ -72,7 +73,7 @@ struct ToDoAlertView: View {
                     Image(.ic_tag)
                         .renderingMode(.template)
                         .foregroundColor(Color.fromHex(tag))
-                    Text(tag)
+                    Text(tagName)
                         .applyFont(.detail_r_12)
                         .foregroundColor(.gray05)
                 }

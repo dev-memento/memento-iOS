@@ -15,6 +15,7 @@ struct ToDoListDataModel: Identifiable, Equatable, Hashable {
     var dueDate: String
     var priorityType: Priority
     var isChecked: Bool
+    var tagName: String
     
     func mapToToDoItem() -> ToDoListTotalResponseDataTest {
         return .init(id: id,
@@ -25,7 +26,7 @@ struct ToDoListDataModel: Identifiable, Equatable, Hashable {
                      isCompleted: false,
                      priorityValue: 1,
                      priorityType: priorityType.title,
-                     tagName: "",
+                     tagName: tagName,
                      tagColor: colorType,
                      toDoType: "",
                      orderNum: 0)

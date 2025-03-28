@@ -255,7 +255,8 @@ extension WeeklyCalendarViewModel {
                                 date: item.startDate,
                                 dueDate: item.endDate,
                                 priorityType: Priority(rawValue: item.priorityType) ?? .low,
-                                isChecked: item.isCompleted
+                                isChecked: item.isCompleted,
+                                tagName: item.tagName
                             )
                         }
                         self?.getAllTodoList = true
@@ -397,7 +398,8 @@ extension WeeklyCalendarViewModel {
                         date: $0.date,
                         dueDate: $0.dueDate,
                         priorityType: $0.priorityType,
-                        isChecked: $0.isChecked
+                        isChecked: $0.isChecked,
+                        tagName: $0.tagName
                     )
                 )
         }

@@ -68,6 +68,7 @@ struct ToDoListView: View {
                     todoTitle: todo.mapToToDoItem().description,
                     deadline: todo.mapToToDoItem().endDate ?? "",
                     tag: todo.mapToToDoItem().tagColor ?? "",
+                    tagName: todo.mapToToDoItem().tagName ?? "",
                     priority: todo.priorityType ?? .none,
                     isChecked: Binding(
                         get: { todo.isChecked },
