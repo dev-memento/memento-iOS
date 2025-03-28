@@ -20,7 +20,7 @@ struct ToDoListView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     ForEach(viewModel.mCallendarDataSource.wholeMonthDate, id: \.self) { date in
-                        ToDoListDateView(date: "\(makeMonthDate(month: date.month)) \(date.day)")
+                        ToDoListDateView(date: "\(Date.makeMonthDate(month: date.month)) \(date.day)")
                             .padding(.bottom, 8)
                             .id(date)
                         if let events = viewModel.toDoListItemDict[date], !events.isEmpty {
@@ -112,37 +112,6 @@ struct ToDoListView: View {
         let uncheckedItems = items.filter { !$0.isChecked }
         
         return uncheckedItems.first == item
-    }
-    
-    private func makeMonthDate(month: String) -> String {
-        switch month {
-        case "1":
-            return "Jan"
-        case "2":
-            return "Feb"
-        case "3":
-            return "Mar"
-        case "4":
-            return "Apr"
-        case "5":
-            return "May"
-        case "6":
-            return "Jun"
-        case "7":
-            return "Jul"
-        case "8":
-            return "Aug"
-        case "9":
-            return "Sep"
-        case "10":
-            return "Oct"
-        case "11":
-            return "Nov"
-        case "12":
-            return "Dec"
-        default:
-            return ""
-        }
     }
 }
 
