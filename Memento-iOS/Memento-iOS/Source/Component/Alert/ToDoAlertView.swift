@@ -71,7 +71,7 @@ struct ToDoAlertView: View {
                 HStack(spacing: 3) {
                     Image(.ic_tag)
                         .renderingMode(.template)
-                        .foregroundColor(.mementoBlue)
+                        .foregroundColor(Color.fromHex(tag))
                     Text(tag)
                         .applyFont(.detail_r_12)
                         .foregroundColor(.gray05)
