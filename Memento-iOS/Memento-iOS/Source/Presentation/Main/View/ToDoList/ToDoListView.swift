@@ -45,10 +45,6 @@ struct ToDoListView: View {
                                     showTodoAlert = true
                                 }
                             }
-                        } else {
-                            Text("No tasks for this date")
-                                .foregroundColor(.gray)
-                                .padding()
                         }
                     }
                     Spacer()
