@@ -64,7 +64,7 @@ struct SettingView: View {
             }
         }
     }
-
+    
     struct UserInfoCard: View {
         var body: some View {
             HStack(spacing: 15) {
@@ -103,51 +103,26 @@ struct SettingView: View {
                     Spacer()
                     
                     Button {
-                     
+                        
                     } label: {
                         Image(.btn_setting_on)
                     }
                 }
                 .padding(.horizontal, 26)
                 .padding(.top, 16)
-         
-                Button {
-                    viewModel.navigateToNext(.Tag)
-                } label: {
-                    HStack {
-                        Text(SettingsSettingViewText.tag)
-                            .applyFont(.body_r_14)
-                            .foregroundColor(Color.gray05)
-                        
-                        Spacer()
-                        
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(.gray05)
-                    }
-                    .padding(.vertical, 15)
-                    .padding(.horizontal, 26)
-                }
                 
-                Button {
-                    viewModel.navigateToNext(.Time)
-                } label: {
-                    HStack {
-                        Text(SettingsSettingViewText.time)
-                            .applyFont(.body_r_14)
-                            .foregroundColor(Color.gray05)
-                        
-                        Spacer()
-                        
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(.gray05)
-                    }
-                    .padding(.vertical, 15)
-                    .padding(.horizontal, 26)
-                }
+                SettingsRowButton(
+                    title: SettingsSettingViewText.tag,
+                    action: { viewModel.navigateToNext(.Tag) }
+                )
                 
-                Divider().background(Color.gray09)
-                    .padding(.top, 13)
-                    .padding(.horizontal, 26)
+                SettingsRowButton(
+                    title: SettingsSettingViewText.time,
+                    action: { viewModel.navigateToNext(.Time) }
+                )
+                
+                
+                SettingsRowDivider()
             }
         }
     }
@@ -157,64 +132,25 @@ struct SettingView: View {
         
         var body: some View {
             VStack {
-                Button {
-                    viewModel.navigateToNext(.Integrations)
-                } label: {
-                    HStack {
-                        Text(SettingsSettingViewText.integrations)
-                            .applyFont(.body_r_14)
-                            .foregroundColor(Color.gray05)
-                        
-                        Spacer()
-                        
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(.gray05)
-                    }
-                    .padding(.vertical, 15)
-                    .padding(.horizontal, 26)
-                }
                 
-                Divider().background(Color.gray09)
-                    .padding(.top, 13)
-                    .padding(.horizontal, 26)
+                SettingsRowButton(
+                    title: SettingsSettingViewText.integrations,
+                    action: { viewModel.navigateToNext(.Integrations) }
+                )
                 
-                Button {
-                    viewModel.navigateToNext(.Feedback)
-                } label: {
-                    HStack {
-                        Text(SettingsSettingViewText.feedback)
-                            .applyFont(.body_r_14)
-                            .foregroundColor(Color.gray05)
-                        
-                        Spacer()
-                        
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(.gray05)
-                    }
-                    .padding(.vertical, 15)
-                    .padding(.horizontal, 26)
-                }
+                SettingsRowDivider()
                 
-                Button {
-                    viewModel.navigateToNext(.Terms)
-                } label: {
-                    HStack {
-                        Text(SettingsSettingViewText.terms)
-                            .applyFont(.body_r_14)
-                            .foregroundColor(Color.gray05)
-                        
-                        Spacer()
-                        
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(.gray05)
-                    }
-                    .padding(.vertical, 15)
-                    .padding(.horizontal, 26)
-                }
+                SettingsRowButton(
+                    title: SettingsSettingViewText.feedback,
+                    action: { viewModel.navigateToNext(.Feedback) }
+                )
                 
-                Divider().background(Color.gray09)
-                    .padding(.top, 13)
-                    .padding(.horizontal, 26)
+                SettingsRowButton(
+                    title: SettingsSettingViewText.terms,
+                    action: { viewModel.navigateToNext(.Terms) }
+                )
+                
+                SettingsRowDivider()
             }
         }
     }
@@ -243,6 +179,33 @@ struct SettingView: View {
                 .padding(.horizontal, 26)
             }
         }
+    }
+}
+
+struct SettingsRowButton: View {
+    let title: String
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack {
+                Text(title)
+                    .applyFont(.body_r_14)
+                    .foregroundColor(Color.gray05)
+                
+                Spacer()
+            }
+            .padding(.top, 15)
+            .padding(.horizontal, 26)
+        }
+    }
+}
+
+struct SettingsRowDivider: View {
+    var body: some View {
+        Divider().background(Color.gray09)
+            .padding(.top, 13)
+            .padding(.horizontal, 26)
     }
 }
 

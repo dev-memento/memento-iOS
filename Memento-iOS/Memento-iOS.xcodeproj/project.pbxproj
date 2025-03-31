@@ -79,8 +79,6 @@
 				Source/Presentation/Add/Common/Model/SegmentedMenuType.swift,
 				Source/Presentation/Add/Common/Model/Tag.swift,
 				Source/Presentation/Add/Common/Model/ViewType.swift,
-				Source/Presentation/Add/Common/View/CustomToggleStyle.swift,
-				Source/Presentation/Add/Common/View/CustomToggleView.swift,
 				Source/Presentation/Add/Common/View/SegmentedMenuView.swift,
 				Source/Presentation/Add/Common/View/SheetContainer.swift,
 				Source/Presentation/Add/Common/View/TagPickerSheet.swift,
@@ -92,12 +90,6 @@
 				Source/Presentation/Onboarding/ViewModel/AppState.swift,
 				Source/Presentation/Onboarding/ViewModel/AuthViewModel.swift,
 				Source/Presentation/Onboarding/ViewModel/OnboardingViewModel.swift,
-				Source/Presentation/Setting/Model/TagItem.swift,
-				Source/Presentation/Setting/View/IntegrationsView.swift,
-				Source/Presentation/Setting/View/SettingView.swift,
-				Source/Presentation/Setting/View/TagEditView.swift,
-				Source/Presentation/Setting/View/TimeView.swift,
-				Source/Presentation/Setting/ViewModel/SettingViewModel.swift,
 				Source/Utils/DynamicPresentationDetent.swift,
 			);
 			target = 830F3C552D2A73BD00254FDE /* Memento-iOS */;
