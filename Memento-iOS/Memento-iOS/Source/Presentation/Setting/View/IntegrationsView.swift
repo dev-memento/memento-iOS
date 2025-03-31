@@ -35,7 +35,7 @@ struct IntegrationsView: View {
     }
 }
 
-
+// TODO - 이미 연결된 캘린더 해제 로직 추가
 private struct ConnectedCalendarView: View {
     
     var body: some View {
@@ -50,7 +50,7 @@ private struct ConnectedCalendarView: View {
             .padding(.horizontal, 36)
             
             Button {
-                // 구글 캘린더 연동 버튼 동작
+            
             } label: {
                 HStack(spacing: 0) {
                     Image(.img_apple)
@@ -69,7 +69,7 @@ private struct ConnectedCalendarView: View {
                 .background(Color.gray10)
                 .cornerRadius(4)
             }
-            .padding(.horizontal, 34)       // 버튼 주변에 패딩 적용
+            .padding(.horizontal, 34)
             
         }
         .background {
@@ -81,6 +81,7 @@ private struct ConnectedCalendarView: View {
     }
 }
 
+// TODO - 각 캘린더 연동 로직 구현 필요
 private struct CalendarConnectButtons: View {
     var body: some View {
         VStack(spacing: 8) {
@@ -94,7 +95,7 @@ private struct CalendarConnectButtons: View {
             .padding(.horizontal, 36)
             
             Button {
-                // 구글 캘린더 연동 버튼 동작
+              
             } label: {
                 HStack(spacing: 0) {
                     Image(.img_google)
@@ -117,7 +118,7 @@ private struct CalendarConnectButtons: View {
             .padding(.horizontal, 34)
             
             Button {
-                // 구글 캘린더 연동 버튼 동작
+              
             } label: {
                 HStack(spacing: 0) {
                     Image(.img_apple)

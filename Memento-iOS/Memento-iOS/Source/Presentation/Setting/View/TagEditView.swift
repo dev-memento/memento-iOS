@@ -35,16 +35,13 @@ struct TagEditView: View {
             
             VStack(spacing: 6) {
                 ForEach(categories) { item in
-                    // TagEditView.swift
                     Button {
                         viewModel.navigateToNext(.TagDetail(item, item.isChevronVisible))
                     } label: {
                         CategoryRowView(item: item)
                     }
-
                 }
-                
-                // Add 버튼
+
                 Button(action: {
                     viewModel.navigateToNext(.TagDetail(nil, false))
                 }) {

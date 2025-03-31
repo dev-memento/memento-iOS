@@ -66,14 +66,14 @@ struct TagEditDetailView: View {
                 }
                 .padding(.top, 25)
                 .padding(.bottom, 24)
-                .padding(.leading, 12)
-                .padding(.trailing, 12)
+                .padding(.horizontal, 12)
                 .background(
                     RoundedRectangle(cornerRadius: 8)
                         .fill(Color.gray10)
                 )
                 .padding(.horizontal, 16)
                 .padding(.top, 25)
+                
                 // ✅ 아래 Delete 버튼은 바깥에 따로
                 if isNew {
                     Button {

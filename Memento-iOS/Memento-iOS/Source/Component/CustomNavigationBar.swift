@@ -57,7 +57,7 @@ struct CustomNavigationBar: View {
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, alignment: .center)
             } else {
-                Spacer().frame(maxWidth: .infinity) // 🔥 중앙 정렬용 빈 공간 확보
+                Spacer().frame(maxWidth: .infinity) 
             }
 
             // 오른쪽 버튼
