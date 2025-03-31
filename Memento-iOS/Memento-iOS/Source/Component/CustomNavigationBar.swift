@@ -7,7 +7,6 @@
 
 import SwiftUI
 import MDSKit
-
 struct CustomNavigationBar: View {
     
     // MARK: - Properties
@@ -37,8 +36,8 @@ struct CustomNavigationBar: View {
     // MARK: - Body
     
     var body: some View {
-        HStack(alignment: .center) {
-            // Back Button
+        HStack {
+            // 왼쪽 버튼
             if showBackButton {
                 Button(action: backButtonAction) {
                     Image(.btn_back)
@@ -47,50 +46,32 @@ struct CustomNavigationBar: View {
                         .frame(width: 48, height: 48)
                         .foregroundColor(.gray06)
                 }
+            } else {
+                Spacer().frame(width: 48)
             }
-            
-            // Title
+
+            // 중앙 타이틀 (없을 경우에도 공간 유지)
             if let title = title {
                 Text(title)
                     .applyFont(.body_b_16)
                     .foregroundColor(.white)
+                    .frame(maxWidth: .infinity, alignment: .center)
+            } else {
+                Spacer().frame(maxWidth: .infinity) 
             }
-            
-            Spacer()
-            
-            // Skip Button
+
+            // 오른쪽 버튼
             if showSkipButton {
                 Button(action: skipButtonAction) {
                     Text("Skip")
                         .applyFont(.body_b_14)
                         .foregroundColor(.gray06)
                 }
+                .frame(width: 48)
+            } else {
+                Spacer().frame(width: 48)
             }
         }
         .frame(height: 48)
-    }
-}
-
-// MARK: - Preview
-
-#Preview {
-    VStack(spacing: 20) {
-        CustomNavigationBar(
-            showBackButton: true,
-            showSkipButton: true,
-            backButtonAction: {},
-            skipButtonAction: {}
-        )
-        .padding()
-        .background(Color.black)
-        
-        CustomNavigationBar(
-            title: "Title",
-            showBackButton: true,
-            showSkipButton: false,
-            backButtonAction: {}
-        )
-        .padding()
-        .background(Color.black)
     }
 }
