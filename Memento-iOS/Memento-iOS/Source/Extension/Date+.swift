@@ -58,4 +58,29 @@ extension Date {
         // 초 단위 시간 차이 반환
         return Int(end.timeIntervalSince(start))
     }
+    
+    static func makeMonthDate(month: String) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "M"
+        guard let date = formatter.date(from: month) else { return "" }
+
+        formatter.dateFormat = "MMM"
+        
+        return formatter.string(from: date)
+    }
+    
+    static func formatEndDate(_ endDate: String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        
+        if let date = dateFormatter.date(from: endDate) {
+            if Calendar.current.isDate(date, inSameDayAs: Date()) {
+                return "Today"
+            }
+            dateFormatter.dateFormat = "MMM dd"
+            return dateFormatter.string(from: date)
+        }
+        
+        return endDate
+    }
 }

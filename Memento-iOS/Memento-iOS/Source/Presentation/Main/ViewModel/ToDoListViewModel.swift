@@ -81,8 +81,9 @@ extension ToDoListViewModel {
                                 toDoTitle: item.description,
                                 date: item.startDate,
                                 dueDate: item.endDate,
-                                priorityType: Priority(rawValue: item.priorityType) ?? .low,
-                                isChecked: item.isCompleted
+                                priorityType: Priority(rawValue: item.priorityType.lowercased()) ?? .none,
+                                isChecked: item.isCompleted,
+                                tagName: item.tagName
                             )
                         }
                         self?.getAllTodoList = true

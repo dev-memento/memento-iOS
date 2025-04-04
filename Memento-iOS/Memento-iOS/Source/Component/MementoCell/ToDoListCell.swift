@@ -28,7 +28,7 @@ struct ToDoListCell: View {
             
             Spacer()
             
-            PriorityLabelView(priority: Priority(rawValue: toDoList.priorityType) ?? .none)
+            PriorityLabelView(priority: Priority(rawValue: toDoList.priorityType.lowercased()) ?? .none)
         }
         .frame(height: 68)
         .background(highlightedBackground)
@@ -91,14 +91,15 @@ struct DueDateView: View {
             }
             
             Image(.ic_deadline)
-                .padding(.leading, 10)
+                .padding(.leading, toDoIconName(for: toDoType) == nil ? 0 : 10)
                 .foregroundColor(Color.gray05)
             
-            Text(endDate)
+            Text(Date.formatEndDate(endDate))
                 .applyFont(.detail_r_12)
                 .foregroundColor(Color.gray05)
                 .padding(.leading, 1)
         }
+        
     }
     
     private func toDoIconName(for type: String) -> Image? {

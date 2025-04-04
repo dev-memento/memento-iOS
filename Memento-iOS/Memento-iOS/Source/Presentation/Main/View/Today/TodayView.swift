@@ -66,7 +66,8 @@ struct TodayView: View {
                     todoId: todo.id,
                     todoTitle: todo.toDoTitle,
                     deadline: todo.dueDate,
-                    tag: "Work",
+                    tag: todo.colorType,
+                    tagName: todo.tagName,
                     priority: todo.priorityType,
                     isChecked: todoBinding,
                     onDelete: {
