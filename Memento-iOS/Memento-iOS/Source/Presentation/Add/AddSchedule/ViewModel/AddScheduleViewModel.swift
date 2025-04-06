@@ -17,10 +17,10 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
 
     // MARK: - Date & Time
 
-    @Published var startsDate: Date
-    @Published var endsDate: Date
-    @Published var selectedStartTime: Date
-    @Published var selectedEndTime: Date
+    @Published var startDate: Date { didSet { checkIfAllDayShouldBeEnabled() } }
+    @Published var startTime: Date { didSet { checkIfAllDayShouldBeEnabled() } }
+    @Published var endDate: Date { didSet { checkIfAllDayShouldBeEnabled() } }
+    @Published var endTime: Date { didSet { checkIfAllDayShouldBeEnabled() } }
 
     // MARK: - Sheet State
 
@@ -52,10 +52,10 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
         }
 
         self.scheduleApiService = scheduleApiService
-        self.startsDate = roundedStart
-        self.selectedStartTime = roundedStart
-        self.endsDate = roundedEnd
-        self.selectedEndTime = roundedEnd
+        self.startDate = roundedStart
+        self.startTime = roundedStart
+        self.endDate = roundedEnd
+        self.endTime = roundedEnd
         self.isAllDay = false
         self.selectedTag = Tag.mockData.first ?? Tag(tagId: 0, color: .gray02, title: "Untitled")
     }
@@ -155,13 +155,13 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
 
     private func updateTimesForAllDayStatus() {
         if isAllDay {
-            selectedStartTime = startsDate.startOfDay
-            selectedEndTime = endsDate.startOfDay
+            startTime = startDate.startOfDay
+            endTime = endDate.startOfDay
         } else {
             guard let (roundedStart, roundedEnd) = Self.makeRoundedStartAndEnd() else { return }
 
-            selectedStartTime = roundedStart
-            selectedEndTime = roundedEnd
+            startTime = roundedStart
+            endTime = roundedEnd
         }
     }
 
