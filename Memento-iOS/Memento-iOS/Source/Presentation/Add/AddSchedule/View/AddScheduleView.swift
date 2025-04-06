@@ -72,8 +72,8 @@ struct AddScheduleView: View {
         let title = (type == .start) ? StringLiteral.Common.starts : StringLiteral.Common.ends
         let formattedDate = (type == .start) ? viewModel.formattedStartDate : viewModel.formattedEndDate
         let formattedTime = (type == .start) ? viewModel.formattedStartTime : viewModel.formattedEndTime
-        let dateBinding = (type == .start) ? $viewModel.startsDate : $viewModel.endsDate
-        let timeBinding = (type == .start) ? $viewModel.selectedStartTime : $viewModel.selectedEndTime
+        let dateBinding = (type == .start) ? $viewModel.startDate : $viewModel.endDate
+        let timeBinding = (type == .start) ? $viewModel.startTime : $viewModel.endTime
         let isDatePresented = (type == .start) ? $viewModel.isStartDatePressed : $viewModel.isEndDatePressed
         let isTimePresented = (type == .start) ? $viewModel.isStartTimePressed : $viewModel.isEndTimePressed
 
