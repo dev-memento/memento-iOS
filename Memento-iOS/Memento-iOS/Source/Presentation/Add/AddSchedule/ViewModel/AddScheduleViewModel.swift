@@ -12,7 +12,15 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
 
     @Published var title: String = ""
     @Published var selectedTag: Tag
-    @Published var isAllDay: Bool { didSet { updateTimesForAllDayStatus() } }
+    @Published var isAllDay: Bool {
+        didSet {
+            if isManualAllDayChangeAllowed {
+                isAllDayManuallyToggled = true
+            }
+            updateTimesForAllDayStatus()
+        }
+    }
+
     @Published var isNaturalLanguageInputEnabled: Bool = false
 
     // MARK: - Date & Time
@@ -36,13 +44,16 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     @Published var isEndTimePickerPresented: Bool = false
     @Published var isTagPickerPresented: Bool = false
 
-    // MARK: - Computed Properties
+    // MARK: - Properties
 
     var isTitleEmpty: Bool { title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
-    var formattedStartDate: String { startsDate.formattedDate(with: "MMM d, yyyy") }
-    var formattedEndDate: String { endsDate.formattedDate(with: "MMM d, yyyy") }
-    var formattedStartTime: String { formatTimeString(selectedStartTime) }
-    var formattedEndTime: String { formatTimeString(selectedEndTime) }
+    var formattedStartDate: String { startDate.formattedDate(with: "MMM d, yyyy") }
+    var formattedEndDate: String { endDate.formattedDate(with: "MMM d, yyyy") }
+    var formattedStartTime: String { formatTimeString(startTime) }
+    var formattedEndTime: String { formatTimeString(endTime) }
+
+    private var isManualAllDayChangeAllowed: Bool { numberOfDayDifference() < 2 }
+    private var isAllDayManuallyToggled: Bool = false
 
     // MARK: - Initializer
 
@@ -63,25 +74,32 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     // MARK: - API
 
     func postAddSchedule(completion: @escaping () -> Void) {
-        let body = PostCreateScheduleRequest(
+        let shouldBeAllDay = isEventLongerThan24Hours() || isAllDay
+
+         if isEventLongerThan24Hours() && !isAllDay {
+             print("DEBUG: 이벤트 기간이 24시간 이상이지만 사용자가 all-day를 해제했습니다. API에는 isAllDay: true로 전송됩니다.")
+         }
+
+        let request = PostCreateScheduleRequest(
             description: title,
-            startDate: formatDateTime(date: startsDate, time: selectedStartTime),
-            endDate: formatDateTime(date: endsDate, time: selectedEndTime),
-            isAllDay: isAllDay,
+            startDate: combine(date: startDate, time: startTime).formattedDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),
+            endDate: combine(date: endDate, time: endTime).formattedDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),
+            isAllDay: shouldBeAllDay,
             tagID: selectedTag.tagId == 0 ? 1 : selectedTag.tagId
         )
 
-        print("DEBUG: \(body)")
+        print("DEBUG: request - \(request)")
 
-        scheduleApiService.postCreateSchedule(bodyParam: body) { [weak self] result in
+        scheduleApiService.postCreateSchedule(bodyParam: request) { [weak self] result in
             guard let self else { return }
 
             self.postMakeScheduleNotiFication()
             completion()
+            print("DEBUG: result - \(result)")
         }
     }
-    
-    func postMakeScheduleNotiFication() {
+
+    private func postMakeScheduleNotiFication() {
         NotificationCenter.default.post(
             name: NSNotification.Name("postScheduleComplete"),
             object: nil,
@@ -147,11 +165,26 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
         isTagPressed = false
     }
 
+    // MARK: - User Interaction
+
     func toggleAllDay() {
+        guard isManualAllDayChangeAllowed else {
+            print("DEBUG: 2일 이상 일정은 올데이 해제 불가")
+            return
+        }
+
         isAllDay.toggle()
+        isAllDayManuallyToggled = true
     }
 
-    // MARK: - Helpers
+    // MARK: - Time & Date
+
+    func isEventLongerThan24Hours() -> Bool {
+        let start = combine(date: startDate, time: startTime)
+        let end = combine(date: endDate, time: endTime)
+
+        return end.timeIntervalSince(start) >= .secondsInADay
+    }
 
     private func updateTimesForAllDayStatus() {
         if isAllDay {
@@ -165,21 +198,51 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
         }
     }
 
-    private func formatTimeString(_ date: Date) -> String {
-        isAllDay ? StringLiteral.AddSchedule.allDay : date.formattedDate(with: "h:mm a")
+    private func checkIfAllDayShouldBeEnabled() {
+        let dayDifference = numberOfDayDifference()
+        let start = combine(date: startDate, time: startTime)
+        let end = combine(date: endDate, time: endTime)
+        let interval = end.timeIntervalSince(start)
+        let shouldBeAllDay: Bool
+
+        switch dayDifference {
+        case 2...:
+            shouldBeAllDay = true
+        case 1, 0:
+            if isAllDayManuallyToggled { return }
+            shouldBeAllDay = interval >= .secondsInADay
+        default:
+            shouldBeAllDay = false
+        }
+
+        if isAllDay != shouldBeAllDay {
+            isAllDay = shouldBeAllDay
+        }
     }
 
-    private func formatDateTime(date: Date, time: Date) -> String {
+    private func combine(date: Date, time: Date) -> Date {
         let calendar = Calendar.current
-        var components = calendar.dateComponents([.year, .month, .day], from: date)
+        var dateComponents = calendar.dateComponents([.year, .month, .day], from: date)
         let timeComponents = calendar.dateComponents([.hour, .minute, .second], from: time)
 
-        components.hour = timeComponents.hour
-        components.minute = timeComponents.minute
-        components.second = timeComponents.second
+        dateComponents.hour = timeComponents.hour
+        dateComponents.minute = timeComponents.minute
+        dateComponents.second = timeComponents.second
 
-        let combinedDate = calendar.date(from: components) ?? date
-        return combinedDate.formattedDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        return calendar.date(from: dateComponents) ?? date
+    }
+
+    private func numberOfDayDifference() -> Int {
+        let calendar = Calendar.current
+        let startDay = calendar.startOfDay(for: startDate)
+        let endDay = calendar.startOfDay(for: endDate)
+        return calendar.dateComponents([.day], from: startDay, to: endDay).day ?? 0
+    }
+
+    // MARK: - Formatter
+
+    private func formatTimeString(_ date: Date) -> String {
+        isAllDay ? StringLiteral.AddSchedule.allDay : date.formattedDate(with: "h:mm a")
     }
 
     private static func makeRoundedStartAndEnd() -> (Date, Date)? {
