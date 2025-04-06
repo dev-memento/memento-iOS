@@ -148,15 +148,23 @@ struct AddScheduleView: View {
     private var allDayCheckBoxSection: some View {
         HStack {
             Spacer()
+
+            let isEnabled = viewModel.isEventLongerThan24Hours()
+
             Button(action: viewModel.toggleAllDay) {
                 HStack {
                     Image(viewModel.isAllDay ? .btn_check_selected_square : .btn_check_unselected_square)
+                        .renderingMode(.template)
+                        .foregroundColor(isEnabled ? .gray05 : .gray07)
+                        .opacity(isEnabled ? 1.0 : 0.5)
 
                     Text(StringLiteral.AddSchedule.allDay)
                         .applyFont(.body_r_14)
-                        .foregroundColor(Color.gray05)
+                        .foregroundColor(isEnabled ? .gray05 : .gray07)
+                        .opacity(isEnabled ? 1.0 : 0.5)
                 }
             }
+            .disabled(!isEnabled)
             .padding(.top, 12)
         }
     }
