@@ -72,8 +72,8 @@ struct AddScheduleView: View {
         let title = (type == .start) ? StringLiteral.Common.starts : StringLiteral.Common.ends
         let formattedDate = (type == .start) ? viewModel.formattedStartDate : viewModel.formattedEndDate
         let formattedTime = (type == .start) ? viewModel.formattedStartTime : viewModel.formattedEndTime
-        let dateBinding = (type == .start) ? $viewModel.startsDate : $viewModel.endsDate
-        let timeBinding = (type == .start) ? $viewModel.selectedStartTime : $viewModel.selectedEndTime
+        let dateBinding = (type == .start) ? $viewModel.startDate : $viewModel.endDate
+        let timeBinding = (type == .start) ? $viewModel.startTime : $viewModel.endTime
         let isDatePresented = (type == .start) ? $viewModel.isStartDatePressed : $viewModel.isEndDatePressed
         let isTimePresented = (type == .start) ? $viewModel.isStartTimePressed : $viewModel.isEndTimePressed
 
@@ -148,15 +148,23 @@ struct AddScheduleView: View {
     private var allDayCheckBoxSection: some View {
         HStack {
             Spacer()
+
+            let isEnabled = viewModel.isEventLongerThan24Hours()
+
             Button(action: viewModel.toggleAllDay) {
                 HStack {
                     Image(viewModel.isAllDay ? .btn_check_selected_square : .btn_check_unselected_square)
+                        .renderingMode(.template)
+                        .foregroundColor(isEnabled ? .gray05 : .gray07)
+                        .opacity(isEnabled ? 1.0 : 0.5)
 
                     Text(StringLiteral.AddSchedule.allDay)
                         .applyFont(.body_r_14)
-                        .foregroundColor(Color.gray05)
+                        .foregroundColor(isEnabled ? .gray05 : .gray07)
+                        .opacity(isEnabled ? 1.0 : 0.5)
                 }
             }
+            .disabled(!isEnabled)
             .padding(.top, 12)
         }
     }
