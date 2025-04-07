@@ -99,14 +99,6 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
         }
     }
 
-    private func postMakeScheduleNotiFication() {
-        NotificationCenter.default.post(
-            name: NSNotification.Name("postScheduleComplete"),
-            object: nil,
-            userInfo: nil
-        )
-    }
-
     // MARK: - Sheet Control
 
     func presentDatePicker(type: AddScheduleSectionType) {
@@ -185,8 +177,25 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
 
         return end.timeIntervalSince(start) >= .secondsInADay
     }
+}
 
-    private func updateTimesForAllDayStatus() {
+// MARK: - Private Methods
+
+private extension AddScheduleViewModel {
+
+    // MARK: Notification
+
+    func postMakeScheduleNotiFication() {
+        NotificationCenter.default.post(
+            name: NSNotification.Name("postScheduleComplete"),
+            object: nil,
+            userInfo: nil
+        )
+    }
+
+    // MARK: Time Handling
+
+    func updateTimesForAllDayStatus() {
         if isAllDay {
             startTime = startDate.startOfDay
             endTime = endDate.startOfDay
@@ -198,7 +207,7 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
         }
     }
 
-    private func checkIfAllDayShouldBeEnabled() {
+    func checkIfAllDayShouldBeEnabled() {
         let dayDifference = numberOfDayDifference()
         let start = combine(date: startDate, time: startTime)
         let end = combine(date: endDate, time: endTime)
@@ -220,7 +229,9 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
         }
     }
 
-    private func combine(date: Date, time: Date) -> Date {
+    // MARK: Date Utilities
+
+    func combine(date: Date, time: Date) -> Date {
         let calendar = Calendar.current
         var dateComponents = calendar.dateComponents([.year, .month, .day], from: date)
         let timeComponents = calendar.dateComponents([.hour, .minute, .second], from: time)
@@ -232,20 +243,22 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
         return calendar.date(from: dateComponents) ?? date
     }
 
-    private func numberOfDayDifference() -> Int {
+    func numberOfDayDifference() -> Int {
         let calendar = Calendar.current
         let startDay = calendar.startOfDay(for: startDate)
         let endDay = calendar.startOfDay(for: endDate)
         return calendar.dateComponents([.day], from: startDay, to: endDay).day ?? 0
     }
 
-    // MARK: - Formatter
+    // MARK: Formatter
 
-    private func formatTimeString(_ date: Date) -> String {
+    func formatTimeString(_ date: Date) -> String {
         isAllDay ? StringLiteral.AddSchedule.allDay : date.formattedDate(with: "h:mm a")
     }
 
-    private static func makeRoundedStartAndEnd() -> (Date, Date)? {
+    // MARK: Factory
+
+    static func makeRoundedStartAndEnd() -> (Date, Date)? {
         let start = Date().roundedToNearestHalfHour()
         guard let end = Calendar.current.date(byAdding: .hour, value: 2, to: start) else {
             return nil
