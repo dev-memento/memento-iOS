@@ -11,11 +11,6 @@ class AppState: ObservableObject {
     @Published var isLoggedIn: Bool = false
     
     init() {
-//        do {
-//            try TokenKeychainManager.shared.clearTokens()
-//        } catch {
-//            
-//        }
         checkToken()
     }
     
