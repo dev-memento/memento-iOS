@@ -26,7 +26,7 @@ final class TagAPIService: BaseAPIService, TagAPIServiceProtocol {
     private let provider = MoyaProvider<TagTargetType>(plugins: [MoyaPlugin.shared])
     
     func getTags(completion: @escaping (NetworkResult<BaseDTO<[TagResponseData]>>) -> Void) {
-        provider.request(.getTags) { result in
+        provider.requestWithTokenRefresh(.getTags) { result in
             switch result {
             case .success(let response):
                 let networkResult: NetworkResult<BaseDTO<[TagResponseData]>> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)

@@ -42,7 +42,7 @@ final class TokenRefreshPlugin: PluginType {
                 return
             }
 
-            provider.request(.auth(refreshToken: refreshToken)) { [weak self] result in
+            provider.requestWithTokenRefresh(.auth(refreshToken: refreshToken)) { [weak self] result in
                 guard let self else { return }
 
                 switch result {
