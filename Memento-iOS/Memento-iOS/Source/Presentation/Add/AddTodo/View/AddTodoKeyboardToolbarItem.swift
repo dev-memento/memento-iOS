@@ -77,9 +77,11 @@ struct AddTodoKeyboardToolbarItem: View {
             TagPickerSheet(
                 viewModel: viewModel,
                 isPresented: $viewModel.showTagPicker,
-                type: .addTodo(.tag),
-                tagList: Tag.mockData
+                type: .addTodo(.tag)
             )
+            .onAppear {
+                viewModel.loadTags()
+            }
         }
     }
 
