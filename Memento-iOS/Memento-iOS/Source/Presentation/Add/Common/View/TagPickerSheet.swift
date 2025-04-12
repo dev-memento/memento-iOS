@@ -9,6 +9,7 @@ import SwiftUI
 
 protocol TagSelectable: ObservableObject {
     var selectedTag: Tag { get set }
+    var tagList: [Tag] { get }
 }
 
 struct TagPickerSheet<ViewModel: TagSelectable>: View {
@@ -17,14 +18,13 @@ struct TagPickerSheet<ViewModel: TagSelectable>: View {
     @Binding var isPresented: Bool
 
     let type: PickerButtonType
-    let tagList: [Tag]
 
     var body: some View {
         SheetContainer(type: type) {
             SheetOKButton { isPresented = false }
 
             List {
-                ForEach(tagList) { tag in
+                ForEach(viewModel.tagList) { tag in
                     Button(action: {
                         viewModel.selectedTag = tag
                     }) {
@@ -35,19 +35,23 @@ struct TagPickerSheet<ViewModel: TagSelectable>: View {
 
                             Text(tag.title)
                                 .applyFont(.body_r_14)
-                                .foregroundStyle(viewModel.selectedTag.id == tag.id ? Color.gray02 : Color.gray07)
+                                .foregroundStyle(isSelected(tag: tag) ? Color.gray02 : Color.gray07)
 
                             Spacer()
                         }
                     }
-                    .listRowBackground(viewModel.selectedTag.tagId == tag.tagId ? Color.gray08 : Color.clear)
+                    .listRowBackground(isSelected(tag: tag) ? Color.gray08 : Color.clear)
                 }
             }
             .listStyle(PlainListStyle())
             .ignoresSafeArea()
             .padding([.horizontal, .bottom], 10)
-            .scrollDisabled(tagList.count <= 3)
+            .scrollDisabled(viewModel.tagList.count <= 3)
         }
-        .applyDynamicSheetForTagCount()
+        .applyDynamicSheetForTagCount(tagList: viewModel.tagList)
+    }
+
+    private func isSelected(tag: Tag) -> Bool {
+        viewModel.selectedTag.tagId == tag.tagId
     }
 }
