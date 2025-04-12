@@ -12,6 +12,7 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
 
     @Published var title: String = ""
     @Published var selectedTag: Tag
+    @Published var tagList: [Tag]
     @Published var isAllDay: Bool {
         didSet {
             if isManualAllDayChangeAllowed {
@@ -68,7 +69,8 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
         self.endDate = roundedEnd
         self.endTime = roundedEnd
         self.isAllDay = false
-        self.selectedTag = Tag.mockData.first ?? Tag(tagId: 0, color: .gray02, title: "Untitled")
+        self.selectedTag = Tag(tagId: 187, color: Color(hex: "#A9ADBB"), title: "Untitled")
+        self.tagList = []
     }
 
     // MARK: - API
