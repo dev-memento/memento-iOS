@@ -13,6 +13,8 @@ struct AddTodoView: View {
 
     // MARK: - Properties
 
+    @ObservedObject var segmentedViewModel: SegmentedMenuViewModel
+
     @StateObject private var viewModel = AddTodoViewModel()
 
     // MARK: - Body
@@ -20,7 +22,7 @@ struct AddTodoView: View {
     var body: some View {
         VStack {
             AddTodoHeaderView(viewModel: viewModel)
-            AddTodoTextView(viewModel: viewModel)
+            AddTodoTextView(viewModel: viewModel, segmentedViewModel: segmentedViewModel)
         }
         .padding(.horizontal)
         .background(Color.gray10)

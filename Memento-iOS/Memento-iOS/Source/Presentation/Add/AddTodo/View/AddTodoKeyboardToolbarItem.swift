@@ -12,7 +12,7 @@ import MDSKit
 struct AddTodoKeyboardToolbarItem: View {
 
     @ObservedObject var viewModel: AddTodoViewModel
-    @Environment(\.dismiss) var dismiss
+    @ObservedObject var segmentedViewModel: SegmentedMenuViewModel
 
     var body: some View {
         HStack {
@@ -111,7 +111,7 @@ struct AddTodoKeyboardToolbarItem: View {
         Button(action: {
             viewModel.createTodo {
                 viewModel.postMakeScheduleNotiFication()
-                dismiss()
+                segmentedViewModel.isPresented = false
             }
         }) {
             Image(viewModel.isTextEmpty ? .btn_enter_disabled : .btn_enter_active)
