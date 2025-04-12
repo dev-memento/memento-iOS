@@ -123,6 +123,37 @@ final class AddTodoViewModel: ObservableObject, TagSelectable {
         }
     }
 
+    func loadTags() {
+        tagAPIService.getTags { [weak self] result in
+            guard let self = self else { return }
+
+            switch result {
+            case .success(let dto):
+                guard let dto = dto else { return }
+
+                let tagModels: [Tag] = dto.data.map {
+                    Tag(
+                        tagId: $0.id,
+                        color: Color(hex: $0.colorCode),
+                        title: $0.name
+                    )
+                }
+
+                DispatchQueue.main.async {
+                    self.tagList = tagModels
+                }
+            case .badRequest, .notFound:
+                print("DEBUG: Error - 잘못된 요청입니다.")
+            case .unAuthorized:
+                print("DEBUG: Error - 유효하지 않은 토큰입니다.")
+            case .serverError:
+                print("DEBUG: Error - 내부 서버 에러")
+            default:
+                print("DEBUG: Error - 태그 불러오기 실패")
+            }
+        }
+    }
+
     func postMakeScheduleNotiFication() {
         NotificationCenter.default.post(
             name: NSNotification.Name("postScheduleComplete"),
