@@ -35,10 +35,8 @@ final class AddTodoViewModel: ObservableObject, TagSelectable {
     @Published var formattedStartDate: String = StringLiteral.AddTodo.today
     @Published var formattedEndDate: String = StringLiteral.AddTodo.today
 
-    @Published var selectedTag: Tag = Tag.mockData.first(
-        where: { $0.tagId == 1 }
-    ) ?? Tag(tagId: 1, color: .gray05, title: "Untitled")
-    @Published var tagId: Int? = 1
+    @Published var tagList: [Tag] = []
+    @Published var selectedTag: Tag = Tag(tagId: 187, color: Color(hex: "#A9ADBB"), title: "Untitled")
 
     @Published var priorityUrgency: Double? = 0.0
     @Published var priorityImportance: Double? = 0.0
@@ -55,11 +53,16 @@ final class AddTodoViewModel: ObservableObject, TagSelectable {
     }
 
     private let todoAPIService: TodoAPIServiceProtocol
+    private let tagAPIService: TagAPIServiceProtocol
 
     // MARK: - Initializer
 
-    init(todoAPIService: TodoAPIServiceProtocol = TodoAPIService()) {
+    init(
+        todoAPIService: TodoAPIServiceProtocol = TodoAPIService(),
+        tagAPIService: TagAPIServiceProtocol = TagAPIService()
+    ) {
         self.todoAPIService = todoAPIService
+        self.tagAPIService = tagAPIService
         updateFormattedDate()
     }
 
@@ -73,7 +76,7 @@ final class AddTodoViewModel: ObservableObject, TagSelectable {
             startDate: formattedStartDate,
             description: description,
             endDate: formattedEndDate,
-            tagId: tagId,
+            tagId: selectedTag.tagId,
             priorityUrgency: priorityUrgency,
             priorityImportance: priorityImportance
         ) { result in
