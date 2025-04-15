@@ -58,15 +58,16 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     // MARK: - Initializer
 
     init(scheduleApiService: ScheduleAPIService = ScheduleAPIService()) {
-        guard let (roundedStart, roundedEnd) = Self.makeRoundedStartAndEnd() else {
+        guard let (roundedStartTime, roundedEndTime) = Self.makeRoundedStartAndEnd() else {
             fatalError("DEBUG: 시간 계산에 실패했습니다.")
         }
 
+        let today = Date().startOfDay
         self.scheduleApiService = scheduleApiService
-        self.startDate = roundedStart
-        self.startTime = roundedStart
-        self.endDate = roundedEnd
-        self.endTime = roundedEnd
+        self.startDate = today
+        self.endDate = today
+        self.startTime = roundedStartTime
+        self.endTime = roundedEndTime
         self.isAllDay = false
         self.selectedTag = Tag.mockData.first ?? Tag(tagId: 0, color: .gray02, title: "Untitled")
     }
