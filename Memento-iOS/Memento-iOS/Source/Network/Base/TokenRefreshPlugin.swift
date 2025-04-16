@@ -8,6 +8,7 @@ import Foundation
 import Moya
 
 final class TokenRefreshPlugin: PluginType {
+    static let shared = TokenRefreshPlugin()
     private let keychain = TokenKeychainManager.shared
     private let provider = MoyaProvider<TokenRefreshType>(plugins: [MoyaPlugin.shared])
     private var isRefreshing = false
@@ -41,7 +42,7 @@ final class TokenRefreshPlugin: PluginType {
                 return
             }
 
-            provider.request(.auth(refreshToken: refreshToken)) { [weak self] result in
+            provider.requestWithTokenRefresh(.auth(refreshToken: refreshToken)) { [weak self] result in
                 guard let self else { return }
 
                 switch result {
@@ -99,7 +100,7 @@ extension MoyaProvider {
                 if response.statusCode == 401 && retryCount > 0 {
                     print("🔄 [Moya] 401 detected, refreshing token...")
 
-                    TokenRefreshPlugin().handleTokenRefresh { success in
+                    TokenRefreshPlugin.shared.handleTokenRefresh { success in
                         if success {
                             print("✅ Retry after refresh")
                             self.requestWithTokenRefresh(target, retryCount: retryCount - 1, completion: completion)

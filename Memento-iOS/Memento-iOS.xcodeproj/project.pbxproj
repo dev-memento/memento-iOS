@@ -46,6 +46,7 @@
 				Source/Const/TimeInterval.swift,
 				Source/Data/MCalendarEventList.swift,
 				Source/Data/MEventDataSource.swift,
+				"Source/Extension/String+.swift",
 				Source/Network/AI/DTO/Request/PrioritizationRequest.swift,
 				Source/Network/AI/DTO/Response/PrioritizationResponse.swift,
 				Source/Network/AI/PrioritizationAPIService.swift,

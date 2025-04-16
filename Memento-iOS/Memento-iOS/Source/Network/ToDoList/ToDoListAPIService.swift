@@ -19,11 +19,11 @@ protocol ToDoListAPIServiceProtocol {
 
 final class ToDoListAPIService: BaseAPIService, ToDoListAPIServiceProtocol {
     
-    private let provider = MoyaProvider<ToDoListTargetType>(plugins: [MoyaPlugin.shared, TokenRefreshPlugin()])
+    private let provider = MoyaProvider<ToDoListTargetType>(plugins: [MoyaPlugin.shared, TokenRefreshPlugin.shared])
     
     // To-Do List API 연결
     func getToDoList(completion: @escaping (NetworkResult<BaseDTO<ToDoListTotalResponseData>>) -> Void) {
-        provider.request(.getToDoList) { result in
+        provider.requestWithTokenRefresh(.getToDoList) { result in
             switch result {
             case .success(let response):
                 let networkResult: NetworkResult<BaseDTO<ToDoListTotalResponseData>> = self.fetchNetworkResult(
@@ -46,7 +46,7 @@ final class ToDoListAPIService: BaseAPIService, ToDoListAPIServiceProtocol {
     
     // To-Do List 완료 여부 API 연결
     func updateToDoCompletion(toDoId: Int, completion: @escaping (NetworkResult<BaseDTO<ToDoListCompletedResponseData>>) -> Void) {
-        provider.request(.updateToDoCompletion(toDoId: toDoId)) { result in
+        provider.requestWithTokenRefresh(.updateToDoCompletion(toDoId: toDoId)) { result in
             switch result {
             case .success(let response):
                 let networkResult: NetworkResult<BaseDTO<ToDoListCompletedResponseData>> = self.fetchNetworkResult(

@@ -27,7 +27,7 @@ final class HealthCheckAPIService: BaseAPIService, HealthCheckAPIServiceProtocol
 
     /// Health Check API 호출
     func getHealthCheck(completion: @escaping (NetworkResult<HealthCheckResponseDTO>) -> Void) {
-        provider.request(.getHealthCheck) { result in
+        provider.requestWithTokenRefresh(.getHealthCheck) { result in
             switch result {
             case .success(let response):
                 let networkResult: NetworkResult<HealthCheckResponseDTO> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)

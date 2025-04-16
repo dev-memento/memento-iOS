@@ -21,12 +21,10 @@ extension PrioritizationAPIServiceProtocol {
 // MARK: - PrioritizationAPIService
 
 final class PrioritizationAPIService: BaseAPIService, PrioritizationAPIServiceProtocol {
-    private let provider = MoyaProvider<PrioritizationTargetType>(plugins: [MoyaPlugin.shared, TokenRefreshPlugin()])
+    private let provider = MoyaProvider<PrioritizationTargetType>(plugins: [MoyaPlugin.shared, TokenRefreshPlugin.shared])
 
     func fetchPrioritization(request: PrioritizationRequest, completion: @escaping (NetworkResult<PrioritizationResponse>) -> Void) {
-        provider.request(.todo(request: request)) { [weak self] result in
-            guard let self = self else { return }
-
+        provider.requestWithTokenRefresh(.todo(request: request)) { result in
             switch result {
             case .success(let response):
                 let networkResult: NetworkResult<PrioritizationResponse> = self.fetchNetworkResult(

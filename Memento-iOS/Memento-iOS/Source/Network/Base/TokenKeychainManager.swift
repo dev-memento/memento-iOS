@@ -113,13 +113,23 @@ final class TokenKeychainManager {
     }
     
     // MARK: - Token Validation
-    
+
+    func isTokenExpired(_ token: String) -> Bool {
+        let parts = token.split(separator: ".")
+        guard parts.count == 3,
+              let payloadData = Data(base64Encoded: String(parts[1]).base64Padded()),
+              let json = try? JSONSerialization.jsonObject(with: payloadData) as? [String: Any],
+              let exp = json["exp"] as? TimeInterval else { return true }
+
+        return Date().timeIntervalSince1970 > exp
+    }
+
     func hasValidToken() -> Bool {
         do {
-            if let accessToken = try getAccessToken(), !accessToken.isEmpty {
-                return true
+            guard let accessToken = try getAccessToken(), !accessToken.isEmpty else {
+                return false
             }
-            return false
+            return !isTokenExpired(accessToken)
         } catch {
             return false
         }
