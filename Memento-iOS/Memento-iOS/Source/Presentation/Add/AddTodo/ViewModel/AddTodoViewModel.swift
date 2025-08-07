@@ -35,10 +35,8 @@ final class AddTodoViewModel: ObservableObject, TagSelectable {
     @Published var formattedStartDate: String = StringLiteral.AddTodo.today
     @Published var formattedEndDate: String = StringLiteral.AddTodo.today
 
-    @Published var selectedTag: Tag = Tag.mockData.first(
-        where: { $0.tagId == 1 }
-    ) ?? Tag(tagId: 1, color: .gray05, title: "Untitled")
-    @Published var tagId: Int? = 1
+    @Published var tagList: [Tag] = []
+    @Published var selectedTag: Tag = Tag(tagId: 187, color: Color(hex: "#A9ADBB"), title: "Untitled")
 
     @Published var priorityUrgency: Double? = 0.0
     @Published var priorityImportance: Double? = 0.0
@@ -55,11 +53,16 @@ final class AddTodoViewModel: ObservableObject, TagSelectable {
     }
 
     private let todoAPIService: TodoAPIServiceProtocol
+    private let tagAPIService: TagAPIServiceProtocol
 
     // MARK: - Initializer
 
-    init(todoAPIService: TodoAPIServiceProtocol = TodoAPIService()) {
+    init(
+        todoAPIService: TodoAPIServiceProtocol = TodoAPIService(),
+        tagAPIService: TagAPIServiceProtocol = TagAPIService()
+    ) {
         self.todoAPIService = todoAPIService
+        self.tagAPIService = tagAPIService
         updateFormattedDate()
     }
 
@@ -73,7 +76,7 @@ final class AddTodoViewModel: ObservableObject, TagSelectable {
             startDate: formattedStartDate,
             description: description,
             endDate: formattedEndDate,
-            tagId: tagId,
+            tagId: selectedTag.tagId,
             priorityUrgency: priorityUrgency,
             priorityImportance: priorityImportance
         ) { result in
@@ -117,6 +120,37 @@ final class AddTodoViewModel: ObservableObject, TagSelectable {
         case .medium: return .matrix_medium
         case .low: return .matrix_low
         case .none: return .matrix_none
+        }
+    }
+
+    func loadTags() {
+        tagAPIService.getTags { [weak self] result in
+            guard let self = self else { return }
+
+            switch result {
+            case .success(let dto):
+                guard let dto = dto else { return }
+
+                let tagModels: [Tag] = dto.data.map {
+                    Tag(
+                        tagId: $0.id,
+                        color: Color(hex: $0.colorCode),
+                        title: $0.name
+                    )
+                }
+
+                DispatchQueue.main.async {
+                    self.tagList = tagModels
+                }
+            case .badRequest, .notFound:
+                print("DEBUG: Error - 잘못된 요청입니다.")
+            case .unAuthorized:
+                print("DEBUG: Error - 유효하지 않은 토큰입니다.")
+            case .serverError:
+                print("DEBUG: Error - 내부 서버 에러")
+            default:
+                print("DEBUG: Error - 태그 불러오기 실패")
+            }
         }
     }
 

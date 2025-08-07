@@ -13,8 +13,8 @@ struct AddTodoTextView: View {
     // MARK: - Properties
 
     @ObservedObject var viewModel: AddTodoViewModel
+    @ObservedObject var segmentedViewModel: SegmentedMenuViewModel
 
-    @Environment(\.dismiss) var dismiss
     @FocusState private var isFocused: Bool
     @State private var keyboardHeight: CGFloat = 0
 
@@ -56,7 +56,7 @@ struct AddTodoTextView: View {
         }
         .toolbar {
             ToolbarItem(placement: .keyboard) {
-                AddTodoKeyboardToolbarItem(viewModel: viewModel)
+                AddTodoKeyboardToolbarItem(viewModel: viewModel, segmentedViewModel: segmentedViewModel)
             }
         }
     }

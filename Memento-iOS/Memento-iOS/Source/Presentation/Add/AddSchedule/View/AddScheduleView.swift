@@ -195,8 +195,7 @@ struct AddScheduleView: View {
                 TagPickerSheet(
                     viewModel: viewModel,
                     isPresented: $viewModel.isTagPressed,
-                    type: .addSchedule(.tag),
-                    tagList: Tag.mockData
+                    type: .addSchedule(.tag)
                 )
             }
         }

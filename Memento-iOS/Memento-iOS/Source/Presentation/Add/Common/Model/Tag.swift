@@ -22,15 +22,3 @@ struct Tag: Equatable, Identifiable {
         self.title = title
     }
 }
-
-extension Tag {
-
-    static let mockData: [Tag] = [
-        Tag(tagId: 1, color: .gray05, title: "Untitled"),
-        Tag(tagId: 2, color: .mementoBlue, title: "Family"),
-        Tag(tagId: 3, color: .mementoCyan, title: "School"),
-        Tag(tagId: 4, color: .mementoMint, title: "Project"),
-        Tag(tagId: 5, color: .mementoLightGreen, title: "Meeting"),
-        Tag(tagId: 6, color: .mementoYellow, title: "Daily")
-    ]
-}
