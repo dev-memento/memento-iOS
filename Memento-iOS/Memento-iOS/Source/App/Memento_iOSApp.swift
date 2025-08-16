@@ -22,21 +22,23 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
 
         registerFonts()
         FirebaseApp.configure()
-
+        Messaging.messaging().isAutoInitEnabled = true
+        Messaging.messaging().apnsToken = Data(repeating: 0, count: 32)
         UNUserNotificationCenter.current().delegate = self
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            if let error = error {
-                print("알림 권한 요청 실패: \(error.localizedDescription)")
-                return
-            }
-            if granted {
-                DispatchQueue.main.async {
-                    UIApplication.shared.registerForRemoteNotifications()
-                }
-            } else {
-                print("알림 권한 거부")
-            }
-        }
+        
+//        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+//            if let error = error {
+//                print("알림 권한 요청 실패: \(error.localizedDescription)")
+//                return
+//            }
+//            if granted {
+//                DispatchQueue.main.async {
+//                    UIApplication.shared.registerForRemoteNotifications()
+//                }
+//            } else {
+//                print("알림 권한 거부")
+//            }
+//        }
 
         Thread.sleep(forTimeInterval: 2)
         return true
