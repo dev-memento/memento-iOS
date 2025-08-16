@@ -3,7 +3,7 @@ import SwiftUI
 import MDSKit
 
 final class AddScheduleViewModel: ObservableObject, TagSelectable {
-
+   
     // MARK: - Dependencies
 
     private var scheduleApiService: ScheduleAPIService
@@ -37,6 +37,7 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     @Published var isEndDatePressed: Bool = false
     @Published var isEndTimePressed: Bool = false
     @Published var isTagPressed: Bool = false
+    @Published var showTagPicker: Bool = false
 
     @Published var isStartDatePickerPresented: Bool = false
     @Published var isEndDatePickerPresented: Bool = false
