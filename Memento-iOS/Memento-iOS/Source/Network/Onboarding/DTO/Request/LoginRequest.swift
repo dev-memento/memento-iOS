@@ -10,5 +10,7 @@ import Foundation
 struct LoginRequest: Codable {
     let provider: String // "GOOGLE" 또는 "APPLE"
     let idToken: String  // ID Token : From Firebase Auth
+    let timeZoneOffset: String 
+    let fcmToken: String
 }
 

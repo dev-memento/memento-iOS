@@ -9,7 +9,7 @@ import Foundation
 import Moya
 
 enum LoginTargetType {
-    case login(provider: String, idToken: String)
+    case login(provider: String, idToken: String, timeZoneOffset: String, fcmToken: String)
 }
 
 extension LoginTargetType: BaseTargetType {
@@ -23,24 +23,29 @@ extension LoginTargetType: BaseTargetType {
     }
     
     var utilPath: UtilPath {
-        return .auth
+        return .user
     }
     
     var path: String {
         switch self {
         case .login:
-            return "\(utilPath.rawValue)/login" // 결과: "/api/v1/auth/login"
+            return "\(utilPath.rawValue)" // 결과: "/api/v1/members"
         }
     }
     
     var method: Moya.Method {
-        return .post
+        return .put
     }
     
     var requestBodyParameter: Codable? {
         switch self {
-        case .login(let provider, let idToken):
-            return LoginRequest(provider: provider, idToken: idToken)
+        case let .login(provider, idToken, timeZoneOffset, fcmToken):
+            return LoginRequest(
+                provider: provider,
+                idToken: idToken,
+                timeZoneOffset: timeZoneOffset,
+                fcmToken: fcmToken
+            )
         }
     }
     

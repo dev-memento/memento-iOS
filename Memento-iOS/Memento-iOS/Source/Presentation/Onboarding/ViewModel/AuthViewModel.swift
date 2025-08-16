@@ -7,10 +7,13 @@
 
 import SwiftUI
 import Combine
+
 import AuthenticationServices
 import Firebase
 import FirebaseAuth
 import GoogleSignIn
+
+import FirebaseMessaging
 
 enum AuthAction {
     case googleLogin
@@ -24,9 +27,9 @@ class AuthViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     @Published var isAuthenticated: Bool = false
-
+    
     let loginService = LoginAPIService()
-
+    
     func send(action: AuthAction) {
         switch action {
         case .googleLogin:
@@ -39,12 +42,12 @@ class AuthViewModel: ObservableObject {
             signInWithAppleCompletion(result)
         }
     }
-
+    
     func signInWithGoogle() {
         Task { @MainActor in
             guard !isLoading else { return }
             isLoading = true
-
+            
             if GIDSignIn.sharedInstance.hasPreviousSignIn() {
                 GIDSignIn.sharedInstance.restorePreviousSignIn { [weak self] user, error in
                     Task { @MainActor in
@@ -60,12 +63,12 @@ class AuthViewModel: ObservableObject {
                 
                 let configuration = GIDConfiguration(clientID: clientID)
                 GIDSignIn.sharedInstance.configuration = configuration
-
+                
                 guard let rootViewController = UIApplication.shared.keyWindow?.rootViewController else {
                     handleError(nil, defaultMessage: "루트 뷰 컨트롤러를 찾을 수 없습니다.")
                     return
                 }
-
+                
                 GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { [weak self] result, error in
                     Task { @MainActor in
                         guard let self = self else { return }
@@ -79,7 +82,7 @@ class AuthViewModel: ObservableObject {
             }
         }
     }
-
+    
     func signOutWithGoogle() {
         GIDSignIn.sharedInstance.signOut()
         do {
@@ -89,18 +92,18 @@ class AuthViewModel: ObservableObject {
             print("Google 로그아웃 실패: \(error.localizedDescription)")
         }
     }
-
+    
     private func signInWithApple(_ request: ASAuthorizationAppleIDRequest) {
         request.requestedScopes = [.fullName, .email]
         request.requestedOperation = .operationLogin
     }
-
+    
     private func signInWithAppleCompletion(_ result: Result<ASAuthorization, Error>) {
         Task { @MainActor in
             guard !isLoading else { return }
             isLoading = true
             defer { isLoading = false }
-
+            
             switch result {
             case .success(let authorization):
                 await processAppleAuthorization(authorization)
@@ -109,7 +112,7 @@ class AuthViewModel: ObservableObject {
             }
         }
     }
-
+    
     private func handleError(_ error: Error?, defaultMessage: String) {
         self.errorMessage = error?.localizedDescription ?? defaultMessage
         self.isAuthenticated = false
@@ -120,6 +123,7 @@ class AuthViewModel: ObservableObject {
 //MARK: HTTP Memento 서버 통신 부분
 
 extension AuthViewModel {
+    
     private func authenticateUser(for user: GIDGoogleUser?, with error: Error?) async {
         defer { isLoading = false }
 
@@ -133,17 +137,30 @@ extension AuthViewModel {
             return
         }
 
-        loginService.login(provider: "GOOGLE", idToken: idToken) { [weak self] result in
-            guard let self = self else { return }
+        do {
+            let fcmToken = try await Messaging.messaging().token()
+            let timeZoneOffset = Self.currentTimeZoneOffset()
 
-            switch result {
-            case .success(let response):
-                self.handleLoginSuccess(response?.data)
-            case .unAuthorized:
-                self.handleError(nil, defaultMessage: "인증 실패. 다시 로그인하세요.")
-            default:
-                self.handleError(nil, defaultMessage: "서버 오류가 발생했습니다.")
+            loginService.login(
+                provider: "GOOGLE",
+                idToken: idToken,
+                timeZoneOffset: timeZoneOffset,
+                fcmToken: fcmToken
+            ) { [weak self] result in
+                guard let self = self else { return }
+
+                switch result {
+                case .success(let response):
+                    self.handleLoginSuccess(response?.data)
+                case .unAuthorized:
+                    self.handleError(nil, defaultMessage: "인증 실패. 다시 로그인하세요.")
+                default:
+                    self.handleError(nil, defaultMessage: "서버 오류가 발생했습니다.")
+                }
             }
+
+        } catch {
+            handleError(error, defaultMessage: "FCM 토큰을 가져올 수 없습니다.")
         }
     }
 
@@ -155,17 +172,30 @@ extension AuthViewModel {
             return
         }
 
-        loginService.login(provider: "APPLE", idToken: idTokenString) { [weak self] result in
-            guard let self = self else { return }
+        do {
+            let fcmToken = try await Messaging.messaging().token()
+            let timeZoneOffset = Self.currentTimeZoneOffset()
 
-            switch result {
-            case .success(let response):
-                self.handleLoginSuccess(response?.data)
-            case .unAuthorized:
-                self.handleError(nil, defaultMessage: "인증 실패. 다시 로그인하세요.")
-            default:
-                self.handleError(nil, defaultMessage: "서버 오류가 발생했습니다.")
+            loginService.login(
+                provider: "APPLE",
+                idToken: idTokenString,
+                timeZoneOffset: timeZoneOffset,
+                fcmToken: fcmToken
+            ) { [weak self] result in
+                guard let self = self else { return }
+
+                switch result {
+                case .success(let response):
+                    self.handleLoginSuccess(response?.data)
+                case .unAuthorized:
+                    self.handleError(nil, defaultMessage: "인증 실패. 다시 로그인하세요.")
+                default:
+                    self.handleError(nil, defaultMessage: "서버 오류가 발생했습니다.")
+                }
             }
+
+        } catch {
+            handleError(error, defaultMessage: "FCM 토큰을 가져올 수 없습니다.")
         }
     }
 
@@ -174,10 +204,26 @@ extension AuthViewModel {
         do {
             try TokenKeychainManager.shared.saveAccessToken(data.accessToken)
             try TokenKeychainManager.shared.saveRefreshToken(data.refreshToken)
+
+            AppState.shared.isLoggedIn = true
+
             self.isAuthenticated = true
             print("로그인 성공 및 토큰 저장 완료")
         } catch {
             handleError(error, defaultMessage: "토큰 저장 실패")
         }
     }
+
+
+}
+
+
+extension AuthViewModel {
+    private static func currentTimeZoneOffset() -> String {
+        let seconds = TimeZone.current.secondsFromGMT()
+        let hours = seconds / 3600
+        let minutes = abs(seconds / 60 % 60)
+        return String(format: "%+03d:%02d", hours, minutes)
+    }
+
 }

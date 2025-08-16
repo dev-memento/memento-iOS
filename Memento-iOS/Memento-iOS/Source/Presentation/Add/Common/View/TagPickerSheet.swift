@@ -9,22 +9,23 @@ import SwiftUI
 
 protocol TagSelectable: ObservableObject {
     var selectedTag: Tag { get set }
-    var tagList: [Tag] { get }
+    var showTagPicker: Bool { get set }
 }
 
 struct TagPickerSheet<ViewModel: TagSelectable>: View {
-
+    
     @ObservedObject var viewModel: ViewModel
-    @Binding var isPresented: Bool
-
+    //    @Binding var isPresented: Bool
+    
     let type: PickerButtonType
-
+    let tagList: [Tag]
+    
     var body: some View {
         SheetContainer(type: type) {
-            SheetOKButton { isPresented = false }
-
+            SheetOKButton { viewModel.showTagPicker = false }
+            
             List {
-                ForEach(viewModel.tagList) { tag in
+                ForEach(tagList) { tag in
                     Button(action: {
                         viewModel.selectedTag = tag
                     }) {
@@ -32,26 +33,22 @@ struct TagPickerSheet<ViewModel: TagSelectable>: View {
                             Circle()
                                 .fill(tag.color)
                                 .frame(width: 12, height: 12)
-
+                            
                             Text(tag.title)
                                 .applyFont(.body_r_14)
-                                .foregroundStyle(isSelected(tag: tag) ? Color.gray02 : Color.gray07)
-
+                                .foregroundStyle(viewModel.selectedTag.id == tag.id ? Color.gray02 : Color.gray07)
+                            
                             Spacer()
                         }
                     }
-                    .listRowBackground(isSelected(tag: tag) ? Color.gray08 : Color.clear)
+                    .listRowBackground(viewModel.selectedTag.tagId == tag.tagId ? Color.gray08 : Color.clear)
                 }
             }
             .listStyle(PlainListStyle())
             .ignoresSafeArea()
             .padding([.horizontal, .bottom], 10)
-            .scrollDisabled(viewModel.tagList.count <= 3)
+            .scrollDisabled(tagList.count <= 3)
         }
-        .applyDynamicSheetForTagCount(tagList: viewModel.tagList)
-    }
-
-    private func isSelected(tag: Tag) -> Bool {
-        viewModel.selectedTag.tagId == tag.tagId
+        .applyDynamicSheetForTagCount()
     }
 }

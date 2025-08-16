@@ -10,8 +10,8 @@ import Foundation
 struct TodoRequest: Codable {
     let startDate: String
     let description: String
-    let endDate: String?
-    let tagId: Int?
-    let priorityUrgency: Double?
-    let priorityImportance: Double?
+    let endDate: String
+    let tagId: Int
+    let priorityUrgency: Double
+    let priorityImportance: Double
 }

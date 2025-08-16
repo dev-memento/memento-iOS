@@ -3,7 +3,7 @@ import SwiftUI
 import MDSKit
 
 final class AddScheduleViewModel: ObservableObject, TagSelectable {
-
+   
     // MARK: - Dependencies
 
     private var scheduleApiService: ScheduleAPIService
@@ -12,7 +12,6 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
 
     @Published var title: String = ""
     @Published var selectedTag: Tag
-    @Published var tagList: [Tag]
     @Published var isAllDay: Bool {
         didSet {
             if isManualAllDayChangeAllowed {
@@ -38,6 +37,7 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     @Published var isEndDatePressed: Bool = false
     @Published var isEndTimePressed: Bool = false
     @Published var isTagPressed: Bool = false
+    @Published var showTagPicker: Bool = false
 
     @Published var isStartDatePickerPresented: Bool = false
     @Published var isEndDatePickerPresented: Bool = false
@@ -70,8 +70,7 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
         self.startTime = roundedStartTime
         self.endTime = roundedEndTime
         self.isAllDay = false
-        self.selectedTag = Tag(tagId: 187, color: Color(hex: "#A9ADBB"), title: "Untitled")
-        self.tagList = []
+        self.selectedTag = Tag.mockData.first ?? Tag(tagId: 0, color: .gray02, title: "Untitled")
     }
 
     // MARK: - API

@@ -12,27 +12,27 @@ enum TodoTargetType {
     case createTodo(
         startDate: String,
         description: String,
-        endDate: String?,
-        tagId: Int?,
-        priorityUrgency: Double?,
-        priorityImportance: Double?
+        endDate: String,
+        tagId: Int,
+        priorityUrgency: Double,
+        priorityImportance: Double
     )
 }
 
 extension TodoTargetType: BaseTargetType {
-
+    
     var pathParameter: String? {
         return nil
     }
-
+    
     var headerType: HeaderType {
         return .accessTokenHeader
     }
-
+    
     var utilPath: UtilPath {
         return .todo
     }
-
+    
     var path: String {
         switch self {
         case .deleteTodo(let todoId):
@@ -41,7 +41,7 @@ extension TodoTargetType: BaseTargetType {
             return utilPath.rawValue
         }
     }
-
+    
     var method: Moya.Method {
         switch self {
         case .deleteTodo:
@@ -50,7 +50,7 @@ extension TodoTargetType: BaseTargetType {
             return .post
         }
     }
-
+    
     var requestBodyParameter: Codable? {
         switch self {
         case .deleteTodo:
@@ -73,7 +73,7 @@ extension TodoTargetType: BaseTargetType {
             )
         }
     }
-
+    
     var queryParameter: [String: Any]? {
         return nil
     }

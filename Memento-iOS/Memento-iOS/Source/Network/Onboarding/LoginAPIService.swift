@@ -11,7 +11,7 @@ import Moya
 // MARK: - LoginAPIServiceProtocol
 
 protocol LoginAPIServiceProtocol {
-    func login(provider: String, idToken: String, completion: @escaping (NetworkResult<LoginResponseDTO>) -> Void)
+    func login(provider: String, idToken: String, timeZoneOffset: String, fcmToken: String, completion: @escaping (NetworkResult<LoginResponseDTO>) -> Void)
 }
 
 extension LoginAPIServiceProtocol {
@@ -25,8 +25,10 @@ final class LoginAPIService: BaseAPIService, LoginAPIServiceProtocol {
     let provider = MoyaProvider<LoginTargetType>(plugins: [MoyaPlugin.shared])
     
     /// 로그인 API 호출
-    func login(provider: String, idToken: String, completion: @escaping (NetworkResult<LoginResponseDTO>) -> Void) {
-        self.provider.request(.login(provider: provider, idToken: idToken)) { [weak self] result in
+    func login(provider: String, idToken: String, timeZoneOffset: String, fcmToken: String, completion: @escaping (NetworkResult<LoginResponseDTO>) -> Void) {
+        self.provider.request(
+            .login(provider: provider, idToken: idToken, timeZoneOffset: timeZoneOffset, fcmToken: fcmToken)
+        ) { [weak self] result in
             guard let self = self else { return }
             
             switch result {
@@ -37,6 +39,19 @@ final class LoginAPIService: BaseAPIService, LoginAPIServiceProtocol {
                 )
                 print(networkResult.stateDescription)
                 completion(networkResult)
+                
+                
+                if case .success(let data) = networkResult,
+                   let loginData = data?.data {
+                    do {
+                        let access = loginData.accessToken.replacingOccurrences(of: "Bearer ", with: "")
+                        let refresh = loginData.refreshToken.replacingOccurrences(of: "Bearer ", with: "")
+                        try TokenKeychainManager.shared.saveAccessToken(access)
+                        try TokenKeychainManager.shared.saveRefreshToken(refresh)
+                    } catch {
+                        print("[ERROR] 토큰 저장 실패: \(error)")
+                    }
+                }
                 
             case .failure(let error):
                 if let response = error.response {
@@ -50,5 +65,3 @@ final class LoginAPIService: BaseAPIService, LoginAPIServiceProtocol {
         }
     }
 }
-
-

@@ -14,10 +14,10 @@ protocol TodoAPIServiceProtocol {
     func createTodo(
         startDate: String,
         description: String,
-        endDate: String?,
-        tagId: Int?,
-        priorityUrgency: Double?,
-        priorityImportance: Double?,
+        endDate: String,
+        tagId: Int,
+        priorityUrgency: Double,
+        priorityImportance: Double,
         completion: @escaping (NetworkResult<Void>) -> Void
     )
 }
@@ -51,10 +51,10 @@ final class TodoAPIService: BaseAPIService, TodoAPIServiceProtocol {
     func createTodo(
         startDate: String,
         description: String,
-        endDate: String?,
-        tagId: Int?,
-        priorityUrgency: Double?,
-        priorityImportance: Double?,
+        endDate: String,
+        tagId: Int,
+        priorityUrgency: Double,
+        priorityImportance: Double,
         completion: @escaping (NetworkResult<Void>) -> Void
     ) {
         provider.requestWithTokenRefresh(
