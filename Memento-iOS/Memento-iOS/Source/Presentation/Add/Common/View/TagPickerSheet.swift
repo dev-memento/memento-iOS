@@ -9,20 +9,21 @@ import SwiftUI
 
 protocol TagSelectable: ObservableObject {
     var selectedTag: Tag { get set }
+    var showTagPicker: Bool { get set }
 }
 
 struct TagPickerSheet<ViewModel: TagSelectable>: View {
-
+    
     @ObservedObject var viewModel: ViewModel
-    @Binding var isPresented: Bool
-
+    //    @Binding var isPresented: Bool
+    
     let type: PickerButtonType
     let tagList: [Tag]
-
+    
     var body: some View {
         SheetContainer(type: type) {
-            SheetOKButton { isPresented = false }
-
+            SheetOKButton { viewModel.showTagPicker = false }
+            
             List {
                 ForEach(tagList) { tag in
                     Button(action: {
@@ -32,11 +33,11 @@ struct TagPickerSheet<ViewModel: TagSelectable>: View {
                             Circle()
                                 .fill(tag.color)
                                 .frame(width: 12, height: 12)
-
+                            
                             Text(tag.title)
                                 .applyFont(.body_r_14)
                                 .foregroundStyle(viewModel.selectedTag.id == tag.id ? Color.gray02 : Color.gray07)
-
+                            
                             Spacer()
                         }
                     }
