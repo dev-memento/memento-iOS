@@ -3,12 +3,12 @@ import SwiftUI
 import MCalendar
 
 struct TabBarView: View {
-
+    
     @State private var selectedTab: TabBarItem = .today
     @State private var previousTab: TabBarItem = .today
     @State private var segmentedViewHeight: CGFloat = .zero
     @GestureState private var translation: CGFloat = .zero
-
+    
     @StateObject var segmentedViewModel = SegmentedMenuViewModel()
     @StateObject var calendarViewModel = WeeklyCalendarViewModel(
         mCalendarDataSource: MCalendarDataSource(),
@@ -59,7 +59,11 @@ struct TabBarView: View {
                         segmentedViewModel.isPresented = true
                         selectedTab = previousTab
                     }
-                    .onChange(of: selectedTab) { _, newValue in
+                    .onChange(of: selectedTab) { oldValue, newValue in
+                        if newValue != .addition {
+                            previousTab = newValue
+                        }
+                        
                         if newValue == .addition {
                             withAnimation {
                                 segmentedViewModel.isPresented = true
@@ -76,7 +80,7 @@ struct TabBarView: View {
                     }
                     .tag(TabBarItem.todo)
             }
-
+            
             if segmentedViewModel.isPresented {
                 Color.black.opacity(0.5)
                     .ignoresSafeArea(.all)
@@ -86,7 +90,7 @@ struct TabBarView: View {
                         segmentedViewModel.selectedButton = .checkbox
                     }
                     .zIndex(1)
-
+                
                 SegmentedMenuView(viewModel: segmentedViewModel, sheetHeight: $segmentedViewHeight)
                     .zIndex(2)
                     .offset(y: translation)
@@ -113,10 +117,10 @@ struct TabBarView: View {
             calendarViewModel.getToDoListTotalAPI()
             calendarViewModel.getSchedulesTotalAPI()
             todolistViewModel.getToDoListTotalAPI()
-            
         }
+        .environmentObject(todolistViewModel)
     }
-
+    
     private func dismissKeyboard() {
         UIApplication.shared.sendAction(
             #selector(UIResponder.resignFirstResponder),
