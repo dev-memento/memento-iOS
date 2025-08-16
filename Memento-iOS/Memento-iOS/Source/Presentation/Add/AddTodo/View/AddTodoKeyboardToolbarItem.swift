@@ -10,10 +10,10 @@ import SwiftUI
 import MDSKit
 
 struct AddTodoKeyboardToolbarItem: View {
-
+    
     @ObservedObject var viewModel: AddTodoViewModel
-    @Environment(\.dismiss) var dismiss
-
+    var onEnter: () -> Void
+    
     var body: some View {
         HStack {
             deadlineButton
@@ -27,14 +27,14 @@ struct AddTodoKeyboardToolbarItem: View {
         .frame(width: UIScreen.main.bounds.width)
         .background(Color.gray10.ignoresSafeArea(.all))
     }
-
+    
     var deadlineButton: some View {
         Button(action: {
             viewModel.showEndDatePicker = true
         }) {
             HStack {
                 Image(.ic_deadline)
-
+                
                 Text(viewModel.formattedEndDate)
                     .applyFont(.detail_r_12)
             }
@@ -47,7 +47,7 @@ struct AddTodoKeyboardToolbarItem: View {
             SheetContainer(type: .addTodo(.date)) {
                 VStack {
                     SheetOKButton { viewModel.showEndDatePicker = false }
-
+                    
                     DatePicker(
                         "",
                         selection: $viewModel.endDate,
@@ -61,7 +61,7 @@ struct AddTodoKeyboardToolbarItem: View {
             }
         }
     }
-
+    
     var tagButton: some View {
         Button(action: {
             viewModel.showTagPicker = true
@@ -76,13 +76,13 @@ struct AddTodoKeyboardToolbarItem: View {
         .sheet(isPresented: $viewModel.showTagPicker) {
             TagPickerSheet(
                 viewModel: viewModel,
-                isPresented: $viewModel.showTagPicker,
+                //                isPresented: $viewModel.showTagPicker,
                 type: .addTodo(.tag),
-                tagList: Tag.mockData
+                tagList: viewModel.tags
             )
         }
     }
-
+    
     var matrixButton: some View {
         Button(action: {
             viewModel.showPriorityPicker = true
@@ -104,13 +104,10 @@ struct AddTodoKeyboardToolbarItem: View {
             }
         }
     }
-
+    
     var enterButton: some View {
         Button(action: {
-            viewModel.createTodo {
-                viewModel.postMakeScheduleNotiFication()
-                dismiss()
-            }
+            onEnter()
         }) {
             Image(viewModel.isTextEmpty ? .btn_enter_disabled : .btn_enter_active)
         }
