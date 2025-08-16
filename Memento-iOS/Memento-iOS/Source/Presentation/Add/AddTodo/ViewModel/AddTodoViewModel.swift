@@ -107,7 +107,7 @@ final class AddTodoViewModel: ObservableObject, TagSelectable {
             startDate: formattedStartDate,
             description: description,
             endDate: formattedEndDate,
-            tagId: tagId,
+            tagId: selectedTag.tagId,
             priorityUrgency: priorityUrgency,
             priorityImportance: priorityImportance
         ) { result in

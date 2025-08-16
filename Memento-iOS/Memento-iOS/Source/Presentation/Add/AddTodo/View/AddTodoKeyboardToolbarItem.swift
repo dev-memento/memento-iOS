@@ -80,6 +80,9 @@ struct AddTodoKeyboardToolbarItem: View {
                 type: .addTodo(.tag),
                 tagList: viewModel.tags
             )
+//            .onAppear {
+//                viewModel.loadTags()
+//            }
         }
     }
     
