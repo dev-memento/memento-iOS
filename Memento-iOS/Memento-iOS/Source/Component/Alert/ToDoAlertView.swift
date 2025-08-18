@@ -50,7 +50,7 @@ struct ToDoAlertView: View {
                     Image(.ic_deadline)
                         .foregroundColor(.gray05)
                     
-                    Text(Date.formatEndDate(deadline))
+                    Text(Date.displayEndDate(deadline))
                         .applyFont(.detail_r_12)
                         .foregroundColor(.gray05)
                 }

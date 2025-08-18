@@ -69,16 +69,19 @@ extension Date {
         return formatter.string(from: date)
     }
     
-    static func formatEndDate(_ endDate: String) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
+    
+    /// ToDoListCell 에서 endDate가 오늘 날짜면 "Today"를 반환하고,
+    /// 오늘이 아니면 "MMM dd, YYYY" 형식의 문자열로 변환
+    static func displayEndDate(_ endDate: String) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
         
-        if let date = dateFormatter.date(from: endDate) {
+        if let date = formatter.date(from: endDate) {
             if Calendar.current.isDate(date, inSameDayAs: Date()) {
                 return "Today"
             }
-            dateFormatter.dateFormat = "MMM dd"
-            return dateFormatter.string(from: date)
+            formatter.dateFormat = "MMM dd, YYYY"
+            return formatter.string(from: date)
         }
         
         return endDate
