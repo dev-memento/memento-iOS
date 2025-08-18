@@ -19,7 +19,7 @@ struct AllDayListCell: View {
             
             Spacer()
         }
-        .frame(height: 32)
+        .frame(maxWidth: .infinity, minHeight: 32)
         .background(Color.mainNavy)
     }
 }
@@ -31,6 +31,6 @@ struct AllDayTitleView: View {
         Text(title)
             .applyFont(.body_r_14)
             .foregroundColor(.gray05)
-            .frame(width: 300, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
