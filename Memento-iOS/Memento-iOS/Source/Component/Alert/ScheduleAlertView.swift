@@ -13,21 +13,20 @@ struct ScheduleAlertView: View {
     let scheduleTitle: String
     let startDate: String
     let endDate: String
-    let tag: String
-    let source: String
+    let tagName: String
+    let tagColorCode: String
+    let scheduleType: String
     
     var onDelete: () -> Void
     var onEdit: () -> Void
-    var scheduleAPIService: ScheduleAPIServiceProtocol
 
     @State private var isLoading: Bool = false
 
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
+            HStack(spacing: 10) {
                 Image(.ic_event)
-                    .resizable()
-                    .frame(width: 20, height: 20)
+                
                 Text(scheduleTitle)
                     .applyFont(.body_b_16)
                     .foregroundColor(.grayWhite)
@@ -36,11 +35,10 @@ struct ScheduleAlertView: View {
             .padding(.top, 20)
             .padding(.leading, 16)
             
-            HStack {
+            HStack(spacing: 42) {
                 Text(StringLiteral.Common.starts)
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
-                    .padding(.trailing, 42)
                 
                 Text(startDate)
                     .applyFont(.detail_r_12)
@@ -51,11 +49,10 @@ struct ScheduleAlertView: View {
             .padding(.top, 18)
             .padding(.leading, 46)
             
-            HStack {
+            HStack(spacing: 48) {
                 Text(StringLiteral.Common.ends)
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
-                    .padding(.trailing, 48)
                 
                 Text(endDate)
                     .applyFont(.detail_r_12)
@@ -66,17 +63,17 @@ struct ScheduleAlertView: View {
             .padding(.top, 16)
             .padding(.leading, 46)
             
-            HStack {
+            HStack(spacing: 54) {
                 Text(StringLiteral.Common.tag)
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
-                    .padding(.trailing, 54)
                 
                 HStack(spacing: 3) {
                     Image(.ic_tag)
                         .renderingMode(.template)
-                        .foregroundColor(.mementoBlue)
-                    Text(tag)
+                        .foregroundColor(Color.fromHex(tagColorCode))
+
+                    Text(tagName)
                         .applyFont(.detail_r_12)
                         .foregroundColor(.gray05)
                 }
@@ -86,17 +83,15 @@ struct ScheduleAlertView: View {
             .padding(.top, 16)
             .padding(.leading, 46)
             
-            HStack {
+            HStack(spacing: 47) {
                 Text(StringLiteral.Alert.from)
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
-                    .padding(.trailing, 47)
                 
                 HStack(spacing: 3) {
                     Image(.img_notion)
-                        .resizable()
-                        .frame(width: 17, height: 17)
-                    Text(source)
+
+                    Text(scheduleType)
                         .applyFont(.detail_r_12)
                         .foregroundColor(.gray05)
                 }
@@ -109,7 +104,7 @@ struct ScheduleAlertView: View {
             Spacer()
             
             HStack(spacing: 15) {
-                DeleteButton(onDelete: deleteSchedule)
+                DeleteButton(onDelete: onDelete)
                 EditButton(onEdit: onEdit)
             }
             .padding(.bottom, 26)
@@ -119,47 +114,4 @@ struct ScheduleAlertView: View {
         .background(Color.gray10)
         .cornerRadius(2)
     }
-
-    // MARK: - API
-
-    private func deleteSchedule() {
-        isLoading = true
-        scheduleAPIService.deleteSchedule(scheduleId: scheduleId) { result in
-            print("DEBUG: Requesting DELETE for Schedule ID: \(scheduleId)")
-            DispatchQueue.main.async {
-                isLoading = false
-                switch result {
-                case .success:
-                    onDelete()
-                    print("DEBUG: Schedule 삭제 성공")
-                case .badRequest:
-                    print("DEBUG: 잘못된 요청입니다. - Schedule 삭제 실패")
-                case .notFound:
-                    print("DEBUG: 잘못된 요청입니다. - Schedule 삭제 실패")
-                case .serverError:
-                    print("DEBUG: 내부 서버 에러 - Schedule 삭제 실패")
-                default:
-                    print("DEBUG: 알 수 없는 에러 - Schedule 삭제 실패")
-                }
-            }
-        }
-    }
-}
-
-#Preview {
-    ScheduleAlertView(
-        scheduleId: 1,
-        scheduleTitle: "UXUI 과제",
-        startDate: "Jan 31, 2025  8PM",
-        endDate: "Jan 31, 2025  11PM",
-        tag: "SOPT",
-        source: "Notion",
-        onDelete: {
-            print("Delete button tapped")
-        },
-        onEdit: {
-            print("Edit button tapped")
-        },
-        scheduleAPIService: ScheduleAPIService()
-    )
 }
