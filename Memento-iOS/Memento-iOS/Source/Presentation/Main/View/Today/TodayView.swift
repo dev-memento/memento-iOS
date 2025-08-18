@@ -229,30 +229,31 @@ struct TodayListItemView: View {
             
             switch item {
             case .todo(var todo):
-                ToDoListCell(
-                    toDoList: todo
-                        .mapToToDoItem(),
-                    //                    toDoListCompleted: ToDoListCompletedResponseData(
-                    //                        id: todo.id,
-                    //                        isCompleted: todo.isChecked
-                    //                    ),
-                    toDoListCompleted: Binding<ToDoListCompletedResponseData>(
-                        get: {
-                            ToDoListCompletedResponseData(id: todo.id, isCompleted: todo.isChecked)
-                        },
-                        set: { newValue in
-                            todo.isChecked = newValue.isCompleted
-                            onCheckChanged(newValue.isCompleted)
-                        }
-                    ),
-                    isHighlighted: isHighlighted,
-                    backgroundColor: backgroundColor
-                )
-                .contentShape(Rectangle())
-                .padding(.trailing, -20)
-                .onTapGesture {
-                    onTodoTap(todo)
-                }
+                Rectangle()
+//                ToDoListCell(
+//                    toDoList: todo
+//                        .mapToToDoItem(),
+//                    //                    toDoListCompleted: ToDoListCompletedResponseData(
+//                    //                        id: todo.id,
+//                    //                        isCompleted: todo.isChecked
+//                    //                    ),
+//                    toDoListCompleted: Binding<ToDoListCompletedResponseData>(
+//                        get: {
+//                            ToDoListCompletedResponseData(id: todo.id, isCompleted: todo.isChecked)
+//                        },
+//                        set: { newValue in
+//                            todo.isChecked = newValue.isCompleted
+//                            onCheckChanged(newValue.isCompleted)
+//                        }
+//                    ),
+//                    isHighlighted: isHighlighted,
+//                    backgroundColor: backgroundColor
+//                )
+//                .contentShape(Rectangle())
+//                .padding(.trailing, -20)
+//                .onTapGesture {
+//                    onTodoTap(todo)
+//                }
                 
             case .schedule(let schedule):
                 ScheduleListCell(
