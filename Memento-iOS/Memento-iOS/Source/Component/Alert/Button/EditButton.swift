@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct EditButton: View {
+    
     let onEdit: () -> Void
     
     var body: some View {
