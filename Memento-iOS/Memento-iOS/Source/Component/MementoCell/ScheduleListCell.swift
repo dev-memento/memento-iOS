@@ -26,7 +26,7 @@ struct ScheduleListCell: View {
     var body: some View {
         HStack(spacing: 10) {
             // Hex 코드가 제대로 넘어오는지 확인
-            ColorTagView(colorType: schedule.tagColorCode)
+            ColorTagView(colorType: schedule.tagColorCode, width: 3)
             IconView()
 
             VStack(alignment: .leading, spacing: 8) {

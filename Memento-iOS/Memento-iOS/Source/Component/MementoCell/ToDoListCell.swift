@@ -17,7 +17,7 @@ struct ToDoListCell: View {
     
     var body: some View {
         HStack(spacing: 10) {
-            ColorTagView(colorType: toDoList.tagColor)
+            ColorTagView(colorType: toDoList.tagColor, width: 3)
             
             CheckBoxView(isChecked: $toDoListCompleted.isCompleted)
             

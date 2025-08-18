@@ -14,7 +14,7 @@ struct AllDayListCell: View {
     
     var body: some View {
         HStack(spacing: 21) {
-            ColorTagView(colorType: tagColorCode)
+            ColorTagView(colorType: tagColorCode, width: 5)
             
             AllDayTitleView(title: title)
             

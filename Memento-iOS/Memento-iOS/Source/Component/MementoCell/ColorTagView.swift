@@ -8,11 +8,13 @@
 import SwiftUI
 
 struct ColorTagView: View {
+    
     var colorType: String
+    var width: Int
     
     var body: some View {
         Rectangle()
             .fill(Color.fromHex(colorType))
-            .frame(width: 3)
+            .frame(width: CGFloat(width))
     }
 }
