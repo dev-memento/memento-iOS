@@ -67,24 +67,14 @@ struct ToDoListView: View {
                     tagName: todo.mapToToDoItem().tagName ?? "",
                     tagColorCode: todo.mapToToDoItem().tagColor ?? "",
                     priority: todo.priorityType ?? .none,
-                    
                     onDelete: {
-                        if let date = viewModel.toDoListItemDict.first(where: { $0.value.contains(where: { $0.id == selectedItem?.id }) })?.key,
-                           let index = viewModel.toDoListItemDict[date]?.firstIndex(where: { $0.id == selectedItem?.id }) {
-                            viewModel.toDoListItemDict[date]?.remove(at: index)
-                            
-                            if viewModel.toDoListItemDict[date]?.isEmpty == true {
-                                viewModel.toDoListItemDict.removeValue(forKey: date)
-                            }
-                        }
+                        viewModel.deleteTodo(todoId: todo.id)
                         showTodoAlert = false
-                        viewModel.getToDoListTotalAPI()
                     },
                     onEdit: {
                         showTodoAlert = false
                         showEditSheet = true
                     },
-                    todoAPIService: TodoAPIService(),
                     isChecked: Binding(
                         get: { todo.isChecked },
                         set: { newValue in

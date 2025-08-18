@@ -23,7 +23,8 @@ struct TabBarView: View {
         tagService: TagAPIService(),
         toDoListService: ToDoListAPIService(),
         mCallendarDataSource: MCalendarDataSource(),
-        mEventDataSource: MEventDatasource()
+        mEventDataSource: MEventDatasource(),
+        toDoService: TodoAPIService()
     )
     
     init() {

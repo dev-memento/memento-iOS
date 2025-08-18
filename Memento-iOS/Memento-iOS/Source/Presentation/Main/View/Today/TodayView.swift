@@ -75,8 +75,6 @@ struct TodayView: View {
                     onEdit: {
                         showTodoAlert = false
                     },
-                    
-                    todoAPIService: TodoAPIService(),
                     isChecked: todoBinding
                 )
                 .background(Color.black.opacity(0.4))

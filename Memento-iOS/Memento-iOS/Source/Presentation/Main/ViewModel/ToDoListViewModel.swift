@@ -15,6 +15,7 @@ final class ToDoListViewModel: ObservableObject {
     @Published var toDoList: [ToDoListTotalResponseDataTest] = []
     private let tagService: TagAPIServiceProtocol
     private let toDoListService: ToDoListAPIServiceProtocol
+    private let toDoService: TodoAPIServiceProtocol
     @Published var toDoListItems: [ToDoListDataModel] = []
     @Published var mCallendarDataSource: MCalendarDataSource
     @Published var mEventDataSource: MEventDatasource
@@ -33,12 +34,14 @@ final class ToDoListViewModel: ObservableObject {
         tagService: TagAPIServiceProtocol,
         toDoListService: ToDoListAPIServiceProtocol,
         mCallendarDataSource: MCalendarDataSource,
-        mEventDataSource: MEventDatasource
+        mEventDataSource: MEventDatasource,
+        toDoService: TodoAPIServiceProtocol
     ) {
         self.tagService = tagService
         self.toDoListService = toDoListService
         self.mCallendarDataSource = mCallendarDataSource
         self.mEventDataSource = mEventDataSource
+        self.toDoService = toDoService
     }
     
     func preprocessingForEventDate() {
@@ -66,6 +69,30 @@ extension ToDoListViewModel {
             }
         }
     }
+    
+    func deleteTodo(todoId: Int) {
+        toDoService.deleteTodo(todoId: todoId) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    self?.removeTodoFromDict(todoId: todoId)
+                default:
+                    print("Todo 삭제 실패")
+                }
+            }
+        }
+    }
+    
+    private func removeTodoFromDict(todoId: Int) {
+        guard let date = toDoListItemDict.first(where: { $0.value.contains(where: { $0.id == todoId }) })?.key,
+              let index = toDoListItemDict[date]?.firstIndex(where: { $0.id == todoId }) else { return }
+        
+        toDoListItemDict[date]?.remove(at: index)
+        if toDoListItemDict[date]?.isEmpty == true {
+            toDoListItemDict.removeValue(forKey: date)
+        }
+    }
+    
     
     func getToDoListTotalAPI() {
         toDoListService.getToDoList { [weak self] result in

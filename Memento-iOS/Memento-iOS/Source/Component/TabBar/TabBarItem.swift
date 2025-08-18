@@ -56,7 +56,8 @@ enum TabBarItem: CaseIterable {
                         tagService: TagAPIService(),
                         toDoListService: ToDoListAPIService(),
                         mCallendarDataSource: MCalendarDataSource(),
-                        mEventDataSource: MEventDatasource()
+                        mEventDataSource: MEventDatasource(),
+                        toDoService: TodoAPIService()
                     )
                 )
             )
