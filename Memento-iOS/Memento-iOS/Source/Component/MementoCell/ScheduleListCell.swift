@@ -23,7 +23,7 @@ struct ScheduleListCell: View {
             
             IconView()
             
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 5) {
                 ScheduleTitleView(title: title)
                 
                 TimeInfoView(scheduleType: scheduleType, timeDuration: timeDuration)

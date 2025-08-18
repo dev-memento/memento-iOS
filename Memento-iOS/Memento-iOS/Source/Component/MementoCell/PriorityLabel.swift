@@ -8,8 +8,8 @@
 import SwiftUI
 import MDSKit
 
-/// Todo 관리에 필요한 중요도 표시 라벨
 enum Priority: String {
+    
     case immediate, high, medium, low, none
     
     var strokeColor: Color {
@@ -41,7 +41,7 @@ enum Priority: String {
         case .none: return StringLiteral.Priority.none
         }
     }
-
+    
     func getPriorityValues() -> (urgency: Double, importance: Double) {
         switch self {
         case .immediate:
