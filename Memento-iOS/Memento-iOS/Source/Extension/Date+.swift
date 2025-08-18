@@ -20,24 +20,24 @@ extension Date {
         dateFormatter.locale = Locale(identifier: "en_US")
         return dateFormatter.string(from: self)
     }
-
+    
     /// ISO 8601 포맷 반환
     func makeCurrentDate() -> String {
         return self.formattedDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX", timeZone: TimeZone(abbreviation: "UTC")!)
     }
-
+    
     func roundedToNearestHalfHour() -> Date {
         let calendar = Calendar.current
         let minute = calendar.component(.minute, from: self)
         let components = calendar.dateComponents([.year, .month, .hour], from: self)
-
+        
         guard let baseHour = calendar.date(from: components) else { return self }
-
+        
         let roundedMinutes = (minute + 15) / 30 * 30
-
+        
         return calendar.date(byAdding: .minute, value: roundedMinutes, to: baseHour) ?? self
     }
-
+    
     /// 문자열 날짜를 특정 포맷 날짜로 반환
     static func dateFromString(_ dateString: String, format: String = "yyyy-MM-dd HH:mm:ss.SSSSSS") -> Date? {
         let dateFormatter = DateFormatter()
@@ -46,7 +46,7 @@ extension Date {
         dateFormatter.locale = Locale(identifier: "en_US")
         return dateFormatter.date(from: dateString)
     }
-
+    
     /// Start Date와 End Date의 소요 시간 (Duration Time)을 계산해주는 메소드
     static func calculateDuration(startDate: String, endDate: String, format: String = "yyyy-MM-dd HH:mm:ss.SSSSSS") -> Int {
         guard let start = Date.dateFromString(startDate, format: format),
@@ -63,7 +63,7 @@ extension Date {
         let formatter = DateFormatter()
         formatter.dateFormat = "M"
         guard let date = formatter.date(from: month) else { return "" }
-
+        
         formatter.dateFormat = "MMM"
         
         return formatter.string(from: date)
@@ -82,5 +82,16 @@ extension Date {
         }
         
         return endDate
+    }
+    
+    /// ScheduleListCell 에서 endDate와 현재 시간을 비교하여 스케줄이 종료되었는지 여부를 반환
+    static func hasScheduleEnded(endDate: String) -> Bool {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
+        formatter.timeZone = TimeZone.current
+        guard let date = formatter.date(from: endDate) else {
+            return false
+        }
+        return Date() > date
     }
 }
