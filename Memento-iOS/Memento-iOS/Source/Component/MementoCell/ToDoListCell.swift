@@ -9,30 +9,36 @@ import SwiftUI
 import MDSKit
 
 struct ToDoListCell: View {
-    var toDoList: ToDoListTotalResponseDataTest
-    @Binding var toDoListCompleted: ToDoListCompletedResponseData
+    
+    var tagColorCode: String
+    var title: String
+    var toDoType: String
+    var endDate: String
+    var priority: Priority
     
     var isHighlighted: Bool
-    var backgroundColor: Color
+    
+    @Binding var isCompleted: Bool
     
     var body: some View {
         HStack(spacing: 10) {
-            ColorTagView(colorType: toDoList.tagColor, width: 3)
+            ColorTagView(colorType: tagColorCode, width: 3)
             
-            CheckBoxView(isChecked: $toDoListCompleted.isCompleted)
+            CheckBoxView(isChecked: $isCompleted)
             
-            VStack(alignment: .leading) {
-                ToDoTitleView(title: toDoList.description, isChecked: toDoListCompleted.isCompleted)
-                DueDateView(endDate: toDoList.endDate, toDoType: toDoList.toDoType)
+            VStack(alignment: .leading, spacing: 5) {
+                ToDoTitleView(title: title, isChecked: isCompleted)
+                
+                DueDateView(toDoType: toDoType, endDate: endDate)
             }
             
             Spacer()
             
-            PriorityLabelView(priority: Priority(rawValue: toDoList.priorityType.lowercased()) ?? .none)
+            PriorityLabelView(priority: priority)
         }
         .frame(height: 68)
         .background(highlightedBackground)
-        .opacity(toDoListCompleted.isCompleted ? 0.5 : 1.0)
+        .opacity(isCompleted ? 0.5 : 1.0)
     }
     
     private var highlightedBackground: some View {
@@ -54,6 +60,7 @@ struct ToDoListCell: View {
 }
 
 struct CheckBoxView: View {
+    
     @Binding var isChecked: Bool
     
     var body: some View {
@@ -62,6 +69,7 @@ struct CheckBoxView: View {
                 .onTapGesture {
                     isChecked.toggle()
                 }
+            
             Spacer()
         }
         .padding(.top, 11)
@@ -69,6 +77,7 @@ struct CheckBoxView: View {
 }
 
 struct ToDoTitleView: View {
+    
     var title: String
     var isChecked: Bool
     
@@ -81,45 +90,32 @@ struct ToDoTitleView: View {
 }
 
 struct DueDateView: View {
-    var endDate: String
+    
     var toDoType: String
+    var endDate: String
     
     var body: some View {
-        HStack(spacing: 0) {
-            if let toDoImage = toDoIconName(for: toDoType) {
-                toDoImage
-            }
+        HStack(spacing: 1) {
+            //            Image(.img_notion)
             
             Image(.ic_deadline)
-                .padding(.leading, toDoIconName(for: toDoType) == nil ? 0 : 10)
                 .foregroundColor(Color.gray05)
             
-            Text(Date.formatEndDate(endDate))
+            Text(Date.displayEndDate(endDate))
                 .applyFont(.detail_r_12)
                 .foregroundColor(Color.gray05)
-                .padding(.leading, 1)
-        }
-        
-    }
-    
-    private func toDoIconName(for type: String) -> Image? {
-        switch type {
-        case "GOOGLE":
-            return Image(.img_google)
-        case "APPLE":
-            return Image(.img_apple)
-        default:
-            return nil
         }
     }
 }
 
 struct PriorityLabelView: View {
+    
     var priority: Priority
     
     var body: some View {
         VStack {
             PriorityLabel(priority: priority)
+            
             Spacer()
         }
         .padding(.top, 10)

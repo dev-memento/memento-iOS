@@ -152,10 +152,13 @@ struct ToDoListItemView: View {
     var body: some View {
         VStack(spacing: 10) {
             ToDoListCell(
-                toDoList: item,
-                toDoListCompleted: toDoListCompletedBinding,
+                tagColorCode: item.tagColor,
+                title: item.description,
+                toDoType: item.toDoType,
+                endDate: item.endDate,
+                priority: Priority(rawValue: item.priorityType.lowercased()) ?? .none,
                 isHighlighted: isHighlighted,
-                backgroundColor: backgroundColor
+                isCompleted: $isChecked
             )
         }
         .padding(.bottom, 8)
