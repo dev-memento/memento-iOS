@@ -88,23 +88,16 @@ struct TodayView: View {
                     scheduleTitle: schedule.description,
                     startDate: schedule.startDate,
                     endDate: schedule.endDate,
-                    tag: "SOPT",
-                    source: "Notion",
+                    tagName: schedule.tagName,
+                    tagColorCode: schedule.tagColorCode,
+                    scheduleType: "Notion",
                     onDelete: {
-                        if let index = viewModel.todayItems.firstIndex(where: {
-                            if case .schedule(let s) = $0 {
-                                return s.id == schedule.id
-                            }
-                            return false
-                        }) {
-                            viewModel.todayItems.remove(at: index)
-                        }
+                        viewModel.deleteSchedule(scheduleId: schedule.id)
                         showScheduleAlert = false
                     },
                     onEdit: {
                         showScheduleAlert = false
-                    },
-                    scheduleAPIService: ScheduleAPIService()
+                    }
                 )
                 .background(Color.black.opacity(0.4))
                 .edgesIgnoringSafeArea(.all)

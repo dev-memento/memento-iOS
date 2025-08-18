@@ -128,20 +128,17 @@ final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
 
     func deleteSchedule(scheduleId: Int, completion: @escaping (NetworkResult<Void>) -> Void) {
         provider.requestWithTokenRefresh(.deleteSchedule(scheduleId: scheduleId)) { result in
-            print("DEBUG: Requesting DELETE for Schedule ID: \(scheduleId)")
             switch result {
             case .success(let response):
                 let result: NetworkResult<Void> = self.fetchNetworkResult(
                     statusCode: response.statusCode
                 )
-                print("DEBUG: \(result.stateDescription)")
                 completion(result)
             case .failure(let error):
                 if let response = error.response {
                     let result: NetworkResult<Void> = self.fetchNetworkResult(
                         statusCode: response.statusCode
                     )
-                    print("DEBUG: \(result.stateDescription)")
                     completion(result)
                 }
             }
