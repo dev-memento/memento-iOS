@@ -10,18 +10,18 @@ import SwiftUI
 import MDSKit
 
 struct AddScheduleView: View {
-
+    
     // MARK: - Properties
-
+    
     @Environment(\.dismiss) var dismiss
     @StateObject private var viewModel: AddScheduleViewModel = .init()
-
+    
     // MARK: - Body
-
+    
     var body: some View {
         ZStack {
             Color.gray10.ignoresSafeArea()
-
+            
             VStack {
                 toggleSection
                 titleInputSection
@@ -34,14 +34,17 @@ struct AddScheduleView: View {
             }
             .padding(.horizontal)
         }
+        .onAppear {
+            viewModel.getTagsAPI()
+        }
     }
-
+    
     // MARK: - UI Components
-
+    
     private var toggleSection: some View {
         CustomToggleView(isOn: $viewModel.isNaturalLanguageInputEnabled)
     }
-
+    
     private var titleInputSection: some View {
         VStack {
             ZStack(alignment: .leading) {
@@ -50,7 +53,7 @@ struct AddScheduleView: View {
                         .foregroundColor(.gray07)
                         .applyFont(.body_b_18)
                 }
-
+                
                 TextField("", text: $viewModel.title)
                     .tint(Color.mementoLightGreen)
                     .foregroundColor(.grayWhite)
@@ -60,14 +63,14 @@ struct AddScheduleView: View {
             }
             .frame(height: 24)
             .padding(.vertical, 8)
-
+            
             Divider()
                 .frame(height: 2)
                 .background(Color.gray08)
                 .padding(.bottom, 24)
         }
     }
-
+    
     private func dateTimePickerSection(type: AddScheduleSectionType) -> some View {
         let title = (type == .start) ? StringLiteral.Common.starts : StringLiteral.Common.ends
         let formattedDate = (type == .start) ? viewModel.formattedStartDate : viewModel.formattedEndDate
@@ -76,14 +79,14 @@ struct AddScheduleView: View {
         let timeBinding = (type == .start) ? $viewModel.startTime : $viewModel.endTime
         let isDatePresented = (type == .start) ? $viewModel.isStartDatePressed : $viewModel.isEndDatePressed
         let isTimePresented = (type == .start) ? $viewModel.isStartTimePressed : $viewModel.isEndTimePressed
-
+        
         return HStack {
             Text(title)
                 .applyFont(.body_r_16)
                 .foregroundColor(.gray05)
-
+            
             Spacer()
-
+            
             Button {
                 viewModel.presentDatePicker(type: type)
             } label: {
@@ -98,7 +101,7 @@ struct AddScheduleView: View {
                 SheetContainer(type: .addSchedule(.date)) {
                     VStack {
                         SheetOKButton { viewModel.dismissDatePicker(type: type) }
-
+                        
                         DatePicker(
                             "",
                             selection: dateBinding,
@@ -111,7 +114,7 @@ struct AddScheduleView: View {
                     }
                 }
             }
-
+            
             Button {
                 viewModel.presentTimePicker(type: type)
             } label: {
@@ -128,7 +131,7 @@ struct AddScheduleView: View {
                 SheetContainer(type: .addSchedule(.time)) {
                     VStack {
                         SheetOKButton { viewModel.dismissTimePicker(type: type) }
-
+                        
                         DatePicker(
                             "",
                             selection: timeBinding,
@@ -144,20 +147,20 @@ struct AddScheduleView: View {
             }
         }
     }
-
+    
     private var allDayCheckBoxSection: some View {
         HStack {
             Spacer()
-
+            
             let isEnabled = viewModel.isEventLongerThan24Hours()
-
+            
             Button(action: viewModel.toggleAllDay) {
                 HStack {
                     Image(viewModel.isAllDay ? .btn_check_selected_square : .btn_check_unselected_square)
                         .renderingMode(.template)
                         .foregroundColor(isEnabled ? .gray05 : .gray07)
                         .opacity(isEnabled ? 1.0 : 0.5)
-
+                    
                     Text(StringLiteral.AddSchedule.allDay)
                         .applyFont(.body_r_14)
                         .foregroundColor(isEnabled ? .gray05 : .gray07)
@@ -168,21 +171,21 @@ struct AddScheduleView: View {
             .padding(.top, 12)
         }
     }
-
+    
     private var tagPickerSection: some View {
         HStack {
             Text(StringLiteral.Common.tag)
                 .applyFont(.body_r_16)
                 .foregroundStyle(Color.gray05)
-
+            
             Spacer()
-
+            
             Button(action: viewModel.presentTagPicker) {
                 HStack(spacing: 5) {
                     Circle()
                         .fill(viewModel.selectedTag.color)
                         .frame(width: 14, height: 14)
-
+                    
                     Text(viewModel.selectedTag.title)
                         .applyFont(.body_r_14)
                         .foregroundColor(.gray02)
@@ -194,18 +197,17 @@ struct AddScheduleView: View {
             .sheet(isPresented: $viewModel.isTagPressed) {
                 TagPickerSheet(
                     viewModel: viewModel,
-//                    isPresented: $viewModel.isTagPressed,
                     type: .addSchedule(.tag),
-                    tagList: Tag.mockData
+                    tagList: viewModel.tags
                 )
             }
         }
     }
-
+    
     private var enterButton: some View {
         HStack {
             Spacer()
-
+            
             Button {
                 viewModel.postAddSchedule { dismiss() }
             } label: {

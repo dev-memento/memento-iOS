@@ -11,7 +11,7 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     // MARK: - Input
 
     @Published var title: String = ""
-    @Published var selectedTag: Tag
+//    @Published var selectedTag: Tag
     @Published var isAllDay: Bool {
         didSet {
             if isManualAllDayChangeAllowed {
@@ -22,6 +22,12 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     }
 
     @Published var isNaturalLanguageInputEnabled: Bool = false
+    
+    private let tagService: TagAPIServiceProtocol
+    @Published var tags: [Tag] = []
+    
+    @Published var selectedTag: Tag = Tag(tagId: 1, color: .gray05, title: "Untitled") { didSet { tagId = selectedTag.tagId } }
+    @Published var tagId: Int = 1
 
     // MARK: - Date & Time
 
@@ -58,7 +64,7 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
 
     // MARK: - Initializer
 
-    init(scheduleApiService: ScheduleAPIService = ScheduleAPIService()) {
+    init(scheduleApiService: ScheduleAPIService = ScheduleAPIService(), tagService: TagAPIServiceProtocol = TagAPIService()) {
         guard let (roundedStartTime, roundedEndTime) = Self.makeRoundedStartAndEnd() else {
             fatalError("DEBUG: 시간 계산에 실패했습니다.")
         }
@@ -70,11 +76,38 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
         self.startTime = roundedStartTime
         self.endTime = roundedEndTime
         self.isAllDay = false
-        self.selectedTag = Tag.mockData.first ?? Tag(tagId: 0, color: .gray02, title: "Untitled")
+        self.tagService = tagService
+        
     }
 
     // MARK: - API
 
+    func getTagsAPI() {
+        tagService.getTags { [weak self] result in
+            guard let self = self else { return }
+            
+            if case let .success(baseDTO) = result,
+               let tagList = baseDTO?.data {
+                
+                self.tags = tagList.map { tag in
+                    Tag(
+                        tagId: tag.id,
+                        color: Color(hex: tag.colorCode),
+                        title: tag.name
+                    )
+                }
+                
+                if let firstTag = self.tags.first {
+                    self.selectedTag = firstTag
+                    self.tagId = firstTag.tagId
+                }
+                
+            } else {
+                print("태그 불러오기 실패")
+            }
+        }
+    }
+    
     func postAddSchedule(completion: @escaping () -> Void) {
         let shouldBeAllDay = isEventLongerThan24Hours() || isAllDay
 
@@ -87,7 +120,7 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
             startDate: combine(date: startDate, time: startTime).formattedDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),
             endDate: combine(date: endDate, time: endTime).formattedDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),
             isAllDay: shouldBeAllDay,
-            tagID: selectedTag.tagId == 0 ? 1 : selectedTag.tagId
+            tagID: selectedTag.tagId
         )
 
         print("DEBUG: request - \(request)")
