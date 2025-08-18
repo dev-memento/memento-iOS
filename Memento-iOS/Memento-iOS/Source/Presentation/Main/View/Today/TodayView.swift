@@ -255,7 +255,13 @@ struct TodayListItemView: View {
                 }
                 
             case .schedule(let schedule):
-                ScheduleListCell(schedule: schedule)
+                ScheduleListCell(
+                        tagColorCode: schedule.tagColorCode,
+                        title: schedule.description,
+                        scheduleType: schedule.scheduleType,
+                        endDate: schedule.endDate,
+                        timeDuration: schedule.timeDuration
+                    )
                     .contentShape(Rectangle())
                     .padding(.trailing, -20)
                     .onTapGesture {
