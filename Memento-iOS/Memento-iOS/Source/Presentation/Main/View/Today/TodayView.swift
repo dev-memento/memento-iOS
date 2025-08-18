@@ -63,20 +63,21 @@ struct TodayView: View {
                 )
                 
                 ToDoAlertView(
-                    todoId: todo.id,
-                    todoTitle: todo.toDoTitle,
+                    toDoId: todo.id,
+                    toDoTitle: todo.toDoTitle,
                     deadline: todo.dueDate,
-                    tag: todo.colorType,
                     tagName: todo.tagName,
+                    tagColorCode: todo.colorType,
                     priority: todo.priorityType,
-                    isChecked: todoBinding,
                     onDelete: {
                         showTodoAlert = false
                     },
                     onEdit: {
                         showTodoAlert = false
                     },
-                    todoAPIService: TodoAPIService()
+                    
+                    todoAPIService: TodoAPIService(),
+                    isChecked: todoBinding
                 )
                 .background(Color.black.opacity(0.4))
                 .edgesIgnoringSafeArea(.all)

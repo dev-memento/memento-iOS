@@ -61,24 +61,13 @@ struct ToDoListView: View {
             
             if showTodoAlert, let todo = selectedItem {
                 ToDoAlertView(
-                    todoId: todo.mapToToDoItem().id,
-                    todoTitle: todo.mapToToDoItem().description,
+                    toDoId: todo.mapToToDoItem().id,
+                    toDoTitle: todo.mapToToDoItem().description,
                     deadline: todo.mapToToDoItem().endDate ?? "",
-                    tag: todo.mapToToDoItem().tagColor ?? "",
                     tagName: todo.mapToToDoItem().tagName ?? "",
+                    tagColorCode: todo.mapToToDoItem().tagColor ?? "",
                     priority: todo.priorityType ?? .none,
-                    isChecked: Binding(
-                        get: { todo.isChecked },
-                        set: { newValue in
-                            if let date = viewModel.toDoListItemDict.first(where: { $0.value.contains(where: { $0.id == todo.id }) })?.key,
-                               let index = viewModel.toDoListItemDict[date]?.firstIndex(where: { $0.id == todo.id }) {
-                                viewModel.toDoListItemDict[date]?[index].isChecked = newValue
-                                viewModel.updateToDoCompletion(toDoId: todo.id)
-                                
-                                selectedItem?.isChecked = newValue
-                            }
-                        }
-                    ),
+                    
                     onDelete: {
                         if let date = viewModel.toDoListItemDict.first(where: { $0.value.contains(where: { $0.id == selectedItem?.id }) })?.key,
                            let index = viewModel.toDoListItemDict[date]?.firstIndex(where: { $0.id == selectedItem?.id }) {
@@ -95,7 +84,19 @@ struct ToDoListView: View {
                         showTodoAlert = false
                         showEditSheet = true
                     },
-                    todoAPIService: TodoAPIService()
+                    todoAPIService: TodoAPIService(),
+                    isChecked: Binding(
+                        get: { todo.isChecked },
+                        set: { newValue in
+                            if let date = viewModel.toDoListItemDict.first(where: { $0.value.contains(where: { $0.id == todo.id }) })?.key,
+                               let index = viewModel.toDoListItemDict[date]?.firstIndex(where: { $0.id == todo.id }) {
+                                viewModel.toDoListItemDict[date]?[index].isChecked = newValue
+                                viewModel.updateToDoCompletion(toDoId: todo.id)
+                                
+                                selectedItem?.isChecked = newValue
+                            }
+                        }
+                    )
                 )
                 .background(Color.black.opacity(0.4))
                 .edgesIgnoringSafeArea(.all)

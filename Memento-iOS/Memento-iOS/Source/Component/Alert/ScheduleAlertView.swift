@@ -30,6 +30,7 @@ struct ScheduleAlertView: View {
                 Text(scheduleTitle)
                     .applyFont(.body_b_16)
                     .foregroundColor(.grayWhite)
+                
                 Spacer()
             }
             .padding(.top, 20)

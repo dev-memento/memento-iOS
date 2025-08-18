@@ -9,49 +9,49 @@ import SwiftUI
 
 struct ToDoAlertView: View {
 
-    let todoId: Int
-    let todoTitle: String
+    let toDoId: Int
+    let toDoTitle: String
     let deadline: String
-    let tag: String
     let tagName: String
+    let tagColorCode: String
     let priority: Priority
-    
-    @Binding var isChecked: Bool
-    
+
     var onDelete: () -> Void
     var onEdit: () -> Void
+    
     var todoAPIService: TodoAPIServiceProtocol
 
     @State private var isLoading: Bool = false
+    @Binding var isChecked: Bool
 
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
+            HStack(spacing: 10) {
                 Button(action: {
                     isChecked.toggle()
                 }) {
                     Image(isChecked ? .btn_check_selected_square : .btn_check_unselected_square)
-                        .resizable()
-                        .frame(width: 20, height: 20)
                 }
-                Text(todoTitle)
+                
+                Text(toDoTitle)
                     .applyFont(.body_b_16)
                     .foregroundColor(.grayWhite)
                     .strikethrough(isChecked, color: .grayWhite)
+                
                 Spacer()
             }
             .padding(.top, 22)
             .padding(.leading, 16)
             
-            HStack {
+            HStack(spacing: 27) {
                 Text(StringLiteral.Alert.deadline)
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
-                    .padding(.trailing, 27)
                 
                 HStack(spacing: 3) {
                     Image(.ic_deadline)
                         .foregroundColor(.gray05)
+                    
                     Text(Date.formatEndDate(deadline))
                         .applyFont(.detail_r_12)
                         .foregroundColor(.gray05)
@@ -62,17 +62,16 @@ struct ToDoAlertView: View {
             .padding(.top, 18)
             .padding(.leading, 46)
             
-            
-            HStack {
+            HStack(spacing: 54) {
                 Text(StringLiteral.Common.tag)
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
-                    .padding(.trailing, 54)
                 
                 HStack(spacing: 3) {
                     Image(.ic_tag)
                         .renderingMode(.template)
-                        .foregroundColor(Color.fromHex(tag))
+                        .foregroundColor(Color.fromHex(tagColorCode))
+                    
                     Text(tagName)
                         .applyFont(.detail_r_12)
                         .foregroundColor(.gray05)
@@ -83,14 +82,13 @@ struct ToDoAlertView: View {
             .padding(.top, 16)
             .padding(.leading, 46)
             
-            
-            HStack {
+            HStack(spacing: 36) {
                 Text(StringLiteral.Alert.priority)
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
-                    .padding(.trailing, 36)
                 
                 PriorityLabel(priority: priority)
+                
                 Spacer()
             }
             .padding(.top, 14)
@@ -114,8 +112,8 @@ struct ToDoAlertView: View {
 
     private func deleteTodo() {
         isLoading = true
-        todoAPIService.deleteTodo(todoId: todoId) { result in
-            print("DEBUG: Requesting DELETE for Todo ID: \(todoId)")
+        todoAPIService.deleteTodo(todoId: toDoId) { result in
+            print("DEBUG: Requesting DELETE for Todo ID: \(toDoId)")
             DispatchQueue.main.async {
                 isLoading = false
                 switch result {
