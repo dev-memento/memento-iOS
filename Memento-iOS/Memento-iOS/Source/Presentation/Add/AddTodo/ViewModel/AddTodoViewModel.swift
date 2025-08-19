@@ -38,10 +38,8 @@ final class AddTodoViewModel: ObservableObject, TagSelectable {
     private let tagService: TagAPIServiceProtocol
     @Published var tags: [Tag] = []
     
-    @Published var selectedTag: Tag = Tag(tagId: 1, color: .gray05, title: "Untitled") {
-        didSet {
-            tagId = selectedTag.tagId
-        }
+    @Published var selectedTag: Tag = Tag(tagId: 1, name: "Untitled", color: .gray05) {
+        didSet { tagId = selectedTag.tagId }
     }
     @Published var tagId: Int = 1
     
@@ -83,8 +81,9 @@ final class AddTodoViewModel: ObservableObject, TagSelectable {
                 self.tags = tagList.map { tag in
                     Tag(
                         tagId: tag.id,
-                        color: Color(hex: tag.colorCode),
-                        title: tag.name
+               
+                        name: tag.name,
+                        color: Color(hex: tag.colorCode)
                     )
                 }
                 

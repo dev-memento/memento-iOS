@@ -34,7 +34,7 @@ struct TagPickerSheet<ViewModel: TagSelectable>: View {
                                 .fill(tag.color)
                                 .frame(width: 12, height: 12)
                             
-                            Text(tag.title)
+                            Text(tag.name)
                                 .applyFont(.body_r_14)
                                 .foregroundStyle(viewModel.selectedTag.id == tag.id ? Color.gray02 : Color.gray07)
                             

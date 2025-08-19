@@ -26,18 +26,6 @@ extension Date {
         return self.formattedDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX", timeZone: TimeZone(abbreviation: "UTC")!)
     }
     
-    func roundedToNearestHalfHour() -> Date {
-        let calendar = Calendar.current
-        let minute = calendar.component(.minute, from: self)
-        let components = calendar.dateComponents([.year, .month, .hour], from: self)
-        
-        guard let baseHour = calendar.date(from: components) else { return self }
-        
-        let roundedMinutes = (minute + 15) / 30 * 30
-        
-        return calendar.date(byAdding: .minute, value: roundedMinutes, to: baseHour) ?? self
-    }
-    
     /// 문자열 날짜를 특정 포맷 날짜로 반환
     static func dateFromString(_ dateString: String, format: String = "yyyy-MM-dd HH:mm:ss.SSSSSS") -> Date? {
         let dateFormatter = DateFormatter()
@@ -70,6 +58,22 @@ extension Date {
     }
     
     
+    
+    
+    
+    /// 현재 시간을 기준으로 가장 가까운 30분 단위로 반올림한 시간을 반환
+    func roundedToNearestHalfHour() -> Date {
+        let calendar = Calendar.current
+        let minute = calendar.component(.minute, from: self)
+        let components = calendar.dateComponents([.year, .month, .hour], from: self)
+        
+        guard let baseHour = calendar.date(from: components) else { return self }
+        
+        let roundedMinutes = (minute + 15) / 30 * 30
+        
+        return calendar.date(byAdding: .minute, value: roundedMinutes, to: baseHour) ?? self
+    }
+    
     /// ToDoListCell 에서 endDate가 오늘 날짜면 "Today"를 반환하고,
     /// 오늘이 아니면 "MMM dd, YYYY" 형식의 문자열로 변환
     static func displayEndDate(_ endDate: String) -> String {
@@ -80,8 +84,7 @@ extension Date {
             if Calendar.current.isDate(date, inSameDayAs: Date()) {
                 return "Today"
             }
-            formatter.dateFormat = "MMM dd, YYYY"
-            return formatter.string(from: date)
+            return date.formattedDate(with: "MMM dd, YYYY")
         }
         
         return endDate
