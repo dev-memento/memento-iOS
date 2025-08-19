@@ -1,5 +1,5 @@
 //
-//  ScheduleAllDayResponseData.swift
+//  ScheduleAllDayResponse.swift
 //  Memento-iOS
 //
 //  Created by Kimgahyun on 1/21/25.
@@ -7,11 +7,11 @@
 
 import Foundation
 
-struct ScheduleAllDayResponseData: Codable, Equatable {
-    let allDaySchedulesList: [ScheduleAllDayResponseDataTest]
+struct ScheduleAllDayResponse: Codable, Equatable {
+    let allDaySchedulesList: [AllDaySchedulesList]
 }
 
-struct ScheduleAllDayResponseDataTest: Codable, Equatable {
+struct AllDaySchedulesList: Codable, Equatable {
     let id: Int
     let description: String
     let startDate: String

@@ -1,11 +1,13 @@
 //
-//  ScheduleDetailResponseData.swift
+//  ScheduleDetailResponse.swift
 //  Memento-iOS
 //
 //  Created by Kimgahyun on 1/22/25.
 //
 
-struct ScheduleDetailResponseData: Codable {
+import Foundation
+
+struct ScheduleDetailResponse: Codable {
     let id: Int
     let description: String
     let startDate: String

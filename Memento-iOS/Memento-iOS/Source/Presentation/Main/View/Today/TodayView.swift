@@ -14,7 +14,7 @@ struct TodayView: View {
     @ObservedObject var viewModel: WeeklyCalendarViewModel
     
     @State private var selectTodo: ToDoListDataModel?
-    @State private var selectSchedule: ScheduleTotalResponseDataTest?
+    @State private var selectSchedule: ScheduleWithOrderInfos?
     
     @State private var showTodoAlert = false
     @State private var showScheduleAlert = false
@@ -167,7 +167,7 @@ struct TodayView: View {
                 showTodoAlert = true
             },
             onScheduleTap: { schedule in
-                selectSchedule = ScheduleTotalResponseDataTest(
+                selectSchedule = ScheduleWithOrderInfos(
                     id: schedule.id,
                     description: schedule.description,
                     startDate: schedule.startDate,
@@ -216,7 +216,7 @@ struct TodayListItemView: View {
     var backgroundColor: Color
     
     var onTodoTap: (ToDoListDataModel) -> Void
-    var onScheduleTap: (ScheduleTotalResponseDataTest) -> Void
+    var onScheduleTap: (ScheduleWithOrderInfos) -> Void
     
     var onCheckChanged: (Bool) -> Void
     

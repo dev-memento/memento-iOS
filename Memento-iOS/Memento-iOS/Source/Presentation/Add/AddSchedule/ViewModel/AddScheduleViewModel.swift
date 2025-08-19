@@ -115,17 +115,17 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
              print("DEBUG: 이벤트 기간이 24시간 이상이지만 사용자가 all-day를 해제했습니다. API에는 isAllDay: true로 전송됩니다.")
          }
 
-        let request = PostCreateScheduleRequest(
+        let request = SchedulePostRequest(
             description: title,
             startDate: combine(date: startDate, time: startTime).formattedDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),
             endDate: combine(date: endDate, time: endTime).formattedDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),
             isAllDay: shouldBeAllDay,
-            tagID: selectedTag.tagId
+            tagId: selectedTag.tagId
         )
 
         print("DEBUG: request - \(request)")
 
-        scheduleApiService.postCreateSchedule(bodyParam: request) { [weak self] result in
+        scheduleApiService.postSchedule(body: request) { [weak self] result in
             guard let self else { return }
 
             self.postMakeScheduleNotiFication()

@@ -1,5 +1,5 @@
 //
-//  ScheduleTotalResponseData.swift
+//  ScheduleTotalResponse.swift
 //  Memento-iOS
 //
 //  Created by Kimgahyun on 1/21/25.
@@ -7,11 +7,11 @@
 
 import Foundation
 
-struct ScheduleTotalResponseData: Codable, Equatable {
-    let scheduleWithOrderInfos: [ScheduleTotalResponseDataTest]
+struct ScheduleTotalResponse: Codable, Equatable {
+    let scheduleWithOrderInfos: [ScheduleWithOrderInfos]
 }
 
-struct ScheduleTotalResponseDataTest: Codable, Equatable {
+struct ScheduleWithOrderInfos: Codable, Equatable {
     let id: Int
     let description: String
     let startDate: String
@@ -23,4 +23,3 @@ struct ScheduleTotalResponseDataTest: Codable, Equatable {
     let tagName: String
     let tagColorCode: String
 }
-

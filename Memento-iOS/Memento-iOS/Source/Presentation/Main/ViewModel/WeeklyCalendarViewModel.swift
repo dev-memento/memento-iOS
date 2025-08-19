@@ -13,10 +13,10 @@ import MCalendar
 
 final class WeeklyCalendarViewModel: ObservableObject {
     
-    @Published var schedules: [ScheduleTotalResponseDataTest] = []
-    @Published var tag: [TagResponseData] = []
+    @Published var schedules: [ScheduleWithOrderInfos] = []
+    @Published var tag: [TagResponse] = []
     @Published var toDoList: [ToDoListTotalResponseDataTest] = []
-    @Published var allday: [ScheduleAllDayResponseDataTest] = []
+    @Published var allday: [AllDaySchedulesList] = []
     @Published var wakeUpTime: String = "8 AM"
     @Published var windDownTime: String = "11 PM"
     
@@ -308,7 +308,7 @@ extension WeeklyCalendarViewModel {
     
     
     func getSchedulesAllDayAPI() {
-        scheduleService.getSchedulesAllDays { [weak self] result in
+        scheduleService.getSchedulesAllDay { [weak self] result in
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {

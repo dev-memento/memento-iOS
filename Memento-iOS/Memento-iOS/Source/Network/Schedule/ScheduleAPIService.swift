@@ -12,136 +12,162 @@ import Moya
 // MARK: - ScheduleAPIServiceProtocol
 
 protocol ScheduleAPIServiceProtocol {
-    func getSchedulesTotal(completion: @escaping (NetworkResult<BaseDTO<ScheduleTotalResponseData>>) -> Void)
-    func getSchedulesAllDays(completion: @escaping (NetworkResult<ScheduleAllDayResponseDTO>) -> Void)
-    func getSchedules(completion: @escaping (NetworkResult<ScheduleResponseDTO>) -> Void)
-    func getSchedulesDetail(completion: @escaping (NetworkResult<ScheduleDetailResponseDTO>) -> Void)
-    func postCreateSchedule(bodyParam: PostCreateScheduleRequest, completion: @escaping (NetworkResult<PostCreateScheduleResponseDTO>) -> Void)
+    func getSchedulesTotal(completion: @escaping (NetworkResult<ScheduleTotalResponseDTO>) -> Void)
+    func getSchedulesAllDay(completion: @escaping (NetworkResult<ScheduleAllDayResponseDTO>) -> Void)
+    func getSchedulesByDate(date: String, completion: @escaping (NetworkResult<ScheduleByDateResponseDTO>) -> Void)
+    func getSchedulesDetail(scheduleId: Int, completion: @escaping (NetworkResult<ScheduleDetailResponseDTO>) -> Void)
+    
+    func postSchedule(body: SchedulePostRequest, completion: @escaping (NetworkResult<SchedulePostResponseDTO>) -> Void)
+    
     func deleteSchedule(scheduleId: Int, completion: @escaping (NetworkResult<Void>) -> Void)
 }
 
 extension ScheduleAPIServiceProtocol {
-    typealias ScheduleTotalResponseDTO = BaseDTO<ScheduleTotalResponseData>
-    typealias ScheduleAllDayResponseDTO = BaseDTO<ScheduleAllDayResponseData>
-    typealias ScheduleResponseDTO = BaseDTO<ScheduleResponseData>
-    typealias ScheduleDetailResponseDTO = BaseDTO<ScheduleDetailResponseData>
-    typealias PostCreateScheduleResponseDTO = BaseDTO<PostCreateScheduleResponseData?>
+    typealias ScheduleTotalResponseDTO = BaseDTO<ScheduleTotalResponse>
+    typealias ScheduleAllDayResponseDTO = BaseDTO<ScheduleAllDayResponse>
+    typealias ScheduleByDateResponseDTO = BaseDTO<ScheduleTotalResponse> // 전체 일정 조회랑 같은 DTO
+    typealias ScheduleDetailResponseDTO = BaseDTO<ScheduleDetailResponse>
+    
+    typealias SchedulePostResponseDTO = BaseDTO<SchedulePostResponse?>
 }
 
 // MARK: - ScheduleAPIService
+// TODO: 공통 헬퍼 함수로 묶어서 중복 코드 제거
 
 final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
-
+    
     private let provider = MoyaProvider<ScheduleTargetType>(plugins: [MoyaPlugin.shared])
     
-    // 일정(Schedule) 관련 전체 데이터 
-    func getSchedulesTotal(completion: @escaping (NetworkResult<BaseDTO<ScheduleTotalResponseData>>) -> Void) {
+    // 전체 일정 조회
+    func getSchedulesTotal(completion: @escaping (NetworkResult<ScheduleTotalResponseDTO>) -> Void) {
         provider.requestWithTokenRefresh(.getSchedulesTotal) { [weak self] result in
             guard let self else { return }
+            let networkResult: NetworkResult<ScheduleTotalResponseDTO>
+            
             switch result {
             case .success(let response):
-                let networkResult: NetworkResult<BaseDTO<ScheduleTotalResponseData>> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
-                completion(networkResult)
+                networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
             case .failure(let error):
                 if let response = error.response {
-                    let networkResult: NetworkResult<ScheduleTotalResponseDTO> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
-                    completion(networkResult)
+                    networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
                 }
-            }
-        }
-    }
-    
-    // 일정 All-day API 연결
-    func getSchedulesAllDays(completion: @escaping (NetworkResult<ScheduleAllDayResponseDTO>) -> Void) {
-        provider.requestWithTokenRefresh(.getSchedulesAllDay) { result in
-            switch result {
-            case .success(let response):
-                let networkResult: NetworkResult<ScheduleAllDayResponseDTO> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
-                print(networkResult.stateDescription)
-                completion(networkResult)
-                
-            case .failure(let error):
-                if let response = error.response {
-                    let networkResult: NetworkResult<ScheduleAllDayResponseDTO> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
-                    completion(networkResult)
+                else {
+                    networkResult = .networkFail
                 }
-            }
-        }
-    }
-    
-    // 일정 (해당 날짜) API 연결 
-    func getSchedules(completion: @escaping (NetworkResult<ScheduleResponseDTO>) -> Void) {
-        provider.requestWithTokenRefresh(.getSchedules) { result in
-            switch result {
-            case .success(let response):
-                let networkResult: NetworkResult<ScheduleResponseDTO> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
-                print(networkResult.stateDescription)
-                completion(networkResult)
-                
-            case.failure(let error):
-                if let response = error.response {
-                    let networkResult: NetworkResult<ScheduleResponseDTO> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
-                    completion(networkResult)
-                }
-            }
-        }
-    }
-    
-    // 일정 (디테일) API 연결 
-    func getSchedulesDetail(completion: @escaping (NetworkResult<ScheduleDetailResponseDTO>) -> Void) {
-        provider.requestWithTokenRefresh(.getSchedulesDetail) { result in
-            switch result {
-            case .success(let response):
-                let networkResult: NetworkResult<ScheduleDetailResponseDTO> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
-                print(networkResult.stateDescription)
-                completion(networkResult)
-                
-            case .failure(let error):
-                if let response = error.response {
-                    let networkResult: NetworkResult<ScheduleDetailResponseDTO> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
-                    completion(networkResult)
-                }
-            }
-        }
-    }
-    
-    func postCreateSchedule(bodyParam: PostCreateScheduleRequest,
-                            completion: @escaping (NetworkResult<PostCreateScheduleResponseDTO>) -> Void) {
-        provider.requestWithTokenRefresh(.postCreateSchedule(body: bodyParam),
-                         completion: { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case .success(let response):
-                let networkResult: NetworkResult<PostCreateScheduleResponseDTO> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
-                print(networkResult.stateDescription)
-                completion(networkResult)
-            case .failure(let error):
-                if let response = error.response {
-                    let networkResult: NetworkResult<PostCreateScheduleResponseDTO> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
-                    completion(networkResult)
-                }
-                
             }
             
-        })
+            print(networkResult.stateDescription)
+            completion(networkResult)
+        }
     }
-
-    func deleteSchedule(scheduleId: Int, completion: @escaping (NetworkResult<Void>) -> Void) {
-        provider.requestWithTokenRefresh(.deleteSchedule(scheduleId: scheduleId)) { result in
+    
+    // All day 일정 조회
+    func getSchedulesAllDay(completion: @escaping (NetworkResult<ScheduleAllDayResponseDTO>) -> Void) {
+        provider.requestWithTokenRefresh(.getSchedulesAllDay) { [weak self] result in
+            guard let self = self else { return }
+            let networkResult: NetworkResult<ScheduleAllDayResponseDTO>
+            
             switch result {
             case .success(let response):
-                let result: NetworkResult<Void> = self.fetchNetworkResult(
-                    statusCode: response.statusCode
-                )
-                completion(result)
+                networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
             case .failure(let error):
                 if let response = error.response {
-                    let result: NetworkResult<Void> = self.fetchNetworkResult(
-                        statusCode: response.statusCode
-                    )
-                    completion(result)
+                    networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
+                } else {
+                    networkResult = .networkFail
                 }
             }
+            
+            print(networkResult.stateDescription)
+            completion(networkResult)
+        }
+    }
+    
+    // 특정 날짜 일정 조회
+    func getSchedulesByDate(date: String, completion: @escaping (NetworkResult<ScheduleByDateResponseDTO>) -> Void) {
+        provider.requestWithTokenRefresh(.getSchedulesByDate(date: date)) { [weak self] result in
+            guard let self = self else { return }
+            let networkResult: NetworkResult<ScheduleByDateResponseDTO>
+            
+            switch result {
+            case .success(let response):
+                networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
+            case .failure(let error):
+                if let response = error.response {
+                    networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
+                } else {
+                    networkResult = .networkFail
+                }
+            }
+            
+            print(networkResult.stateDescription)
+            completion(networkResult)
+        }
+    }
+    
+    // 일정 상세 조회
+    func getSchedulesDetail(scheduleId: Int, completion: @escaping (NetworkResult<ScheduleDetailResponseDTO>) -> Void) {
+        provider.requestWithTokenRefresh(.getSchedulesDetail(scheduleId: scheduleId)) { [weak self] result in
+            guard let self = self else { return }
+            let networkResult: NetworkResult<ScheduleDetailResponseDTO>
+            
+            switch result {
+            case .success(let response):
+                networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
+            case .failure(let error):
+                if let response = error.response {
+                    networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
+                } else {
+                    networkResult = .networkFail
+                }
+            }
+            
+            print(networkResult.stateDescription)
+            completion(networkResult)
+        }
+    }
+    
+    // 일정 생성
+    func postSchedule(body: SchedulePostRequest, completion: @escaping (NetworkResult<SchedulePostResponseDTO>) -> Void) {
+        provider.requestWithTokenRefresh(.postSchedule(body: body)) { [weak self] result in
+            guard let self = self else { return }
+            let networkResult: NetworkResult<SchedulePostResponseDTO>
+            
+            switch result {
+            case .success(let response):
+                networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
+            case .failure(let error):
+                if let response = error.response {
+                    networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
+                } else {
+                    networkResult = .networkFail
+                }
+            }
+            
+            print(networkResult.stateDescription)
+            completion(networkResult)
+        }
+    }
+    
+    // 일정 삭제
+    func deleteSchedule(scheduleId: Int, completion: @escaping (NetworkResult<Void>) -> Void) {
+        provider.requestWithTokenRefresh(.deleteSchedule(scheduleId: scheduleId)) { [weak self] result in
+            guard let self = self else { return }
+            let networkResult: NetworkResult<Void>
+            
+            switch result {
+            case .success(let response):
+                networkResult = self.fetchNetworkResult(statusCode: response.statusCode)
+            case .failure(let error):
+                if let response = error.response {
+                    networkResult = self.fetchNetworkResult(statusCode: response.statusCode)
+                } else {
+                    networkResult = .networkFail
+                }
+            }
+            
+            print(networkResult.stateDescription)
+            completion(networkResult)
         }
     }
 }
