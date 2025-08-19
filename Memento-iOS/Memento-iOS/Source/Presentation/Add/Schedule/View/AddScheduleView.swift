@@ -89,7 +89,7 @@ struct AddScheduleView: View {
                     onTap: { viewModel.presentDatePicker(type: type) }
                 )
                 .sheet(isPresented: isDatePickerPresented) {
-                    SheetContainer(type: .addSchedule(.date)) {
+                    SheetContainer(type: .addSchedule(.date(type))) {
                         VStack {
                             SheetOKButton { viewModel.dismissDatePicker(type: type) }
                             
@@ -114,7 +114,7 @@ struct AddScheduleView: View {
                 .disabled(viewModel.isAllDay)
                 .opacity(viewModel.isAllDay ? 0.3 : 1.0)
                 .sheet(isPresented: isTimePickerPresented) {
-                    SheetContainer(type: .addSchedule(.time)) {
+                    SheetContainer(type: .addSchedule(.time(type))) {
                         VStack {
                             SheetOKButton { viewModel.dismissTimePicker(type: type) }
                             
