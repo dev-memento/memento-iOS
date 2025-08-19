@@ -86,7 +86,8 @@ struct AddScheduleView: View {
                 PickerButton(
                     label: formattedDate,
                     isPresented: isDatePickerPresented,
-                    onTap: { viewModel.presentDatePicker(type: type) }
+                    onTap: { viewModel.presentDatePicker(type: type) },
+                    width: 124
                 )
                 .sheet(isPresented: isDatePickerPresented) {
                     SheetContainer(type: .addSchedule(.date(type))) {
@@ -109,7 +110,8 @@ struct AddScheduleView: View {
                 PickerButton(
                     label: formattedTime,
                     isPresented: isTimePickerPresented,
-                    onTap: { viewModel.presentTimePicker(type: type) }
+                    onTap: { viewModel.presentTimePicker(type: type) },
+                    width: 96
                 )
                 .disabled(viewModel.isAllDay)
                 .opacity(viewModel.isAllDay ? 0.3 : 1.0)

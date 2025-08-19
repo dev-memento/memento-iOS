@@ -12,6 +12,7 @@ struct PickerButton: View {
     let label: String
     @Binding var isPresented: Bool
     let onTap: () -> Void
+    let width: CGFloat
 
     var body: some View {
         Button {
@@ -20,8 +21,8 @@ struct PickerButton: View {
             Text(label)
                 .applyFont(.body_r_14)
                 .foregroundColor(.gray02)
-                .padding(.horizontal, 22)
                 .padding(.vertical, 8)
+                .frame(width: width)
                 .background(isPresented ? Color.gray07 : Color.gray09)
                 .cornerRadius(2)
         }
