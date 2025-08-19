@@ -49,6 +49,6 @@ struct TagPickerSheet<ViewModel: TagSelectable>: View {
             .padding([.horizontal, .bottom], 10)
             .scrollDisabled(tagList.count <= 3)
         }
-        .applyDynamicSheetForTagCount()
+        .applyDynamicSheetForTagCount(tagCount: tagList.count)
     }
 }
