@@ -35,9 +35,6 @@ struct AddScheduleView: View {
             }
             .padding(.horizontal)
         }
-        .onAppear {
-            viewModel.getTagsAPI()
-        }
     }
     
     private var titleInputView: some View {

@@ -93,7 +93,13 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
         }
     }
     
-    func presentTagPicker() { isTagPickerPresented = true }
+    func presentTagPicker() {
+        if tagList.isEmpty {
+            getTagsAPI()
+        }
+        
+        isTagPickerPresented = true
+    }
     func dismissTagPicker() { isTagPickerPresented = false }
     
     
