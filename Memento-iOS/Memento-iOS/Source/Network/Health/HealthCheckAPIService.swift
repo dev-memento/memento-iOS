@@ -23,11 +23,14 @@ extension HealthCheckAPIServiceProtocol {
 
 final class HealthCheckAPIService: BaseAPIService, HealthCheckAPIServiceProtocol {
 
-    private let provider = MoyaProvider<HealthCheckTargetType>(plugins: [MoyaPlugin.shared])
+    private let provider = MoyaProvider<HealthCheckTargetType>(
+        session: AFSessionFactory.shared,
+        plugins: [MoyaPlugin.shared]
+    )
 
     /// Health Check API 호출
     func getHealthCheck(completion: @escaping (NetworkResult<HealthCheckResponseDTO>) -> Void) {
-        provider.requestWithTokenRefresh(.getHealthCheck) { result in
+        provider.request(.getHealthCheck) { result in
             switch result {
             case .success(let response):
                 let networkResult: NetworkResult<HealthCheckResponseDTO> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)

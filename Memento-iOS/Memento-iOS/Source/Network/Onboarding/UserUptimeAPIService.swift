@@ -21,10 +21,12 @@ extension UserUptimeAPIServiceProtocol {
 // MARK: - UserInfoGetAPIService
 
 final class UserUptimeAPIService: BaseAPIService, UserUptimeAPIServiceProtocol {
-    private let provider = MoyaProvider<UserInfoTargetType>(plugins: [MoyaPlugin.shared, TokenRefreshPlugin.shared])
-
+    private let provider = MoyaProvider<UserInfoTargetType>(
+          session: AFSessionFactory.shared,
+          plugins: [MoyaPlugin.shared]
+      )
     func fetchUptime(completion: @escaping (NetworkResult<UserUptimeResponseDTO>) -> Void) {
-        provider.requestWithTokenRefresh(.getUserUptime) { [weak self] result in
+        provider.request(.getUserUptime) { [weak self] result in
             guard let self = self else { return }
 
             switch result {

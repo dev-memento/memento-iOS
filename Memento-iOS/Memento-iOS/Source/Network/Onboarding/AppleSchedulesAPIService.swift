@@ -17,8 +17,11 @@ protocol AppleSchedulesAPIServiceProtocol {
 // MARK: - AppleSchedulesAPIService
 
 final class AppleSchedulesAPIService: BaseAPIService, AppleSchedulesAPIServiceProtocol {
-    private let provider = MoyaProvider<AppleSchedulesTargetType>(plugins: [MoyaPlugin.shared, TokenRefreshPlugin.shared])
-
+    private let provider = MoyaProvider<AppleSchedulesTargetType>(
+        session: AFSessionFactory.shared,
+        plugins: [MoyaPlugin.shared]
+    )
+    
     /// 스케줄 생성하기 API 호출
     func submitSchedules(request: AppleScheduleListRequest, completion: @escaping (NetworkResult<EmptyDTO>) -> Void) {
         provider.request(.schedule(request: request)) { [weak self] result in

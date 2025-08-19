@@ -83,6 +83,7 @@ final class TokenKeychainManager {
     // MARK: - Access Token
     
     func saveAccessToken(_ token: String) throws {
+        print("👍 AccessToken 저장 환료")
         try save(key: "AccessToken", value: token)
     }
     
@@ -93,6 +94,7 @@ final class TokenKeychainManager {
     // MARK: - Refresh Token
     
     func saveRefreshToken(_ token: String) throws {
+        print("👍 RefreshToken 저장 환료")
         try save(key: "RefreshToken", value: token)
     }
     

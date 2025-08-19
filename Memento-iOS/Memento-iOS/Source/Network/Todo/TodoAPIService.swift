@@ -23,11 +23,14 @@ protocol TodoAPIServiceProtocol {
 }
 
 final class TodoAPIService: BaseAPIService, TodoAPIServiceProtocol {
-
-    private let provider = MoyaProvider<TodoTargetType>(plugins: [MoyaPlugin.shared, TokenRefreshPlugin.shared])
-
+    
+    private let provider = MoyaProvider<TodoTargetType>(
+        session: AFSessionFactory.shared,
+        plugins: [MoyaPlugin.shared]
+    )
+    
     func deleteTodo(todoId: Int, completion: @escaping (NetworkResult<Void>) -> Void) {
-        provider.requestWithTokenRefresh(.deleteTodo(todoId: todoId)) { result in
+        provider.request(.deleteTodo(todoId: todoId)) { result in
             print("DEBUG: Requesting DELETE for Todo ID: \(todoId)")
             switch result {
             case .success(let response):
@@ -47,7 +50,7 @@ final class TodoAPIService: BaseAPIService, TodoAPIServiceProtocol {
             }
         }
     }
-
+    
     func createTodo(
         startDate: String,
         description: String,
@@ -57,7 +60,7 @@ final class TodoAPIService: BaseAPIService, TodoAPIServiceProtocol {
         priorityImportance: Double,
         completion: @escaping (NetworkResult<Void>) -> Void
     ) {
-        provider.requestWithTokenRefresh(
+        provider.request(
             .createTodo(
                 startDate: startDate,
                 description: description,

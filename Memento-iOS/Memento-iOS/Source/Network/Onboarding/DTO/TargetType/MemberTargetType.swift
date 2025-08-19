@@ -33,7 +33,10 @@ extension MemberTargetType: BaseTargetType {
     var path: String { utilPath.rawValue }
     
     var method: Moya.Method {
-        return .put
+         switch self {
+         case .socialLogin: return .put
+         case .withdraw:    return .delete
+         }
     }
     
     var requestBodyParameter: Codable? {

@@ -24,8 +24,10 @@ extension MemberAPIServiceProtocol {
 
 final class MemberAPIService: BaseAPIService, MemberAPIServiceProtocol {
     
-    
-    let provider = MoyaProvider<MemberTargetType>(plugins: [MoyaPlugin.shared])
+    private let provider = MoyaProvider<MemberTargetType>(
+        session: AFSessionFactory.shared,
+        plugins: [MoyaPlugin.shared]
+    )
     
     // MARK: - 회원 로그인
     func socialLogin(provider: String, idToken: String, timeZoneOffset: String, fcmToken: String, completion: @escaping (NetworkResult<LoginResponseDTO>) -> Void) {
@@ -40,7 +42,6 @@ final class MemberAPIService: BaseAPIService, MemberAPIServiceProtocol {
                     statusCode: response.statusCode,
                     data: response.data
                 )
-                print(networkResult.stateDescription)
                 completion(networkResult)
             
             case .failure(let error):

@@ -19,7 +19,6 @@ enum HeaderType {
     case socialTokenHeader(socialToken: String)
     case accessTokenHeader
     case refreshTokenHeader
-    case tokenHealthHeader(tokenHealthType: TokenHealthType)
     case noTokenHeader
 }
 
@@ -72,10 +71,6 @@ extension BaseTargetType {
                 print("[ERROR] 리프레시 토큰 로드 실패")
                 return nil
             }
-        case .tokenHealthHeader:
-            // 나중에 추가
-            // Access Token 또는 Refresh Token의 상태 확인 및 구분
-            break
             
         case .noTokenHeader:
             break
@@ -93,4 +88,6 @@ extension BaseTargetType {
         }
         return .requestPlain
     }
+    
+    var validationType: ValidationType { .successCodes }
 }

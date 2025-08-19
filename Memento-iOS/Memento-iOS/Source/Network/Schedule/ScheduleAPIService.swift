@@ -32,11 +32,14 @@ extension ScheduleAPIServiceProtocol {
 
 final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
 
-    private let provider = MoyaProvider<ScheduleTargetType>(plugins: [MoyaPlugin.shared])
+    private let provider = MoyaProvider<ScheduleTargetType>(
+        session: AFSessionFactory.shared,
+        plugins: [MoyaPlugin.shared]
+    )
     
     // 일정(Schedule) 관련 전체 데이터 
     func getSchedulesTotal(completion: @escaping (NetworkResult<BaseDTO<ScheduleTotalResponseData>>) -> Void) {
-        provider.requestWithTokenRefresh(.getSchedulesTotal) { [weak self] result in
+        provider.request(.getSchedulesTotal) { [weak self] result in
             guard let self else { return }
             switch result {
             case .success(let response):
@@ -53,7 +56,7 @@ final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
     
     // 일정 All-day API 연결
     func getSchedulesAllDays(completion: @escaping (NetworkResult<ScheduleAllDayResponseDTO>) -> Void) {
-        provider.requestWithTokenRefresh(.getSchedulesAllDay) { result in
+        provider.request(.getSchedulesAllDay) { result in
             switch result {
             case .success(let response):
                 let networkResult: NetworkResult<ScheduleAllDayResponseDTO> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
@@ -71,7 +74,7 @@ final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
     
     // 일정 (해당 날짜) API 연결 
     func getSchedules(completion: @escaping (NetworkResult<ScheduleResponseDTO>) -> Void) {
-        provider.requestWithTokenRefresh(.getSchedules) { result in
+        provider.request(.getSchedules) { result in
             switch result {
             case .success(let response):
                 let networkResult: NetworkResult<ScheduleResponseDTO> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
@@ -89,7 +92,7 @@ final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
     
     // 일정 (디테일) API 연결 
     func getSchedulesDetail(completion: @escaping (NetworkResult<ScheduleDetailResponseDTO>) -> Void) {
-        provider.requestWithTokenRefresh(.getSchedulesDetail) { result in
+        provider.request(.getSchedulesDetail) { result in
             switch result {
             case .success(let response):
                 let networkResult: NetworkResult<ScheduleDetailResponseDTO> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
@@ -107,7 +110,7 @@ final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
     
     func postCreateSchedule(bodyParam: PostCreateScheduleRequest,
                             completion: @escaping (NetworkResult<PostCreateScheduleResponseDTO>) -> Void) {
-        provider.requestWithTokenRefresh(.postCreateSchedule(body: bodyParam),
+        provider.request(.postCreateSchedule(body: bodyParam),
                          completion: { [weak self] result in
             guard let self else { return }
             switch result {
@@ -127,7 +130,7 @@ final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
     }
 
     func deleteSchedule(scheduleId: Int, completion: @escaping (NetworkResult<Void>) -> Void) {
-        provider.requestWithTokenRefresh(.deleteSchedule(scheduleId: scheduleId)) { result in
+        provider.request(.deleteSchedule(scheduleId: scheduleId)) { result in
             print("DEBUG: Requesting DELETE for Schedule ID: \(scheduleId)")
             switch result {
             case .success(let response):
