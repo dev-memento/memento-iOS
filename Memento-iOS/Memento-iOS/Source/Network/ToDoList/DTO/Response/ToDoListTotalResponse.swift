@@ -1,15 +1,17 @@
 //
-//  ToDoListResponseData.swift
+//  ToDoListTotalResponse.swift
 //  Memento-iOS
 //
 //  Created by 이세민 on 1/23/25.
 //
 
-struct ToDoListTotalResponseData: Codable {
-    let toDoGetResponses: [ToDoListTotalResponseDataTest]
+import Foundation
+
+struct ToDoListTotalResponse: Codable {
+    let toDoGetResponses: [ToDoGetResponses]
 }
 
-struct ToDoListTotalResponseDataTest: Codable, Equatable {
+struct ToDoGetResponses: Codable, Equatable {
     let id: Int
     let groupId: String
     let description: String

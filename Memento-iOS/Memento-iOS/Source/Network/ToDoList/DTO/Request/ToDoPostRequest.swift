@@ -1,5 +1,5 @@
 //
-//  TodoRequest.swift
+//  ToDoPostRequest.swift
 //  Memento-iOS
 //
 //  Created by RAFA on 1/23/25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct TodoRequest: Codable {
+struct ToDoPostRequest: Codable {
     let startDate: String
     let description: String
     let endDate: String

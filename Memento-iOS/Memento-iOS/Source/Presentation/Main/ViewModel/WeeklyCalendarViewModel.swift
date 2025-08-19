@@ -15,7 +15,7 @@ final class WeeklyCalendarViewModel: ObservableObject {
     
     @Published var schedules: [ScheduleWithOrderInfos] = []
     @Published var tag: [TagResponse] = []
-    @Published var toDoList: [ToDoListTotalResponseDataTest] = []
+    @Published var toDoList: [ToDoGetResponses] = []
     @Published var allday: [AllDaySchedulesList] = []
     @Published var wakeUpTime: String = "8 AM"
     @Published var windDownTime: String = "11 PM"
@@ -258,7 +258,7 @@ extension WeeklyCalendarViewModel {
     }
     
     func getToDoListTotalAPI() {
-        toDoListService.getToDoList { [weak self] result in
+        toDoListService.getToDoListTotal { [weak self] result in
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {

@@ -59,11 +59,11 @@ final class AddTodoViewModel: ObservableObject, TagSelectable {
         description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
     
-    private let todoAPIService: TodoAPIServiceProtocol
+    private let todoAPIService: ToDoListAPIServiceProtocol
     
     // MARK: - Initializer
     
-    init(todoAPIService: TodoAPIServiceProtocol = TodoAPIService(),
+    init(todoAPIService: ToDoListAPIServiceProtocol = ToDoListAPIService(),
          tagService: TagAPIServiceProtocol = TagAPIService()) {
         self.todoAPIService = todoAPIService
         self.tagService = tagService
@@ -103,14 +103,18 @@ final class AddTodoViewModel: ObservableObject, TagSelectable {
         let formattedStartDate = startDate.formattedDate(with: "yyyy-MM-dd")
         let formattedEndDate = endDate.formattedDate(with: "yyyy-MM-dd")
         
-        todoAPIService.createTodo(
+        let request = ToDoPostRequest(
             startDate: formattedStartDate,
             description: description,
             endDate: formattedEndDate,
             tagId: selectedTag.tagId,
             priorityUrgency: priorityUrgency,
             priorityImportance: priorityImportance
-        ) { result in
+        )
+        
+        todoAPIService.postToDo(body: request) { [weak self] result in
+            guard let self else { return }
+            
             switch result {
             case .success:
                 completion()
@@ -126,7 +130,7 @@ final class AddTodoViewModel: ObservableObject, TagSelectable {
                 print("DEBUG: Error - 내부 서버 에러")
             default:
                 completion()
-                print("DEBUG: Error - 에러 발생")
+                print("DEBUG: Error - 알 수 없는 에러 발생")
             }
         }
     }

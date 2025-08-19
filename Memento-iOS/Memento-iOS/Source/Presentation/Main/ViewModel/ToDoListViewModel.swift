@@ -12,10 +12,9 @@ import MDSKit
 import MCalendar
 
 final class ToDoListViewModel: ObservableObject {
-    @Published var toDoList: [ToDoListTotalResponseDataTest] = []
+    @Published var toDoList: [ToDoGetResponses] = []
     private let tagService: TagAPIServiceProtocol
     private let toDoListService: ToDoListAPIServiceProtocol
-    private let toDoService: TodoAPIServiceProtocol
     @Published var toDoListItems: [ToDoListDataModel] = []
     @Published var mCallendarDataSource: MCalendarDataSource
     @Published var mEventDataSource: MEventDatasource
@@ -35,13 +34,11 @@ final class ToDoListViewModel: ObservableObject {
         toDoListService: ToDoListAPIServiceProtocol,
         mCallendarDataSource: MCalendarDataSource,
         mEventDataSource: MEventDatasource,
-        toDoService: TodoAPIServiceProtocol
     ) {
         self.tagService = tagService
         self.toDoListService = toDoListService
         self.mCallendarDataSource = mCallendarDataSource
         self.mEventDataSource = mEventDataSource
-        self.toDoService = toDoService
     }
     
     func preprocessingForEventDate() {
@@ -71,7 +68,7 @@ extension ToDoListViewModel {
     }
     
     func deleteTodo(todoId: Int) {
-        toDoService.deleteTodo(todoId: todoId) { [weak self] result in
+        toDoListService.deleteToDo(toDoId: todoId) { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
                 case .success:
@@ -95,7 +92,7 @@ extension ToDoListViewModel {
     
     
     func getToDoListTotalAPI() {
-        toDoListService.getToDoList { [weak self] result in
+        toDoListService.getToDoListTotal { [weak self] result in
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {

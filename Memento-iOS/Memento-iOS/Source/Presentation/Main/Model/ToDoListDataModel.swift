@@ -17,7 +17,7 @@ struct ToDoListDataModel: Identifiable, Equatable, Hashable {
     var isChecked: Bool
     var tagName: String
     
-    func mapToToDoItem() -> ToDoListTotalResponseDataTest {
+    func mapToToDoItem() -> ToDoGetResponses {
         return .init(id: id,
                      groupId: "",
                      description: toDoTitle,

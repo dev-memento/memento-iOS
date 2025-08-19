@@ -130,18 +130,18 @@ struct ToDoListDateView: View {
 }
 
 struct ToDoListItemView: View {
-    var item: ToDoListTotalResponseDataTest
+    var item: ToDoGetResponses
     @Binding var isChecked: Bool
     
     var isHighlighted: Bool
     var backgroundColor: Color
     
-    var onTodoTap: (ToDoListTotalResponseData) -> Void
+    var onTodoTap: (ToDoListTotalResponse) -> Void
     
-    private var toDoListCompletedBinding: Binding<ToDoListCompletedResponseData> {
-        Binding<ToDoListCompletedResponseData>(
+    private var toDoListCompletedBinding: Binding<ToDoCompletionResponse> {
+        Binding<ToDoCompletionResponse>(
             get: {
-                ToDoListCompletedResponseData(id: item.id, isCompleted: isChecked)
+                ToDoCompletionResponse(id: item.id, isCompleted: isChecked)
             },
             set: { newValue in
                 isChecked = newValue.isCompleted
