@@ -8,30 +8,29 @@
 import Foundation
 import Moya
 
-enum LoginTargetType {
-    case login(provider: String, idToken: String, timeZoneOffset: String, fcmToken: String)
+enum MemberTargetType {
+    case socialLogin(provider: String, idToken: String, timeZoneOffset: String, fcmToken: String)
+    case withdraw
 }
 
-extension LoginTargetType: BaseTargetType {
+extension MemberTargetType: BaseTargetType {
     
     var pathParameter: String? {
         return nil
     }
     
     var headerType: HeaderType {
-        return .noTokenHeader
+        switch self {
+        case .socialLogin: return .noTokenHeader
+        case .withdraw:    return .accessTokenHeader
+        }
     }
     
     var utilPath: UtilPath {
         return .user
     }
     
-    var path: String {
-        switch self {
-        case .login:
-            return "\(utilPath.rawValue)" // 결과: "/api/v1/members"
-        }
-    }
+    var path: String { utilPath.rawValue }
     
     var method: Moya.Method {
         return .put
@@ -39,13 +38,15 @@ extension LoginTargetType: BaseTargetType {
     
     var requestBodyParameter: Codable? {
         switch self {
-        case let .login(provider, idToken, timeZoneOffset, fcmToken):
+        case let .socialLogin(provider, idToken, timeZoneOffset, fcmToken):
             return LoginRequest(
                 provider: provider,
                 idToken: idToken,
                 timeZoneOffset: timeZoneOffset,
                 fcmToken: fcmToken
             )
+        case .withdraw:
+            return nil
         }
     }
     
