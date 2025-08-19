@@ -34,7 +34,7 @@ extension ScheduleAPIServiceProtocol {
 
 final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
     
-    private let provider = MoyaProvider<ScheduleTargetType>(plugins: [MoyaPlugin.shared])
+    private let provider = MoyaProvider<ScheduleTargetType>(plugins: [MoyaPlugin.shared, TokenRefreshPlugin.shared])
     
     // 전체 일정 조회
     func getSchedulesTotal(completion: @escaping (NetworkResult<ScheduleTotalResponseDTO>) -> Void) {
