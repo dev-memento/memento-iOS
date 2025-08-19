@@ -12,32 +12,38 @@ import Moya
 // MARK: - TagAPIServiceProtocol
 
 protocol TagAPIServiceProtocol {
-    func getTags(completion: @escaping (NetworkResult<BaseDTO<[TagResponseData]>>) -> Void)
+    func getTags(completion: @escaping (NetworkResult<TagResponseDTO>) -> Void)
 }
 
 extension TagAPIServiceProtocol {
-    typealias TagResponseDTO = BaseDTO<TagResponseData>
+    typealias TagResponseDTO = BaseDTO<[TagResponse]>
 }
 
 // MARK: - TagAPIService
 
 final class TagAPIService: BaseAPIService, TagAPIServiceProtocol {
-
+    
     private let provider = MoyaProvider<TagTargetType>(plugins: [MoyaPlugin.shared])
     
-    func getTags(completion: @escaping (NetworkResult<BaseDTO<[TagResponseData]>>) -> Void) {
-        provider.requestWithTokenRefresh(.getTags) { result in
+    func getTags(completion: @escaping (NetworkResult<TagResponseDTO>) -> Void) {
+        provider.requestWithTokenRefresh(.getTags) { [weak self] result in
+            guard let self else { return }
+            let networkResult: NetworkResult<TagResponseDTO>
+            
             switch result {
             case .success(let response):
-                let networkResult: NetworkResult<BaseDTO<[TagResponseData]>> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
-                print(networkResult.stateDescription)
-                completion(networkResult)
+                networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
             case .failure(let error):
                 if let response = error.response {
-                    let networkResult: NetworkResult<BaseDTO<[TagResponseData]>> = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
+                    networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
+                }
+                else {
+                    networkResult = .networkFail
                 }
             }
+            
+            print(networkResult.stateDescription)
+            completion(networkResult)
         }
     }
-    
 }
