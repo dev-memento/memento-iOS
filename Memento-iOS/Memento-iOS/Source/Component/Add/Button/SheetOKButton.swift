@@ -11,12 +11,13 @@ import MDSKit
 
 struct SheetOKButton: View {
 
-    let action: () -> Void
+    let onTap: () -> Void
 
     var body: some View {
         HStack {
             Spacer()
-            Button("OK", action: action)
+            
+            Button("OK", action: onTap)
                 .applyFont(.body_r_14)
                 .foregroundColor(Color.gray04)
                 .padding(.top, 20)
