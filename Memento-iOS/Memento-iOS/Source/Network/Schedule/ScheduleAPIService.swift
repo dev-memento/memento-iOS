@@ -17,7 +17,7 @@ protocol ScheduleAPIServiceProtocol {
     func getSchedulesByDate(date: String, completion: @escaping (NetworkResult<ScheduleByDateResponseDTO>) -> Void)
     func getSchedulesDetail(scheduleId: Int, completion: @escaping (NetworkResult<ScheduleDetailResponseDTO>) -> Void)
     
-    func postSchedule(body: SchedulePostRequest, completion: @escaping (NetworkResult<SchedulePostResponseDTO>) -> Void)
+    func postSchedule(body: SchedulePostRequest, completion: @escaping (NetworkResult<Void>) -> Void)
     
     func deleteSchedule(scheduleId: Int, completion: @escaping (NetworkResult<Void>) -> Void)
 }
@@ -27,8 +27,6 @@ extension ScheduleAPIServiceProtocol {
     typealias ScheduleAllDayResponseDTO = BaseDTO<ScheduleAllDayResponse>
     typealias ScheduleByDateResponseDTO = BaseDTO<ScheduleTotalResponse> // 전체 일정 조회랑 같은 DTO
     typealias ScheduleDetailResponseDTO = BaseDTO<ScheduleDetailResponse>
-    
-    typealias SchedulePostResponseDTO = BaseDTO<SchedulePostResponse?>
 }
 
 // MARK: - ScheduleAPIService
@@ -128,17 +126,17 @@ final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
     }
     
     // 일정 생성
-    func postSchedule(body: SchedulePostRequest, completion: @escaping (NetworkResult<SchedulePostResponseDTO>) -> Void) {
+    func postSchedule(body: SchedulePostRequest, completion: @escaping (NetworkResult<Void>) -> Void) {
         provider.requestWithTokenRefresh(.postSchedule(body: body)) { [weak self] result in
             guard let self = self else { return }
-            let networkResult: NetworkResult<SchedulePostResponseDTO>
+            let networkResult: NetworkResult<Void>
             
             switch result {
             case .success(let response):
-                networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
+                networkResult = self.fetchNetworkResult(statusCode: response.statusCode)
             case .failure(let error):
                 if let response = error.response {
-                    networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
+                    networkResult = self.fetchNetworkResult(statusCode: response.statusCode)
                 } else {
                     networkResult = .networkFail
                 }
