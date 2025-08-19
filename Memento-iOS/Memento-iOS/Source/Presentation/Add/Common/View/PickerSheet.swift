@@ -1,5 +1,5 @@
 //
-//  SheetContainer.swift
+//  PickerSheet.swift
 //  Memento-iOS
 //
 //  Created by RAFA on 1/18/25.
@@ -9,7 +9,7 @@ import SwiftUI
 
 import MDSKit
 
-struct SheetContainer<Content: View>: View {
+struct PickerSheet<Content: View>: View {
 
     let type: PickerButtonType
     let content: Content

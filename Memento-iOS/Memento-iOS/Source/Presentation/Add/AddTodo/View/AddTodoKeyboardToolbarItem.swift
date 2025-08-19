@@ -44,7 +44,7 @@ struct AddTodoKeyboardToolbarItem: View {
         .background(Color.gray09)
         .clipShape(RoundedRectangle(cornerRadius: 2))
         .sheet(isPresented: $viewModel.showEndDatePicker) {
-            SheetContainer(type: .addToDo(.date)) {
+            PickerSheet(type: .addToDo(.date)) {
                 VStack {
                     SheetOKButton { viewModel.showEndDatePicker = false }
                     
@@ -98,7 +98,7 @@ struct AddTodoKeyboardToolbarItem: View {
         }
         .frame(width: 42, height: 42)
         .sheet(isPresented: $viewModel.showPriorityPicker) {
-            SheetContainer(type: .addToDo(.priority)) {
+            PickerSheet(type: .addToDo(.priority)) {
                 AddTodoPriorityView(
                     viewType: .add,
                     source: "",
