@@ -76,7 +76,7 @@ struct AddTodoKeyboardToolbarItem: View {
         .sheet(isPresented: $viewModel.showTagPicker) {
             TagPickerSheet(
                 viewModel: viewModel,
-                //                isPresented: $viewModel.showTagPicker,
+                                isPresented: $viewModel.showTagPicker,
                 type: .addToDo(.tag),
                 tagList: viewModel.tags
             )

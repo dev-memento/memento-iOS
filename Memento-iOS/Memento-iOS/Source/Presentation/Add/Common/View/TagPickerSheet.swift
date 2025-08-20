@@ -9,20 +9,19 @@ import SwiftUI
 
 protocol TagSelectable: ObservableObject {
     var selectedTag: Tag { get set }
-    var showTagPicker: Bool { get set }
 }
 
 struct TagPickerSheet<ViewModel: TagSelectable>: View {
     
     @ObservedObject var viewModel: ViewModel
-    //    @Binding var isPresented: Bool
+    @Binding var isPresented: Bool
     
     let type: PickerButtonType
     let tagList: [Tag]
     
     var body: some View {
-        SheetContainer(type: type) {
-            SheetOKButton { viewModel.showTagPicker = false }
+        PickerSheet(type: type) {
+            SheetOKButton { isPresented = false }
             
             List {
                 ForEach(tagList) { tag in
