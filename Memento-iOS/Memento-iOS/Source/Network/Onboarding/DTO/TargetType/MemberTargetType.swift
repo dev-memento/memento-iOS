@@ -22,7 +22,7 @@ extension MemberTargetType: BaseTargetType {
     var headerType: HeaderType {
         switch self {
         case .socialLogin: return .noTokenHeader
-        case .withdraw:    return .accessTokenHeader
+        case .withdraw:    return .tokenHeader
         }
     }
     

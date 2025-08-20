@@ -15,12 +15,12 @@ enum UserInfoTargetType {
 
 extension UserInfoTargetType: BaseTargetType {
     
-    var pathParameter: String? {
-        return nil
+    var headerType: HeaderType {
+        return .tokenHeader
     }
     
-    var headerType: HeaderType {
-        return .accessTokenHeader
+    var pathParameter: String? {
+        return nil
     }
     
     var utilPath: UtilPath {

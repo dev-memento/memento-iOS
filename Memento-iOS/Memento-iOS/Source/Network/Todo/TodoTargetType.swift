@@ -26,7 +26,7 @@ extension TodoTargetType: BaseTargetType {
     }
     
     var headerType: HeaderType {
-        return .accessTokenHeader
+        return .tokenHeader
     }
     
     var utilPath: UtilPath {

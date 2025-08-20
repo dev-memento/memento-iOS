@@ -4,20 +4,22 @@
 //
 //  Created by 정정욱 on 1/22/25.
 //
+
 import Foundation
 import Moya
 import Alamofire
 
+// MARK: - AFSessionFactory
 enum AFSessionFactory {
-    /// 일반 요청용 (TokenInterceptor 장착)
+    /// 일반 요청 (TokenInterceptor 장착)
     static let shared: Session = {
         let config = URLSessionConfiguration.af.default
         config.timeoutIntervalForRequest = 20
         config.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
         return Session(configuration: config, interceptor: TokenInterceptor.shared)
     }()
-
-    /// 리프레시 전용 (인터셉터 없음) — re-entrancy 방지
+    
+    /// 리프레시 전용(인터셉터 없음) — 동일 세션 재진입/교착 방지
     static let refreshOnly: Session = {
         let config = URLSessionConfiguration.af.default
         config.timeoutIntervalForRequest = 15
@@ -26,75 +28,68 @@ enum AFSessionFactory {
     }()
 }
 
-
+// MARK: - TokenInterceptor
 final class TokenInterceptor: RequestInterceptor {
-
     static let shared = TokenInterceptor()
 
     private let lock = NSLock()
     private var isRefreshing = false
     private var pendingCompletions: [((RetryResult) -> Void)] = []
 
-    private let baseURLString: String? = Bundle.main.infoDictionary?["BASE_URL"] as? String
+    private let baseURLString: String = Config.baseURL
+    private let refreshPath = "/v1/auth/token/refresh"
+    private var refreshURL: URL? { URL(string: baseURLString + refreshPath) }
 
     private init() {}
 
-    // MARK: - Authorization 보정 (필요 시에만)
+    // MARK: Adapt
     func adapt(_ urlRequest: URLRequest,
                for session: Session,
                completion: @escaping (Result<URLRequest, Error>) -> Void) {
-
         var req = urlRequest
 
         guard isOurAPI(req) else { completion(.success(req)); return }
-        if isLogin(req) || isRefresh(req) { completion(.success(req)); return }
 
-        // 현재 요청의 Authorization (있을 수도, 없을 수도)
-        let currentHeader = req.value(forHTTPHeaderField: "Authorization")
-        let currentBearer = extractBearer(from: currentHeader)
-
-        // Keychain의 최신 액세스 토큰
-        let latestToken: String? = {
-            do {
-                guard let token = try TokenKeychainManager.shared.getAccessToken(),
-                      !token.isEmpty
-                else { return nil }
-                return token
-            } catch {
-                return nil
-            }
-        }()
-
-        // 1) 헤더가 없고 최신 토큰이 있으면 → 주입
-        if currentBearer == nil, let latest = latestToken {
-            req.setValue("Bearer \(latest)", forHTTPHeaderField: "Authorization")
+        // 로그인/리프레시 스킵
+        if isLogin(req) || isRefresh(req) {
             completion(.success(req)); return
         }
 
-        // 2) 헤더가 있는데 값이 오래됐으면 → 최신으로 교체
-        if let current = currentBearer, let latest = latestToken, current != latest {
-            req.setValue("Bearer \(latest)", forHTTPHeaderField: "Authorization")
+        // 이미 Authorization 있으면(소셜/특수) 손대지 않음
+        if req.value(forHTTPHeaderField: "Authorization") != nil {
             completion(.success(req)); return
         }
 
-        // 3) 그 외(이미 최신/토큰 없음) → 그대로 통과
+        if let access = try? TokenKeychainManager.shared.getAccessToken(), !access.isEmpty {
+            req.setValue("Bearer \(access)", forHTTPHeaderField: "Authorization")
+        }
+
         completion(.success(req))
     }
 
-    // MARK: - 401 → 리프레시 후 재시도
+    // MARK: Retry (401 → refresh → retry 1회)
     func retry(_ request: Request,
                for session: Session,
                dueTo error: Error,
                completion: @escaping (RetryResult) -> Void) {
 
-        guard let response = request.task?.response as? HTTPURLResponse,
-              response.statusCode == 401,
-              !isRefresh(request) // 리프레시 자체 401은 루프 방지
-        else {
-            completion(.doNotRetryWithError(error))
+        guard let res = request.task?.response as? HTTPURLResponse else {
+            completion(.doNotRetryWithError(error)); return
+        }
+
+        // 리프레시 자체거나 401 아님 → 재시도 X
+        if res.statusCode != 401 || isRefresh(request.request) {
+            completion(.doNotRetryWithError(error)); return
+        }
+
+        // 같은 원요청은 1회만
+        if request.retryCount > 0 {
+            forceRelogin()
+            completion(.doNotRetry)
             return
         }
 
+        // 동시 401 합류
         lock.lock()
         if isRefreshing {
             pendingCompletions.append(completion)
@@ -115,94 +110,57 @@ final class TokenInterceptor: RequestInterceptor {
             self.lock.unlock()
 
             if success {
-                // 재시도 시 adapt가 다시 호출되고, 최신 토큰으로 '보정'됨
                 completions.forEach { $0(.retry) }
             } else {
-                try? TokenKeychainManager.shared.clearTokens()
-                DispatchQueue.main.async { AuthSession.shared.isLoggedIn = false }
+                self.forceRelogin()
                 completions.forEach { $0(.doNotRetry) }
             }
         }
     }
 
-    // MARK: - Refresh
+    // MARK: Refresh (인터셉터 미적용 세션)
+    // TokenRefreshPlugin.swift (일부만 발췌)
 
-    /// 실제 리프레시 호출 (Authorization: Bearer <refresh_token>)
-    // TokenInterceptor.swift (중요 부분만 발췌)
     private func refreshTokens(completion: @escaping (Bool) -> Void) {
-        guard let refresh: String = ((try? TokenKeychainManager.shared.getRefreshToken()) ?? nil),
-              !refresh.isEmpty else { completion(false); return }
-
-        let provider = MoyaProvider<TokenRefreshTargetType>(
-            session: AFSessionFactory.refreshOnly,          // 전용 세션 (교착 방지)
-            plugins: [MoyaPlugin.shared]
-        )
-
-        provider.request(.auth(refreshToken: refresh)) { result in
+        RefreshService.refreshTokens { result in
             switch result {
-            case .success(let response):
-                if response.statusCode == 401 {
-                    self.forceRelogin()
-                    completion(false)
-                    return
-                }
-
-                guard (200..<300).contains(response.statusCode) else {
-                    completion(false); return
-                }
-
+            case .success(let tokenData):
                 do {
-                    let dto = try JSONDecoder().decode(NewAccessTokenResponse.self, from: response.data)
-                    let access = dto.data.accessToken.replacingOccurrences(of: "Bearer ", with: "")
-                    let newRef = dto.data.refreshToken.replacingOccurrences(of: "Bearer ", with: "")
-                    try TokenKeychainManager.shared.saveAccessToken(access)
-                    try TokenKeychainManager.shared.saveRefreshToken(newRef)
+                    try TokenKeychainManager.shared.saveAccessToken(tokenData.accessToken)
+                    try TokenKeychainManager.shared.saveRefreshToken(tokenData.refreshToken)
                     completion(true)
                 } catch {
                     completion(false)
                 }
-
             case .failure(let err):
-                // 네트워크 오류(오프라인 등)라면 여기선 재로그인 강제 X (원하면 정책에 맞게)
-                print("refresh error:", err.localizedDescription)
+                if (err as NSError).code == 401 { self.forceRelogin() }
                 completion(false)
             }
         }
     }
 
 
-    // MARK: - Helpers
-
+    // MARK: Helpers
     private func isOurAPI(_ req: URLRequest) -> Bool {
-        guard let base = baseURLString, let url = req.url else { return false }
-        return url.absoluteString.hasPrefix(base)
+        guard let url = req.url else { return false }
+        return url.absoluteString.hasPrefix(baseURLString)
     }
 
     private func isLogin(_ req: URLRequest) -> Bool {
         let path = req.url?.path ?? ""
-        let method = req.httpMethod ?? "GET"
+        let method = req.httpMethod ?? "PUT"
         return method == "PUT" && path == "/v1/members"
     }
 
-    private func isRefresh(_ req: URLRequest) -> Bool {
-        let path = req.url?.path ?? ""
-        return path == "/v1/auth/token/refresh"
+    private func isRefresh(_ req: URLRequest?) -> Bool {
+        guard let path = req?.url?.path else { return false }
+        return path == refreshPath
     }
 
-    private func isRefresh(_ request: Request) -> Bool {
-        request.request.flatMap(isRefresh) ?? false
-    }
-
-    /// "Bearer xxx" → "xxx"
-    private func extractBearer(from header: String?) -> String? {
-        guard let header, header.hasPrefix("Bearer ") else { return nil }
-        return String(header.dropFirst("Bearer ".count))
-    }
-    
     private func forceRelogin() {
         try? TokenKeychainManager.shared.clearTokens()
         DispatchQueue.main.async {
-            AuthSession.shared.isLoggedIn = false   // 루트에서 LoginView로 전환
+            AuthSession.shared.isLoggedIn = false
         }
     }
 }

@@ -9,27 +9,20 @@ import Foundation
 
 import Moya
 
-enum TokenHealthType {
-    case accessToken
-    case refreshToken
-}
-
-///  헤더에 들어가는 토큰의 상태에 따른 Type
-enum HeaderType {
-    case socialTokenHeader(socialToken: String)
-    case accessTokenHeader
-    case refreshTokenHeader
-    case noTokenHeader
-}
+typealias MoyaRequestTask = Moya.Task
 
 /// 각 API에 따라 공통된 Path 값 (존재하지 않는 경우 빈 String 값)
 enum UtilPath: String {
     case todo = "/v1/todos"
     case tag = "/v1/tags"
     case schedule = "/v1/schedules"
-    case auth = "/v1/auth"
     case user = "/v1/members"
     case health = "/health"
+}
+
+enum HeaderType {
+    case tokenHeader    // Access 토큰 필요
+    case noTokenHeader           // 토큰 불필요 (로그인/회원가입/헬스체크 등)
 }
 
 protocol BaseTargetType: TargetType {
@@ -49,37 +42,11 @@ extension BaseTargetType {
     }
     
     var headers: [String: String]? {
-        let keychainManager = TokenKeychainManager.shared
-        
-        var header = ["Content-Type": "application/json"]
-        
-        switch headerType {
-        case .socialTokenHeader(let socialToken):
-            header["Authorization"] = "Bearer \(socialToken)"
-            
-        case .accessTokenHeader:
-            if let accessToken = try? keychainManager.getAccessToken() {
-                return ["Authorization": "Bearer \(accessToken)", "Content-Type": "application/json"]
-            } else {
-                print("[ERROR] 액세스 토큰 로드 실패")
-                return nil
-            }
-        case .refreshTokenHeader:
-            if let refreshToken = try? keychainManager.getRefreshToken() {
-                return ["Authorization": "Bearer \(refreshToken)", "Content-Type": "application/json"]
-            } else {
-                print("[ERROR] 리프레시 토큰 로드 실패")
-                return nil
-            }
-            
-        case .noTokenHeader:
-            break
-        }
-        
+        var header: [String: String] = ["Content-Type": "application/json"]
         return header
     }
     
-    var task: Task {
+    var task: MoyaRequestTask {
         if let queryParameter {
             return .requestParameters(parameters: queryParameter, encoding: URLEncoding.default)
         }
@@ -89,5 +56,8 @@ extension BaseTargetType {
         return .requestPlain
     }
     
+    /// 서버가 200~299 상태코드로 응답했을 때만 성공으로 처리하고, 나머지(400, 401, 500 등)는 자동으로 실패
+    /// 인터셉터(TokenRefreshPlugin)가 동작하려면 요청이 실패했을 때 에러(MoyaError) 로 전달되어야 함
+    /// 그래야 401을 잡고 → 리프레시 요청 → 토큰 갱신 → 재시도 순서가 가능
     var validationType: ValidationType { .successCodes }
 }
