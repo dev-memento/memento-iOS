@@ -18,7 +18,7 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     
     // MARK: - User Input
     @Published var isNaturalLanguageEnabled: Bool = false
-    @Published var title: String = ""
+    @Published var description: String = ""
     
     @Published var startDate: Date = Date().startOfDay {
         didSet { autoUpdateAllDayStatus() }
@@ -56,14 +56,16 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     
     
     // MARK: - Computed Properties
-    var isTitleEmpty: Bool { title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    var isTextEmpty: Bool { description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    
     var formattedStartDate: String { startDate.formattedDate(with: "MMM d, yyyy") }
     var formattedEndDate: String { endDate.formattedDate(with: "MMM d, yyyy") }
+    
     var formattedStartTime: String { formatTime(startTime) }
     var formattedEndTime: String { formatTime(endTime) }
     
     
-    // MARK: - Time Utilities
+    // MARK: - Date Time Helpers
     
     // 날짜랑 시간 결합
     func combineDateAndTime(date: Date, time: Date) -> Date {
@@ -157,7 +159,7 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     
     
     // MARK: - API
-    func getTagsAPI() {
+    func getTags() {
         tagService.getTags { [weak self] result in
             guard let self = self else { return }
             
@@ -171,9 +173,9 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
         }
     }
     
-    func postAddSchedule(completion: @escaping () -> Void) {
+    func postSchedule(completion: @escaping () -> Void) {
         let body = SchedulePostRequest(
-            description: title,
+            description: description,
             startDate: formatDate(date: startDate, time: startTime),
             endDate: formatDate(date: endDate, time: endTime),
             isAllDay: isAllDay,

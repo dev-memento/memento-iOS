@@ -26,7 +26,7 @@ struct AddScheduleView: View {
             VStack {
                 CustomToggleView(isOn: $viewModel.isNaturalLanguageEnabled)
                 
-                titleInputView
+                descriptionInputView
                 
                 dateTimePickerView(type: .start)
                 dateTimePickerView(type: .end)
@@ -43,16 +43,16 @@ struct AddScheduleView: View {
         }
     }
     
-    private var titleInputView: some View {
+    private var descriptionInputView: some View {
         VStack {
             ZStack(alignment: .leading) {
-                if viewModel.isTitleEmpty {
+                if viewModel.isTextEmpty {
                     Text(StringLiteral.AddEvent.title)
                         .foregroundColor(.gray07)
                         .applyFont(.body_b_18)
                 }
                 
-                TextField("", text: $viewModel.title)
+                TextField("", text: $viewModel.description)
                     .tint(Color.mementoLightGreen)
                     .foregroundColor(.grayWhite)
                     .applyFont(.body_b_18)
@@ -177,7 +177,7 @@ struct AddScheduleView: View {
             
             Button(action: {
                 if viewModel.tagList.isEmpty {
-                    viewModel.getTagsAPI()
+                    viewModel.getTags()
                 }
                 isTagPickerPresented = true
             }) {
@@ -210,13 +210,13 @@ struct AddScheduleView: View {
             Spacer()
             
             Button {
-                viewModel.postAddSchedule { }
+                viewModel.postSchedule { }
             } label: {
-                Image( viewModel.isTitleEmpty ? .btn_enter_disabled : .btn_enter_active)
+                Image( viewModel.isTextEmpty ? .btn_enter_disabled : .btn_enter_active)
             }
             .padding(.trailing, 10)
             .padding(.bottom, 40)
-            .disabled(viewModel.isTitleEmpty)
+            .disabled(viewModel.isTextEmpty)
         }
     }
 }
