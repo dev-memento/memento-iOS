@@ -9,5 +9,5 @@ import Foundation
 
 extension TimeInterval {
 
-    static let secondsInADay: TimeInterval = 86_400
+    static let oneDay: TimeInterval = 24 * 60 * 60
 }

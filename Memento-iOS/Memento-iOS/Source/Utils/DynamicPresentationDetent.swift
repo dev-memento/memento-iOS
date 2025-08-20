@@ -36,7 +36,7 @@ struct DynamicPresentationDetent {
         on device: DeviceSizeCategory
     ) -> CGFloat {
         switch type {
-        case .addTodo(let subtype):
+        case .addToDo(let subtype):
             return fractionForAddTodo(subtype: subtype, device: device)
         case .addSchedule(let subtype):
             return fractionForAddSchedule(subtype: subtype, device: device)
@@ -44,7 +44,7 @@ struct DynamicPresentationDetent {
     }
 
     private static func fractionForAddTodo(
-        subtype: AddTodoPickerButtonType,
+        subtype: AddToDoPickerButtonType,
         device: DeviceSizeCategory
     ) -> CGFloat {
         switch subtype {

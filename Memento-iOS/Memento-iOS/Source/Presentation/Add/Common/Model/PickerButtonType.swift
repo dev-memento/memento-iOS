@@ -7,15 +7,21 @@
 
 import Foundation
 
-enum AddTodoPickerButtonType {
-    case date, tag, priority
+enum PickerButtonType {
+    case addSchedule(AddSchedulePickerButtonType)
+    case addToDo(AddToDoPickerButtonType)
 }
 
 enum AddSchedulePickerButtonType {
-    case date, time, tag
+    case date(DateTimeType)
+    case time(DateTimeType)
+    case tag
 }
 
-enum PickerButtonType {
-    case addTodo(AddTodoPickerButtonType)
-    case addSchedule(AddSchedulePickerButtonType)
+enum DateTimeType {
+    case start, end
+}
+
+enum AddToDoPickerButtonType {
+    case date, tag, priority
 }

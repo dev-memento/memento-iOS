@@ -10,17 +10,26 @@ import SwiftUI
 import MDSKit
 
 struct SheetOKButton: View {
-
-    let action: () -> Void
-
+    
+    let onTap: () -> Void
+    
     var body: some View {
         HStack {
             Spacer()
-            Button("OK", action: action)
+            
+            Button("OK", action: onTap)
                 .applyFont(.body_r_14)
                 .foregroundColor(Color.gray04)
                 .padding(.top, 20)
                 .padding(.trailing, 22)
         }
+    }
+}
+
+struct SheetOKButton_Previews: PreviewProvider {
+    static var previews: some View {
+        SheetOKButton(onTap: {})
+            .background(Color.mainNavy)
+            .previewLayout(.sizeThatFits)
     }
 }

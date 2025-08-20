@@ -27,8 +27,8 @@ extension View {
     ///
     /// - Returns: 동적으로 동작하는 시트 반환
     @ViewBuilder
-    func applyDynamicSheetForTagCount() -> some View {
-        if Tag.mockData.count > 3 {
+    func applyDynamicSheetForTagCount(tagCount: Int) -> some View {
+        if tagCount > 3 {
             self.presentationContentInteraction(.scrolls)
                 .scrollIndicators(.hidden)
                 .presentationDetents([.fraction(0.33), .fraction(0.99)])

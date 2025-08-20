@@ -13,10 +13,10 @@ import MCalendar
 
 final class WeeklyCalendarViewModel: ObservableObject {
     
-    @Published var schedules: [ScheduleTotalResponseDataTest] = []
-    @Published var tag: [TagResponseData] = []
-    @Published var toDoList: [ToDoListTotalResponseDataTest] = []
-    @Published var allday: [ScheduleAllDayResponseDataTest] = []
+    @Published var schedules: [ScheduleWithOrderInfos] = []
+    @Published var tag: [TagResponse] = []
+    @Published var toDoList: [ToDoGetResponses] = []
+    @Published var allday: [AllDaySchedulesList] = []
     @Published var wakeUpTime: String = "8 AM"
     @Published var windDownTime: String = "11 PM"
     
@@ -87,34 +87,34 @@ final class WeeklyCalendarViewModel: ObservableObject {
     }
     
     func mapToTodayItemList() {
-//        todayItems = schedules.map { .schedule(
-//            .init(
-//                id: $0.id,
-//                description: $0.description,
-//                startDate: $0.startDate,
-//                endDate: $0.endDate,
-//                timeDuration: $0.timeDuration,
-//                isAllDay: $0.isAllDay,
-//                scheduleType: $0.scheduleType,
-//                order: $0.order,
-//                tagName: $0.tagName,
-//                tagColorCode: $0.tagColorCode
-//            )
-//        )}
-//        
-//        todayItems = toDoListItems.map {
-//            .todo(
-//                .init(
-//                    id: $0.id,
-//                    colorType: $0.colorType,
-//                    toDoTitle: $0.toDoTitle,
-//                    date: $0.date,
-//                    dueDate: $0.dueDate,
-//                    priorityType: $0.priorityType,
-//                    isChecked: $0.isChecked
-//                )
-//            )
-//        }
+        //        todayItems = schedules.map { .schedule(
+        //            .init(
+        //                id: $0.id,
+        //                description: $0.description,
+        //                startDate: $0.startDate,
+        //                endDate: $0.endDate,
+        //                timeDuration: $0.timeDuration,
+        //                isAllDay: $0.isAllDay,
+        //                scheduleType: $0.scheduleType,
+        //                order: $0.order,
+        //                tagName: $0.tagName,
+        //                tagColorCode: $0.tagColorCode
+        //            )
+        //        )}
+        //        
+        //        todayItems = toDoListItems.map {
+        //            .todo(
+        //                .init(
+        //                    id: $0.id,
+        //                    colorType: $0.colorType,
+        //                    toDoTitle: $0.toDoTitle,
+        //                    date: $0.date,
+        //                    dueDate: $0.dueDate,
+        //                    priorityType: $0.priorityType,
+        //                    isChecked: $0.isChecked
+        //                )
+        //            )
+        //        }
         getAllTodoList = false
         getAllScheduleList = false
     }
@@ -160,7 +160,7 @@ final class WeeklyCalendarViewModel: ObservableObject {
     
     @objc
     private func didReceiveNotification() {
-
+        
         self.getAllEvents()
     }
 }
@@ -229,6 +229,23 @@ extension WeeklyCalendarViewModel {
         }
     }
     
+    func deleteSchedule(scheduleId: Int) {
+        scheduleService.deleteSchedule(scheduleId: scheduleId) { result in
+            DispatchQueue.main.async {
+                if case .success = result {
+                    if let index = self.todayItems.firstIndex(where: {
+                        if case .schedule(let s) = $0 { return s.id == scheduleId }
+                        return false
+                    }) {
+                        self.todayItems.remove(at: index)
+                    }
+                } else {
+                    print("삭제 실패")
+                }
+            }
+        }
+    }
+    
     func getTagsAPI() {
         tagService.getTags() { [weak self] result in
             switch result {
@@ -241,7 +258,7 @@ extension WeeklyCalendarViewModel {
     }
     
     func getToDoListTotalAPI() {
-        toDoListService.getToDoList { [weak self] result in
+        toDoListService.getToDoListTotal { [weak self] result in
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
@@ -291,7 +308,7 @@ extension WeeklyCalendarViewModel {
     
     
     func getSchedulesAllDayAPI() {
-        scheduleService.getSchedulesAllDays { [weak self] result in
+        scheduleService.getSchedulesAllDay { [weak self] result in
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
@@ -308,23 +325,23 @@ extension WeeklyCalendarViewModel {
     }
     
     func userUptimeAPI() {
-//        userUptimeService.fetchUptime{ result in
-//            switch result {
-//            case .success(let response):
-//                print("시간 가져오기 성공")
-//                // 추가 작업 필요 시 여기에 작성
-//                if let wakeUpTime = response?.data.wakeUpTime, let windDownTime = response?.data.windDownTime {
-//                    self.wakeUpTime = wakeUpTime
-//                    self.windDownTime = wakeUpTime
-//                    print("시간 가져오기 성공 \(self.wakeUpTime) \(self.windDownTime)")
-//                } else {
-//                    self.wakeUpTime = "8 AM"
-//                    self.windDownTime = "11 PM"
-//                }
-//            default:
-//                print("시간 가져오기 실패")
-//            }
-//        }
+        //        userUptimeService.fetchUptime{ result in
+        //            switch result {
+        //            case .success(let response):
+        //                print("시간 가져오기 성공")
+        //                // 추가 작업 필요 시 여기에 작성
+        //                if let wakeUpTime = response?.data.wakeUpTime, let windDownTime = response?.data.windDownTime {
+        //                    self.wakeUpTime = wakeUpTime
+        //                    self.windDownTime = wakeUpTime
+        //                    print("시간 가져오기 성공 \(self.wakeUpTime) \(self.windDownTime)")
+        //                } else {
+        //                    self.wakeUpTime = "8 AM"
+        //                    self.windDownTime = "11 PM"
+        //                }
+        //            default:
+        //                print("시간 가져오기 실패")
+        //            }
+        //        }
     }
 }
 
@@ -358,22 +375,22 @@ extension WeeklyCalendarViewModel {
             //    일정의 시작 ≤ dayEnd && 일정의 끝 ≥ dayStart
             return start <= dayEnd && end >= dayStart
         }
-        .map {
-            TodayItemDataModel.schedule(
-                .init(
-                    id: $0.id,
-                    description: $0.description,
-                    startDate: $0.startDate,
-                    endDate: $0.endDate,
-                    timeDuration: $0.timeDuration,
-                    isAllDay: $0.isAllDay,
-                    scheduleType: $0.scheduleType,
-                    order: $0.order,
-                    tagName: $0.tagName,
-                    tagColorCode: $0.tagColorCode
+            .map {
+                TodayItemDataModel.schedule(
+                    .init(
+                        id: $0.id,
+                        description: $0.description,
+                        startDate: $0.startDate,
+                        endDate: $0.endDate,
+                        timeDuration: $0.timeDuration,
+                        isAllDay: $0.isAllDay,
+                        scheduleType: $0.scheduleType,
+                        order: $0.order,
+                        tagName: $0.tagName,
+                        tagColorCode: $0.tagColorCode
+                    )
                 )
-            )
-        }
+            }
         
         let today = toDoListItems.filter { todoItem in
             guard
@@ -388,21 +405,21 @@ extension WeeklyCalendarViewModel {
             //    일정의 시작 ≤ dayEnd && 일정의 끝 ≥ dayStart
             return start <= dayEnd && end >= dayStart
         }
-        .map {
-            TodayItemDataModel
-                .todo(
-                    .init(
-                        id: $0.id,
-                        colorType: $0.colorType,
-                        toDoTitle: $0.toDoTitle,
-                        date: $0.date,
-                        dueDate: $0.dueDate,
-                        priorityType: $0.priorityType,
-                        isChecked: $0.isChecked,
-                        tagName: $0.tagName
+            .map {
+                TodayItemDataModel
+                    .todo(
+                        .init(
+                            id: $0.id,
+                            colorType: $0.colorType,
+                            toDoTitle: $0.toDoTitle,
+                            date: $0.date,
+                            dueDate: $0.dueDate,
+                            priorityType: $0.priorityType,
+                            isChecked: $0.isChecked,
+                            tagName: $0.tagName
+                        )
                     )
-                )
-        }
+            }
         todayItems.append(contentsOf: scheudle)
         todayItems.append(contentsOf: today)
     }
@@ -424,7 +441,7 @@ extension WeeklyCalendarViewModel {
         formatter.dateFormat = "yyyy-MM-dd"
         return formatter.date(from: date)
     }
-        
+    
 }
 
 extension String {

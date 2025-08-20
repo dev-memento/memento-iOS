@@ -20,24 +20,12 @@ extension Date {
         dateFormatter.locale = Locale(identifier: "en_US")
         return dateFormatter.string(from: self)
     }
-
+    
     /// ISO 8601 포맷 반환
     func makeCurrentDate() -> String {
         return self.formattedDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX", timeZone: TimeZone(abbreviation: "UTC")!)
     }
-
-    func roundedToNearestHalfHour() -> Date {
-        let calendar = Calendar.current
-        let minute = calendar.component(.minute, from: self)
-        let components = calendar.dateComponents([.year, .month, .hour], from: self)
-
-        guard let baseHour = calendar.date(from: components) else { return self }
-
-        let roundedMinutes = (minute + 15) / 30 * 30
-
-        return calendar.date(byAdding: .minute, value: roundedMinutes, to: baseHour) ?? self
-    }
-
+    
     /// 문자열 날짜를 특정 포맷 날짜로 반환
     static func dateFromString(_ dateString: String, format: String = "yyyy-MM-dd HH:mm:ss.SSSSSS") -> Date? {
         let dateFormatter = DateFormatter()
@@ -46,7 +34,7 @@ extension Date {
         dateFormatter.locale = Locale(identifier: "en_US")
         return dateFormatter.date(from: dateString)
     }
-
+    
     /// Start Date와 End Date의 소요 시간 (Duration Time)을 계산해주는 메소드
     static func calculateDuration(startDate: String, endDate: String, format: String = "yyyy-MM-dd HH:mm:ss.SSSSSS") -> Int {
         guard let start = Date.dateFromString(startDate, format: format),
@@ -63,24 +51,53 @@ extension Date {
         let formatter = DateFormatter()
         formatter.dateFormat = "M"
         guard let date = formatter.date(from: month) else { return "" }
-
+        
         formatter.dateFormat = "MMM"
         
         return formatter.string(from: date)
     }
     
-    static func formatEndDate(_ endDate: String) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
+    
+    
+    
+    
+    /// 현재 시간을 기준으로 가장 가까운 30분 단위로 반올림한 시간을 반환
+    func roundedToNearestHalfHour() -> Date {
+        let calendar = Calendar.current
+        let minute = calendar.component(.minute, from: self)
+        let components = calendar.dateComponents([.year, .month, .hour], from: self)
         
-        if let date = dateFormatter.date(from: endDate) {
+        guard let baseHour = calendar.date(from: components) else { return self }
+        
+        let roundedMinutes = (minute + 15) / 30 * 30
+        
+        return calendar.date(byAdding: .minute, value: roundedMinutes, to: baseHour) ?? self
+    }
+    
+    /// ToDoListCell 에서 endDate가 오늘 날짜면 "Today"를 반환하고,
+    /// 오늘이 아니면 "MMM dd, YYYY" 형식의 문자열로 변환
+    static func displayEndDate(_ endDate: String) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        
+        if let date = formatter.date(from: endDate) {
             if Calendar.current.isDate(date, inSameDayAs: Date()) {
                 return "Today"
             }
-            dateFormatter.dateFormat = "MMM dd"
-            return dateFormatter.string(from: date)
+            return date.formattedDate(with: "MMM dd, YYYY")
         }
         
         return endDate
+    }
+    
+    /// ScheduleListCell 에서 endDate와 현재 시간을 비교하여 스케줄이 종료되었는지 여부를 반환
+    static func hasScheduleEnded(endDate: String) -> Bool {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
+        formatter.timeZone = TimeZone.current
+        guard let date = formatter.date(from: endDate) else {
+            return false
+        }
+        return Date() > date
     }
 }

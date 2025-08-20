@@ -12,7 +12,7 @@ import MDSKit
 import MCalendar
 
 final class ToDoListViewModel: ObservableObject {
-    @Published var toDoList: [ToDoListTotalResponseDataTest] = []
+    @Published var toDoList: [ToDoGetResponses] = []
     private let tagService: TagAPIServiceProtocol
     private let toDoListService: ToDoListAPIServiceProtocol
     @Published var toDoListItems: [ToDoListDataModel] = []
@@ -33,7 +33,7 @@ final class ToDoListViewModel: ObservableObject {
         tagService: TagAPIServiceProtocol,
         toDoListService: ToDoListAPIServiceProtocol,
         mCallendarDataSource: MCalendarDataSource,
-        mEventDataSource: MEventDatasource
+        mEventDataSource: MEventDatasource,
     ) {
         self.tagService = tagService
         self.toDoListService = toDoListService
@@ -67,8 +67,32 @@ extension ToDoListViewModel {
         }
     }
     
+    func deleteTodo(todoId: Int) {
+        toDoListService.deleteToDo(toDoId: todoId) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    self?.removeTodoFromDict(todoId: todoId)
+                default:
+                    print("Todo 삭제 실패")
+                }
+            }
+        }
+    }
+    
+    private func removeTodoFromDict(todoId: Int) {
+        guard let date = toDoListItemDict.first(where: { $0.value.contains(where: { $0.id == todoId }) })?.key,
+              let index = toDoListItemDict[date]?.firstIndex(where: { $0.id == todoId }) else { return }
+        
+        toDoListItemDict[date]?.remove(at: index)
+        if toDoListItemDict[date]?.isEmpty == true {
+            toDoListItemDict.removeValue(forKey: date)
+        }
+    }
+    
+    
     func getToDoListTotalAPI() {
-        toDoListService.getToDoList { [weak self] result in
+        toDoListService.getToDoListTotal { [weak self] result in
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
