@@ -64,6 +64,9 @@ struct AddTodoKeyboardToolbarItem: View {
     
     var tagButton: some View {
         Button(action: {
+            if viewModel.tagList.isEmpty {
+                viewModel.getTags()
+            }
             viewModel.showTagPicker = true
         }) {
             Circle()
