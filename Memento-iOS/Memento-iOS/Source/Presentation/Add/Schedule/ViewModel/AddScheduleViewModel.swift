@@ -111,9 +111,6 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     var formattedEndTime: String { formatTime(endTime) }
     
     
-    var showTagPicker: Bool = false // 어칼거니?
-    
-    
     // MARK: - Time Utilities
     
     // 날짜랑 시간 결합

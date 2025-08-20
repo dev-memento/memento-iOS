@@ -59,7 +59,7 @@ extension ToDoListTargetType: BaseTargetType {
         case .getToDoDetail(let toDoId),
                 .deleteToDo(let toDoId):
             return "\(utilPath.rawValue)/\(toDoId)"
-        case .getToDoByDate(let date):
+        case .getToDoByDate:
             return "\(utilPath.rawValue)/date"
         default:
             return utilPath.rawValue
