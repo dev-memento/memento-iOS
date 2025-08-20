@@ -7,7 +7,8 @@ import SwiftUI
 import MDSKit
 
 struct AddTodoPriorityView: View {
-
+    @ObservedObject var viewModel: AddToDoViewModel
+    
     let items: [(String, Priority)] = [
         ("Important O\nUrgent O", .immediate),
         ("Important O\nUrgent X", .high),
@@ -15,9 +16,7 @@ struct AddTodoPriorityView: View {
         ("Important X\nUrgent X", .low)
     ]
     let viewType: ViewType
-    let source: String
-    @ObservedObject var viewModel: AddToDoViewModel
-
+    
     private let gridItem = [
         GridItem(.fixed(146)),
         GridItem(.fixed(146))
@@ -30,7 +29,7 @@ struct AddTodoPriorityView: View {
 
             VStack {
                 HeaderView(viewType: viewType, onDone: {
-                    viewModel.showPriorityPicker = false
+                    viewModel.isPriorityPickerPresented = false
                 })
 
                 TodoItemView(viewType: viewType, priority: $viewModel.selectedPriority)

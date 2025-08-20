@@ -1,5 +1,5 @@
 //
-//  AddTodoKeyboardToolbarItem.swift
+//  AddToDoToolbarView.swift
 //  Memento-iOS
 //
 //  Created by RAFA on 2/23/25.
@@ -9,28 +9,31 @@ import SwiftUI
 
 import MDSKit
 
-struct AddTodoKeyboardToolbarItem: View {
+struct AddToDoToolbarView: View {
     
     @ObservedObject var viewModel: AddToDoViewModel
-    var onEnter: () -> Void
     
     var body: some View {
         HStack {
-            deadlineButton
-            tagButton
-            matrixButton
+            deadlineButtonView
+            
+            tagPickerView
+            
+            matrixButtonView
+            
             Spacer()
-            enterButton
+            
+            enterButtonView
         }
         .padding(.bottom, 20)
-        .padding(.horizontal, 15)
+        .padding(.horizontal)
         .frame(width: UIScreen.main.bounds.width)
         .background(Color.gray10.ignoresSafeArea(.all))
     }
     
-    var deadlineButton: some View {
+    var deadlineButtonView: some View {
         Button(action: {
-            viewModel.showEndDatePicker = true
+            viewModel.isEndDatePickerPresented = true
         }) {
             HStack {
                 Image(.ic_deadline)
@@ -42,11 +45,11 @@ struct AddTodoKeyboardToolbarItem: View {
         }
         .frame(width: 86, height: 41)
         .background(Color.gray09)
-        .clipShape(RoundedRectangle(cornerRadius: 2))
-        .sheet(isPresented: $viewModel.showEndDatePicker) {
+        .cornerRadius(2)
+        .sheet(isPresented: $viewModel.isEndDatePickerPresented) {
             PickerSheet(type: .addToDo(.date)) {
                 VStack {
-                    SheetOKButton { viewModel.showEndDatePicker = false }
+                    SheetOKButton { viewModel.isEndDatePickerPresented = false }
                     
                     DatePicker(
                         "",
@@ -62,12 +65,12 @@ struct AddTodoKeyboardToolbarItem: View {
         }
     }
     
-    var tagButton: some View {
+    private var tagPickerView: some View {
         Button(action: {
             if viewModel.tagList.isEmpty {
                 viewModel.getTags()
             }
-            viewModel.showTagPicker = true
+            viewModel.isTagPickerPresented = true
         }) {
             Circle()
                 .fill(Color(viewModel.selectedTag.color))
@@ -75,23 +78,20 @@ struct AddTodoKeyboardToolbarItem: View {
         }
         .frame(width: 42, height: 42)
         .background(Color.gray09)
-        .clipShape(RoundedRectangle(cornerRadius: 2))
-        .sheet(isPresented: $viewModel.showTagPicker) {
+        .cornerRadius(2)
+        .sheet(isPresented: $viewModel.isTagPickerPresented) {
             TagPickerSheet(
                 viewModel: viewModel,
-                                isPresented: $viewModel.showTagPicker,
+                isPresented: $viewModel.isTagPickerPresented,
                 type: .addToDo(.tag),
                 tagList: viewModel.tagList
             )
-//            .onAppear {
-//                viewModel.loadTags()
-//            }
         }
     }
     
-    var matrixButton: some View {
+    private var matrixButtonView: some View {
         Button(action: {
-            viewModel.showPriorityPicker = true
+            viewModel.isPriorityPickerPresented = true
         }) {
             Image(viewModel.selectedPriority.imageName)
                 .frame(width: 26, height: 26)
@@ -100,20 +100,19 @@ struct AddTodoKeyboardToolbarItem: View {
                 .cornerRadius(2)
         }
         .frame(width: 42, height: 42)
-        .sheet(isPresented: $viewModel.showPriorityPicker) {
+        .sheet(isPresented: $viewModel.isPriorityPickerPresented) {
             PickerSheet(type: .addToDo(.priority)) {
                 AddTodoPriorityView(
-                    viewType: .add,
-                    source: "",
-                    viewModel: viewModel
+                    viewModel: viewModel,
+                    viewType: .add
                 )
             }
         }
     }
     
-    var enterButton: some View {
+    private var enterButtonView: some View {
         Button(action: {
-            onEnter()
+            viewModel.postToDo { }
         }) {
             Image(viewModel.isTextEmpty ? .btn_enter_disabled : .btn_enter_active)
         }

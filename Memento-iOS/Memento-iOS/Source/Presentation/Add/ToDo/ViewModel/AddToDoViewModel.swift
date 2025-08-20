@@ -35,10 +35,12 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
         didSet { updatePriorityValue() }
     }
     
-    @Published var showStartDatePicker: Bool = false
-    @Published var showEndDatePicker: Bool = false
-    @Published var showTagPicker: Bool = false
-    @Published var showPriorityPicker: Bool = false
+    
+    // MARK: - Picker State
+    @Published var isStartDatePickerPresented: Bool = false
+    @Published var isEndDatePickerPresented: Bool = false
+    @Published var isTagPickerPresented: Bool = false
+    @Published var isPriorityPickerPresented: Bool = false
     
     
     // MARK: - Initializer
@@ -59,7 +61,7 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
     
     // MARK: - Date Helpers
     func formatDate(_ date: Date) -> String {
-        Calendar.current.isDateInToday(date) ? StringLiteral.AddTodo.today : date.formattedDate(with: "MMM d")
+        Calendar.current.isDateInToday(date) ? StringLiteral.AddToDo.today : date.formattedDate(with: "MMM d")
     }
     
     

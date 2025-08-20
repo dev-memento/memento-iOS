@@ -21,13 +21,13 @@ struct AddToDoView: View {
                     .applyFont(.body_r_14)
                 
                 Button(viewModel.formattedStartDate) {
-                    viewModel.showStartDatePicker = true
+                    viewModel.isStartDatePickerPresented = true
                 }
                 .foregroundColor(.gray04)
                 .applyFont(.body_r_14)
-                .sheet(isPresented: $viewModel.showStartDatePicker) {
+                .sheet(isPresented: $viewModel.isStartDatePickerPresented) {
                     PickerSheet(type: .addToDo(.date)) {
-                        SheetOKButton { viewModel.showStartDatePicker = false }
+                        SheetOKButton { viewModel.isStartDatePickerPresented = false }
                         
                         DatePicker(
                             "",

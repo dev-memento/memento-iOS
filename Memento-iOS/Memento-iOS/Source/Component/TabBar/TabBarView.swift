@@ -118,7 +118,6 @@ struct TabBarView: View {
             calendarViewModel.getSchedulesTotalAPI()
             todolistViewModel.getToDoListTotalAPI()
         }
-        .environmentObject(todolistViewModel)
     }
     
     private func dismissKeyboard() {

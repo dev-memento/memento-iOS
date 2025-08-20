@@ -10,16 +10,10 @@ import MDSKit
 
 struct AddTodoTextView: View {
     
-    // MARK: - Properties
-    
     @ObservedObject var viewModel: AddToDoViewModel
-    @EnvironmentObject var todolistViewModel: ToDoListViewModel
-    var onClose: (() -> Void)?
     
     @FocusState private var isFocused: Bool
     @State private var keyboardHeight: CGFloat = 0
-    
-    // MARK: - Body
     
     var body: some View {
         VStack {
@@ -46,10 +40,10 @@ struct AddTodoTextView: View {
                                     isFocused = false
                                 }
                             }
-//                            .onChange(of: viewModel.description) { _, newText in
-//                                viewModel.limitTextLength(newText)
-//                                scrollToBottom(proxy: proxy)
-//                            }
+                        //                            .onChange(of: viewModel.description) { _, newText in
+                        //                                viewModel.limitTextLength(newText)
+                        //                                scrollToBottom(proxy: proxy)
+                        //                            }
                     }
                 }
                 .onAppear { setupKeyboardObservers(proxy: proxy) }
@@ -57,15 +51,8 @@ struct AddTodoTextView: View {
         }
         .toolbar {
             ToolbarItem(placement: .keyboard) {
-                AddTodoKeyboardToolbarItem(
-                    viewModel: viewModel,
-                    onEnter: {
-                        viewModel.postToDo {
-//                            viewModel.postMakeScheduleNotiFication()
-                            todolistViewModel.getToDoListTotalAPI()
-                            onClose?()
-                        }
-                    }
+                AddToDoToolbarView(
+                    viewModel: viewModel
                 )
             }
         }

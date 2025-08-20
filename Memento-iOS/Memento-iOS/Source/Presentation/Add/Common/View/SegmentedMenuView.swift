@@ -94,9 +94,7 @@ private extension SegmentedMenuView {
     var contentView: some View {
         switch viewModel.selectedButton {
         case .checkbox:
-            AddTodoView(onClose: {
-                viewModel.isPresented = false
-            })
+            AddToDoView()
         case .event: AddScheduleView()
         }
     }
