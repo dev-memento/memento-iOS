@@ -12,8 +12,8 @@ import MDSKit
 final class AddScheduleViewModel: ObservableObject, TagSelectable {
     
     // MARK: - Dependencies
-    private var scheduleAPIService: ScheduleAPIServiceProtocol
-    private let tagAPIService: TagAPIServiceProtocol
+    private var scheduleService: ScheduleAPIServiceProtocol
+    private let tagService: TagAPIServiceProtocol
     
     
     // MARK: - User Input
@@ -47,14 +47,14 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     
     
     // MARK: - Initializer
-    init(scheduleApiService: ScheduleAPIService = ScheduleAPIService(),
+    init(scheduleService: ScheduleAPIServiceProtocol = ScheduleAPIService(),
          tagService: TagAPIServiceProtocol = TagAPIService()) {
         
-        self.scheduleAPIService = scheduleApiService
-        self.tagAPIService = tagService
+        self.scheduleService = scheduleService
+        self.tagService = tagService
     }
     
-     
+    
     // MARK: - Computed Properties
     var isTitleEmpty: Bool { title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
     var formattedStartDate: String { startDate.formattedDate(with: "MMM d, yyyy") }
@@ -158,7 +158,7 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     
     // MARK: - API
     func getTagsAPI() {
-        tagAPIService.getTags { [weak self] result in
+        tagService.getTags { [weak self] result in
             guard let self = self else { return }
             
             if case let .success(response) = result,
@@ -180,7 +180,7 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
             tagId: selectedTag.tagId
         )
         
-        scheduleAPIService.postSchedule(body: body) { _ in
+        scheduleService.postSchedule(body: body) { _ in
             completion()
         }
     }
