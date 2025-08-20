@@ -1,4 +1,5 @@
 import Foundation
+import Moya
 import Combine
 import AuthenticationServices
 import Firebase
@@ -12,6 +13,7 @@ final class AuthSession: ObservableObject {
     
     @Published var isLoggedIn: Bool = false
     @Published var isLoading: Bool = false
+    @Published var shouldStartOnboarding = false      // 온보딩 시작 플래그
     @Published var errorMessage: String?
     
     private let keychain = TokenKeychainManager.shared
@@ -61,13 +63,13 @@ final class AuthSession: ObservableObject {
 extension AuthSession {
     
     func signInWithGoogle() {
-        Task { @MainActor in
+        _Concurrency.Task { @MainActor in
             guard !isLoading else { return }
             isLoading = true
             
             if GIDSignIn.sharedInstance.hasPreviousSignIn() {
                 GIDSignIn.sharedInstance.restorePreviousSignIn { [weak self] user, error in
-                    Task { @MainActor in
+                    _Concurrency.Task { @MainActor in
                         guard let self = self else { return }
                         await self.authenticateGoogleUser(for: user, with: error)
                     }
@@ -87,7 +89,7 @@ extension AuthSession {
                 }
                 
                 GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { [weak self] result, error in
-                    Task { @MainActor in
+                    _Concurrency.Task { @MainActor in
                         guard let self = self else { return }
                         if let result = result {
                             await self.authenticateGoogleUser(for: result.user, with: error)
@@ -117,7 +119,7 @@ extension AuthSession {
     }
     
     func handleAppleSignInCompletion(_ result: Result<ASAuthorization, Error>) {
-        Task { @MainActor in
+        _Concurrency.Task { @MainActor in
             guard !isLoading else { return }
             isLoading = true
             defer { isLoading = false }
@@ -179,24 +181,32 @@ extension AuthSession {
                 timeZoneOffset: timeZoneOffset,
                 fcmToken: fcmToken
             ) { [weak self] result in
-                // 메인 액터 hop
-                Task { @MainActor in
+                _Concurrency.Task { @MainActor in
                     guard let self else { return }
-                    print("⚡️ completion fired:", result)
-                    
                     switch result {
-                    case .success(let response):
-                        guard let data = response?.data else {
-                            print("⚠️ success but data == nil"); self.isLoading = false; return
+                    case .success(let resp):
+                        guard let data = resp?.data else {
+                            self.errorMessage = "로그인 응답 오류"; self.isLoading = false; return
                         }
-                        print("➡️ setTokens 직전:", data.accessToken.prefix(16), data.refreshToken.prefix(16))
                         self.setTokens(accessToken: data.accessToken, refreshToken: data.refreshToken)
+                        
+                        if data.isNewUser {
+                            // 신규: 온보딩 시작
+                            self.shouldStartOnboarding = true
+                            self.isLoggedIn = false        // 메인은 아직 X
+                        } else {
+                            // 기존: 바로 메인
+                            self.shouldStartOnboarding = false
+                            self.isLoggedIn = true
+                        }
                         self.isLoading = false
                         
                     case .unAuthorized:
-                        self.handleError(nil, defaultMessage: "인증 실패. 다시 로그인하세요.")
+                        self.errorMessage = "인증 실패. 다시 로그인하세요."
+                        self.isLoading = false
                     default:
-                        self.handleError(nil, defaultMessage: "서버 오류가 발생했습니다.")
+                        self.errorMessage = "서버 오류가 발생했습니다."
+                        self.isLoading = false
                     }
                 }
             }
@@ -212,6 +222,75 @@ extension AuthSession {
         return String(format: "%+03d:%02d", hours, minutes)
     }
 }
+
+@MainActor
+extension AuthSession {
+    
+    /// 앱 시작 시: 토큰으로 세션 복구
+    func autoLoginOnLaunch() async {
+        if isLoggedIn { return }
+        
+        // 1) Access 토큰으로 바로 통과 시도
+        do {
+            if let access = try keychain.getAccessToken(),
+               !access.isEmpty,
+               !keychain.isTokenExpired(access) {
+                isLoggedIn = true
+                shouldStartOnboarding = false
+                return
+            }
+        } catch {
+            // 접근 실패 → 계속 진행 (리프레시/로그인 판단)
+            errorMessage = "[AutoLogin] 키체인 AccessToken 조회 실패: \(error.localizedDescription)"
+            // Access 단계에서 바로 로그인 상태를 건드리진 않음
+        }
+        
+        // 2) Refresh 토큰이 있으면 리프레시 시도
+        do {
+            if let refresh = try keychain.getRefreshToken(),
+               !refresh.isEmpty {
+                let ok = await refreshTokens(refreshToken: refresh)
+                if ok {
+                    isLoggedIn = true
+                    shouldStartOnboarding = false
+                } else {
+                    // 리프레시 실패 → 세션 초기화
+                    errorMessage = "[AutoLogin] 토큰 갱신 실패"
+                    clear()
+                }
+                return
+            }
+        } catch {
+            // Refresh 조회 자체가 실패 → 로그인 화면
+            errorMessage = "[AutoLogin] 키체인 RefreshToken 조회 실패: \(error.localizedDescription)"
+            isLoggedIn = false
+            return
+        }
+        
+        // 3) 토큰 전무 → 로그인 화면
+        isLoggedIn = false
+    }
+    
+    /// 리프레시 API 호출 (전용 세션 사용)
+    private func refreshTokens(refreshToken: String) async -> Bool {
+        await withCheckedContinuation { cont in
+            RefreshService.refreshTokens { result in
+                switch result {
+                case .success(let tokenData):
+                    self.setTokens(accessToken: tokenData.accessToken, refreshToken: tokenData.refreshToken)
+                    cont.resume(returning: true)
+                case .failure(let e):
+                    self.errorMessage = "[AutoLogin] 리프레시 실패: \(e.localizedDescription)"
+                    cont.resume(returning: false)
+                }
+            }
+        }
+    }
+}
+
+
+
+
 /*
  private extension AppState {
  
