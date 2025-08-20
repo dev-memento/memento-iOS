@@ -15,7 +15,7 @@ struct CustomActionSheetView: View {
     @State private var actionType: ActionType = .delete
     
     var body: some View {
-        VStack {
+        VStack { // 예시 버튼
             Button("Show Delete for Repeated Schedule") {
                 isRepeated = true
                 itemType = .schedule
@@ -78,6 +78,7 @@ struct CustomActionSheetView: View {
     }
 }
 
+// MARK: - CustomActionSheetView 관련 Enum 정의 (항목/동작/버튼 텍스트)
 extension CustomActionSheetView {
     enum ItemType {
         case schedule
@@ -88,6 +89,7 @@ extension CustomActionSheetView {
         case delete
         case edit
         
+        // 액션 시트 타이틀 반환
         func dialogTitle(for itemType: ItemType) -> String {
             switch (self, itemType) {
             case (.delete, .schedule):
@@ -102,6 +104,7 @@ extension CustomActionSheetView {
         }
     }
     
+    // 실제 버튼 액션 정의
     enum Action: Hashable {
         case singleDelete
         case multipleDelete
@@ -109,6 +112,7 @@ extension CustomActionSheetView {
         case multipleEdit
         case defaultDelete
         
+        // 각 버튼별 텍스트 반환
         func buttonTitle(for itemType: ItemType) -> String {
             switch (self, itemType) {
             case (.singleDelete, .schedule): return "Delete This Event Only"
@@ -127,5 +131,13 @@ extension CustomActionSheetView {
         var role: ButtonRole? {
             self == .defaultDelete ? .destructive : nil
         }
+    }
+}
+
+
+struct CustomActionSheetView_Previews: PreviewProvider {
+    static var previews: some View {
+        CustomActionSheetView()
+            .previewLayout(.sizeThatFits)
     }
 }
