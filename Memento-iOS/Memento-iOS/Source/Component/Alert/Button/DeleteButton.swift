@@ -28,3 +28,10 @@ struct DeleteButton: View {
         }
     }
 }
+
+struct DeleteButton_Previews: PreviewProvider {
+    static var previews: some View {
+        DeleteButton(onDelete: {})
+            .previewLayout(.sizeThatFits)
+    }
+}

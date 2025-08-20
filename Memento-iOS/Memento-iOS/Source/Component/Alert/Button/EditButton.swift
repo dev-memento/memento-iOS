@@ -28,3 +28,10 @@ struct EditButton: View {
         }
     }
 }
+
+struct EditButton_Previews: PreviewProvider {
+    static var previews: some View {
+        EditButton(onEdit: {})
+            .previewLayout(.sizeThatFits)
+    }
+}

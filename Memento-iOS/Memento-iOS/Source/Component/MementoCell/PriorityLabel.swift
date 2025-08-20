@@ -76,3 +76,19 @@ struct PriorityLabel: View {
             )
     }
 }
+
+struct PriorityLabel_Previews: PreviewProvider {
+    static var previews: some View {
+        VStack(spacing: 30) {
+            PriorityLabel(priority: .immediate)
+            PriorityLabel(priority: .high)
+            PriorityLabel(priority: .medium)
+            PriorityLabel(priority: .low)
+            PriorityLabel(priority: .none)
+        }
+        .padding()
+        .background(Color.mainNavy)
+        .previewLayout(.sizeThatFits)
+        
+    }
+}

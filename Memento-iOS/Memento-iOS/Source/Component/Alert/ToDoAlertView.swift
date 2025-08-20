@@ -106,3 +106,22 @@ struct ToDoAlertView: View {
         .cornerRadius(2)
     }
 }
+
+struct ToDoAlertView_Previews: PreviewProvider {
+    @State static var isChecked = false
+    
+    static var previews: some View {
+        ToDoAlertView(
+            toDoId: 1,
+            toDoTitle: "건조기 돌리기",
+            deadline: "Today",
+            tagName: "Personal",
+            tagColorCode: "#3867FF",
+            priority: .high,
+            onDelete: {},
+            onEdit: {},
+            isChecked: $isChecked
+        )
+        .previewLayout(.sizeThatFits)
+    }
+}

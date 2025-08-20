@@ -122,3 +122,20 @@ struct PriorityLabelView: View {
         .padding(.trailing, 8)
     }
 }
+
+struct ToDoListCell_Previews: PreviewProvider {
+    @State static var isCompleted = false
+    
+    static var previews: some View {
+        ToDoListCell(
+            tagColorCode: "#3867FF",
+            title: "건조기 돌리기",
+            toDoType: "Personal",
+            endDate: "Today",
+            priority: .high,
+            isHighlighted: false,
+            isCompleted: $isCompleted
+        )
+        .previewLayout(.sizeThatFits)
+    }
+}

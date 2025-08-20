@@ -116,3 +116,20 @@ struct ScheduleAlertView: View {
         .cornerRadius(2)
     }
 }
+
+struct ScheduleAlertView_Previews: PreviewProvider {
+    static var previews: some View {
+        ScheduleAlertView(
+            scheduleId: 1,
+            scheduleTitle: "회의 일정",
+            startDate: "Aug 21, 2025, 10AM",
+            endDate: "Aug 21, 2025, 11AM",
+            tagName: "Work",
+            tagColorCode: "#6CA9E1",
+            scheduleType: "Notion",
+            onDelete: {},
+            onEdit: {}
+        )
+        .previewLayout(.sizeThatFits)
+    }
+}

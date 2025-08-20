@@ -10,9 +10,9 @@ import SwiftUI
 import MDSKit
 
 struct SheetOKButton: View {
-
+    
     let onTap: () -> Void
-
+    
     var body: some View {
         HStack {
             Spacer()
@@ -23,5 +23,13 @@ struct SheetOKButton: View {
                 .padding(.top, 20)
                 .padding(.trailing, 22)
         }
+    }
+}
+
+struct SheetOKButton_Previews: PreviewProvider {
+    static var previews: some View {
+        SheetOKButton(onTap: {})
+            .background(Color.mainNavy)
+            .previewLayout(.sizeThatFits)
     }
 }

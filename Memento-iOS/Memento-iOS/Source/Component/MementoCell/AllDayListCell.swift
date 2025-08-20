@@ -20,7 +20,8 @@ struct AllDayListCell: View {
             
             Spacer()
         }
-        .frame(maxWidth: .infinity, minHeight: 32)
+        .frame(maxWidth: .infinity)
+        .frame(height: 32)
         .background(Color.mainNavy)
     }
 }
@@ -34,5 +35,15 @@ struct AllDayTitleView: View {
             .applyFont(.body_r_14)
             .foregroundColor(.gray05)
             .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+struct AllDayListCell_Previews: PreviewProvider {
+    static var previews: some View {
+        VStack(spacing: 3) {
+            AllDayListCell(tagColorCode: "#FF426E", title: "여행")
+            AllDayListCell(tagColorCode: "#FF8162", title: "테니스")
+        }
+        .previewLayout(.sizeThatFits)
     }
 }

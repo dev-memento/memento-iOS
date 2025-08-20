@@ -75,3 +75,16 @@ struct TimeInfoView: View {
         }
     }
 }
+
+struct ScheduleListCell_Previews: PreviewProvider {
+    static var previews: some View {
+        ScheduleListCell(
+            tagColorCode: "#6CA9E1",
+            title: "회의 일정",
+            scheduleType: "Work",
+            endDate: "Aug 21, 2025, 11AM",
+            timeDuration: "10 AM - 11 AM"
+        )
+        .previewLayout(.sizeThatFits)
+    }
+}

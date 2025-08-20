@@ -18,3 +18,11 @@ struct ColorTagView: View {
             .frame(width: CGFloat(width))
     }
 }
+
+struct ColorTagView_Previews: PreviewProvider {
+    static var previews: some View {
+        ColorTagView(colorType: "#149C95", width: 5)
+            .frame(height: 32)
+            .previewLayout(.sizeThatFits)
+    }
+}

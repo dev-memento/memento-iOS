@@ -13,7 +13,7 @@ struct PickerButton: View {
     @Binding var isPresented: Bool
     let onTap: () -> Void
     let width: CGFloat
-
+    
     var body: some View {
         Button {
             onTap()
@@ -26,5 +26,28 @@ struct PickerButton: View {
                 .background(isPresented ? Color.gray07 : Color.gray09)
                 .cornerRadius(2)
         }
+    }
+}
+
+struct PickerButton_Previews: PreviewProvider {
+    @State static var isPresented = false
+    
+    static var previews: some View {
+        HStack(spacing: 10) {
+            PickerButton(
+                label: "Aug 21, 2025",
+                isPresented: $isPresented,
+                onTap: { isPresented.toggle() },
+                width: 124
+            )
+            
+            PickerButton(
+                label: "4:00 AM",
+                isPresented: $isPresented,
+                onTap: { isPresented.toggle() },
+                width: 96
+            )
+        }
+        .previewLayout(.sizeThatFits)
     }
 }
