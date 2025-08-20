@@ -12,7 +12,7 @@ struct AddTodoTextView: View {
     
     // MARK: - Properties
     
-    @ObservedObject var viewModel: AddTodoViewModel
+    @ObservedObject var viewModel: AddToDoViewModel
     @EnvironmentObject var todolistViewModel: ToDoListViewModel
     var onClose: (() -> Void)?
     
@@ -46,10 +46,10 @@ struct AddTodoTextView: View {
                                     isFocused = false
                                 }
                             }
-                            .onChange(of: viewModel.description) { _, newText in
-                                viewModel.limitTextLength(newText)
-                                scrollToBottom(proxy: proxy)
-                            }
+//                            .onChange(of: viewModel.description) { _, newText in
+//                                viewModel.limitTextLength(newText)
+//                                scrollToBottom(proxy: proxy)
+//                            }
                     }
                 }
                 .onAppear { setupKeyboardObservers(proxy: proxy) }
@@ -60,8 +60,8 @@ struct AddTodoTextView: View {
                 AddTodoKeyboardToolbarItem(
                     viewModel: viewModel,
                     onEnter: {
-                        viewModel.createTodo {
-                            viewModel.postMakeScheduleNotiFication()
+                        viewModel.postToDo {
+//                            viewModel.postMakeScheduleNotiFication()
                             todolistViewModel.getToDoListTotalAPI()
                             onClose?()
                         }

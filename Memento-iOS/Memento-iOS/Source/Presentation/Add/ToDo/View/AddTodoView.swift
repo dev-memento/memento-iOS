@@ -13,7 +13,7 @@ struct AddTodoView: View {
     
     // MARK: - Properties
     
-    @StateObject private var viewModel = AddTodoViewModel()
+    @StateObject private var viewModel = AddToDoViewModel()
     @EnvironmentObject var todolistViewModel: ToDoListViewModel
     var onClose: (() -> Void)?
     

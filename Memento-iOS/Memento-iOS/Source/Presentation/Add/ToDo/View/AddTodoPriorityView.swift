@@ -16,7 +16,7 @@ struct AddTodoPriorityView: View {
     ]
     let viewType: ViewType
     let source: String
-    @ObservedObject var viewModel: AddTodoViewModel
+    @ObservedObject var viewModel: AddToDoViewModel
 
     private let gridItem = [
         GridItem(.fixed(146)),

@@ -13,7 +13,7 @@ struct AddTodoHeaderView: View {
 
     // MARK: - Properties
 
-    @ObservedObject var viewModel: AddTodoViewModel
+    @ObservedObject var viewModel: AddToDoViewModel
 
     // MARK: - Body
 
@@ -46,7 +46,7 @@ struct AddTodoHeaderView: View {
 
             Spacer()
 
-            CustomToggleView(isOn: $viewModel.isNaturalLanguageInputEnabled)
+            CustomToggleView(isOn: $viewModel.isNaturalLanguageEnabled)
         }
     }
 }

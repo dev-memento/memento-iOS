@@ -11,7 +11,7 @@ import MDSKit
 
 struct AddTodoKeyboardToolbarItem: View {
     
-    @ObservedObject var viewModel: AddTodoViewModel
+    @ObservedObject var viewModel: AddToDoViewModel
     var onEnter: () -> Void
     
     var body: some View {
@@ -78,7 +78,7 @@ struct AddTodoKeyboardToolbarItem: View {
                 viewModel: viewModel,
                                 isPresented: $viewModel.showTagPicker,
                 type: .addToDo(.tag),
-                tagList: viewModel.tags
+                tagList: viewModel.tagList
             )
 //            .onAppear {
 //                viewModel.loadTags()
@@ -90,7 +90,7 @@ struct AddTodoKeyboardToolbarItem: View {
         Button(action: {
             viewModel.showPriorityPicker = true
         }) {
-            Image(viewModel.getPriorityImage(viewModel.selectedPriority))
+            Image(viewModel.selectedPriority.imageName)
                 .frame(width: 26, height: 26)
                 .padding(8)
                 .background(Color.gray09)
