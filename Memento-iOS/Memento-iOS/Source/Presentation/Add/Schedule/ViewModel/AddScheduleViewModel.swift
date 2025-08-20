@@ -54,55 +54,7 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
         self.tagAPIService = tagService
     }
     
-    
-    // MARK: - Picker State
-    @Published var isStartDatePickerPresented: Bool = false
-    @Published var isEndDatePickerPresented: Bool = false
-    @Published var isStartTimePickerPresented: Bool = false
-    @Published var isEndTimePickerPresented: Bool = false
-    @Published var isTagPickerPresented: Bool = false
-    
-    
-    // MARK: - Picker Control
-    func presentDatePicker(type: DateTimeType) {
-        switch type {
-        case .start: isStartDatePickerPresented = true
-        case .end: isEndDatePickerPresented = true
-        }
-    }
-    
-    func dismissDatePicker(type: DateTimeType) {
-        switch type {
-        case .start: isStartDatePickerPresented = false
-        case .end: isEndDatePickerPresented = false
-        }
-    }
-    
-    func presentTimePicker(type: DateTimeType) {
-        guard !isAllDay else { return }
-        switch type {
-        case .start: isStartTimePickerPresented = true
-        case .end: isEndTimePickerPresented = true
-        }
-    }
-    
-    func dismissTimePicker(type: DateTimeType) {
-        switch type {
-        case .start: isStartTimePickerPresented = false
-        case .end: isEndTimePickerPresented = false
-        }
-    }
-    
-    func presentTagPicker() {
-        if tagList.isEmpty {
-            getTagsAPI()
-        }
-        
-        isTagPickerPresented = true
-    }
-    func dismissTagPicker() { isTagPickerPresented = false }
-    
-    
+     
     // MARK: - Computed Properties
     var isTitleEmpty: Bool { title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
     var formattedStartDate: String { startDate.formattedDate(with: "MMM d, yyyy") }

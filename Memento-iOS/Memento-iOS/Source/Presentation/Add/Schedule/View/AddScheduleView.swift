@@ -13,6 +13,12 @@ struct AddScheduleView: View {
     
     @StateObject private var viewModel: AddScheduleViewModel = .init()
     
+    @State private var isStartDatePickerPresented = false
+    @State private var isEndDatePickerPresented = false
+    @State private var isStartTimePickerPresented = false
+    @State private var isEndTimePickerPresented = false
+    @State private var isTagPickerPresented: Bool = false
+    
     var body: some View {
         ZStack {
             Color.gray10.ignoresSafeArea()
@@ -65,12 +71,15 @@ struct AddScheduleView: View {
     
     private func dateTimePickerView(type: DateTimeType) -> some View {
         let title = (type == .start) ? StringLiteral.Common.starts : StringLiteral.Common.ends
+        
         let formattedDate = (type == .start) ? viewModel.formattedStartDate : viewModel.formattedEndDate
         let formattedTime = (type == .start) ? viewModel.formattedStartTime : viewModel.formattedEndTime
+        
         let selectedDate = (type == .start) ? $viewModel.startDate : $viewModel.endDate
         let selectedTime = (type == .start) ? $viewModel.startTime : $viewModel.endTime
-        let isDatePickerPresented = (type == .start) ? $viewModel.isStartDatePickerPresented : $viewModel.isEndDatePickerPresented
-        let isTimePickerPresented = (type == .start) ? $viewModel.isStartTimePickerPresented : $viewModel.isEndTimePickerPresented
+        
+        let isDatePickerPresented = (type == .start) ? $isStartDatePickerPresented : $isEndDatePickerPresented
+        let isTimePickerPresented = (type == .start) ? $isStartTimePickerPresented : $isEndTimePickerPresented
         
         return HStack(spacing: 0) {
             Text(title)
@@ -83,13 +92,13 @@ struct AddScheduleView: View {
                 PickerButton(
                     label: formattedDate,
                     isPresented: isDatePickerPresented,
-                    onTap: { viewModel.presentDatePicker(type: type) },
+                    onTap: { isDatePickerPresented.wrappedValue.toggle() },
                     width: 124
                 )
                 .sheet(isPresented: isDatePickerPresented) {
                     PickerSheet(type: .addSchedule(.date(type))) {
                         VStack {
-                            SheetOKButton { viewModel.dismissDatePicker(type: type) }
+                            SheetOKButton { isDatePickerPresented.wrappedValue = false }
                             
                             DatePicker(
                                 "",
@@ -107,7 +116,7 @@ struct AddScheduleView: View {
                 PickerButton(
                     label: formattedTime,
                     isPresented: isTimePickerPresented,
-                    onTap: { viewModel.presentTimePicker(type: type) },
+                    onTap: { if !viewModel.isAllDay { isTimePickerPresented.wrappedValue.toggle() } },
                     width: 96
                 )
                 .disabled(viewModel.isAllDay)
@@ -115,7 +124,7 @@ struct AddScheduleView: View {
                 .sheet(isPresented: isTimePickerPresented) {
                     PickerSheet(type: .addSchedule(.time(type))) {
                         VStack {
-                            SheetOKButton { viewModel.dismissTimePicker(type: type) }
+                            SheetOKButton { isTimePickerPresented.wrappedValue = false }
                             
                             DatePicker(
                                 "",
@@ -166,7 +175,12 @@ struct AddScheduleView: View {
             
             Spacer()
             
-            Button(action: viewModel.presentTagPicker) {
+            Button(action: {
+                if viewModel.tagList.isEmpty {
+                    viewModel.getTagsAPI()
+                }
+                isTagPickerPresented = true
+            }) {
                 HStack(spacing: 5) {
                     Image(.ic_tag)
                         .renderingMode(.template)
@@ -177,13 +191,13 @@ struct AddScheduleView: View {
                         .foregroundColor(.gray02)
                 }
                 .frame(width: 200, height: 36)
-                .background(viewModel.isTagPickerPresented ? Color.gray07 : Color.gray09)
+                .background(isTagPickerPresented ? Color.gray07 : Color.gray09)
                 .cornerRadius(2)
             }
-            .sheet(isPresented: $viewModel.isTagPickerPresented) {
+            .sheet(isPresented: $isTagPickerPresented) {
                 TagPickerSheet(
                     viewModel: viewModel,
-                    isPresented: $viewModel.isTagPickerPresented,
+                    isPresented: $isTagPickerPresented,
                     type: .addSchedule(.tag),
                     tagList: viewModel.tagList
                 )
