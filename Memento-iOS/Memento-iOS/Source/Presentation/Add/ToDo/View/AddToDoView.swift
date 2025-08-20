@@ -48,7 +48,8 @@ struct AddToDoView: View {
             
             AddTodoTextView(viewModel: viewModel)
         }
-        .padding(.horizontal, 23)
+        .padding(.leading, 23)
+        .padding(.trailing, 16)
         .background(Color.gray10)
     }
 }
