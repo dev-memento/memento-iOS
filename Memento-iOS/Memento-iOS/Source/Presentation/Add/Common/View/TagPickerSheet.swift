@@ -26,6 +26,8 @@ struct TagPickerSheet<ViewModel: TagSelectable>: View {
             
             List {
                 ForEach(tagList) { tag in
+                    let isSelected = viewModel.selectedTag.id == tag.id
+                    
                     Button(action: {
                         viewModel.selectedTag = tag
                     }) {
@@ -36,12 +38,12 @@ struct TagPickerSheet<ViewModel: TagSelectable>: View {
                             
                             Text(tag.name)
                                 .applyFont(.body_r_14)
-                                .foregroundStyle(viewModel.selectedTag.id == tag.id ? Color.gray02 : Color.gray07)
+                                .foregroundStyle(isSelected ? Color.gray02 : Color.gray07)
                             
                             Spacer()
                         }
                     }
-                    .listRowBackground(viewModel.selectedTag.tagId == tag.tagId ? Color.gray08 : Color.clear)
+                    .listRowBackground(isSelected ? Color.gray08 : Color.clear)
                 }
             }
             .listStyle(PlainListStyle())
