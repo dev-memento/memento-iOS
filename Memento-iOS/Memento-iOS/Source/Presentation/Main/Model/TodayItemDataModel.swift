@@ -9,7 +9,7 @@ import Foundation
 
 enum TodayItemDataModel: Identifiable, Equatable {
     case todo(ToDoListDataModel)
-    case schedule(ScheduleTotalResponseDataTest)
+    case schedule(ScheduleWithOrderInfos)
     
     // `Identifiable`을 준수하기 위해 고유 id 추가
     var id: Int {
@@ -39,7 +39,7 @@ enum TodayItemDataModel: Identifiable, Equatable {
 }
 
 extension TodayItemDataModel {
-    func mapToToDoResponse() -> ToDoListTotalResponseDataTest? {
+    func mapToToDoResponse() -> ToDoGetResponses? {
         switch self {
         case .todo(let todo):
             return todo.mapToToDoItem()

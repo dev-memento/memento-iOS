@@ -10,8 +10,9 @@ import Foundation
 import MDSKit
 
 enum SegmentedMenuType: CaseIterable {
+    
     case checkbox, event
-
+    
     var image: MDSImageName {
         switch self {
         case .checkbox: return .ic_checkbox

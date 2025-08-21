@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct DeleteButton: View {
+    
     let onDelete: () -> Void
     
     var body: some View {
@@ -16,15 +17,21 @@ struct DeleteButton: View {
         }) {
             VStack {
                 Image(.ic_delete)
-                    .foregroundColor(.mementoRed)
                 Text(StringLiteral.Alert.delete)
                     .applyFont(.body_r_16)
-                    .foregroundColor(.mementoRed)
             }
+            .foregroundColor(.mementoRed)
             .padding()
             .frame(width: 140, height: 74)
             .background(Color.labelImmediate15)
             .cornerRadius(2)
         }
+    }
+}
+
+struct DeleteButton_Previews: PreviewProvider {
+    static var previews: some View {
+        DeleteButton(onDelete: {})
+            .previewLayout(.sizeThatFits)
     }
 }

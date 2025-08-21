@@ -14,7 +14,7 @@ struct TodayView: View {
     @ObservedObject var viewModel: WeeklyCalendarViewModel
     
     @State private var selectTodo: ToDoListDataModel?
-    @State private var selectSchedule: ScheduleTotalResponseDataTest?
+    @State private var selectSchedule: ScheduleWithOrderInfos?
     
     @State private var showTodoAlert = false
     @State private var showScheduleAlert = false
@@ -63,20 +63,19 @@ struct TodayView: View {
                 )
                 
                 ToDoAlertView(
-                    todoId: todo.id,
-                    todoTitle: todo.toDoTitle,
+                    toDoId: todo.id,
+                    toDoTitle: todo.toDoTitle,
                     deadline: todo.dueDate,
-                    tag: todo.colorType,
                     tagName: todo.tagName,
+                    tagColorCode: todo.colorType,
                     priority: todo.priorityType,
-                    isChecked: todoBinding,
                     onDelete: {
                         showTodoAlert = false
                     },
                     onEdit: {
                         showTodoAlert = false
                     },
-                    todoAPIService: TodoAPIService()
+                    isChecked: todoBinding
                 )
                 .background(Color.black.opacity(0.4))
                 .edgesIgnoringSafeArea(.all)
@@ -88,23 +87,16 @@ struct TodayView: View {
                     scheduleTitle: schedule.description,
                     startDate: schedule.startDate,
                     endDate: schedule.endDate,
-                    tag: "SOPT",
-                    source: "Notion",
+                    tagName: schedule.tagName,
+                    tagColorCode: schedule.tagColorCode,
+                    scheduleType: "Notion",
                     onDelete: {
-                        if let index = viewModel.todayItems.firstIndex(where: {
-                            if case .schedule(let s) = $0 {
-                                return s.id == schedule.id
-                            }
-                            return false
-                        }) {
-                            viewModel.todayItems.remove(at: index)
-                        }
+                        viewModel.deleteSchedule(scheduleId: schedule.id)
                         showScheduleAlert = false
                     },
                     onEdit: {
                         showScheduleAlert = false
-                    },
-                    scheduleAPIService: ScheduleAPIService()
+                    }
                 )
                 .background(Color.black.opacity(0.4))
                 .edgesIgnoringSafeArea(.all)
@@ -175,7 +167,7 @@ struct TodayView: View {
                 showTodoAlert = true
             },
             onScheduleTap: { schedule in
-                selectSchedule = ScheduleTotalResponseDataTest(
+                selectSchedule = ScheduleWithOrderInfos(
                     id: schedule.id,
                     description: schedule.description,
                     startDate: schedule.startDate,
@@ -224,7 +216,7 @@ struct TodayListItemView: View {
     var backgroundColor: Color
     
     var onTodoTap: (ToDoListDataModel) -> Void
-    var onScheduleTap: (ScheduleTotalResponseDataTest) -> Void
+    var onScheduleTap: (ScheduleWithOrderInfos) -> Void
     
     var onCheckChanged: (Bool) -> Void
     
@@ -237,33 +229,40 @@ struct TodayListItemView: View {
             
             switch item {
             case .todo(var todo):
-                ToDoListCell(
-                    toDoList: todo
-                        .mapToToDoItem(),
-                    //                    toDoListCompleted: ToDoListCompletedResponseData(
-                    //                        id: todo.id,
-                    //                        isCompleted: todo.isChecked
-                    //                    ),
-                    toDoListCompleted: Binding<ToDoListCompletedResponseData>(
-                        get: {
-                            ToDoListCompletedResponseData(id: todo.id, isCompleted: todo.isChecked)
-                        },
-                        set: { newValue in
-                            todo.isChecked = newValue.isCompleted
-                            onCheckChanged(newValue.isCompleted)
-                        }
-                    ),
-                    isHighlighted: isHighlighted,
-                    backgroundColor: backgroundColor
-                )
-                .contentShape(Rectangle())
-                .padding(.trailing, -20)
-                .onTapGesture {
-                    onTodoTap(todo)
-                }
+                Rectangle()
+//                ToDoListCell(
+//                    toDoList: todo
+//                        .mapToToDoItem(),
+//                    //                    toDoListCompleted: ToDoListCompletedResponseData(
+//                    //                        id: todo.id,
+//                    //                        isCompleted: todo.isChecked
+//                    //                    ),
+//                    toDoListCompleted: Binding<ToDoListCompletedResponseData>(
+//                        get: {
+//                            ToDoListCompletedResponseData(id: todo.id, isCompleted: todo.isChecked)
+//                        },
+//                        set: { newValue in
+//                            todo.isChecked = newValue.isCompleted
+//                            onCheckChanged(newValue.isCompleted)
+//                        }
+//                    ),
+//                    isHighlighted: isHighlighted,
+//                    backgroundColor: backgroundColor
+//                )
+//                .contentShape(Rectangle())
+//                .padding(.trailing, -20)
+//                .onTapGesture {
+//                    onTodoTap(todo)
+//                }
                 
             case .schedule(let schedule):
-                ScheduleListCell(schedule: schedule)
+                ScheduleListCell(
+                        tagColorCode: schedule.tagColorCode,
+                        title: schedule.description,
+                        scheduleType: schedule.scheduleType,
+                        endDate: schedule.endDate,
+                        timeDuration: schedule.timeDuration
+                    )
                     .contentShape(Rectangle())
                     .padding(.trailing, -20)
                     .onTapGesture {

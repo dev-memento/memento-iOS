@@ -87,7 +87,7 @@ struct TabBarView: View {
                     .onTapGesture {
                         dismissKeyboard()
                         segmentedViewModel.isPresented = false
-                        segmentedViewModel.selectedButton = .checkbox
+                        segmentedViewModel.selectedMenu = .checkbox
                     }
                     .zIndex(1)
                 
@@ -105,7 +105,7 @@ struct TabBarView: View {
                                 if value.translation.height > segmentedViewHeight / 3 {
                                     dismissKeyboard()
                                     segmentedViewModel.isPresented = false
-                                    segmentedViewModel.selectedButton = .checkbox
+                                    segmentedViewModel.selectedMenu = .checkbox
                                 }
                             }
                     )
@@ -118,7 +118,6 @@ struct TabBarView: View {
             calendarViewModel.getSchedulesTotalAPI()
             todolistViewModel.getToDoListTotalAPI()
         }
-        .environmentObject(todolistViewModel)
     }
     
     private func dismissKeyboard() {

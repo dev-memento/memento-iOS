@@ -10,12 +10,14 @@ import Foundation
 import Moya
 
 enum ScheduleTargetType {
-    case getSchedulesTotal
-    case getSchedulesAllDay
-    case getSchedules
-    case getSchedulesDetail
-    case postCreateSchedule(body: PostCreateScheduleRequest)
-    case deleteSchedule(scheduleId: Int)
+    case getSchedulesTotal // 전체 일정 조회
+    case getSchedulesAllDay // All day 일정 조회
+    case getSchedulesByDate(date: String) // 특정 날짜 일정 조회
+    case getSchedulesDetail(scheduleId: Int) // 일정 상세 조회
+    
+    case postSchedule(body: SchedulePostRequest) // 일정 생성
+    
+    case deleteSchedule(scheduleId: Int) // 일정 삭제
 }
 
 extension ScheduleTargetType: BaseTargetType {
@@ -32,12 +34,17 @@ extension ScheduleTargetType: BaseTargetType {
     }
     
     var queryParameter: [String: Any]? {
-        return .none
+        switch self {
+        case .getSchedulesByDate(let date):
+            return ["date": date]
+        default:
+            return nil
+        }
     }
     
     var requestBodyParameter: Codable? {
         switch self {
-        case .postCreateSchedule(let body):
+        case .postSchedule(let body):
             return body
         default:
             return nil
@@ -50,7 +57,8 @@ extension ScheduleTargetType: BaseTargetType {
             return utilPath.rawValue + "/total"
         case .getSchedulesAllDay:
             return utilPath.rawValue + "/all-days"
-        case .deleteSchedule(let scheduleId):
+        case .getSchedulesDetail(let scheduleId),
+                .deleteSchedule(let scheduleId):
             return utilPath.rawValue + "/\(scheduleId)"
         default:
             return utilPath.rawValue
@@ -59,7 +67,7 @@ extension ScheduleTargetType: BaseTargetType {
     
     var method: Moya.Method {
         switch self {
-        case .postCreateSchedule(_):
+        case .postSchedule:
             return .post
         case .deleteSchedule:
             return .delete
