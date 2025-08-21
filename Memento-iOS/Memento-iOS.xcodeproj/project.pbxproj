@@ -77,7 +77,7 @@
 				Source/Presentation/Add/Common/ViewModel/SegmentedMenuViewModel.swift,
 				Source/Presentation/Add/Schedule/View/AddScheduleView.swift,
 				Source/Presentation/Add/Schedule/ViewModel/AddScheduleViewModel.swift,
-				Source/Presentation/Add/ToDo/View/AddToDoPriorityView.swift,
+				Source/Presentation/Add/ToDo/View/AddToDoPrioritySheet.swift,
 				Source/Presentation/Add/ToDo/View/AddToDoTextView.swift,
 				Source/Presentation/Add/ToDo/View/AddToDoToolbarView.swift,
 				Source/Presentation/Add/ToDo/View/AddToDoView.swift,

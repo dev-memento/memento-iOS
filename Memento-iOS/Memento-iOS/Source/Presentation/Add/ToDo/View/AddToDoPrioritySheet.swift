@@ -1,13 +1,15 @@
-//  AddToDoPriorityView.swift
+//
+//  AddToDoPrioritySheet.swift
 //  Memento-iOS
 //
 //  Created by 정정욱 on 1/18/25.
+//
 
 import SwiftUI
 
 import MDSKit
 
-struct AddToDoPriorityView: View {
+struct AddToDoPrioritySheet: View {
     
     @ObservedObject var viewModel: AddToDoViewModel
     
