@@ -72,7 +72,7 @@ extension SegmentedMenuView {
         case .checkbox:
             AddToDoView()
         case .event:
-            AddScheduleView()
+            AddScheduleView(isAddViewPresented: $viewModel.isPresented)
         }
     }
 }

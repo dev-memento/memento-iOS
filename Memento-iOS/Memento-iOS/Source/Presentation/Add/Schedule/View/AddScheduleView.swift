@@ -13,6 +13,8 @@ struct AddScheduleView: View {
     
     @StateObject private var viewModel: AddScheduleViewModel = .init()
     
+    @Binding var isAddViewPresented: Bool
+    
     @State private var isStartDatePickerPresented = false
     @State private var isEndDatePickerPresented = false
     @State private var isStartTimePickerPresented = false
@@ -210,7 +212,11 @@ struct AddScheduleView: View {
             Spacer()
             
             Button {
-                viewModel.postSchedule { }
+                viewModel.postSchedule {
+                    withAnimation(.spring()) {
+                        isAddViewPresented = false
+                    }
+                }
             } label: {
                 Image( viewModel.isTextEmpty ? .btn_enter_disabled : .btn_enter_active)
             }
