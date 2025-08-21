@@ -73,6 +73,7 @@ extension Publishers {
         
         return willShow
             .merge(with: willHide)
+            .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
     }
 }
