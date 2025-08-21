@@ -11,32 +11,22 @@ import MDSKit
 
 struct SegmentedMenuView: View {
     
-    // MARK: - Properties
+    @ObservedObject var viewModel: SegmentedMenuViewModel
     
-    @ObservedObject private var viewModel: SegmentedMenuViewModel
     @Binding var sheetHeight: CGFloat
-    
-    // MARK: - Initializer
-    
-    init(viewModel: SegmentedMenuViewModel, sheetHeight: Binding<CGFloat>) {
-        self.viewModel = viewModel
-        self._sheetHeight = sheetHeight
-    }
-    
-    // MARK: - Body
     
     var body: some View {
         GeometryReader { geometry in
-            let screenHeight = geometry.size.height
-            let calculatedSheetHeight = screenHeight * 0.8
+            let calculatedSheetHeight = geometry.size.height * 0.8
             
             VStack {
                 Spacer()
+                
                 VStack {
                     menuButtonsView
+                    
                     contentView
                 }
-                .frame(maxWidth: .infinity)
                 .frame(height: calculatedSheetHeight)
                 .background(Color.gray10)
                 .transition(.move(edge: .bottom))
@@ -48,54 +38,41 @@ struct SegmentedMenuView: View {
     }
 }
 
-// MARK: - UI Components
-
-private extension SegmentedMenuView {
-    
-    // MARK: Menu Buttons
-    
+extension SegmentedMenuView {
     var menuButtonsView: some View {
-        HStack {
+        HStack(spacing: 0) {
             ForEach(SegmentedMenuType.allCases, id: \.self) { type in
-                configureMenuButton(type: type)
+                Button {
+                    viewModel.selectedMenu = type
+                } label: {
+                    ZStack {
+                        Circle()
+                            .fill(viewModel.selectedMenu == type ? Color.grayBlack : Color.clear)
+                        
+                        Image(type.image)
+                            .renderingMode(.template)
+                            .foregroundColor(viewModel.selectedMenu == type ? .grayWhite : .gray07)
+                    }
+                    .frame(width: 38, height: 38)
+                }
             }
         }
+        .padding(3)
         .background(
             Color.gray09
                 .clipShape(Capsule())
-                .frame(width: 90, height: 48)
+                .frame(height: 44)
         )
-        .padding(.top, 20)
-        .padding(.bottom, 10)
+        .padding(.vertical, 13)
     }
-    
-    @ViewBuilder
-    func configureMenuButton(type: SegmentedMenuType) -> some View {
-        Button {
-            viewModel.selectButton(type)
-        } label: {
-            ZStack {
-                if viewModel.selectedButton == type {
-                    Circle()
-                        .fill(viewModel.selectedButton == type ? Color.grayBlack : Color.clear)
-                }
-                
-                Image(type.image)
-                    .renderingMode(.template)
-                    .foregroundColor(viewModel.selectedButton == type ? .grayWhite : .gray07)
-            }
-            .frame(width: 38, height: 38)
-        }
-    }
-    
-    // MARK: Content View
     
     @ViewBuilder
     var contentView: some View {
-        switch viewModel.selectedButton {
+        switch viewModel.selectedMenu {
         case .checkbox:
             AddToDoView()
-        case .event: AddScheduleView()
+        case .event:
+            AddScheduleView()
         }
     }
 }

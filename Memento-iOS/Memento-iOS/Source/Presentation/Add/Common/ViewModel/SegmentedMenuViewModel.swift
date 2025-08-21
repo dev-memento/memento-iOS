@@ -10,9 +10,6 @@ import SwiftUI
 final class SegmentedMenuViewModel: ObservableObject {
 
     @Published var isPresented: Bool = false
-    @Published var selectedButton: SegmentedMenuType = .checkbox
-
-    func selectButton(_ type: SegmentedMenuType) {
-        selectedButton = type
-    }
+    @Published var selectedMenu: SegmentedMenuType = .checkbox
+    
 }

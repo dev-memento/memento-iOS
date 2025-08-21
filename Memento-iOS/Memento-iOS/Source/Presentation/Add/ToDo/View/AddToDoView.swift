@@ -19,6 +19,7 @@ struct AddToDoView: View {
                 Text(StringLiteral.AddToDo.title)
                     .foregroundColor(.gray07)
                     .applyFont(.body_r_14)
+                    .padding(.trailing, 5)
                 
                 Button(viewModel.formattedStartDate) {
                     viewModel.isStartDatePickerPresented = true
