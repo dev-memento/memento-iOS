@@ -42,16 +42,18 @@ extension SegmentedMenuView {
     var menuButtonsView: some View {
         HStack(spacing: 0) {
             ForEach(SegmentedMenuType.allCases, id: \.self) { type in
+                let isSelectedMenu = (viewModel.selectedMenu == type)
+                
                 Button {
                     viewModel.selectedMenu = type
                 } label: {
                     ZStack {
                         Circle()
-                            .fill(viewModel.selectedMenu == type ? Color.grayBlack : Color.clear)
+                            .fill(isSelectedMenu ? Color.grayBlack : Color.clear)
                         
                         Image(type.image)
                             .renderingMode(.template)
-                            .foregroundColor(viewModel.selectedMenu == type ? .grayWhite : .gray07)
+                            .foregroundColor(isSelectedMenu ? .grayWhite : .gray07)
                     }
                     .frame(width: 38, height: 38)
                 }
