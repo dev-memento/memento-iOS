@@ -40,10 +40,7 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     }
     
     @Published var tagList: [Tag] = []
-    @Published var selectedTag: Tag = Tag(tagId: 1, name: "Untitled", color: .gray05) {
-        didSet { tagId = selectedTag.tagId }
-    }
-    @Published var tagId: Int = 1
+    @Published var selectedTag: Tag = Tag(tagId: 1, name: "Untitled", color: .gray05)
     
     
     // MARK: - Initializer
@@ -63,6 +60,8 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     
     var formattedStartTime: String { formatTime(startTime) }
     var formattedEndTime: String { formatTime(endTime) }
+    
+    var tagId: Int { selectedTag.tagId }
     
     
     // MARK: - Date Time Helpers
@@ -168,7 +167,6 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
                 
                 self.tagList = tags.map { Tag(tagId: $0.id, name: $0.name, color: Color(hex: $0.colorCode)) }
                 self.selectedTag = self.tagList.first ?? self.selectedTag
-                self.tagId = self.selectedTag.tagId
             }
         }
     }

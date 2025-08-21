@@ -24,11 +24,8 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
     @Published var endDate: Date = Date()
     
     @Published var tagList: [Tag] = []
-    @Published var selectedTag: Tag = Tag(tagId: 1, name: "Untitled", color: .gray05) {
-        didSet { tagId = selectedTag.tagId }
-    }
-    @Published var tagId: Int = 1
-    
+    @Published var selectedTag: Tag = Tag(tagId: 1, name: "Untitled", color: .gray05)
+
     @Published var priorityUrgency: Double = 0.0
     @Published var priorityImportance: Double = 0.0
     @Published var selectedPriority: Priority = .none {
@@ -58,6 +55,7 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
     var formattedStartDate: String { formatDate(startDate) }
     var formattedEndDate: String { formatDate(endDate) }
     
+    var tagId: Int { selectedTag.tagId }
     
     // MARK: - Date Helpers
     func formatDate(_ date: Date) -> String {
@@ -82,7 +80,6 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
                 
                 self.tagList = tags.map { Tag(tagId: $0.id, name: $0.name, color: Color(hex: $0.colorCode)) }
                 self.selectedTag = self.tagList.first ?? self.selectedTag
-                self.tagId = self.selectedTag.tagId
             }
         }
     }
