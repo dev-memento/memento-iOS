@@ -12,11 +12,12 @@ import MDSKit
 final class AddToDoViewModel: ObservableObject, TagSelectable {
     
     // MARK: - Dependencies
+    
     private var toDoService: ToDoListAPIServiceProtocol
     private let tagService: TagAPIServiceProtocol
     
-    
     // MARK: - User Input
+    
     @Published var isNaturalLanguageEnabled: Bool = false
     @Published var description: String = ""
     
@@ -32,15 +33,15 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
         didSet { updatePriorityValue() }
     }
     
-    
     // MARK: - Picker State
+    
     @Published var isStartDatePickerPresented: Bool = false
     @Published var isEndDatePickerPresented: Bool = false
     @Published var isTagPickerPresented: Bool = false
     @Published var isPriorityPickerPresented: Bool = false
     
-    
     // MARK: - Initializer
+    
     init(toDoService: ToDoListAPIServiceProtocol = ToDoListAPIService(),
          tagService: TagAPIServiceProtocol = TagAPIService()) {
         
@@ -48,8 +49,8 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
         self.tagService = tagService
     }
     
-    
     // MARK: - Computed Properties
+    
     var isTextEmpty: Bool { description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
     
     var formattedStartDate: String { formatDate(startDate) }
@@ -58,19 +59,20 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
     var tagId: Int { selectedTag.tagId }
     
     // MARK: - Date Helpers
+    
     func formatDate(_ date: Date) -> String {
         Calendar.current.isDateInToday(date) ? StringLiteral.AddToDo.today : date.formattedDate(with: "MMM d")
     }
     
-    
     // MARK: - Priority Helpers
+    
     private func updatePriorityValue() {
         priorityUrgency = selectedPriority.getPriorityValues().urgency
         priorityImportance = selectedPriority.getPriorityValues().importance
     }
     
-  
     // MARK: - API
+    
     func getTags() {
         tagService.getTags { [weak self] result in
             guard let self = self else { return }

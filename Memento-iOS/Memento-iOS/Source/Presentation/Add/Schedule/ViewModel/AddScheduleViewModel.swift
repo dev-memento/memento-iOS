@@ -12,11 +12,12 @@ import MDSKit
 final class AddScheduleViewModel: ObservableObject, TagSelectable {
     
     // MARK: - Dependencies
+    
     private var scheduleService: ScheduleAPIServiceProtocol
     private let tagService: TagAPIServiceProtocol
     
-    
     // MARK: - User Input
+    
     @Published var isNaturalLanguageEnabled: Bool = false
     @Published var description: String = ""
     
@@ -42,8 +43,8 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     @Published var tagList: [Tag] = []
     @Published var selectedTag: Tag = Tag(tagId: 1, name: "Untitled", color: .gray05)
     
-    
     // MARK: - Initializer
+    
     init(scheduleService: ScheduleAPIServiceProtocol = ScheduleAPIService(),
          tagService: TagAPIServiceProtocol = TagAPIService()) {
         
@@ -51,8 +52,8 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
         self.tagService = tagService
     }
     
-    
     // MARK: - Computed Properties
+    
     var isTextEmpty: Bool { description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
     
     var formattedStartDate: String { startDate.formattedDate(with: "MMM d, yyyy") }
@@ -62,7 +63,6 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     var formattedEndTime: String { formatTime(endTime) }
     
     var tagId: Int { selectedTag.tagId }
-    
     
     // MARK: - Date Time Helpers
     
@@ -86,7 +86,6 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     func formatTime(_ date: Date) -> String {
         isAllDay ? StringLiteral.AddSchedule.allDay : date.formattedDate(with: "h:mm a")
     }
-    
     
     // MARK: - All-Day Handling
     
@@ -156,8 +155,8 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
         }
     }
     
-    
     // MARK: - API
+    
     func getTags() {
         tagService.getTags { [weak self] result in
             guard let self = self else { return }
