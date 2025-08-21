@@ -20,9 +20,23 @@ final class AuthSession: ObservableObject {
     // MARK: - Dependencies
     let keychain = TokenKeychainManager.shared
     let memberService = MemberAPIService()
+    var hasValidAccessToken: Bool {
+          keychain.hasValidToken()
+      }
 
     private init() {
         isLoggedIn = keychain.hasValidToken()
+    }
+    
+    // MARK: - 세션 초기화 담당
+    func clear() {
+        do { try keychain.clearTokens() } catch {
+            print("[AuthSession] token clear failed: \(error)")
+        }
+        isLoggedIn = false
+        shouldStartOnboarding = false
+        errorMessage = nil
+        isLoading = false
     }
 
     // MARK: - Error/Helper

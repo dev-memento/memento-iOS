@@ -9,7 +9,7 @@ import SwiftUI
 import MDSKit
 
 struct WorkPreferenceView: View {
-    @EnvironmentObject var viewModel: OnboardingViewModel // 뷰모델 주입
+    @EnvironmentObject var viewModel: OnboardingViewModel
     
     var body: some View {
         ZStack {
@@ -143,5 +143,5 @@ private struct NextButton: View {
 }
 
 #Preview {
-    WorkPreferenceView().environmentObject(OnboardingViewModel(authViewModel: AuthViewModel()))
+    WorkPreferenceView().environmentObject(OnboardingViewModel())
 }

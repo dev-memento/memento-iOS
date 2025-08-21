@@ -178,21 +178,20 @@ private struct CalendarConnectButtons: View {
         }
     }
 }
-
-// MARK: - AppStartButton
-
 private struct AppStartButton: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
+    @EnvironmentObject var authSession: AuthSession
 
     var body: some View {
         Button {
-            // 1. 먼저 데이터 전송
+            // 1. 데이터 전송
             viewModel.submitOnboardingData()
             
-            // 2. 약간의 딜레이 후 화면 전환
+            // 2. 전송 성공 시 → 세션 갱신
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 withAnimation(.easeInOut) {
-                    viewModel.mementoStart = true
+                    authSession.shouldStartOnboarding = false
+                    authSession.isLoggedIn = true
                 }
             }
         } label: {
@@ -205,11 +204,10 @@ private struct AppStartButton: View {
         .background(Color.mainGreen)
         .frame(height: 50)
         .cornerRadius(2)
-        // 3. 중복 탭 방지
-        .disabled(viewModel.mementoStart)
+        .disabled(!authSession.shouldStartOnboarding)
     }
 }
 
 #Preview {
-    CalendarConnectView().environmentObject(OnboardingViewModel(authViewModel: AuthViewModel()))
+    CalendarConnectView().environmentObject(OnboardingViewModel())
 }
