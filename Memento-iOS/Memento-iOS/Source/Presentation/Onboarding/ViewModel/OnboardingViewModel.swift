@@ -100,9 +100,11 @@ extension OnboardingViewModel {
     /// 로그인 이후 최초 진입 -> 다시 뒤로가기 -> 재 로그인시 온보딩 다시 보이게 상태 구독
     private func observeNavigationPath() {
         $navigationPath
-            .sink { newPath in
-                print("newPath \(newPath)")
-                if newPath.isEmpty {
+            .map(\.isEmpty)
+            .removeDuplicates()
+            .filter { $0 }
+            .sink { _ in
+                DispatchQueue.main.async {
                     AuthSession.shared.shouldStartOnboarding = false
                 }
             }

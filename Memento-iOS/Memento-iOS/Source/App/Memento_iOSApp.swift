@@ -66,19 +66,21 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
 @main
 struct MementoApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    @StateObject private var onboardingViewModel = OnboardingViewModel() // 사용자 가입 정보 단일 책임
-    @StateObject private var authSession = AuthSession.shared // 사용자 세션 관리 단일 책임
+    
+    @StateObject private var authSession = AuthSession.shared
+    @StateObject private var onboardingViewModel = OnboardingViewModel()
     @State var showLottieAnimation: Bool = true
     @State private var didRunAutoLoginOnce = false
+    
     
     var body: some Scene {
         WindowGroup {
             rootView
-                .environmentObject(authSession) // 앱 전체에서 사용자 세션을 감시
+                .environmentObject(authSession) // 앱 전체에서 사용자 세션 감시 (사용 가능하게)
                 .onAppear {
                     guard !didRunAutoLoginOnce else { return }
                     didRunAutoLoginOnce = true
-                    Task { await authSession.autoLoginOnLaunch() } 
+                    Task { authSession.autoLoginOnLaunch() } 
                 }
 //                .onAppear { // 탈퇴시 로그인 된 탭 화면에서 해당 코드 실행 해야함
 //                    Task { await withdrawAndSignOut() }
@@ -93,11 +95,10 @@ struct MementoApp: App {
                 .preferredColorScheme(.dark)
         } else {
             if authSession.isLoggedIn {
-                TabBarView().preferredColorScheme(.dark)
-                    .environmentObject(authSession)
+                TabBarView()
+                    .preferredColorScheme(.dark)
             } else {
                 LoginView()
-                    .environmentObject(authSession)
                     .environmentObject(onboardingViewModel)
                     .preferredColorScheme(.dark)
             }
