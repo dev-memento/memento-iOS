@@ -99,11 +99,11 @@ struct MatrixGridView: View {
     
     @Binding var selectedPriority: Priority
     
-    let items: [(String, Priority)] = [
-        ("Important O\nUrgent O", .immediate),
-        ("Important O\nUrgent X", .high),
-        ("Important X\nUrgent O", .medium),
-        ("Important X\nUrgent X", .low)
+    let items: [Matrix] = [
+        Matrix(title: "Important O\nUrgent O", priority: .immediate),
+        Matrix(title: "Important O\nUrgent X", priority: .high),
+        Matrix(title: "Important X\nUrgent O", priority: .medium),
+        Matrix(title: "Important X\nUrgent X", priority: .low)
     ]
     
     private let gridItem = [
@@ -135,17 +135,17 @@ struct MatrixGridView: View {
                 }
                 
                 LazyVGrid(columns: gridItem, spacing: 8) {
-                    ForEach(items.indices, id: \.self) { index in
+                    ForEach(items) { item in
                         Button {
-                            selectedPriority = items[index].1
+                            selectedPriority = item.priority
                         } label: {
                             ZStack {
                                 Rectangle()
-                                    .fill(items[index].1 == selectedPriority ?
-                                          items[index].1.backgroundColor : Color.gray09)
+                                    .fill(item.priority == selectedPriority ?
+                                          item.priority.backgroundColor : Color.gray09)
                                     .frame(width: 146, height: 126)
                                 
-                                Text(items[index].0)
+                                Text(item.title)
                                     .multilineTextAlignment(.center)
                                     .foregroundColor(.gray04)
                                     .applyFont(.detail_r_12)
