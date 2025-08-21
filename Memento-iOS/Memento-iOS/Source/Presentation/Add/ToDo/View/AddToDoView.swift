@@ -46,7 +46,7 @@ struct AddToDoView: View {
                 CustomToggleView(isOn: $viewModel.isNaturalLanguageEnabled)
             }
             
-            AddTodoTextView(viewModel: viewModel)
+            AddToDoTextView(viewModel: viewModel)
         }
         .padding(.leading, 23)
         .padding(.trailing, 16)
