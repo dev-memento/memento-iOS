@@ -14,15 +14,15 @@ enum AFSessionFactory {
     /// 일반 요청 (TokenInterceptor 장착)
     static let shared: Session = {
         let config = URLSessionConfiguration.af.default
-        config.timeoutIntervalForRequest = 20
-        config.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+        config.timeoutIntervalForRequest = 20 // 응답 대기 최대 시간
+        config.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData // 캐시 사용 x 무조건 서버 원본
         return Session(configuration: config, interceptor: TokenInterceptor.shared)
     }()
     
     /// 리프레시 전용(인터셉터 없음) — 동일 세션 재진입/교착 방지
     static let refreshOnly: Session = {
         let config = URLSessionConfiguration.af.default
-        config.timeoutIntervalForRequest = 15
+        config.timeoutIntervalForRequest = 20
         config.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
         return Session(configuration: config, interceptor: nil)
     }()
@@ -42,7 +42,8 @@ final class TokenInterceptor: RequestInterceptor {
 
     private init() {}
 
-    // MARK: Adapt
+    // MARK: 요청이 나가기 직전 토큰 삽입
+    /// 우리 API일 때만 가로채기 로그인, 리프래시 요청이면 토큰 삽입 x
     func adapt(_ urlRequest: URLRequest,
                for session: Session,
                completion: @escaping (Result<URLRequest, Error>) -> Void) {
@@ -55,11 +56,6 @@ final class TokenInterceptor: RequestInterceptor {
             completion(.success(req)); return
         }
 
-        // 이미 Authorization 있으면(소셜/특수) 손대지 않음
-        if req.value(forHTTPHeaderField: "Authorization") != nil {
-            completion(.success(req)); return
-        }
-
         if let access = try? TokenKeychainManager.shared.getAccessToken(), !access.isEmpty {
             req.setValue("Bearer \(access)", forHTTPHeaderField: "Authorization")
         }
@@ -67,7 +63,9 @@ final class TokenInterceptor: RequestInterceptor {
         completion(.success(req))
     }
 
-    // MARK: Retry (401 → refresh → retry 1회)
+    // MARK: 401 에러 발생시 리프래시 갱신 실행
+    /// 동시 401 요청이 전부 refreshTokens()를 호출 → 서버에 중복 리프레시 요청 남발
+    /// lock.lock()으로 첫 요청만 리프레시 담당자가 되고, 나머지는 pendingCompletions 배열에 합류해서 리프레시 끝날 때까지 대기
     func retry(_ request: Request,
                for session: Session,
                dueTo error: Error,
@@ -118,9 +116,8 @@ final class TokenInterceptor: RequestInterceptor {
         }
     }
 
-    // MARK: Refresh (인터셉터 미적용 세션)
-    // TokenRefreshPlugin.swift (일부만 발췌)
-
+    // MARK: Refresh 갱신 API 호출
+    /// 리프래시 토큰 401 만료 시 강제 다시 로그인 화면으로
     private func refreshTokens(completion: @escaping (Bool) -> Void) {
         RefreshService.refreshTokens { result in
             switch result {
@@ -138,14 +135,13 @@ final class TokenInterceptor: RequestInterceptor {
             }
         }
     }
-
-
-    // MARK: Helpers
+    
+    // MARK: - 우리 API 요청 검증, 구글 API 요청에는 손대지 않으려는 목적
     private func isOurAPI(_ req: URLRequest) -> Bool {
         guard let url = req.url else { return false }
         return url.absoluteString.hasPrefix(baseURLString)
     }
-
+    
     private func isLogin(_ req: URLRequest) -> Bool {
         let path = req.url?.path ?? ""
         let method = req.httpMethod ?? "PUT"
