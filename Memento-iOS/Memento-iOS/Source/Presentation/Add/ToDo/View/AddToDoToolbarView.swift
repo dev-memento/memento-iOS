@@ -13,6 +13,8 @@ struct AddToDoToolbarView: View {
     
     @ObservedObject var viewModel: AddToDoViewModel
     
+    @Binding var isAddViewPresented: Bool
+    
     var body: some View {
         HStack {
             deadlineButtonView
@@ -112,7 +114,11 @@ struct AddToDoToolbarView: View {
     
     private var enterButtonView: some View {
         Button(action: {
-            viewModel.postToDo { }
+            viewModel.postToDo {
+                withAnimation(.spring()) {
+                    isAddViewPresented = false
+                }
+            }
         }) {
             Image(viewModel.isTextEmpty ? .btn_enter_disabled : .btn_enter_active)
         }

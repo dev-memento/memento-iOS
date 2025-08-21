@@ -15,6 +15,8 @@ struct AddToDoTextView: View {
     @FocusState private var isFocused: Bool
     @State private var keyboardHeight: CGFloat = 0
     
+    @Binding var isAddViewPresented: Bool
+    
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
@@ -46,7 +48,7 @@ struct AddToDoTextView: View {
         }
         .toolbar {
             ToolbarItem(placement: .keyboard) {
-                AddToDoToolbarView(viewModel: viewModel)
+                AddToDoToolbarView(viewModel: viewModel, isAddViewPresented: $isAddViewPresented)
             }
         }
     }

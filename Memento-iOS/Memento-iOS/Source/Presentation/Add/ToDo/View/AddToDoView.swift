@@ -13,6 +13,8 @@ struct AddToDoView: View {
     
     @StateObject private var viewModel = AddToDoViewModel()
     
+    @Binding var isAddViewPresented: Bool
+    
     var body: some View {
         VStack(spacing: 13) {
             HStack(spacing: 0) {
@@ -47,7 +49,7 @@ struct AddToDoView: View {
                 CustomToggleView(isOn: $viewModel.isNaturalLanguageEnabled)
             }
             
-            AddToDoTextView(viewModel: viewModel)
+            AddToDoTextView(viewModel: viewModel, isAddViewPresented: $isAddViewPresented)
         }
         .padding(.leading, 23)
         .padding(.trailing, 16)

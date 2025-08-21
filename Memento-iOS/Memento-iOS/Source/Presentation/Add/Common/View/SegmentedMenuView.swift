@@ -70,7 +70,7 @@ extension SegmentedMenuView {
     var contentView: some View {
         switch viewModel.selectedMenu {
         case .checkbox:
-            AddToDoView()
+            AddToDoView(isAddViewPresented: $viewModel.isPresented)
         case .event:
             AddScheduleView(isAddViewPresented: $viewModel.isPresented)
         }
