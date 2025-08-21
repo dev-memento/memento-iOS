@@ -42,6 +42,16 @@ enum Priority: String {
         }
     }
     
+    var imageName: MDSImageName {
+        switch self {
+        case .immediate: return .matrix_immediate
+        case .high: return .matrix_high
+        case .medium: return .matrix_medium
+        case .low: return .matrix_low
+        case .none: return .matrix_none
+        }
+    }
+    
     func getPriorityValues() -> (urgency: Double, importance: Double) {
         switch self {
         case .immediate:
