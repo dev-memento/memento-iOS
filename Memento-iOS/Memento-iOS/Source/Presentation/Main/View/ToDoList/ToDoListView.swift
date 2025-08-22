@@ -10,6 +10,7 @@ import MDSKit
 import MCalendar
 
 struct ToDoListView: View {
+    
     @ObservedObject var viewModel: ToDoListViewModel
     
     @State private var showTodoAlert = false
@@ -21,14 +22,18 @@ struct ToDoListView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     ForEach(viewModel.mCallendarDataSource.wholeMonthDate, id: \.self) { date in
+                        
                         ToDoListDateView(date: "\(Date.makeMonthDate(month: date.month)) \(date.day)")
-                            .padding(.bottom, 8)
                             .id(date)
+                            .padding(.bottom, 8)
+                             
                         if let events = viewModel.toDoListItemDict[date], !events.isEmpty {
                             ForEach(events, id: \.self) { event in
+                                
                                 ToDoListItemView(
                                     item: event.mapToToDoItem(),
-                                    isChecked: Binding(
+                                    isHighlighted: isTopPriorityItem(at: event, items: events),
+                                    isCompleted: Binding(
                                         get: { event.isChecked },
                                         set: { newValue in
                                             if let index = viewModel.toDoListItemDict[date]?.firstIndex(where: { $0.id == event.id }) {
@@ -36,10 +41,7 @@ struct ToDoListView: View {
                                                 viewModel.updateToDoCompletion(toDoId: event.id)
                                             }
                                         }
-                                    ),
-                                    isHighlighted: isTopPriorityItem(at: event, items: events),
-                                    backgroundColor: Color.grayBlack,
-                                    onTodoTap: { selectedItem in }
+                                    )
                                 )
                                 .onTapGesture {
                                     selectedItem = event
@@ -53,10 +55,7 @@ struct ToDoListView: View {
             }
             .background(Color.grayBlack)
             .onAppear {
-                viewModel.getToDoListTotalAPI()  // ✅ 캐싱된 데이터 먼저 표시
-                //                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                //                    viewModel.getToDoListTotalAPI(forceRefresh: true)  // ✅ 최신 데이터 갱신
-                //                }
+                viewModel.getToDoListTotalAPI()
             }
             
             if showTodoAlert, let todo = selectedItem {
@@ -107,6 +106,7 @@ struct ToDoListView: View {
 }
 
 struct ToDoListDateView: View {
+    
     var date: String
     
     var body: some View {
@@ -121,6 +121,7 @@ struct ToDoListDateView: View {
                     .applyFont(.body_b_14)
                     .foregroundColor(Color.gray05)
                     .padding(.leading, 22)
+                
                 Spacer()
             }
             .frame(height: 20)
@@ -130,24 +131,11 @@ struct ToDoListDateView: View {
 }
 
 struct ToDoListItemView: View {
+    
     var item: ToDoGetResponses
-    @Binding var isChecked: Bool
-    
     var isHighlighted: Bool
-    var backgroundColor: Color
     
-    var onTodoTap: (ToDoListTotalResponse) -> Void
-    
-    private var toDoListCompletedBinding: Binding<ToDoCompletionResponse> {
-        Binding<ToDoCompletionResponse>(
-            get: {
-                ToDoCompletionResponse(id: item.id, isCompleted: isChecked)
-            },
-            set: { newValue in
-                isChecked = newValue.isCompleted
-            }
-        )
-    }
+    @Binding var isCompleted: Bool
     
     var body: some View {
         VStack(spacing: 10) {
@@ -158,11 +146,10 @@ struct ToDoListItemView: View {
                 endDate: item.endDate,
                 priority: Priority(rawValue: item.priorityType.lowercased()) ?? .none,
                 isHighlighted: isHighlighted,
-                isCompleted: $isChecked
+                isCompleted: $isCompleted
             )
         }
         .padding(.horizontal)
         .padding(.bottom, 8)
     }
 }
-
