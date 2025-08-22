@@ -13,10 +13,14 @@ import MCalendar
 struct ToDoListWeeklyCalendarView: View {
     
     @ObservedObject var viewModel: ToDoListViewModel
-    
     @StateObject private var settingViewModel = SettingViewModel()
     
-    @State private var isSettingPresented = false
+    @State private var isToDoAlertPresented = false
+    @State private var isEditSheetPresented = false
+    @State private var isSettingViewPresented = false
+    
+    @State private var selectedItem: ToDoItem? = nil
+    
     @State private var scrollTarget: MCalendarDataModel? = nil
     
     var body: some View {
@@ -28,17 +32,20 @@ struct ToDoListWeeklyCalendarView: View {
                     .background(Color.grayBlack)
                 
                 ScrollViewReader { proxy in
-                    ToDoListView(viewModel: viewModel)
-                        .scrollContentBackground(.hidden)
-                        .padding(.vertical, 4)
-                        .onChange(of: scrollTarget) {
-                            withAnimation {
-                                proxy.scrollTo(scrollTarget, anchor: .top)
-                            }
+                    ToDoListView(viewModel: viewModel) { tappedItem in
+                        selectedItem = tappedItem
+                        isToDoAlertPresented = true
+                    }
+                    .scrollContentBackground(.hidden)
+                    .padding(.vertical, 4)
+                    .onChange(of: scrollTarget) {
+                        withAnimation {
+                            proxy.scrollTo(scrollTarget, anchor: .top)
                         }
+                    }
                 }
             }
-            .fullScreenCover(isPresented: $isSettingPresented) {
+            .fullScreenCover(isPresented: $isSettingViewPresented) {
                 SettingView()
                     .environmentObject(settingViewModel)
             }
@@ -51,6 +58,28 @@ struct ToDoListWeeklyCalendarView: View {
                 }
             }
             .background(Color.grayBlack)
+            .overlay {
+                if isToDoAlertPresented, let item = selectedItem {
+                    ToDoAlertView(
+                        toDoId: item.id,
+                        toDoTitle: item.description,
+                        deadline: item.endDate,
+                        tagName: item.tagName,
+                        tagColorCode: item.tagColor,
+                        priority: item.priorityType,
+                        onDelete: {
+                            viewModel.deleteToDo(toDoId: item.id)
+                            isToDoAlertPresented = false
+                        },
+                        onEdit: {
+                            isToDoAlertPresented = false
+                        },
+                        isChecked: viewModel.bindingForToDoCompletion(item.id)
+                    )
+                    .background(Color.black.opacity(0.4))
+                    .edgesIgnoringSafeArea(.all)
+                }
+            }
         }
     }
     
@@ -83,7 +112,7 @@ struct ToDoListWeeklyCalendarView: View {
                 .padding(.trailing, 17)
                 
                 Button {
-                    isSettingPresented = true
+                    isSettingViewPresented = true
                 } label: {
                     Image(.ic_settings)
                         .padding(.trailing, 25)

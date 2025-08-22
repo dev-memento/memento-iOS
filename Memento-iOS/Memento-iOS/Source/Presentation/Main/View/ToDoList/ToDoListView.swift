@@ -14,10 +14,7 @@ struct ToDoListView: View {
     
     @ObservedObject var viewModel: ToDoListViewModel
     
-    @State private var isToDoAlertPresented = false
-    @State private var isEditSheetPresented = false
-    
-    @State private var selectedItem: ToDoItem?
+    var onTap: (ToDoItem) -> Void
     
     var body: some View {
         ZStack {
@@ -38,8 +35,7 @@ struct ToDoListView: View {
                                     isCompleted: viewModel.bindingForToDoCompletion(event.id)
                                 )
                                 .onTapGesture {
-                                    selectedItem = event
-                                    isToDoAlertPresented = true
+                                    onTap(event)
                                 }
                             }
                         }
@@ -52,31 +48,6 @@ struct ToDoListView: View {
             .onAppear {
                 viewModel.getToDoListTotal()
             }
-            
-            if isToDoAlertPresented, let todo = selectedItem {
-                ToDoAlertView(
-                    toDoId: todo.id,
-                    toDoTitle: todo.description,
-                    deadline: todo.endDate,
-                    tagName: todo.tagName,
-                    tagColorCode: todo.tagColor,
-                    priority: todo.priorityType,
-                    onDelete: {
-                        viewModel.deleteToDo(toDoId: todo.id)
-                        isToDoAlertPresented = false
-                    },
-                    onEdit: {
-                        isToDoAlertPresented = false
-                        isEditSheetPresented = true
-                    },
-                    isChecked: viewModel.bindingForToDoCompletion(todo.id)
-                )
-                .background(Color.black.opacity(0.4))
-                .edgesIgnoringSafeArea(.all)
-            }
-        }
-        .sheet(isPresented: $isEditSheetPresented) {
-            EmptyView()
         }
     }
 }
