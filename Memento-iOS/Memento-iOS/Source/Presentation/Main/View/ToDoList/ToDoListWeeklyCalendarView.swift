@@ -11,12 +11,14 @@ import MDSKit
 import MCalendar
 
 struct ToDoListWeeklyCalendarView: View {
+    
     @ObservedObject var viewModel: ToDoListViewModel
+    
     @StateObject private var settingViewModel = SettingViewModel()
-    @State private var scrollTarget: MCalendarDataModel? = nil
-    @State private var userInteractionFlag: Bool = false
+    
     @State private var isSettingPresented = false
-
+    @State private var scrollTarget: MCalendarDataModel? = nil
+    
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
@@ -34,22 +36,24 @@ struct ToDoListWeeklyCalendarView: View {
                                 }
                             }
                             .padding(.leading, 22)
+                        
                         Spacer()
-                        VStack {
+                        
+                        VStack(spacing: 0) {
                             Text("\(date.makeTodayYearString())")
                                 .foregroundStyle(Color.gray07)
                                 .applyFont(.detail_b_12)
                                 .padding(.top, 11)
+                            
                             Spacer()
                         }
                         .padding(.trailing, 17)
+                        
                         Button {
                             isSettingPresented = true
                         } label: {
                             Image(.ic_settings)
-                                .resizable()
-                                .frame(width: 26, height: 26)
-                                .padding(.trailing, 34)
+                                .padding(.trailing, 25)
                         }
                     }
                 }
@@ -96,22 +100,24 @@ struct ToDoListWeeklyCalendarView: View {
         })
         .setWeekDayFont(MWeekDayOptions.allDays,
                         font: Font(MDSFont.suiteBold(size: 12).font))
-        .setWeekDayTextColors(MWeekDayOptions.allDays,
-                              color: .gray08)
-        .setWeekDaySelectedColor(MWeekDayOptions.allDays,
-                                 color: .gray04)
         .setDayFont(MWeekDayOptions.allDays,
                     font: Font(MDSFont.suiteBold(size: 16).font))
-        .setDayBackgroundColors(MWeekDayOptions.allDays,
-                                color: .grayWhite)
-        .setDayBackgroundColors(MWeekDayOptions.allDays,
-                                color: .clear)
+        
+        .setWeekDayTextColors(MWeekDayOptions.allDays,
+                              color: .gray08)
         .setDayTextColors(MWeekDayOptions.allDays,
                           color: .gray06)
+        
+        .setWeekDaySelectedColor(MWeekDayOptions.allDays,
+                                 color: .gray04)
         .setDaySelectedColor(MWeekDayOptions.allDays,
                              color: .grayBlack)
+        
+        .setDayBackgroundColors(MWeekDayOptions.allDays,
+                                color: .clear)
         .setDaySelectedBackgroundColors(MWeekDayOptions.allDays,
                                         color: .gray04)
+        
         .setTodayColor(color: .mainGreen)
     }
     
