@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		04792EC42E53362D0016946A /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 04792EC32E53362D0016946A /* Config.xcconfig */; };
 		2F459C3B2D37C83800EDD537 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 2F459C3A2D37C83800EDD537 /* FirebaseAuth */; };
 		2F459C3E2D37C88600EDD537 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 2F459C3D2D37C88600EDD537 /* GoogleSignIn */; };
 		2F459C402D37C88600EDD537 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 2F459C3F2D37C88600EDD537 /* GoogleSignInSwift */; };
@@ -20,7 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		763750FF2D42AB8000A31BA8 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		04792EC32E53362D0016946A /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		830F3C562D2A73BD00254FDE /* Memento-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Memento-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -38,6 +39,7 @@
 				"GoogleService-Info.plist",
 				"Preview Content/Preview Assets.xcassets",
 				Resource/Assets.xcassets,
+				"Resource/Launch Screen.storyboard",
 				Source/Component/Alert/CustomActionSheetView.swift,
 				Source/Component/Alert/ScheduleAlertView.swift,
 				Source/Component/CustomTextEditor.swift,
@@ -52,16 +54,18 @@
 				Source/Network/AI/DTO/Response/PrioritizationResponse.swift,
 				Source/Network/AI/PrioritizationAPIService.swift,
 				Source/Network/AI/TargetType/PrioritizationTargetType.swift,
-				Source/Network/Base/TokenRefreshPlugin.swift,
+				"Source/Network/Base/AuthSession/AuthSession+Apple.swift",
+				"Source/Network/Base/AuthSession/AuthSession+Google.swift",
+				"Source/Network/Base/AuthSession/AuthSession+Network.swift",
+				Source/Network/Base/Token/RefreshService.swift,
+				Source/Network/Base/Token/TokenInterceptor.swift,
 				Source/Network/Onboarding/AppleSchedulesAPIService.swift,
 				Source/Network/Onboarding/CalendarService.swift,
 				Source/Network/Onboarding/DTO/Request/LoginRequest.swift,
 				"Source/Network/Onboarding/DTO/Response /LoginResponse.swift",
 				"Source/Network/Onboarding/DTO/Response /UserUptimeResponse.swift",
 				Source/Network/Onboarding/DTO/TargetType/AppleSchedulesTargetType.swift,
-				Source/Network/Onboarding/DTO/TargetType/TokenRefreshType.swift,
 				Source/Network/Onboarding/DTO/TargetType/UserInfoTargetType.swift,
-				Source/Network/Onboarding/LoginAPIService.swift,
 				Source/Network/Onboarding/UserInfoAPIService.swift,
 				Source/Network/Onboarding/UserUptimeAPIService.swift,
 				Source/Network/Schedule/DTO/Request/SchedulePostRequest.swift,
@@ -85,9 +89,6 @@
 				Source/Presentation/Main/View/DragAndDrop/DropViewDelegate.swift,
 				Source/Presentation/Main/View/ToDoList/ToDoListWeeklyCalendarView.swift,
 				Source/Presentation/Main/ViewModel/ToDoListViewModel.swift,
-				"Source/Presentation/Onboarding/View/Launch Screen.storyboard",
-				Source/Presentation/Onboarding/ViewModel/AppState.swift,
-				Source/Presentation/Onboarding/ViewModel/AuthViewModel.swift,
 				Source/Presentation/Onboarding/ViewModel/OnboardingViewModel.swift,
 				Source/Utils/DynamicPresentationDetent.swift,
 			);
@@ -153,7 +154,7 @@
 		830F3C4D2D2A73BD00254FDE = {
 			isa = PBXGroup;
 			children = (
-				763750FF2D42AB8000A31BA8 /* Config.xcconfig */,
+				04792EC32E53362D0016946A /* Config.xcconfig */,
 				9D57D6E32D3AA104002AB064 /* Memento-iOS */,
 				2F459C412D37C91B00EDD537 /* Frameworks */,
 				830F3C572D2A73BD00254FDE /* Products */,
@@ -251,6 +252,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04792EC42E53362D0016946A /* Config.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,7 +271,7 @@
 /* Begin XCBuildConfiguration section */
 		830F3C622D2A73BF00254FDE /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 763750FF2D42AB8000A31BA8 /* Config.xcconfig */;
+			baseConfigurationReference = 04792EC32E53362D0016946A /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -335,7 +337,7 @@
 		};
 		830F3C632D2A73BF00254FDE /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 763750FF2D42AB8000A31BA8 /* Config.xcconfig */;
+			baseConfigurationReference = 04792EC32E53362D0016946A /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -394,6 +396,7 @@
 		};
 		830F3C652D2A73BF00254FDE /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 04792EC32E53362D0016946A /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -428,6 +431,7 @@
 		};
 		830F3C662D2A73BF00254FDE /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 04792EC32E53362D0016946A /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

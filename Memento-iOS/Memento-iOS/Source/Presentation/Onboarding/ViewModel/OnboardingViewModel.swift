@@ -59,6 +59,7 @@ final class OnboardingViewModel: ObservableObject {
     /// 네비게이션 스택을 관리
     @Published var navigationPath: [OnboardingNavigationDestination] = []
     
+    
     /// 사용자 입력 데이터
     @Published var sleepCycleData: SleepCycleData = SleepCycleData()
     @Published var workSelectionData: WorkSelectionData = WorkSelectionData()
@@ -67,24 +68,12 @@ final class OnboardingViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var mementoStart: Bool = false
     
-    let authViewModel: AuthViewModel
-    let userInfoAPIService = UserInfoAPIService()
-    let userUptimeAPIService = UserUptimeAPIService()
-    
-    // MARK: - Properties
+    private let userInfoAPIService = UserInfoAPIService()
+    private let userUptimeAPIService = UserUptimeAPIService()
     private var cancellables = Set<AnyCancellable>()
     
-    init(authViewModel: AuthViewModel) {
-        self.authViewModel = authViewModel
-        setupAuthStateSubscription()
-        checkAuthenticationStatus()
-    }
-    
-    // 토큰 체크 메서드 추가
-    func checkAuthenticationStatus() {
-        if TokenKeychainManager.shared.hasValidToken() {
-            mementoStart = true
-        }
+    init() {
+        observeNavigationPath() 
     }
 }
 
@@ -107,28 +96,16 @@ extension OnboardingViewModel {
     func resetNavigation() {
         navigationPath.removeAll()
     }
-}
-
-// MARK: - Authentication Handling
-
-extension OnboardingViewModel {
     
-    func handleGoogleLogin() {
-        authViewModel.signInWithGoogle()
-    }
-    
-    func handleAppleLogin(request: ASAuthorizationAppleIDRequest) {
-        authViewModel.send(action: .appleLogin(request))
-    }
-    
-    // AuthViewModel 상태 변화 감지를 위한 메서드
-    private func setupAuthStateSubscription() {
-        authViewModel.$isAuthenticated
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] isAuthenticated in
-                guard let self = self else { return }
-                if isAuthenticated {
-                    self.navigateToNext(.sleepCycleSetting)
+    /// 로그인 이후 최초 진입 -> 다시 뒤로가기 -> 재 로그인시 온보딩 다시 보이게 상태 구독
+    private func observeNavigationPath() {
+        $navigationPath
+            .map(\.isEmpty)
+            .removeDuplicates()
+            .filter { $0 }
+            .sink { _ in
+                DispatchQueue.main.async {
+                    AuthSession.shared.shouldStartOnboarding = false
                 }
             }
             .store(in: &cancellables)
@@ -148,7 +125,7 @@ extension OnboardingViewModel {
     var isNextButtonEnabledForWorkPreference: Bool {
         SurveyQuestion.mockData.allSatisfy { workPreferenceData.selectedAnswers[$0.id] != nil }
     }
-
+    
     /// 선택된 카테고리를 서버에서 요구하는 형식으로 변환하고,
     /// WorkSelectionData의 selectedCategory에 저장합니다.
     func updateCategory(categoryName: String) {
@@ -170,20 +147,37 @@ extension OnboardingViewModel {
             workPreference: workPreferenceData
         )
         
-        submitToServer(onboardingData)
+        submitOnboardingDataAndFinish(onboardingData)
     }
     
     /// 서버로 데이터 전송 로직
-    func submitToServer(_ data: OnboardingData) {
+    func submitOnboardingDataAndFinish(_ data: OnboardingData) {
         // OnboardingData를 UserInfoRequest로 변환
         let userInfoRequest = UserInfoRequest(onboardingData: data)
         
-        userInfoAPIService.updateUserInfo(request: userInfoRequest) { result in
-            switch result {
-            case .success(let response):
-                print("온보딩 데이터 전송 성공: \(response?.message)")
-            default:
-                print("회원 개인 정보 업데이트 실패")
+        // 2) API 호출
+        userInfoAPIService.updateUserInfo(request: userInfoRequest) { [weak self] result in
+            Task { @MainActor in
+                guard let self = self else { return }
+                
+                switch result {
+                case .success(let response):
+                    print("온보딩 데이터 전송 성공: \(response?.message ?? "-")")
+                    // 온보딩 종료 → 탭으로
+                    AuthSession.shared.shouldStartOnboarding = false
+                    AuthSession.shared.isLoggedIn = true
+                    
+                    // 온보딩 네비 스택 정리
+                    self.resetNavigation()
+                    
+                case .unAuthorized:
+                    // 세션 만료 등 → 로그인 화면으로
+                    self.errorMessage = "세션이 만료되었습니다. 다시 로그인 해주세요."
+                    AuthSession.shared.clear()
+                    
+                default:
+                    self.errorMessage = "회원 개인 정보 업데이트 실패"
+                }
             }
         }
     }

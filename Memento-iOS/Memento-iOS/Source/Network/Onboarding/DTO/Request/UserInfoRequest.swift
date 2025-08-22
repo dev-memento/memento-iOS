@@ -1,5 +1,5 @@
 //
-//  SleepCycleRequestModel.swift
+//  UserInfoRequest.swift
 //  Memento-iOS
 //
 //  Created by 정정욱 on 1/21/25.

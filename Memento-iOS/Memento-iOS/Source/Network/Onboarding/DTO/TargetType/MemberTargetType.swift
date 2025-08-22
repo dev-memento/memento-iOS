@@ -1,5 +1,5 @@
 //
-//  LoginTargetType.swift
+//  MemberTargetType.swift
 //  Memento-iOS
 //
 //  Created by 정정욱 on 1/22/25.
@@ -8,44 +8,48 @@
 import Foundation
 import Moya
 
-enum LoginTargetType {
-    case login(provider: String, idToken: String, timeZoneOffset: String, fcmToken: String)
+enum MemberTargetType {
+    case socialLogin(provider: String, idToken: String, timeZoneOffset: String, fcmToken: String)
+    case withdraw
 }
 
-extension LoginTargetType: BaseTargetType {
+extension MemberTargetType: BaseTargetType {
     
     var pathParameter: String? {
         return nil
     }
     
     var headerType: HeaderType {
-        return .noTokenHeader
+        switch self {
+        case .socialLogin: return .noTokenHeader
+        case .withdraw:    return .tokenHeader
+        }
     }
     
     var utilPath: UtilPath {
         return .user
     }
     
-    var path: String {
-        switch self {
-        case .login:
-            return "\(utilPath.rawValue)" // 결과: "/api/v1/members"
-        }
-    }
+    var path: String { utilPath.rawValue }
     
     var method: Moya.Method {
-        return .put
+         switch self {
+         case .socialLogin: return .put
+         case .withdraw:    return .delete
+         }
     }
     
     var requestBodyParameter: Codable? {
         switch self {
-        case let .login(provider, idToken, timeZoneOffset, fcmToken):
+        case let .socialLogin(provider, idToken, timeZoneOffset, fcmToken):
             return LoginRequest(
                 provider: provider,
                 idToken: idToken,
                 timeZoneOffset: timeZoneOffset,
                 fcmToken: fcmToken
             )
+        case .withdraw:
+            return nil
         }
     }
     

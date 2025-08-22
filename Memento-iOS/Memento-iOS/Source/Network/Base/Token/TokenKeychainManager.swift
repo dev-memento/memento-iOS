@@ -1,11 +1,12 @@
 //
-//  KeychainManager.swift
+//  TokenKeychainManager.swift
 //  Memento-iOS
 //
 //  Created by 정정욱 on 1/22/25.
 //
 
 import Foundation
+
 import Security
 
 /// Keychain 관련 에러 정의
@@ -23,6 +24,7 @@ final class TokenKeychainManager {
     private init() {}
     
     // MARK: - 저장 메서드
+    
     func save(key: String, value: String) throws {
         guard let data = value.data(using: .utf8) else {
             throw KeychainError.dataConversionFailed
@@ -44,6 +46,7 @@ final class TokenKeychainManager {
     }
     
     // MARK: - 조회 메서드
+    
     func load(key: String) throws -> String? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
@@ -67,7 +70,35 @@ final class TokenKeychainManager {
         return value
     }
     
-    // MARK: - 삭제 메서드
+    // MARK: - Access Token 저장, 가져오기
+    
+    func saveAccessToken(_ token: String) throws {
+        print("👍 AccessToken 저장 완료")
+        try save(key: "AccessToken", value: token)
+    }
+    
+    func getAccessToken() throws -> String? {
+        return try load(key: "AccessToken")
+    }
+    
+    // MARK: - Refresh Token 저장, 가져오기
+    
+    func saveRefreshToken(_ token: String) throws {
+        print("👍 RefreshToken 저장 완료")
+        try save(key: "RefreshToken", value: token)
+    }
+    
+    func getRefreshToken() throws -> String? {
+        return try load(key: "RefreshToken")
+    }
+    
+    // MARK: - Token 삭제
+    
+    func clearTokens() throws {
+        try delete(key: "AccessToken")
+        try delete(key: "RefreshToken")
+    }
+    
     func delete(key: String) throws {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
@@ -80,49 +111,8 @@ final class TokenKeychainManager {
         }
     }
     
-    // MARK: - Access Token
-    
-    func saveAccessToken(_ token: String) throws {
-        try save(key: "AccessToken", value: token)
-    }
-    
-    func getAccessToken() throws -> String? {
-        return try load(key: "AccessToken")
-    }
-    
-    // MARK: - Refresh Token
-    
-    func saveRefreshToken(_ token: String) throws {
-        try save(key: "RefreshToken", value: token)
-    }
-    
-    func getRefreshToken() throws -> String? {
-        return try load(key: "RefreshToken")
-    }
-    
-    // MARK: - Token Management
-    
-    func clearTokens() throws {
-        try delete(key: "AccessToken")
-        try delete(key: "RefreshToken")
-    }
-    
-    func removeAllTokens() throws {
-        try delete(key: "AccessToken")
-        try delete(key: "RefreshToken")
-    }
-    
-    // MARK: - Token Validation
-
-    func isTokenExpired(_ token: String) -> Bool {
-        let parts = token.split(separator: ".")
-        guard parts.count == 3,
-              let payloadData = Data(base64Encoded: String(parts[1]).base64Padded()),
-              let json = try? JSONSerialization.jsonObject(with: payloadData) as? [String: Any],
-              let exp = json["exp"] as? TimeInterval else { return true }
-
-        return Date().timeIntervalSince1970 > exp
-    }
+    // MARK: - Token 유효성 검사 (만료시각 확인)
+    /// 키체인에서 액세스 토큰을 꺼내서 비어있지 않고, 만료되지 않았는지 확인
 
     func hasValidToken() -> Bool {
         do {
@@ -133,5 +123,15 @@ final class TokenKeychainManager {
         } catch {
             return false
         }
+    }
+
+    func isTokenExpired(_ token: String) -> Bool {
+        let parts = token.split(separator: ".")
+        guard parts.count == 3,
+              let payloadData = Data(base64Encoded: String(parts[1]).base64Padded()),
+              let json = try? JSONSerialization.jsonObject(with: payloadData) as? [String: Any],
+              let exp = json["exp"] as? TimeInterval else { return true }
+
+        return Date().timeIntervalSince1970 > exp
     }
 }

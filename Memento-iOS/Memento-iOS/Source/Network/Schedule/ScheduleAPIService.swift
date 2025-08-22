@@ -34,11 +34,14 @@ extension ScheduleAPIServiceProtocol {
 
 final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
     
-    private let provider = MoyaProvider<ScheduleTargetType>(plugins: [MoyaPlugin.shared, TokenRefreshPlugin.shared])
+    private let provider = MoyaProvider<ScheduleTargetType>(
+        session: AFSessionFactory.shared,
+        plugins: [MoyaPlugin.shared]
+    )
     
     // 전체 일정 조회
     func getSchedulesTotal(completion: @escaping (NetworkResult<ScheduleTotalResponseDTO>) -> Void) {
-        provider.requestWithTokenRefresh(.getSchedulesTotal) { [weak self] result in
+        provider.request(.getSchedulesTotal) { [weak self] result in
             guard let self else { return }
             let networkResult: NetworkResult<ScheduleTotalResponseDTO>
             
@@ -61,7 +64,7 @@ final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
     
     // All day 일정 조회
     func getSchedulesAllDay(completion: @escaping (NetworkResult<ScheduleAllDayResponseDTO>) -> Void) {
-        provider.requestWithTokenRefresh(.getSchedulesAllDay) { [weak self] result in
+        provider.request(.getSchedulesAllDay) { [weak self] result in
             guard let self = self else { return }
             let networkResult: NetworkResult<ScheduleAllDayResponseDTO>
             
@@ -83,7 +86,7 @@ final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
     
     // 특정 날짜 일정 조회
     func getSchedulesByDate(date: String, completion: @escaping (NetworkResult<ScheduleByDateResponseDTO>) -> Void) {
-        provider.requestWithTokenRefresh(.getSchedulesByDate(date: date)) { [weak self] result in
+        provider.request(.getSchedulesByDate(date: date)) { [weak self] result in
             guard let self = self else { return }
             let networkResult: NetworkResult<ScheduleByDateResponseDTO>
             
@@ -105,7 +108,7 @@ final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
     
     // 일정 상세 조회
     func getSchedulesDetail(scheduleId: Int, completion: @escaping (NetworkResult<ScheduleDetailResponseDTO>) -> Void) {
-        provider.requestWithTokenRefresh(.getSchedulesDetail(scheduleId: scheduleId)) { [weak self] result in
+        provider.request(.getSchedulesDetail(scheduleId: scheduleId)) { [weak self] result in
             guard let self = self else { return }
             let networkResult: NetworkResult<ScheduleDetailResponseDTO>
             
@@ -127,7 +130,7 @@ final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
     
     // 일정 생성
     func postSchedule(body: SchedulePostRequest, completion: @escaping (NetworkResult<Void>) -> Void) {
-        provider.requestWithTokenRefresh(.postSchedule(body: body)) { [weak self] result in
+        provider.request(.postSchedule(body: body)) { [weak self] result in
             guard let self = self else { return }
             let networkResult: NetworkResult<Void>
             
@@ -149,7 +152,7 @@ final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
     
     // 일정 삭제
     func deleteSchedule(scheduleId: Int, completion: @escaping (NetworkResult<Void>) -> Void) {
-        provider.requestWithTokenRefresh(.deleteSchedule(scheduleId: scheduleId)) { [weak self] result in
+        provider.request(.deleteSchedule(scheduleId: scheduleId)) { [weak self] result in
             guard let self = self else { return }
             let networkResult: NetworkResult<Void>
             

@@ -35,11 +35,14 @@ extension ToDoListAPIServiceProtocol {
 
 final class ToDoListAPIService: BaseAPIService, ToDoListAPIServiceProtocol {
     
-    private let provider = MoyaProvider<ToDoListTargetType>(plugins: [MoyaPlugin.shared, TokenRefreshPlugin.shared])
+    private let provider = MoyaProvider<ToDoListTargetType>(
+        session: AFSessionFactory.shared,
+        plugins: [MoyaPlugin.shared]                    
+    )
     
     // 전체 투두리스트 조회
     func getToDoListTotal(completion: @escaping (NetworkResult<ToDoListTotalResponseDTO>) -> Void) {
-        provider.requestWithTokenRefresh(.getToDoListTotal) { [weak self] result in
+        provider.request(.getToDoListTotal) { [weak self] result in
             guard let self = self else { return }
             let networkResult: NetworkResult<ToDoListTotalResponseDTO>
             
@@ -61,7 +64,7 @@ final class ToDoListAPIService: BaseAPIService, ToDoListAPIServiceProtocol {
     
     // 특정 날짜 투두 조회
     func getToDoByDate(date: String, completion: @escaping (NetworkResult<ToDoByDateResponseDTO>) -> Void) {
-        provider.requestWithTokenRefresh(.getToDoByDate(date: date)) { [weak self] result in
+        provider.request(.getToDoByDate(date: date)) { [weak self] result in
             guard let self = self else { return }
             let networkResult: NetworkResult<ToDoByDateResponseDTO>
             
@@ -83,7 +86,7 @@ final class ToDoListAPIService: BaseAPIService, ToDoListAPIServiceProtocol {
     
     // 투두 상세 조회
     func getToDoDetail(toDoId: Int, completion: @escaping (NetworkResult<ToDoDetailResponseDTO>) -> Void) {
-        provider.requestWithTokenRefresh(.getToDoDetail(toDoId: toDoId)) { [weak self] result in
+        provider.request(.getToDoDetail(toDoId: toDoId)) { [weak self] result in
             guard let self = self else { return }
             let networkResult: NetworkResult<ToDoDetailResponseDTO>
             
@@ -105,7 +108,7 @@ final class ToDoListAPIService: BaseAPIService, ToDoListAPIServiceProtocol {
     
     // 투두 생성
     func postToDo(body: ToDoPostRequest, completion: @escaping (NetworkResult<Void>) -> Void) {
-        provider.requestWithTokenRefresh(.postToDo(body: body)) { [weak self] result in
+        provider.request(.postToDo(body: body)) { [weak self] result in
             guard let self = self else { return }
             let networkResult: NetworkResult<Void>
             
@@ -127,7 +130,7 @@ final class ToDoListAPIService: BaseAPIService, ToDoListAPIServiceProtocol {
     
     // 투두 삭제
     func deleteToDo(toDoId: Int, completion: @escaping (NetworkResult<Void>) -> Void) {
-        provider.requestWithTokenRefresh(.deleteToDo(todoId: toDoId)) { [weak self] result in
+        provider.request(.deleteToDo(todoId: toDoId)) { [weak self] result in
             guard let self = self else { return }
             let networkResult: NetworkResult<Void>
             
@@ -149,7 +152,7 @@ final class ToDoListAPIService: BaseAPIService, ToDoListAPIServiceProtocol {
     
     // 투두 완료 업데이트
     func updateToDoCompletion(toDoId: Int, completion: @escaping (NetworkResult<ToDoCompletionResponseDTO>) -> Void) {
-        provider.requestWithTokenRefresh(.updateToDoCompletion(toDoId: toDoId)) { [weak self] result in
+        provider.request(.updateToDoCompletion(toDoId: toDoId)) { [weak self] result in
             guard let self = self else { return }
             let networkResult: NetworkResult<ToDoCompletionResponseDTO>
             

@@ -18,11 +18,14 @@ protocol UserInfoAPIServiceProtocol {
 
 final class UserInfoAPIService: BaseAPIService, UserInfoAPIServiceProtocol {
 
-    private let provider = MoyaProvider<UserInfoTargetType>(plugins: [MoyaPlugin.shared, TokenRefreshPlugin.shared])
-
+    private let provider = MoyaProvider<UserInfoTargetType>(
+        session: AFSessionFactory.shared,               
+        plugins: [MoyaPlugin.shared]
+    )
+    
     /// 사용자 정보 업데이트 API 호출
     func updateUserInfo(request: UserInfoRequest, completion: @escaping (NetworkResult<EmptyDTO>) -> Void) {
-        provider.requestWithTokenRefresh(.updateUserInfo(request: request)) { [weak self] result in
+        provider.request(UserInfoTargetType.updateUserInfo(request: request)) { [weak self] result in
             guard let self = self else { return }
 
             switch result {

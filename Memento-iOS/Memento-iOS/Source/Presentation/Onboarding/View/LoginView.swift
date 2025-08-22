@@ -14,51 +14,51 @@ import _AuthenticationServices_SwiftUI
 
 struct LoginView: View {
     @EnvironmentObject var viewModel: OnboardingViewModel
+    @EnvironmentObject var authSession: AuthSession
     
     var body: some View {
-        Group {
-            if TokenKeychainManager.shared.hasValidToken() && viewModel.mementoStart {
-                // 토큰이 있고 회원 가입 마치고 mementoStart 누르면 Main 화면 보이게
-                TabBarView()
-            } else {
-                // 토큰이 없고 신규 사용자라면 로그인 화면 표시
-                NavigationStack(path: $viewModel.navigationPath) {
-                    ZStack {
-                        BackgroundView()
-                        
-                        VStack(alignment: .center) {
-                            LoginHeaderView()
-                                .padding(.top, 115)
-                            
-                            LoginButtons(authViewModel: viewModel.authViewModel)
-                                .padding(.top, 103.2)
-                            
-                            TermsOfUseView()
-                                .padding(.top, 18)
-                            
-                            Spacer()
-                        }
-                    }
-                    .navigationDestination(for: OnboardingNavigationDestination.self) { destination in
-                        switch destination {
-                        case .sleepCycleSetting:
-                            SleepCycleSettingView()
-                                .navigationBarBackButtonHidden()
-                                .environmentObject(viewModel)
-                        case .workSelection:
-                            WorkSelectionView()
-                                .navigationBarBackButtonHidden()
-                                .environmentObject(viewModel)
-                        case .workPreference:
-                            WorkPreferenceView()
-                                .navigationBarBackButtonHidden()
-                                .environmentObject(viewModel)
-                        case .calendarConnect:
-                            CalendarConnectView()
-                                .navigationBarBackButtonHidden()
-                                .environmentObject(viewModel) 
-                        }
-                    }
+        NavigationStack(path: $viewModel.navigationPath) {
+            ZStack {
+                BackgroundView()
+                
+                VStack(alignment: .center) {
+                    LoginHeaderView()
+                        .padding(.top, 115)
+                    
+                    LoginButtons()
+                        .padding(.top, 103.2)
+                        .environmentObject(authSession)
+                    
+                    TermsOfUseView()
+                        .padding(.top, 18)
+                    
+                    Spacer()
+                }
+            }
+            .onChange(of: authSession.shouldStartOnboarding) { oldValue, newValue in
+                if newValue {
+                    viewModel.navigationPath = [.sleepCycleSetting]
+                }
+            }
+            .navigationDestination(for: OnboardingNavigationDestination.self) { destination in
+                switch destination {
+                case .sleepCycleSetting:
+                    SleepCycleSettingView()
+                        .navigationBarBackButtonHidden()
+                        .environmentObject(viewModel)
+                case .workSelection:
+                    WorkSelectionView()
+                        .navigationBarBackButtonHidden()
+                        .environmentObject(viewModel)
+                case .workPreference:
+                    WorkPreferenceView()
+                        .navigationBarBackButtonHidden()
+                        .environmentObject(viewModel)
+                case .calendarConnect:
+                    CalendarConnectView()
+                        .navigationBarBackButtonHidden()
+                        .environmentObject(viewModel)
+                        .environmentObject(authSession)
                 }
             }
         }
@@ -88,13 +88,13 @@ private struct LoginHeaderView: View {
 // MARK: - Login Buttons
 
 private struct LoginButtons: View {
-    @ObservedObject var authViewModel: AuthViewModel
+    @EnvironmentObject var authSession: AuthSession
     
     var body: some View {
         VStack(alignment: .center, spacing: 18) {
             // Google 로그인 버튼
             Button {
-                authViewModel.send(action: .googleLogin)
+                authSession.signInWithGoogle()
             } label: {
                 HStack(spacing: 8) {
                     Image(.img_google)
@@ -110,23 +110,23 @@ private struct LoginButtons: View {
             }
             .frame(width: UIScreen.main.bounds.width * 0.95, height: 46)
             .background(Color.gray10)
-            .disabled(authViewModel.isLoading)
-            .opacity(authViewModel.isLoading ? 0.6 : 1)
+            .disabled(authSession.isLoading)
+            .opacity(authSession.isLoading ? 0.6 : 1)
             
             // Apple 로그인 버튼
             SignInWithAppleButton(
                 onRequest: { request in
-                    guard !authViewModel.isLoading else { return }
-                    authViewModel.send(action: .appleLogin(request))
+                    guard !authSession.isLoading else { return }
+                    authSession.prepareAppleSignIn(request)
                 },
                 onCompletion: { result in
-                    guard !authViewModel.isLoading else { return }
-                    authViewModel.send(action: .appleLoginCompletion(result))
+                    guard !authSession.isLoading else { return }
+                    authSession.handleAppleSignInCompletion(result)
                 }
             )
             .frame(width: UIScreen.main.bounds.width * 0.95, height: 46)
             .background(Color.clear)
-            .disabled(authViewModel.isLoading)
+            .disabled(authSession.isLoading)
             .overlay(
                 HStack(spacing: 8) {
                     Image(.img_apple)
@@ -167,5 +167,5 @@ private struct TermsOfUseView: View {
 
 #Preview {
     LoginView()
-        .environmentObject(OnboardingViewModel(authViewModel: AuthViewModel()))
+        .environmentObject(OnboardingViewModel())
 }

@@ -15,7 +15,7 @@ enum TagTargetType {
 
 extension TagTargetType: BaseTargetType {
     var headerType: HeaderType {
-        return .accessTokenHeader
+        return .tokenHeader
     }
     
     var utilPath: UtilPath {

@@ -23,10 +23,13 @@ extension TagAPIServiceProtocol {
 
 final class TagAPIService: BaseAPIService, TagAPIServiceProtocol {
     
-    private let provider = MoyaProvider<TagTargetType>(plugins: [MoyaPlugin.shared])
+    private let provider = MoyaProvider<TagTargetType>(
+        session: AFSessionFactory.shared,
+        plugins: [MoyaPlugin.shared]
+    )
     
     func getTags(completion: @escaping (NetworkResult<TagResponseDTO>) -> Void) {
-        provider.requestWithTokenRefresh(.getTags) { [weak self] result in
+        provider.request(.getTags) { [weak self] result in
             guard let self else { return }
             let networkResult: NetworkResult<TagResponseDTO>
             
