@@ -11,12 +11,20 @@ import MDSKit
 import MCalendar
 
 struct TodayWeeklyCalendarView: View {
+    
     @ObservedObject var viewModel: TodayWeeklyCalendarViewModel
     @StateObject private var settingViewModel = SettingViewModel()
+    
+    @State private var isToDoAlertPresented: Bool = false
+    @State private var isScheduleAlertPresented: Bool = false
+    @State private var isSettingViewPresented = false
+    
+    @State private var selectedToDo: ToDoItem? = nil
+    @State private var selectedSchedule: ScheduleItem? = nil
+    
     @State private var scrollTarget: Int? = nil
     @State private var userInteractionFlag: Bool = false
-    @State private var isSettingPresented = false
-
+    
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
@@ -44,9 +52,9 @@ struct TodayWeeklyCalendarView: View {
                             Spacer()
                         }
                         .padding(.trailing, 17)
-    
+                        
                         Button {
-                            isSettingPresented = true
+                            isSettingViewPresented = true
                         } label: {
                             Image(.ic_settings)
                                 .resizable()
@@ -90,19 +98,58 @@ struct TodayWeeklyCalendarView: View {
                     .scrollContentBackground(.hidden)
                 }
             }
+            .fullScreenCover(isPresented: $isSettingViewPresented) {
+                SettingView()
+                    .environmentObject(settingViewModel)
+            }
+            .onAppear {
+                viewModel.getSchedulesTotal()
+                viewModel.getSchedulesAllDay()
+                viewModel.userUptimeAPI()
+                viewModel.makeDummyEvent()
+                makeIndex()
+            }
+            .background(Color.grayBlack)
+            .overlay {
+                AlertOverlay(isPresented: isToDoAlertPresented, onDismiss: { isToDoAlertPresented = false }) {
+                    if let todo = selectedToDo {
+                        ToDoAlertView(
+                            toDoId: todo.id,
+                            toDoTitle: todo.description,
+                            deadline: todo.endDate,
+                            tagName: todo.tagName,
+                            tagColorCode: todo.tagColor,
+                            priority: todo.priorityType,
+                            onDelete: {
+                                viewModel.deleteToDo(toDoId: todo.id)
+                                isToDoAlertPresented = false
+                            },
+                            onEdit: { isToDoAlertPresented = false },
+                            isChecked: viewModel.bindingForToDoCompletion(todo.id)
+                        )
+                    }
+                }
+                
+                AlertOverlay(isPresented: isScheduleAlertPresented, onDismiss: { isScheduleAlertPresented = false }) {
+                    if let schedule = selectedSchedule {
+                        ScheduleAlertView(
+                            scheduleId: schedule.id,
+                            scheduleTitle: schedule.description,
+                            startDate: schedule.startDate,
+                            endDate: schedule.endDate,
+                            tagName: schedule.tagName,
+                            tagColorCode: schedule.tagColorCode,
+                            scheduleType: "Notion",
+                            onDelete: {
+                                viewModel.deleteSchedule(scheduleId: schedule.id)
+                                isScheduleAlertPresented = false
+                            },
+                            onEdit: { isScheduleAlertPresented = false }
+                        )
+                    }
+                }
+            }
         }
-        .fullScreenCover(isPresented: $isSettingPresented) {
-            SettingView()
-                .environmentObject(settingViewModel)
-        }
-        .onAppear {
-            viewModel.getSchedulesTotal()
-            viewModel.getSchedulesAllDay()
-            viewModel.userUptimeAPI()
-            viewModel.makeDummyEvent()
-            makeIndex()
-        }
-        .background(Color.grayBlack)
     }
     
     @ViewBuilder
@@ -147,8 +194,14 @@ struct TodayWeeklyCalendarView: View {
     
     @ViewBuilder
     private func todayList(item: MCalendarEventList) -> some View {
-        TodayView(viewModel: viewModel)
-            .scrollContentBackground(.hidden)
+        TodayView(
+            viewModel: viewModel,
+            isToDoAlertPresented: $isToDoAlertPresented,
+            isScheduleAlertPresented: $isScheduleAlertPresented,
+            selectedToDo: $selectedToDo,
+            selectedSchedule: $selectedSchedule
+        )
+        .scrollContentBackground(.hidden)
     }
     
     @ViewBuilder

@@ -86,6 +86,7 @@
 				Source/Presentation/Add/ToDo/View/AddToDoToolbarView.swift,
 				Source/Presentation/Add/ToDo/View/AddToDoView.swift,
 				Source/Presentation/Add/ToDo/ViewModel/AddToDoViewModel.swift,
+				Source/Presentation/Main/View/DragAndDrop/AlertOverlay.swift,
 				Source/Presentation/Main/View/DragAndDrop/DropViewDelegate.swift,
 				Source/Presentation/Main/View/ToDoList/ToDoListWeeklyCalendarView.swift,
 				Source/Presentation/Onboarding/ViewModel/OnboardingViewModel.swift,

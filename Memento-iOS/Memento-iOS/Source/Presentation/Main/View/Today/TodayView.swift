@@ -14,11 +14,11 @@ struct TodayView: View {
     
     @ObservedObject var viewModel: TodayWeeklyCalendarViewModel
     
-    @State private var selectTodo: ToDoItem?
-    @State private var selectSchedule: ScheduleWithOrderInfos?
+    @Binding var isToDoAlertPresented: Bool
+    @Binding var isScheduleAlertPresented: Bool
+    @Binding var selectedToDo: ToDoItem?
+    @Binding var selectedSchedule: ScheduleItem?
     
-    @State private var showTodoAlert = false
-    @State private var showScheduleAlert = false
     @State private var aiPlottingButtonpPressed: Bool = false
     
     var body: some View {
@@ -39,15 +39,19 @@ struct TodayView: View {
                                 item: todayItem,
                                 isArrow: todayItem == viewModel.todayItems.first,
                                 isHighlighted: viewModel.isTopPriorityItem(item: todayItem),
-                                isCompleted: viewModel.bindingForToDoCompletion(todayItem.id),
-                                onToDoTap: { _ in
-                                    showTodoAlert = true
-                                },
-                                onScheduleTap: { _ in
-                                    showScheduleAlert = true
-                                }
+                                isCompleted: viewModel.bindingForToDoCompletion(todayItem.id)
                             )
                             .padding(.bottom, 10)
+                            .onTapGesture {
+                                switch todayItem {
+                                case .todo(let todo):
+                                    selectedToDo = todo
+                                    isToDoAlertPresented = true
+                                case .schedule(let schedule):
+                                    selectedSchedule = schedule
+                                    isScheduleAlertPresented = true
+                                }
+                            }
                             //        .onDrag {
                             //            viewModel.dragTodayItem = currentItem
                             //            return NSItemProvider(object: String(currentItem.id.hashValue) as NSString)
@@ -61,65 +65,6 @@ struct TodayView: View {
                     }
                 }
                 .background(Color.grayBlack)
-            }
-            
-            if showTodoAlert,
-               let todo = selectTodo {
-                let todoBinding = Binding<Bool>(
-                    get: {
-                        if let index = viewModel.todayItems.firstIndex(where: { $0.id == todo.id }),
-                           case .todo(let t) = viewModel.todayItems[index] {
-                            return t.isCompleted
-                        }
-                        return false
-                    },
-                    set: { newValue in
-                        if let index = viewModel.todayItems.firstIndex(where: { $0.id == todo.id }),
-                           case .todo(var t) = viewModel.todayItems[index] {
-                            t.isCompleted = newValue
-                            viewModel.todayItems[index] = .todo(t)
-                        }
-                    }
-                )
-                
-                ToDoAlertView(
-                    toDoId: todo.id,
-                    toDoTitle: todo.description,
-                    deadline: todo.endDate,
-                    tagName: todo.tagName,
-                    tagColorCode: todo.tagColor,
-                    priority: todo.priorityType,
-                    onDelete: {
-                        showTodoAlert = false
-                    },
-                    onEdit: {
-                        showTodoAlert = false
-                    },
-                    isChecked: todoBinding
-                )
-                .background(Color.black.opacity(0.4))
-                .edgesIgnoringSafeArea(.all)
-            }
-            
-            if showScheduleAlert, let schedule = selectSchedule {
-                ScheduleAlertView(
-                    scheduleId: schedule.id,
-                    scheduleTitle: schedule.description,
-                    startDate: schedule.startDate,
-                    endDate: schedule.endDate,
-                    tagName: schedule.tagName,
-                    tagColorCode: schedule.tagColorCode,
-                    scheduleType: "Notion",
-                    onDelete: {
-                        viewModel.deleteSchedule(scheduleId: schedule.id)
-                        showScheduleAlert = false
-                    },
-                    onEdit: {
-                        showScheduleAlert = false
-                    }
-                )
-                .background(Color.black.opacity(0.4))
-                .edgesIgnoringSafeArea(.all)
             }
             
             // 플로팅 버튼
@@ -182,9 +127,6 @@ struct TodayListItemView: View {
     
     @Binding var isCompleted: Bool
     
-    var onToDoTap: (ToDoItem) -> Void
-    var onScheduleTap: (ScheduleItem) -> Void
-    
     var body: some View {
         HStack {
             Image(.ic_progress)
@@ -203,9 +145,6 @@ struct TodayListItemView: View {
                     isHighlighted: isHighlighted,
                     isCompleted: $isCompleted
                 )
-                .onTapGesture {
-                    onToDoTap(todo)
-                }
                 
             case .schedule(let schedule):
                 ScheduleListCell(
@@ -215,9 +154,6 @@ struct TodayListItemView: View {
                     endDate: schedule.endDate,
                     timeDuration: schedule.timeDuration
                 )
-                .onTapGesture {
-                    onScheduleTap(schedule)
-                }
             }
             
             Spacer()

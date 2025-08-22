@@ -59,14 +59,10 @@ struct ToDoListWeeklyCalendarView: View {
             }
             .background(Color.grayBlack)
             .overlay {
-                if isToDoAlertPresented, let item = selectedItem {
-                    ZStack {
-                        Color.black.opacity(0.4)
-                            .edgesIgnoringSafeArea(.all)
-                            .onTapGesture {
-                                isToDoAlertPresented = false
-                            }
-                        
+                AlertOverlay(isPresented: isToDoAlertPresented, onDismiss: {
+                    isToDoAlertPresented = false
+                }) {
+                    if let item = selectedItem {
                         ToDoAlertView(
                             toDoId: item.id,
                             toDoTitle: item.description,
