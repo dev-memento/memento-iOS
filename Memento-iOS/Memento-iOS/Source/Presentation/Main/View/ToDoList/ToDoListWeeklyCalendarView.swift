@@ -60,24 +60,31 @@ struct ToDoListWeeklyCalendarView: View {
             .background(Color.grayBlack)
             .overlay {
                 if isToDoAlertPresented, let item = selectedItem {
-                    ToDoAlertView(
-                        toDoId: item.id,
-                        toDoTitle: item.description,
-                        deadline: item.endDate,
-                        tagName: item.tagName,
-                        tagColorCode: item.tagColor,
-                        priority: item.priorityType,
-                        onDelete: {
-                            viewModel.deleteToDo(toDoId: item.id)
-                            isToDoAlertPresented = false
-                        },
-                        onEdit: {
-                            isToDoAlertPresented = false
-                        },
-                        isChecked: viewModel.bindingForToDoCompletion(item.id)
-                    )
-                    .background(Color.black.opacity(0.4))
-                    .edgesIgnoringSafeArea(.all)
+                    ZStack {
+                        Color.black.opacity(0.4)
+                            .edgesIgnoringSafeArea(.all)
+                            .onTapGesture {
+                                isToDoAlertPresented = false
+                            }
+                        
+                        ToDoAlertView(
+                            toDoId: item.id,
+                            toDoTitle: item.description,
+                            deadline: item.endDate,
+                            tagName: item.tagName,
+                            tagColorCode: item.tagColor,
+                            priority: item.priorityType,
+                            onDelete: {
+                                viewModel.deleteToDo(toDoId: item.id)
+                                isToDoAlertPresented = false
+                            },
+                            onEdit: {
+                                isToDoAlertPresented = false
+                                isEditSheetPresented = true
+                            },
+                            isChecked: viewModel.bindingForToDoCompletion(item.id)
+                        )
+                    }
                 }
             }
         }
