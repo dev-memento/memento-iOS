@@ -10,13 +10,12 @@ struct TabBarView: View {
     @GestureState private var translation: CGFloat = .zero
     
     @StateObject var segmentedViewModel = SegmentedMenuViewModel()
-    @StateObject var calendarViewModel = WeeklyCalendarViewModel(
-        mCalendarDataSource: MCalendarDataSource(),
-        mEventDataSource: MEventDatasource(),
+    @StateObject var calendarViewModel = TodayWeeklyCalendarViewModel(
         scheduleService: ScheduleAPIService(),
-        tagService: TagAPIService(),
-        toDoListService: ToDoListAPIService(),
-        userUptimeService: UserUptimeAPIService()
+        toDoService: ToDoListAPIService(),
+        userUptimeService: UserUptimeAPIService(),
+        mCalendarDataSource: MCalendarDataSource(),
+        mEventDataSource: MEventDatasource()
     )
     
     @StateObject var todolistViewModel = ToDoListViewModel(
@@ -113,8 +112,8 @@ struct TabBarView: View {
             }
         }
         .onAppear {
-            calendarViewModel.getToDoListTotalAPI()
-            calendarViewModel.getSchedulesTotalAPI()
+            calendarViewModel.getToDoListTotal()
+            calendarViewModel.getSchedulesTotal()
             todolistViewModel.getToDoListTotal()
         }
     }

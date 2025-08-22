@@ -11,7 +11,7 @@ import MDSKit
 import MCalendar
 
 struct TodayWeeklyCalendarView: View {
-    @ObservedObject var viewModel: WeeklyCalendarViewModel
+    @ObservedObject var viewModel: TodayWeeklyCalendarViewModel
     @StateObject private var settingViewModel = SettingViewModel()
     @State private var scrollTarget: Int? = nil
     @State private var userInteractionFlag: Bool = false

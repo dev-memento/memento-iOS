@@ -41,13 +41,12 @@ enum TabBarItem: CaseIterable {
     var targetView: AnyView {
         switch self {
         case .today:
-            return AnyView(TodayWeeklyCalendarView(viewModel: WeeklyCalendarViewModel(
-                        mCalendarDataSource: MCalendarDataSource(),
-                        mEventDataSource: MEventDatasource(),
+            return AnyView(TodayWeeklyCalendarView(viewModel: TodayWeeklyCalendarViewModel(
                         scheduleService: ScheduleAPIService(),
-                        tagService: TagAPIService(),
-                        toDoListService: ToDoListAPIService(),
-                        userUptimeService: UserUptimeAPIService()
+                        toDoService: ToDoListAPIService(),
+                        userUptimeService: UserUptimeAPIService(),
+                        mCalendarDataSource: MCalendarDataSource(),
+                        mEventDataSource: MEventDatasource()
                     )))
         case .todo:
             return AnyView(
