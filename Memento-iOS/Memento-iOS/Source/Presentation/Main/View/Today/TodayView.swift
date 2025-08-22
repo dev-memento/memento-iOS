@@ -11,14 +11,15 @@ import MDSKit
 import MCalendar
 
 struct TodayView: View {
-    @ObservedObject var viewModel: WeeklyCalendarViewModel
+    
+    @ObservedObject var viewModel: TodayWeeklyCalendarViewModel
     
     @State private var selectTodo: ToDoItem?
     @State private var selectSchedule: ScheduleWithOrderInfos?
     
     @State private var showTodoAlert = false
     @State private var showScheduleAlert = false
-    @State private var aiPlottingButtonpPressed: Bool = false // 버튼 상태를 나타내는 변수
+    @State private var aiPlottingButtonpPressed: Bool = false
     
     var body: some View {
         ZStack {
@@ -26,10 +27,10 @@ struct TodayView: View {
                 EmptyView()
             } else {
                 ScrollView {
-                    VStack(spacing: 8) {
+                    VStack(spacing: 0) {
                         WakeUpHeaderView(wakeUpTime: viewModel.wakeUpTime)
                             .padding(.leading, 50)
-                            .padding(.bottom, 17)
+                            .padding(.bottom, 15)
                         
                         ForEach($viewModel.todayItems, id: \.wrappedValue.id) { item in
                             createTodayListItemView(for: item)
@@ -101,21 +102,23 @@ struct TodayView: View {
                 .background(Color.black.opacity(0.4))
                 .edgesIgnoringSafeArea(.all)
             }
+            
             // 플로팅 버튼
             VStack {
                 Spacer()
+                
                 HStack {
                     Spacer()
+                    
                     ZStack {
                         Circle()
                             .frame(width: 52, height: 52)
                             .foregroundColor(aiPlottingButtonpPressed ? Color.mainGreen : Color.gray09)
                         
                         Button {
-                            print("눌림")
                             aiPlottingButtonpPressed.toggle()
                             let apiService = PrioritizationAPIService()
-                            let request = PrioritizationRequest(targetDate: "2025-01-24")
+                            let request = PrioritizationRequest(targetDate: "2025-08-18")
                             
                             apiService.fetchPrioritization(request: request) { result in
                                 switch result {
@@ -127,13 +130,11 @@ struct TodayView: View {
                             }
                         } label: {
                             Image(.ic_prio)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 26, height: 26)
-                                .foregroundColor(aiPlottingButtonpPressed ? .white : .black)
+                                .renderingMode(.template)
+                                .foregroundColor(aiPlottingButtonpPressed ? .grayBlack : .grayWhite)
                         }
                     }
-                    .padding(21)
+                    .padding(20)
                 }
             }
         }
@@ -190,11 +191,12 @@ struct TodayView: View {
             }
         )
         .padding(.horizontal)
-        .onDrag {
-            viewModel.dragTodayItem = currentItem
-            return NSItemProvider(object: String(currentItem.id.hashValue) as NSString)
-        }
-        .onDrop(of: [.text], delegate: DropViewDelegate(item: item, draggedItem: $viewModel.dragTodayItem, onDrop: viewModel.dropActionForToday))
+        .padding(.bottom, 10)
+        //        .onDrag {
+        //            viewModel.dragTodayItem = currentItem
+        //            return NSItemProvider(object: String(currentItem.id.hashValue) as NSString)
+        //        }
+        //        .onDrop(of: [.text], delegate: DropViewDelegate(item: item, draggedItem: $viewModel.dragTodayItem, onDrop: viewModel.dropActionForToday))
     }
     
     
@@ -230,44 +232,44 @@ struct TodayListItemView: View {
             switch item {
             case .todo(var todo):
                 Rectangle()
-//                ToDoListCell(
-//                    toDoList: todo
-//                        .mapToToDoItem(),
-//                    //                    toDoListCompleted: ToDoListCompletedResponseData(
-//                    //                        id: todo.id,
-//                    //                        isCompleted: todo.isChecked
-//                    //                    ),
-//                    toDoListCompleted: Binding<ToDoListCompletedResponseData>(
-//                        get: {
-//                            ToDoListCompletedResponseData(id: todo.id, isCompleted: todo.isChecked)
-//                        },
-//                        set: { newValue in
-//                            todo.isChecked = newValue.isCompleted
-//                            onCheckChanged(newValue.isCompleted)
-//                        }
-//                    ),
-//                    isHighlighted: isHighlighted,
-//                    backgroundColor: backgroundColor
-//                )
-//                .contentShape(Rectangle())
-//                .padding(.trailing, -20)
-//                .onTapGesture {
-//                    onTodoTap(todo)
-//                }
+                //                ToDoListCell(
+                //                    toDoList: todo
+                //                        .mapToToDoItem(),
+                //                    //                    toDoListCompleted: ToDoListCompletedResponseData(
+                //                    //                        id: todo.id,
+                //                    //                        isCompleted: todo.isChecked
+                //                    //                    ),
+                //                    toDoListCompleted: Binding<ToDoListCompletedResponseData>(
+                //                        get: {
+                //                            ToDoListCompletedResponseData(id: todo.id, isCompleted: todo.isChecked)
+                //                        },
+                //                        set: { newValue in
+                //                            todo.isChecked = newValue.isCompleted
+                //                            onCheckChanged(newValue.isCompleted)
+                //                        }
+                //                    ),
+                //                    isHighlighted: isHighlighted,
+                //                    backgroundColor: backgroundColor
+                //                )
+                //                .contentShape(Rectangle())
+                //                .padding(.trailing, -20)
+                //                .onTapGesture {
+                //                    onTodoTap(todo)
+                //                }
                 
             case .schedule(let schedule):
                 ScheduleListCell(
-                        tagColorCode: schedule.tagColorCode,
-                        title: schedule.description,
-                        scheduleType: schedule.scheduleType,
-                        endDate: schedule.endDate,
-                        timeDuration: schedule.timeDuration
-                    )
-                    .contentShape(Rectangle())
-                    .padding(.trailing, -20)
-                    .onTapGesture {
-                        onScheduleTap(schedule)
-                    }
+                    tagColorCode: schedule.tagColorCode,
+                    title: schedule.description,
+                    scheduleType: schedule.scheduleType,
+                    endDate: schedule.endDate,
+                    timeDuration: schedule.timeDuration
+                )
+                .contentShape(Rectangle())
+                .padding(.trailing, -20)
+                //                    .onTapGesture {
+                //                        onScheduleTap(schedule)
+                //                    }
             }
             
             Spacer()
