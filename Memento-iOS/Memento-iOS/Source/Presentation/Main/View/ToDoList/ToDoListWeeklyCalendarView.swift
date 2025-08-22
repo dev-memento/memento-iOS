@@ -77,8 +77,13 @@ struct ToDoListWeeklyCalendarView: View {
                 SettingView()
                     .environmentObject(settingViewModel)
             }
+            .onChange(of: viewModel.selectedDate) {
+                scrollTarget = viewModel.selectedDate
+            }
             .onAppear {
-                makeIndex()
+                DispatchQueue.main.async {
+                    scrollTarget = viewModel.selectedDate
+                }
             }
             .background(Color.grayBlack)
         }
@@ -96,7 +101,6 @@ struct ToDoListWeeklyCalendarView: View {
                             mCallendarDatasource: viewModel.mCallendarDataSource,
                             selectedDateCompletion: { date in
             viewModel.selectedDate = date
-            makeIndex()
         })
         .setWeekDayFont(MWeekDayOptions.allDays,
                         font: Font(MDSFont.suiteBold(size: 12).font))
@@ -119,11 +123,5 @@ struct ToDoListWeeklyCalendarView: View {
                                         color: .gray04)
         
         .setTodayColor(color: .mainGreen)
-    }
-    
-    private func makeIndex() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            scrollTarget = viewModel.selectedDate
-        }
     }
 }
