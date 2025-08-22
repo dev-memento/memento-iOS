@@ -161,6 +161,7 @@ struct ToDoListItemView: View {
                 isCompleted: $isChecked
             )
         }
+        .padding(.horizontal)
         .padding(.bottom, 8)
     }
 }
