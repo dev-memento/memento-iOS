@@ -88,7 +88,6 @@
 				Source/Presentation/Add/ToDo/ViewModel/AddToDoViewModel.swift,
 				Source/Presentation/Main/View/DragAndDrop/DropViewDelegate.swift,
 				Source/Presentation/Main/View/ToDoList/ToDoListWeeklyCalendarView.swift,
-				Source/Presentation/Main/ViewModel/ToDoListViewModel.swift,
 				Source/Presentation/Onboarding/ViewModel/OnboardingViewModel.swift,
 				Source/Utils/DynamicPresentationDetent.swift,
 			);

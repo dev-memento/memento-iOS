@@ -27,7 +27,7 @@ struct ToDoListView: View {
                             .id(date)
                             .padding(.bottom, 8)
                         
-                        if let events = viewModel.toDoListItemDict[date], !events.isEmpty {
+                        if let events = viewModel.toDoListDict[date], !events.isEmpty {
                             ForEach(events, id: \.self) { event in
                                 
                                 ToDoListItemView(
@@ -36,8 +36,8 @@ struct ToDoListView: View {
                                     isCompleted: Binding(
                                         get: { event.isCompleted },
                                         set: { newValue in
-                                            if let index = viewModel.toDoListItemDict[date]?.firstIndex(where: { $0.id == event.id }) {
-                                                viewModel.toDoListItemDict[date]?[index].isCompleted = newValue
+                                            if let index = viewModel.toDoListDict[date]?.firstIndex(where: { $0.id == event.id }) {
+                                                viewModel.toDoListDict[date]?[index].isCompleted = newValue
                                                 viewModel.updateToDoCompletion(toDoId: event.id)
                                             }
                                         }
@@ -55,7 +55,7 @@ struct ToDoListView: View {
             }
             .background(Color.grayBlack)
             .onAppear {
-                viewModel.getToDoListTotalAPI()
+                viewModel.getToDoListTotal()
             }
             
             if showTodoAlert, let todo = selectedItem {
@@ -67,7 +67,7 @@ struct ToDoListView: View {
                     tagColorCode: todo.tagColor,
                     priority: todo.priorityType,
                     onDelete: {
-                        viewModel.deleteTodo(todoId: todo.id)
+                        viewModel.deleteToDo(toDoId: todo.id)
                         showTodoAlert = false
                     },
                     onEdit: {
@@ -77,9 +77,9 @@ struct ToDoListView: View {
                     isChecked: Binding(
                         get: { todo.isCompleted },
                         set: { newValue in
-                            if let date = viewModel.toDoListItemDict.first(where: { $0.value.contains(where: { $0.id == todo.id }) })?.key,
-                               let index = viewModel.toDoListItemDict[date]?.firstIndex(where: { $0.id == todo.id }) {
-                                viewModel.toDoListItemDict[date]?[index].isCompleted = newValue
+                            if let date = viewModel.toDoListDict.first(where: { $0.value.contains(where: { $0.id == todo.id }) })?.key,
+                               let index = viewModel.toDoListDict[date]?.firstIndex(where: { $0.id == todo.id }) {
+                                viewModel.toDoListDict[date]?[index].isCompleted = newValue
                                 viewModel.updateToDoCompletion(toDoId: todo.id)
                                 
                                 selectedItem?.isCompleted = newValue

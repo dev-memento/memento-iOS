@@ -20,8 +20,7 @@ struct TabBarView: View {
     )
     
     @StateObject var todolistViewModel = ToDoListViewModel(
-        tagService: TagAPIService(),
-        toDoListService: ToDoListAPIService(),
+        toDoService: ToDoListAPIService(),
         mCallendarDataSource: MCalendarDataSource(),
         mEventDataSource: MEventDatasource()
     )
@@ -116,7 +115,7 @@ struct TabBarView: View {
         .onAppear {
             calendarViewModel.getToDoListTotalAPI()
             calendarViewModel.getSchedulesTotalAPI()
-            todolistViewModel.getToDoListTotalAPI()
+            todolistViewModel.getToDoListTotal()
         }
     }
     

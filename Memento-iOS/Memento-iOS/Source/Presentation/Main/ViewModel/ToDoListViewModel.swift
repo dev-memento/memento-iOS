@@ -2,7 +2,7 @@
 //  ToDoListViewModel.swift
 //  Memento-iOS
 //
-//  Created by 정정욱 on 2/16/25.
+//  Created by 이세민 on 8/23/25.
 //
 
 import Combine
@@ -12,127 +12,104 @@ import MDSKit
 import MCalendar
 
 final class ToDoListViewModel: ObservableObject {
-    @Published var toDoList: [ToDoGetResponses] = []
-    private let tagService: TagAPIServiceProtocol
-    private let toDoListService: ToDoListAPIServiceProtocol
-    @Published var toDoListItems: [ToDoItem] = []
+    
+    // MARK: - Dependencies
+    
+    private var toDoService: ToDoListAPIServiceProtocol
+    
+    // MARK: - Published Properties
+    
     @Published var mCallendarDataSource: MCalendarDataSource
     @Published var mEventDataSource: MEventDatasource
+    
+    @Published var toDoList: [ToDoItem] = []
+    @Published var toDoListDict: [MCalendarDataModel: [ToDoItem]] = [:]
+    
     @Published var currentOffset: CGPoint = .zero
     @Published var selectedDate: MCalendarDataModel = .init(year: "2025",
                                                             month: "1",
                                                             day: "10",
                                                             weekday: .fri)
-    private var cancellable = Set<AnyCancellable>()
-    @Published var getAllTodoList: Bool = false
-    private let dateFormatter = DateFormatter()
-    @Published var toDoListItemDict: [MCalendarDataModel: [ToDoItem]] = [:]
     
+    // MARK: - Initializer
     
-    init(
-        tagService: TagAPIServiceProtocol,
-        toDoListService: ToDoListAPIServiceProtocol,
-        mCallendarDataSource: MCalendarDataSource,
-        mEventDataSource: MEventDatasource,
+    init(toDoService: ToDoListAPIServiceProtocol,
+         mCallendarDataSource: MCalendarDataSource,
+         mEventDataSource: MEventDatasource,
     ) {
-        self.tagService = tagService
-        self.toDoListService = toDoListService
+        self.toDoService = toDoService
         self.mCallendarDataSource = mCallendarDataSource
         self.mEventDataSource = mEventDataSource
     }
     
-    func preprocessingForEventDate() {
+    // MARK: - toDoListDict Helpers
+    
+    private func mapToDoDictByDate() {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+
         for date in mCallendarDataSource.wholeMonthDate {
-            toDoListItemDict[date] = filteredTargetEvent(date)
+            toDoListDict[date] = toDoList.filter {
+                dateFormatter.date(from: $0.startDate)! == date.date()!
+            }
         }
     }
     
-    private func filteredTargetEvent(_ date: MCalendarDataModel) -> [ToDoItem] {
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        return toDoListItems.filter {
-            dateFormatter.date(from: $0.startDate)! == date.date()!
+    private func removeToDoFromDict(toDoId: Int) {
+        guard let date = toDoListDict.first(where: { $0.value.contains(where: { $0.id == toDoId }) })?.key,
+              let index = toDoListDict[date]?.firstIndex(where: { $0.id == toDoId }) else { return }
+        
+        toDoListDict[date]?.remove(at: index)
+        if toDoListDict[date]?.isEmpty == true {
+            toDoListDict.removeValue(forKey: date)
         }
     }
 }
 
-extension ToDoListViewModel {
-    func getTagsAPI() {
-        tagService.getTags() { [weak self] result in
-            switch result {
-            case .success(let response):
-                print("SUCCESS")
-            default:
-                print("ERROR")
-            }
-        }
-    }
-    
-    func deleteTodo(todoId: Int) {
-        toDoListService.deleteToDo(toDoId: todoId) { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success:
-                    self?.removeTodoFromDict(todoId: todoId)
-                default:
-                    print("Todo 삭제 실패")
-                }
-            }
-        }
-    }
-    
-    private func removeTodoFromDict(todoId: Int) {
-        guard let date = toDoListItemDict.first(where: { $0.value.contains(where: { $0.id == todoId }) })?.key,
-              let index = toDoListItemDict[date]?.firstIndex(where: { $0.id == todoId }) else { return }
-        
-        toDoListItemDict[date]?.remove(at: index)
-        if toDoListItemDict[date]?.isEmpty == true {
-            toDoListItemDict.removeValue(forKey: date)
-        }
-    }
-    
-    
-    func getToDoListTotalAPI() {
-        toDoListService.getToDoListTotal { [weak self] result in
-            switch result {
-            case .success(let response):
-                DispatchQueue.main.async {
-                    if let toDoData = response?.data.toDoGetResponses {
-          
-                        self?.toDoList = toDoData
-                        
-       
-                        self?.toDoListItems = toDoData.map { ToDoItem(from: $0) }
-                        
-                        self?.getAllTodoList = true
-                        self?.preprocessingForEventDate()
-                    } else {
-                        print("데이터 변환 실패")
-                        self?.toDoListItems = []
-                    }
-                }
-            default:
-                print("ERROR")
-            }
-        }
-    }
+// MARK: - API
 
+extension ToDoListViewModel {
+    func getToDoListTotal() {
+        toDoService.getToDoListTotal { [weak self] result in
+            guard let self = self else { return }
+            
+            if case let .success(response) = result,
+               let toDoList = response?.data.toDoGetResponses, !toDoList.isEmpty {
+                
+                DispatchQueue.main.async {
+                    self.toDoList = toDoList.map { ToDoItem(from: $0) }
+                    self.mapToDoDictByDate()
+                }
+            }
+        }
+    }
+    
+    func deleteToDo(toDoId: Int) {
+        toDoService.deleteToDo(toDoId: toDoId) { [weak self] result in
+            guard let self = self else { return }
+            
+            if case .success = result {
+                DispatchQueue.main.async {
+                    self.removeToDoFromDict(toDoId: toDoId)
+                }
+            }
+        }
+    }
     
     func updateToDoCompletion(toDoId: Int) {
-        toDoListService.updateToDoCompletion(toDoId: toDoId) { [weak self] result in
-            switch result {
-            case .success(let response):
+        toDoService.updateToDoCompletion(toDoId: toDoId) { [weak self] result in
+            guard let self = self else { return }
+            
+            if case let .success(response) = result,
+               response?.data != nil {
+                
                 DispatchQueue.main.async {
-                    if response?.data != nil {
-                        if let index = self?.toDoList.firstIndex(where: { $0.id == toDoId }) {
-                            self?.toDoListItems[index].isCompleted.toggle()
-                        }
-                        self?.getToDoListTotalAPI()
+                    if let index = self.toDoList.firstIndex(where: { $0.id == toDoId }) {
+                        self.toDoList[index].isCompleted.toggle()
                     }
+                    self.getToDoListTotal()
                 }
-            default:
-                print("ERROR")
             }
         }
     }
-    
 }
