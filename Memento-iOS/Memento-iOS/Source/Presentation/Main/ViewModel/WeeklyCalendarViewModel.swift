@@ -54,6 +54,7 @@ final class WeeklyCalendarViewModel: ObservableObject {
     @Published var scheduleItems: [ScheduleItem] = []
     @Published var allDayItems: [AllDayItem] = []
     @Published var toDoItems: [ToDoItem] = []
+    @Published var toDoListDict: [MCalendarDataModel: [ToDoItem]] = [:]
     
     @Published var dragTodayItem: TodayItemDataModel?
     @Published var dragTodoItem: ToDoItem?
@@ -204,34 +205,84 @@ extension WeeklyCalendarViewModel {
             .store(in: &cancellable)
     }
 }
+    
+    // MARK: - toDoListDict Helpers
+    
+    private func mapToDoDictByDate() {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        
+        for date in mCallendarDataSource.wholeMonthDate {
+            toDoListDict[date] = toDoItems.filter {
+                dateFormatter.date(from: $0.startDate)! == date.date()!
+            }
+        }
+    }
+    
+    private func removeToDoFromDict(toDoId: Int) {
+        guard let date = toDoListDict.first(where: { $0.value.contains(where: { $0.id == toDoId }) })?.key,
+              let index = toDoListDict[date]?.firstIndex(where: { $0.id == toDoId }) else { return }
+        
+        toDoListDict[date]?.remove(at: index)
+        if toDoListDict[date]?.isEmpty == true {
+            toDoListDict.removeValue(forKey: date)
+        }
+    }
+    
+    private func updateToDoCompletionInDict(toDoId: Int) {
+        if let index = self.toDoItems.firstIndex(where: { $0.id == toDoId }) {
+            self.toDoItems[index].isCompleted.toggle()
+        }
+        
+        if let date = self.toDoListDict.first(where: { $0.value.contains(where: { $0.id == toDoId }) })?.key,
+           let index = self.toDoListDict[date]?.firstIndex(where: { $0.id == toDoId }) {
+            self.toDoListDict[date]?[index].isCompleted.toggle()
+        }
+    }
+}
+
+// MARK: - API
 
 extension WeeklyCalendarViewModel {
     func getAllEvents() {
-        getSchedulesTotalAPI()
-        getToDoListTotalAPI()
+        getSchedulesTotal()
+        getToDoListTotal()
     }
     
-    func getSchedulesTotalAPI() {
-        scheduleService.getSchedulesTotal { [weak self] result in
-            switch result {
-            case .success(let response):
+    func getSchedulesAllDay() {
+        scheduleService.getSchedulesAllDay { [weak self] result in
+            guard let self = self else { return }
+            
+            if case let .success(response) = result,
+               let allDayResponse = response?.data.allDaySchedulesList,
+               !allDayResponse.isEmpty {
+                
                 DispatchQueue.main.async {
-                    if let scheduleData = response?.data.scheduleWithOrderInfos {
-                        self?.schedules = scheduleData
-                        self?.getAllScheduleList = true
-                    } else {
-                        print("데이터변환 실패")
-                        self?.schedules = []
-                    }
+                    self.allDayItems = allDayResponse.map { AllDayItem(from: $0) }
                 }
-            default:
-                print("ERROR")
+            }
+        }
+    }
+    
+    func getSchedulesTotal() {
+        scheduleService.getSchedulesTotal { [weak self] result in
+            guard let self = self else { return }
+            
+            if case let .success(response) = result,
+               let scheduleResponse = response?.data.scheduleWithOrderInfos, !scheduleResponse.isEmpty {
+                
+                DispatchQueue.main.async {
+                    self.scheduleItems = scheduleResponse.map { ScheduleItem(from: $0) }
+                    self.getAllScheduleList = true
+                }
             }
         }
     }
     
     func deleteSchedule(scheduleId: Int) {
-        scheduleService.deleteSchedule(scheduleId: scheduleId) { result in
+        scheduleService.deleteSchedule(scheduleId: scheduleId) { [weak self] result in
+            guard let self = self else { return }
+            
             DispatchQueue.main.async {
                 if case .success = result {
                     if let index = self.todayItems.firstIndex(where: {
@@ -247,72 +298,44 @@ extension WeeklyCalendarViewModel {
         }
     }
     
-    func getTagsAPI() {
-        tagService.getTags() { [weak self] result in
-            switch result {
-            case .success(let response):
-                print("SUCCESS")
-            default:
-                print("ERROR")
-            }
-        }
-    }
-    
-    func getToDoListTotalAPI() {
-        toDoListService.getToDoListTotal { [weak self] result in
-            switch result {
-            case .success(let response):
+    func getToDoListTotal() {
+        toDoService.getToDoListTotal { [weak self] result in
+            guard let self = self else { return }
+            
+            if case let .success(response) = result,
+               let toDoResponse = response?.data.toDoGetResponses, !toDoResponse.isEmpty {
+                
                 DispatchQueue.main.async {
-                    if let toDoData = response?.data.toDoGetResponses {
-         
-                        self?.toDoList = toDoData
-                        
-                        self?.toDoListItems = toDoData.map { ToDoItem(from: $0) }
-                        
-                        self?.getAllTodoList = true
-                        self?.preprocessingForEventDate()
-                    } else {
-                        print("데이터 변환 실패")
-                        self?.toDoListItems = []
-                    }
+                    self.toDoItems = toDoResponse.map { ToDoItem(from: $0) }
+                    self.mapToDoDictByDate()
+                    self.getAllToDoList = true
                 }
-            default:
-                print("ERROR")
             }
         }
     }
     
     func updateToDoCompletion(toDoId: Int) {
-        toDoListService.updateToDoCompletion(toDoId: toDoId) { [weak self] result in
-            switch result {
-            case .success(let response):
+        toDoService.updateToDoCompletion(toDoId: toDoId) { [weak self] result in
+            guard let self = self else { return }
+            
+            if case let .success(response) = result,
+               response?.data != nil {
+                
                 DispatchQueue.main.async {
-                    if response?.data != nil {
-                        if let index = self?.toDoList.firstIndex(where: { $0.id == toDoId }) {
-                            self?.toDoListItems[index].isCompleted.toggle()
-                        }
-                    }
+                    self.updateToDoCompletionInDict(toDoId: toDoId)
                 }
-            default:
-                print("ERROR")
             }
         }
     }
     
-    
-    func getSchedulesAllDayAPI() {
-        scheduleService.getSchedulesAllDay { [weak self] result in
-            switch result {
-            case .success(let response):
+    func deleteToDo(toDoId: Int) {
+        toDoService.deleteToDo(toDoId: toDoId) { [weak self] result in
+            guard let self = self else { return }
+            
+            if case .success = result {
                 DispatchQueue.main.async {
-                    if let scheduleData = response?.data.allDaySchedulesList {
-                        self?.allday = scheduleData
-                    } else {
-                        self?.allday = []
-                    }
+                    self.removeToDoFromDict(toDoId: toDoId)
                 }
-            default:
-                print("ERROR")
             }
         }
     }

@@ -96,9 +96,8 @@ struct TodayWeeklyCalendarView: View {
                 .environmentObject(settingViewModel)
         }
         .onAppear {
-            viewModel.getTagsAPI()
-//            viewModel.getSchedulesTotalAPI()
-            viewModel.getSchedulesAllDayAPI()
+            viewModel.getSchedulesTotal()
+            viewModel.getSchedulesAllDay()
             viewModel.userUptimeAPI()
             viewModel.makeDummyEvent()
             makeIndex()
@@ -120,7 +119,7 @@ struct TodayWeeklyCalendarView: View {
             viewModel.selectedDate = date
             // MCalendarDataModel -> Date 변환
             if let selectedDate = date.date() {
-                viewModel.filterSchedules(for: selectedDate) 
+                viewModel.updateTodayItems(for: selectedDate)
             } else { return }
             print(date, "❤️")
             makeIndex()
