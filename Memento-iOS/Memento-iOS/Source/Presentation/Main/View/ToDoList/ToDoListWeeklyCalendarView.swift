@@ -22,42 +22,7 @@ struct ToDoListWeeklyCalendarView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                HStack(spacing: 0) {
-                    if let date = viewModel.selectedDate.date() {
-                        Text("\(date.makeTodayMonthForMMM()) \(date.makeTodayDayString())")
-                            .foregroundStyle(.white)
-                            .applyFont(.suiteExtraBold(size: 32),
-                                       lineHeight: 36)
-                            .onTapGesture {
-                                let date = Date()
-                                viewModel.mCallendarDataSource.moveOtherWeekday(targetDate: date)
-                                if let targetDateModel = date.makeTargetDate() {
-                                    viewModel.selectedDate = targetDateModel
-                                }
-                            }
-                            .padding(.leading, 22)
-                        
-                        Spacer()
-                        
-                        VStack(spacing: 0) {
-                            Text("\(date.makeTodayYearString())")
-                                .foregroundStyle(Color.gray07)
-                                .applyFont(.detail_b_12)
-                                .padding(.top, 11)
-                            
-                            Spacer()
-                        }
-                        .padding(.trailing, 17)
-                        
-                        Button {
-                            isSettingPresented = true
-                        } label: {
-                            Image(.ic_settings)
-                                .padding(.trailing, 25)
-                        }
-                    }
-                }
-                .frame(height: 56)
+                headerView()
                 
                 calendarView()
                     .background(Color.grayBlack)
@@ -86,6 +51,45 @@ struct ToDoListWeeklyCalendarView: View {
                 }
             }
             .background(Color.grayBlack)
+        }
+    }
+    
+    @ViewBuilder
+    private func headerView() -> some View {
+        if let date = viewModel.selectedDate.date() {
+            HStack(spacing: 0) {
+                Text("\(date.makeTodayMonthForMMM()) \(date.makeTodayDayString())")
+                    .foregroundStyle(.white)
+                    .applyFont(.suiteExtraBold(size: 32), lineHeight: 36)
+                    .onTapGesture {
+                        let today = Date()
+                        viewModel.mCallendarDataSource.moveOtherWeekday(targetDate: today)
+                        if let targetDateModel = today.makeTargetDate() {
+                            viewModel.selectedDate = targetDateModel
+                        }
+                    }
+                    .padding(.leading, 22)
+                
+                Spacer()
+                
+                VStack(spacing: 0) {
+                    Text("\(date.makeTodayYearString())")
+                        .foregroundStyle(Color.gray07)
+                        .applyFont(.detail_b_12)
+                        .padding(.top, 11)
+                    
+                    Spacer()
+                }
+                .padding(.trailing, 17)
+                
+                Button {
+                    isSettingPresented = true
+                } label: {
+                    Image(.ic_settings)
+                        .padding(.trailing, 25)
+                }
+            }
+            .frame(height: 56)
         }
     }
     
