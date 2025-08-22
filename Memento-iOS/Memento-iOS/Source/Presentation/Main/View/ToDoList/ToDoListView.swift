@@ -32,16 +32,8 @@ struct ToDoListView: View {
                                 
                                 ToDoListItemView(
                                     item: event,
-                                    isHighlighted: isTopPriorityItem(at: event, items: events),
-                                    isCompleted: Binding(
-                                        get: { event.isCompleted },
-                                        set: { newValue in
-                                            if let index = viewModel.toDoListDict[date]?.firstIndex(where: { $0.id == event.id }) {
-                                                viewModel.toDoListDict[date]?[index].isCompleted = newValue
-                                                viewModel.updateToDoCompletion(toDoId: event.id)
-                                            }
-                                        }
-                                    )
+                                    isHighlighted: viewModel.isTopPriorityItem(at: event, items: events),
+                                    isCompleted: viewModel.bindingForToDoCompletion(event.id)
                                 )
                                 .onTapGesture {
                                     selectedItem = event
@@ -50,6 +42,7 @@ struct ToDoListView: View {
                             }
                         }
                     }
+                    
                     Spacer()
                 }
             }
@@ -74,20 +67,8 @@ struct ToDoListView: View {
                         showTodoAlert = false
                         showEditSheet = true
                     },
-                    isChecked: Binding(
-                        get: { todo.isCompleted },
-                        set: { newValue in
-                            if let date = viewModel.toDoListDict.first(where: { $0.value.contains(where: { $0.id == todo.id }) })?.key,
-                               let index = viewModel.toDoListDict[date]?.firstIndex(where: { $0.id == todo.id }) {
-                                viewModel.toDoListDict[date]?[index].isCompleted = newValue
-                                viewModel.updateToDoCompletion(toDoId: todo.id)
-                                
-                                selectedItem?.isCompleted = newValue
-                            }
-                        }
-                    )
+                    isChecked: viewModel.bindingForToDoCompletion(todo.id)
                 )
-                
                 .background(Color.black.opacity(0.4))
                 .edgesIgnoringSafeArea(.all)
             }
@@ -95,12 +76,6 @@ struct ToDoListView: View {
         .sheet(isPresented: $showEditSheet) {
             EmptyView()
         }
-    }
-    
-    private func isTopPriorityItem(at item: ToDoItem, items: [ToDoItem]) -> Bool {
-        guard !item.isCompleted else { return false }
-        let uncheckedItems = items.filter { !$0.isCompleted }
-        return uncheckedItems.first == item
     }
 }
 

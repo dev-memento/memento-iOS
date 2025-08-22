@@ -47,7 +47,7 @@ final class ToDoListViewModel: ObservableObject {
     private func mapToDoDictByDate() {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
-
+        
         for date in mCallendarDataSource.wholeMonthDate {
             toDoListDict[date] = toDoList.filter {
                 dateFormatter.date(from: $0.startDate)! == date.date()!
@@ -63,6 +63,40 @@ final class ToDoListViewModel: ObservableObject {
         if toDoListDict[date]?.isEmpty == true {
             toDoListDict.removeValue(forKey: date)
         }
+    }
+    
+    private func updateToDoCompletionInDict(toDoId: Int) {
+        if let index = self.toDoList.firstIndex(where: { $0.id == toDoId }) {
+            self.toDoList[index].isCompleted.toggle()
+        }
+        
+        if let date = self.toDoListDict.first(where: { $0.value.contains(where: { $0.id == toDoId }) })?.key,
+           let index = self.toDoListDict[date]?.firstIndex(where: { $0.id == toDoId }) {
+            self.toDoListDict[date]?[index].isCompleted.toggle()
+        }
+    }
+    
+    // MARK: - View Helpers
+    
+    func bindingForToDoCompletion(_ toDoId: Int) -> Binding<Bool> {
+        Binding<Bool>(
+            get: {
+                if let date = self.toDoListDict.first(where: { $0.value.contains(where: { $0.id == toDoId }) })?.key,
+                   let index = self.toDoListDict[date]?.firstIndex(where: { $0.id == toDoId }) {
+                    return self.toDoListDict[date]?[index].isCompleted ?? false
+                }
+                return false
+            },
+            set: { _ in
+                self.updateToDoCompletion(toDoId: toDoId)
+            }
+        )
+    }
+    
+    func isTopPriorityItem(at item: ToDoItem, items: [ToDoItem]) -> Bool {
+        guard !item.isCompleted else { return false }
+        let incompleteItems = items.filter { !$0.isCompleted }
+        return incompleteItems.first == item
     }
 }
 
@@ -104,10 +138,7 @@ extension ToDoListViewModel {
                response?.data != nil {
                 
                 DispatchQueue.main.async {
-                    if let index = self.toDoList.firstIndex(where: { $0.id == toDoId }) {
-                        self.toDoList[index].isCompleted.toggle()
-                    }
-                    self.getToDoListTotal()
+                    self.updateToDoCompletionInDict(toDoId: toDoId)
                 }
             }
         }
