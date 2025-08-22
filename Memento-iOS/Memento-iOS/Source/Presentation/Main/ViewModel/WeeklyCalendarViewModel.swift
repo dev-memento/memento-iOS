@@ -51,8 +51,9 @@ final class WeeklyCalendarViewModel: ObservableObject {
     }
     
     @Published var todayItems: [TodayItemDataModel] = []
-    
-    @Published var toDoListItems: [ToDoItem] = []
+    @Published var scheduleItems: [ScheduleItem] = []
+    @Published var allDayItems: [AllDayItem] = []
+    @Published var toDoItems: [ToDoItem] = []
     
     @Published var dragTodayItem: TodayItemDataModel?
     @Published var dragTodoItem: ToDoItem?

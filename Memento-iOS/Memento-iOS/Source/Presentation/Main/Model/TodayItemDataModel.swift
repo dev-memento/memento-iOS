@@ -9,7 +9,7 @@ import Foundation
 
 enum TodayItemDataModel: Identifiable, Equatable {
     case todo(ToDoItem)
-    case schedule(ScheduleWithOrderInfos)
+    case schedule(ScheduleItem)
     
     // `Identifiable`을 준수하기 위해 고유 id 추가
     var id: Int {
