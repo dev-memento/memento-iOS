@@ -6,11 +6,13 @@
 //
 
 import Foundation
+
 import AuthenticationServices
 import FirebaseMessaging
 
 
-// MARK: - APPLE 로그인 이후 idToken 가져오기 담당 
+// MARK: - APPLE 로그인 이후 idToken 가져오기 담당
+
 @MainActor
 extension AuthSession {
     func prepareAppleSignIn(_ request: ASAuthorizationAppleIDRequest) {

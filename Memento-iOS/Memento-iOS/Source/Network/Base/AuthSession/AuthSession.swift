@@ -1,6 +1,14 @@
+//
+//  AuthSession.swift
+//  Memento-iOS
+//
+//  Created by jeonguk29 on 8/21/25.
+//
+
 import Foundation
-import Moya
 import Combine
+
+import Moya
 import AuthenticationServices
 import Firebase
 import FirebaseAuth
@@ -12,12 +20,14 @@ final class AuthSession: ObservableObject {
     static let shared = AuthSession()
 
     // MARK: - Session State
+    
     @Published var isLoggedIn: Bool = false
     @Published var isLoading: Bool = false
     @Published var shouldStartOnboarding: Bool = false
     @Published var errorMessage: String?
 
     // MARK: - Dependencies
+    
     let keychain = TokenKeychainManager.shared
     let memberService = MemberAPIService()
     var hasValidAccessToken: Bool {
@@ -29,6 +39,7 @@ final class AuthSession: ObservableObject {
     }
     
     // MARK: - 세션 초기화 담당
+    
     func clear() {
         do { try keychain.clearTokens() } catch {
             print("[AuthSession] token clear failed: \(error)")
@@ -40,6 +51,7 @@ final class AuthSession: ObservableObject {
     }
 
     // MARK: - Error/Helper
+    
     func handleError(_ error: Error?, defaultMessage: String) {
         let message = error?.localizedDescription ?? defaultMessage
         print("🚧 [AuthSession] Error: \(message)")
@@ -48,6 +60,7 @@ final class AuthSession: ObservableObject {
     }
     
     // MARK: - 자동 로그인
+    
     func autoLoginOnLaunch() {
         // Access 토큰이 있고 아직 만료 전이면 로그인 상태로만 세팅
         if let token = try? keychain.getAccessToken(),

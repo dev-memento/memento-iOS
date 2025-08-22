@@ -1,11 +1,12 @@
 //
-//  KeychainManager.swift
+//  TokenKeychainManager.swift
 //  Memento-iOS
 //
 //  Created by 정정욱 on 1/22/25.
 //
 
 import Foundation
+
 import Security
 
 /// Keychain 관련 에러 정의
@@ -23,6 +24,7 @@ final class TokenKeychainManager {
     private init() {}
     
     // MARK: - 저장 메서드
+    
     func save(key: String, value: String) throws {
         guard let data = value.data(using: .utf8) else {
             throw KeychainError.dataConversionFailed
@@ -44,6 +46,7 @@ final class TokenKeychainManager {
     }
     
     // MARK: - 조회 메서드
+    
     func load(key: String) throws -> String? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
@@ -110,6 +113,7 @@ final class TokenKeychainManager {
     
     // MARK: - Token 유효성 검사 (만료시각 확인)
     /// 키체인에서 액세스 토큰을 꺼내서 비어있지 않고, 만료되지 않았는지 확인
+
     func hasValidToken() -> Bool {
         do {
             guard let accessToken = try getAccessToken(), !accessToken.isEmpty else {

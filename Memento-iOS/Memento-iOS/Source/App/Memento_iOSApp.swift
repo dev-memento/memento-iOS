@@ -80,7 +80,7 @@ struct MementoApp: App {
                 .onAppear {
                     guard !didRunAutoLoginOnce else { return }
                     didRunAutoLoginOnce = true
-                    Task { authSession.autoLoginOnLaunch() } 
+                    authSession.autoLoginOnLaunch() 
                 }
 //                .onAppear { // 탈퇴시 로그인 된 탭 화면에서 해당 코드 실행 해야함
 //                    Task { await withdrawAndSignOut() }

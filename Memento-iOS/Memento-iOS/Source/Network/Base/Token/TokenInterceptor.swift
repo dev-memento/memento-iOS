@@ -1,15 +1,17 @@
 //
-//  TokenRefreshPlugin.swift
+//  TokenInterceptor.swift
 //  Memento-iOS
 //
 //  Created by 정정욱 on 1/22/25.
 //
 
 import Foundation
+
 import Moya
 import Alamofire
 
 // MARK: - AFSessionFactory
+
 enum AFSessionFactory {
     /// 일반 요청 (TokenInterceptor 장착)
     static let shared: Session = {
@@ -29,6 +31,7 @@ enum AFSessionFactory {
 }
 
 // MARK: - TokenInterceptor
+
 final class TokenInterceptor: RequestInterceptor {
     static let shared = TokenInterceptor()
 
@@ -44,6 +47,7 @@ final class TokenInterceptor: RequestInterceptor {
 
     // MARK: 요청이 나가기 직전 토큰 삽입
     /// 우리 API일 때만 가로채기 로그인, 리프래시 요청이면 토큰 삽입 x
+
     func adapt(_ urlRequest: URLRequest,
                for session: Session,
                completion: @escaping (Result<URLRequest, Error>) -> Void) {
@@ -66,6 +70,7 @@ final class TokenInterceptor: RequestInterceptor {
     // MARK: 401 에러 발생시 리프래시 갱신 실행
     /// 동시 401 요청이 전부 refreshTokens()를 호출 → 서버에 중복 리프레시 요청 남발
     /// lock.lock()으로 첫 요청만 리프레시 담당자가 되고, 나머지는 pendingCompletions 배열에 합류해서 리프레시 끝날 때까지 대기
+    
     func retry(_ request: Request,
                for session: Session,
                dueTo error: Error,
@@ -118,6 +123,7 @@ final class TokenInterceptor: RequestInterceptor {
 
     // MARK: Refresh 갱신 API 호출
     /// 리프래시 토큰 401 만료 시 강제 다시 로그인 화면으로
+
     private func refreshTokens(completion: @escaping (Bool) -> Void) {
         RefreshService.refreshTokens { result in
             switch result {
@@ -137,6 +143,7 @@ final class TokenInterceptor: RequestInterceptor {
     }
     
     // MARK: - 우리 API 요청 검증, 구글 API 요청에는 손대지 않으려는 목적
+    
     private func isOurAPI(_ req: URLRequest) -> Bool {
         guard let url = req.url else { return false }
         return url.absoluteString.hasPrefix(baseURLString)

@@ -5,14 +5,15 @@
 //  Created by jeonguk29 on 8/21/25.
 //
 
-import Foundation
+import UIKit
+
 import GoogleSignIn
 import Firebase
 import FirebaseAuth
 import FirebaseMessaging
-import UIKit
 
 // MARK: - Google 로그인 이후 idToken 가져오기 담당
+
 @MainActor
 extension AuthSession {
     func signInWithGoogle() {

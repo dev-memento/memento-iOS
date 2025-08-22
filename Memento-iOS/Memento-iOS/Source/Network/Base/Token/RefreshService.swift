@@ -11,7 +11,9 @@ import Alamofire
 import Moya
 
 enum RefreshService {
+    
     // MARK: - Endpoint
+    
     static let apiBaseURL        = Config.baseURL
     static let tokenRefreshPath  = "/v1/auth/token/refresh"
     static var tokenRefreshURL: URL? { URL(string: apiBaseURL + tokenRefreshPath) }
