@@ -8,7 +8,7 @@
 import Foundation
 
 enum TodayItemDataModel: Identifiable, Equatable {
-    case todo(ToDoListDataModel)
+    case todo(ToDoItem)
     case schedule(ScheduleWithOrderInfos)
     
     // `Identifiable`을 준수하기 위해 고유 id 추가
@@ -22,7 +22,7 @@ enum TodayItemDataModel: Identifiable, Equatable {
     }
     
     // `toDoBinding`에 getter와 setter 추가
-    var toDoBinding: ToDoListDataModel {
+    var toDoBinding: ToDoItem {
         get {
             if case .todo(let todo) = self {
                 return todo
@@ -34,17 +34,6 @@ enum TodayItemDataModel: Identifiable, Equatable {
             if case .todo = self {
                 self = .todo(newValue)
             }
-        }
-    }
-}
-
-extension TodayItemDataModel {
-    func mapToToDoResponse() -> ToDoGetResponses? {
-        switch self {
-        case .todo(let todo):
-            return todo.mapToToDoItem()
-        case .schedule:
-            return nil
         }
     }
 }

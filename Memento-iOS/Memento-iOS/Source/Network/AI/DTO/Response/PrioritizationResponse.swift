@@ -12,10 +12,10 @@ struct PrioritizationResponse: Codable {
 }
 
 struct PrioritizationData: Codable {
-    let todos: [[TodoItem]]
+    let todos: [[ToDos]]
 }
 
-struct TodoItem: Codable {
+struct ToDos: Codable {
     let id: Int
     let groupId: String
     let description: String

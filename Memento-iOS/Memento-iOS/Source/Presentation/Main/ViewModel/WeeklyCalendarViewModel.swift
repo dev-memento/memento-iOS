@@ -52,10 +52,10 @@ final class WeeklyCalendarViewModel: ObservableObject {
     
     @Published var todayItems: [TodayItemDataModel] = []
     
-    @Published var toDoListItems: [ToDoListDataModel] = []
+    @Published var toDoListItems: [ToDoItem] = []
     
     @Published var dragTodayItem: TodayItemDataModel?
-    @Published var dragTodoItem: ToDoListDataModel?
+    @Published var dragTodoItem: ToDoItem?
     @Published var dropIndex: Int?
     
     @Published var mCallendarDataSource: MCalendarDataSource
@@ -74,7 +74,7 @@ final class WeeklyCalendarViewModel: ObservableObject {
     
     
     private let dateFormatter = DateFormatter()
-    @Published var toDoListItemDict: [MCalendarDataModel: [ToDoListDataModel]] = [:]
+    @Published var toDoListItemDict: [MCalendarDataModel: [ToDoItem]] = [:]
     
     private func preProcessingForAllEvents() {
         Publishers.CombineLatest($getAllTodoList, $getAllScheduleList)
@@ -125,10 +125,10 @@ final class WeeklyCalendarViewModel: ObservableObject {
         }
     }
     
-    private func filteredTargetEvent(_ date: MCalendarDataModel) -> [ToDoListDataModel] {
+    private func filteredTargetEvent(_ date: MCalendarDataModel) -> [ToDoItem] {
         dateFormatter.dateFormat = "yyyy-MM-dd"
         return toDoListItems.filter {
-            dateFormatter.date(from: $0.date)! == date.date()!
+            dateFormatter.date(from: $0.startDate)! == date.date()!
         }
     }
     
@@ -176,7 +176,7 @@ extension WeeklyCalendarViewModel {
                         toOffset: dropIndex > fromIndex ? dropIndex + 1 : dropIndex)
     }
     
-    func dropActionForToDoList(dragItem: ToDoListDataModel?, dropItem: ToDoListDataModel) {
+    func dropActionForToDoList(dragItem: ToDoItem?, dropItem: ToDoItem) {
         guard let dragItem,
               let dropIndex = toDoListItems.firstIndex(where: { $0.id == dropItem.id }),
               let fromIndex = toDoListItems.firstIndex(where: { $0.id == dragItem.id }) else { return }
@@ -263,25 +263,17 @@ extension WeeklyCalendarViewModel {
             case .success(let response):
                 DispatchQueue.main.async {
                     if let toDoData = response?.data.toDoGetResponses {
+         
                         self?.toDoList = toDoData
-                        self?.toDoListItems = toDoData.map { item in
-                            ToDoListDataModel(
-                                id: item.id,
-                                colorType: item.tagColor,
-                                toDoTitle: item.description,
-                                date: item.startDate,
-                                dueDate: item.endDate,
-                                priorityType: Priority(rawValue: item.priorityType) ?? .low,
-                                isChecked: item.isCompleted,
-                                tagName: item.tagName
-                            )
-                        }
+                        
+                        self?.toDoListItems = toDoData.map { ToDoItem(from: $0) }
+                        
                         self?.getAllTodoList = true
+                        self?.preprocessingForEventDate()
                     } else {
-                        print("데이터변환 실패")
+                        print("데이터 변환 실패")
                         self?.toDoListItems = []
                     }
-                    self?.preprocessingForEventDate()
                 }
             default:
                 print("ERROR")
@@ -296,7 +288,7 @@ extension WeeklyCalendarViewModel {
                 DispatchQueue.main.async {
                     if response?.data != nil {
                         if let index = self?.toDoList.firstIndex(where: { $0.id == toDoId }) {
-                            self?.toDoListItems[index].isChecked.toggle()
+                            self?.toDoListItems[index].isCompleted.toggle()
                         }
                     }
                 }
@@ -394,8 +386,8 @@ extension WeeklyCalendarViewModel {
         
         let today = toDoListItems.filter { todoItem in
             guard
-                let start = makeDateToString(todoItem.date),
-                let end   = makeDateToString(todoItem.dueDate)
+                let start = makeDateToString(todoItem.startDate),
+                let end   = makeDateToString(todoItem.endDate)
             else {
                 print("💔날짜 변환 실패 \(todoItem)💔")
                 return false
@@ -405,23 +397,25 @@ extension WeeklyCalendarViewModel {
             //    일정의 시작 ≤ dayEnd && 일정의 끝 ≥ dayStart
             return start <= dayEnd && end >= dayStart
         }
-            .map {
-                TodayItemDataModel
-                    .todo(
-                        .init(
-                            id: $0.id,
-                            colorType: $0.colorType,
-                            toDoTitle: $0.toDoTitle,
-                            date: $0.date,
-                            dueDate: $0.dueDate,
-                            priorityType: $0.priorityType,
-                            isChecked: $0.isChecked,
-                            tagName: $0.tagName
-                        )
-                    )
-            }
+//            .map {
+//                TodayItemDataModel
+//                    .todo(
+//                        ToDoItem(
+//                            id: $0.id,
+//                            description: $0.description,
+//                            startDate: $0.startDate,
+//                            endDate: $0.endDate,
+//                            isCompleted: $0.isCompleted,
+//                            priorityType: Priority(rawValue: $0.priorityType.lowercased()) ?? .none,
+//                            tagName: $0.tagName,
+//                            tagColor: $0.tagColor,
+//                            toDoType: $0.toDoType
+//                        )
+//                    )
+//            }
+
         todayItems.append(contentsOf: scheudle)
-        todayItems.append(contentsOf: today)
+//        todayItems.append(contentsOf: today)
     }
     
     private func toDateFromString(_ date: String) -> Date? {

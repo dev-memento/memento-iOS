@@ -15,7 +15,7 @@ struct ToDoListView: View {
     
     @State private var showTodoAlert = false
     @State private var showEditSheet = false
-    @State private var selectedItem: ToDoListDataModel?
+    @State private var selectedItem: ToDoItem?
     
     var body: some View {
         ZStack {
@@ -26,18 +26,18 @@ struct ToDoListView: View {
                         ToDoListDateView(date: "\(Date.makeMonthDate(month: date.month)) \(date.day)")
                             .id(date)
                             .padding(.bottom, 8)
-                             
+                        
                         if let events = viewModel.toDoListItemDict[date], !events.isEmpty {
                             ForEach(events, id: \.self) { event in
                                 
                                 ToDoListItemView(
-                                    item: event.mapToToDoItem(),
+                                    item: event,
                                     isHighlighted: isTopPriorityItem(at: event, items: events),
                                     isCompleted: Binding(
-                                        get: { event.isChecked },
+                                        get: { event.isCompleted },
                                         set: { newValue in
                                             if let index = viewModel.toDoListItemDict[date]?.firstIndex(where: { $0.id == event.id }) {
-                                                viewModel.toDoListItemDict[date]?[index].isChecked = newValue
+                                                viewModel.toDoListItemDict[date]?[index].isCompleted = newValue
                                                 viewModel.updateToDoCompletion(toDoId: event.id)
                                             }
                                         }
@@ -60,12 +60,12 @@ struct ToDoListView: View {
             
             if showTodoAlert, let todo = selectedItem {
                 ToDoAlertView(
-                    toDoId: todo.mapToToDoItem().id,
-                    toDoTitle: todo.mapToToDoItem().description,
-                    deadline: todo.mapToToDoItem().endDate ?? "",
-                    tagName: todo.mapToToDoItem().tagName ?? "",
-                    tagColorCode: todo.mapToToDoItem().tagColor ?? "",
-                    priority: todo.priorityType ?? .none,
+                    toDoId: todo.id,
+                    toDoTitle: todo.description,
+                    deadline: todo.endDate,
+                    tagName: todo.tagName,
+                    tagColorCode: todo.tagColor,
+                    priority: todo.priorityType,
                     onDelete: {
                         viewModel.deleteTodo(todoId: todo.id)
                         showTodoAlert = false
@@ -75,18 +75,19 @@ struct ToDoListView: View {
                         showEditSheet = true
                     },
                     isChecked: Binding(
-                        get: { todo.isChecked },
+                        get: { todo.isCompleted },
                         set: { newValue in
                             if let date = viewModel.toDoListItemDict.first(where: { $0.value.contains(where: { $0.id == todo.id }) })?.key,
                                let index = viewModel.toDoListItemDict[date]?.firstIndex(where: { $0.id == todo.id }) {
-                                viewModel.toDoListItemDict[date]?[index].isChecked = newValue
+                                viewModel.toDoListItemDict[date]?[index].isCompleted = newValue
                                 viewModel.updateToDoCompletion(toDoId: todo.id)
                                 
-                                selectedItem?.isChecked = newValue
+                                selectedItem?.isCompleted = newValue
                             }
                         }
                     )
                 )
+                
                 .background(Color.black.opacity(0.4))
                 .edgesIgnoringSafeArea(.all)
             }
@@ -96,11 +97,9 @@ struct ToDoListView: View {
         }
     }
     
-    private func isTopPriorityItem(at item: ToDoListDataModel, items: [ToDoListDataModel]) -> Bool {
-        guard !item.isChecked else { return false }
-        
-        let uncheckedItems = items.filter { !$0.isChecked }
-        
+    private func isTopPriorityItem(at item: ToDoItem, items: [ToDoItem]) -> Bool {
+        guard !item.isCompleted else { return false }
+        let uncheckedItems = items.filter { !$0.isCompleted }
         return uncheckedItems.first == item
     }
 }
@@ -132,7 +131,7 @@ struct ToDoListDateView: View {
 
 struct ToDoListItemView: View {
     
-    var item: ToDoGetResponses
+    var item: ToDoItem
     var isHighlighted: Bool
     
     @Binding var isCompleted: Bool
@@ -144,7 +143,7 @@ struct ToDoListItemView: View {
                 title: item.description,
                 toDoType: item.toDoType,
                 endDate: item.endDate,
-                priority: Priority(rawValue: item.priorityType.lowercased()) ?? .none,
+                priority: item.priorityType,
                 isHighlighted: isHighlighted,
                 isCompleted: $isCompleted
             )

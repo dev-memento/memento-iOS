@@ -15,7 +15,7 @@ final class ToDoListViewModel: ObservableObject {
     @Published var toDoList: [ToDoGetResponses] = []
     private let tagService: TagAPIServiceProtocol
     private let toDoListService: ToDoListAPIServiceProtocol
-    @Published var toDoListItems: [ToDoListDataModel] = []
+    @Published var toDoListItems: [ToDoItem] = []
     @Published var mCallendarDataSource: MCalendarDataSource
     @Published var mEventDataSource: MEventDatasource
     @Published var currentOffset: CGPoint = .zero
@@ -26,7 +26,7 @@ final class ToDoListViewModel: ObservableObject {
     private var cancellable = Set<AnyCancellable>()
     @Published var getAllTodoList: Bool = false
     private let dateFormatter = DateFormatter()
-    @Published var toDoListItemDict: [MCalendarDataModel: [ToDoListDataModel]] = [:]
+    @Published var toDoListItemDict: [MCalendarDataModel: [ToDoItem]] = [:]
     
     
     init(
@@ -47,10 +47,10 @@ final class ToDoListViewModel: ObservableObject {
         }
     }
     
-    private func filteredTargetEvent(_ date: MCalendarDataModel) -> [ToDoListDataModel] {
+    private func filteredTargetEvent(_ date: MCalendarDataModel) -> [ToDoItem] {
         dateFormatter.dateFormat = "yyyy-MM-dd"
         return toDoListItems.filter {
-            dateFormatter.date(from: $0.date)! == date.date()!
+            dateFormatter.date(from: $0.startDate)! == date.date()!
         }
     }
 }
@@ -97,23 +97,16 @@ extension ToDoListViewModel {
             case .success(let response):
                 DispatchQueue.main.async {
                     if let toDoData = response?.data.toDoGetResponses {
+          
                         self?.toDoList = toDoData
-                        self?.toDoListItems = toDoData.map { item in
-                            ToDoListDataModel(
-                                id: item.id,
-                                colorType: item.tagColor,
-                                toDoTitle: item.description,
-                                date: item.startDate,
-                                dueDate: item.endDate,
-                                priorityType: Priority(rawValue: item.priorityType.lowercased()) ?? .none,
-                                isChecked: item.isCompleted,
-                                tagName: item.tagName
-                            )
-                        }
+                        
+       
+                        self?.toDoListItems = toDoData.map { ToDoItem(from: $0) }
+                        
                         self?.getAllTodoList = true
                         self?.preprocessingForEventDate()
                     } else {
-                        print("데이터변환 실패")
+                        print("데이터 변환 실패")
                         self?.toDoListItems = []
                     }
                 }
@@ -122,6 +115,7 @@ extension ToDoListViewModel {
             }
         }
     }
+
     
     func updateToDoCompletion(toDoId: Int) {
         toDoListService.updateToDoCompletion(toDoId: toDoId) { [weak self] result in
@@ -130,7 +124,7 @@ extension ToDoListViewModel {
                 DispatchQueue.main.async {
                     if response?.data != nil {
                         if let index = self?.toDoList.firstIndex(where: { $0.id == toDoId }) {
-                            self?.toDoListItems[index].isChecked.toggle()
+                            self?.toDoListItems[index].isCompleted.toggle()
                         }
                         self?.getToDoListTotalAPI()
                     }

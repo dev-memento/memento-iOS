@@ -13,7 +13,7 @@ import MCalendar
 struct TodayView: View {
     @ObservedObject var viewModel: WeeklyCalendarViewModel
     
-    @State private var selectTodo: ToDoListDataModel?
+    @State private var selectTodo: ToDoItem?
     @State private var selectSchedule: ScheduleWithOrderInfos?
     
     @State private var showTodoAlert = false
@@ -49,14 +49,14 @@ struct TodayView: View {
                     get: {
                         if let index = viewModel.todayItems.firstIndex(where: { $0.id == todo.id }),
                            case .todo(let t) = viewModel.todayItems[index] {
-                            return t.isChecked
+                            return t.isCompleted
                         }
                         return false
                     },
                     set: { newValue in
                         if let index = viewModel.todayItems.firstIndex(where: { $0.id == todo.id }),
                            case .todo(var t) = viewModel.todayItems[index] {
-                            t.isChecked = newValue
+                            t.isCompleted = newValue
                             viewModel.todayItems[index] = .todo(t)
                         }
                     }
@@ -64,10 +64,10 @@ struct TodayView: View {
                 
                 ToDoAlertView(
                     toDoId: todo.id,
-                    toDoTitle: todo.toDoTitle,
-                    deadline: todo.dueDate,
+                    toDoTitle: todo.description,
+                    deadline: todo.endDate,
                     tagName: todo.tagName,
-                    tagColorCode: todo.colorType,
+                    tagColorCode: todo.tagColor,
                     priority: todo.priorityType,
                     onDelete: {
                         showTodoAlert = false
@@ -183,7 +183,7 @@ struct TodayView: View {
             }, onCheckChanged: { isChecked in
                 if let index = viewModel.todayItems.firstIndex(where: { $0.id == currentItem.id }),
                    case .todo(var todo) = viewModel.todayItems[index] {
-                    todo.isChecked = isChecked
+                    todo.isCompleted = isChecked
                     viewModel.todayItems[index] = .todo(todo)
                     viewModel.updateToDoCompletion(toDoId: todo.id)
                 }
@@ -199,9 +199,9 @@ struct TodayView: View {
     
     
     private func isTopPriorityItem(at item: TodayItemDataModel) -> Bool {
-        guard case .todo(let todo) = item, !todo.isChecked else { return false }
+        guard case .todo(let todo) = item, !todo.isCompleted else { return false }
         let uncheckedItems = viewModel.todayItems.filter {
-            if case .todo(let t) = $0, !t.isChecked { return true }
+            if case .todo(let t) = $0, !t.isCompleted { return true }
             return false
         }
         return uncheckedItems.first == item
@@ -215,7 +215,7 @@ struct TodayListItemView: View {
     var isArrow: Bool
     var backgroundColor: Color
     
-    var onTodoTap: (ToDoListDataModel) -> Void
+    var onTodoTap: (ToDoItem) -> Void
     var onScheduleTap: (ScheduleWithOrderInfos) -> Void
     
     var onCheckChanged: (Bool) -> Void
