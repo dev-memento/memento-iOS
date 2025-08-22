@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+
 import MDSKit
 import MCalendar
 
@@ -13,8 +14,9 @@ struct ToDoListView: View {
     
     @ObservedObject var viewModel: ToDoListViewModel
     
-    @State private var showTodoAlert = false
-    @State private var showEditSheet = false
+    @State private var isToDoAlertPresented = false
+    @State private var isEditSheetPresented = false
+    
     @State private var selectedItem: ToDoItem?
     
     var body: some View {
@@ -37,7 +39,7 @@ struct ToDoListView: View {
                                 )
                                 .onTapGesture {
                                     selectedItem = event
-                                    showTodoAlert = true
+                                    isToDoAlertPresented = true
                                 }
                             }
                         }
@@ -51,7 +53,7 @@ struct ToDoListView: View {
                 viewModel.getToDoListTotal()
             }
             
-            if showTodoAlert, let todo = selectedItem {
+            if isToDoAlertPresented, let todo = selectedItem {
                 ToDoAlertView(
                     toDoId: todo.id,
                     toDoTitle: todo.description,
@@ -61,11 +63,11 @@ struct ToDoListView: View {
                     priority: todo.priorityType,
                     onDelete: {
                         viewModel.deleteToDo(toDoId: todo.id)
-                        showTodoAlert = false
+                        isToDoAlertPresented = false
                     },
                     onEdit: {
-                        showTodoAlert = false
-                        showEditSheet = true
+                        isToDoAlertPresented = false
+                        isEditSheetPresented = true
                     },
                     isChecked: viewModel.bindingForToDoCompletion(todo.id)
                 )
@@ -73,7 +75,7 @@ struct ToDoListView: View {
                 .edgesIgnoringSafeArea(.all)
             }
         }
-        .sheet(isPresented: $showEditSheet) {
+        .sheet(isPresented: $isEditSheetPresented) {
             EmptyView()
         }
     }
