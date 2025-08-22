@@ -24,7 +24,7 @@ final class TodayWeeklyCalendarViewModel: ObservableObject {
     @Published var mCallendarDataSource: MCalendarDataSource
     @Published var mEventDataSource: MEventDatasource
     
-    @Published var todayItems: [TodayItemDataModel] = []
+    @Published var todayItems: [TodayItem] = []
     @Published var scheduleItems: [ScheduleItem] = []
     @Published var allDayItems: [AllDayItem] = []
     @Published var toDoItems: [ToDoItem] = []
@@ -125,7 +125,7 @@ final class TodayWeeklyCalendarViewModel: ObservableObject {
             
             return start <= dayEnd && end >= dayStart
         }
-            .map { TodayItemDataModel.schedule($0) }
+            .map { TodayItem.schedule($0) }
         
         let toDoItem = toDoItems.filter { toDoItem in
             guard
@@ -137,7 +137,7 @@ final class TodayWeeklyCalendarViewModel: ObservableObject {
             
             return start <= dayEnd && end >= dayStart
         }
-            .map { TodayItemDataModel.todo($0) }
+            .map { TodayItem.todo($0) }
         
         todayItems.append(contentsOf: scheduleItem)
         todayItems.append(contentsOf: toDoItem)
@@ -147,9 +147,36 @@ final class TodayWeeklyCalendarViewModel: ObservableObject {
         return Date.dateFromString(date, format: "yyyy-MM-dd'T'HH:mm:ss.SSS") ?? Date.dateFromString(date, format: "yyyy-MM-dd'T'HH:mm:ss")
     }
     
+    // MARK: - View Helpers
+    
+    func bindingForToDoCompletion(_ toDoId: Int) -> Binding<Bool> {
+        Binding<Bool>(
+            get: {
+                if let date = self.toDoListDict.first(where: { $0.value.contains(where: { $0.id == toDoId }) })?.key,
+                   let index = self.toDoListDict[date]?.firstIndex(where: { $0.id == toDoId }) {
+                    return self.toDoListDict[date]?[index].isCompleted ?? false
+                }
+                return false
+            },
+            set: { _ in
+                self.updateToDoCompletion(toDoId: toDoId)
+            }
+        )
+    }
+    
+    func isTopPriorityItem(item: TodayItem) -> Bool {
+        guard case .todo(let todo) = item, !todo.isCompleted else { return false }
+        
+        let incompleteTodos = todayItems.compactMap {
+            if case .todo(let t) = $0, !t.isCompleted { return t }
+            return nil
+        }
+        return incompleteTodos.first?.id == todo.id
+    }
+    
     // MARK: - Drag And Drop
     
-    @Published var dragTodayItem: TodayItemDataModel?
+    @Published var dragTodayItem: TodayItem?
     @Published var dragTodoItem: ToDoItem?
     @Published var dropIndex: Int?
     

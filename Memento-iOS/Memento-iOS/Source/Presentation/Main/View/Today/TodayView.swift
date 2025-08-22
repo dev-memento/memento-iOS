@@ -33,7 +33,26 @@ struct TodayView: View {
                             .padding(.bottom, 15)
                         
                         ForEach($viewModel.todayItems, id: \.wrappedValue.id) { item in
-                            createTodayListItemView(for: item)
+                            let todayItem = item.wrappedValue
+                            
+                            TodayListItemView(
+                                item: todayItem,
+                                isArrow: todayItem == viewModel.todayItems.first,
+                                isHighlighted: viewModel.isTopPriorityItem(item: todayItem),
+                                isCompleted: viewModel.bindingForToDoCompletion(todayItem.id),
+                                onToDoTap: { _ in
+                                    showTodoAlert = true
+                                },
+                                onScheduleTap: { _ in
+                                    showScheduleAlert = true
+                                }
+                            )
+                            .padding(.bottom, 10)
+                            //        .onDrag {
+                            //            viewModel.dragTodayItem = currentItem
+                            //            return NSItemProvider(object: String(currentItem.id.hashValue) as NSString)
+                            //        }
+                            //        .onDrop(of: [.text], delegate: DropViewDelegate(item: item, draggedItem: $viewModel.dragTodayItem, onDrop: viewModel.dropActionForToday))
                         }
                         
                         WindDownFooterView(windDownTime: viewModel.windDownTime)
@@ -152,75 +171,19 @@ struct TodayView: View {
             }
         }
     }
-    
-    private func createTodayListItemView(for item: Binding<TodayItemDataModel>) -> some View {
-        let currentItem = item.wrappedValue
-        let isArrow = currentItem == viewModel.todayItems.first
-        let isHighlighted = isTopPriorityItem(at: currentItem)
-        
-        return TodayListItemView(
-            item: item,
-            isHighlighted: isHighlighted,
-            isArrow: isArrow,
-            backgroundColor: Color.mainNavy,
-            onTodoTap: { todo in
-                selectTodo = todo
-                showTodoAlert = true
-            },
-            onScheduleTap: { schedule in
-                selectSchedule = ScheduleWithOrderInfos(
-                    id: schedule.id,
-                    description: schedule.description,
-                    startDate: schedule.startDate,
-                    endDate: schedule.endDate,
-                    timeDuration: schedule.timeDuration,
-                    isAllDay: schedule.isAllDay,
-                    scheduleType: schedule.scheduleType,
-                    order: schedule.order,
-                    tagName: schedule.tagName,
-                    tagColorCode: schedule.tagColorCode
-                )
-                showScheduleAlert = true
-            }, onCheckChanged: { isChecked in
-                if let index = viewModel.todayItems.firstIndex(where: { $0.id == currentItem.id }),
-                   case .todo(var todo) = viewModel.todayItems[index] {
-                    todo.isCompleted = isChecked
-                    viewModel.todayItems[index] = .todo(todo)
-                    viewModel.updateToDoCompletion(toDoId: todo.id)
-                }
-            }
-        )
-        .padding(.horizontal)
-        .padding(.bottom, 10)
-        //        .onDrag {
-        //            viewModel.dragTodayItem = currentItem
-        //            return NSItemProvider(object: String(currentItem.id.hashValue) as NSString)
-        //        }
-        //        .onDrop(of: [.text], delegate: DropViewDelegate(item: item, draggedItem: $viewModel.dragTodayItem, onDrop: viewModel.dropActionForToday))
-    }
-    
-    
-    private func isTopPriorityItem(at item: TodayItemDataModel) -> Bool {
-        guard case .todo(let todo) = item, !todo.isCompleted else { return false }
-        let uncheckedItems = viewModel.todayItems.filter {
-            if case .todo(let t) = $0, !t.isCompleted { return true }
-            return false
-        }
-        return uncheckedItems.first == item
-    }
 }
 
 struct TodayListItemView: View {
-    @Binding var item: TodayItemDataModel
     
-    var isHighlighted: Bool
+    var item: TodayItem
+    
     var isArrow: Bool
-    var backgroundColor: Color
+    var isHighlighted: Bool
     
-    var onTodoTap: (ToDoItem) -> Void
-    var onScheduleTap: (ScheduleWithOrderInfos) -> Void
+    @Binding var isCompleted: Bool
     
-    var onCheckChanged: (Bool) -> Void
+    var onToDoTap: (ToDoItem) -> Void
+    var onScheduleTap: (ScheduleItem) -> Void
     
     var body: some View {
         HStack {
@@ -230,32 +193,19 @@ struct TodayListItemView: View {
                 .opacity(isArrow ? 1 : 0)
             
             switch item {
-            case .todo(var todo):
-                Rectangle()
-                //                ToDoListCell(
-                //                    toDoList: todo
-                //                        .mapToToDoItem(),
-                //                    //                    toDoListCompleted: ToDoListCompletedResponseData(
-                //                    //                        id: todo.id,
-                //                    //                        isCompleted: todo.isChecked
-                //                    //                    ),
-                //                    toDoListCompleted: Binding<ToDoListCompletedResponseData>(
-                //                        get: {
-                //                            ToDoListCompletedResponseData(id: todo.id, isCompleted: todo.isChecked)
-                //                        },
-                //                        set: { newValue in
-                //                            todo.isChecked = newValue.isCompleted
-                //                            onCheckChanged(newValue.isCompleted)
-                //                        }
-                //                    ),
-                //                    isHighlighted: isHighlighted,
-                //                    backgroundColor: backgroundColor
-                //                )
-                //                .contentShape(Rectangle())
-                //                .padding(.trailing, -20)
-                //                .onTapGesture {
-                //                    onTodoTap(todo)
-                //                }
+            case .todo(let todo):
+                ToDoListCell(
+                    tagColorCode: todo.tagColor,
+                    title: todo.description,
+                    toDoType: todo.toDoType,
+                    endDate: todo.endDate,
+                    priority: todo.priorityType,
+                    isHighlighted: isHighlighted,
+                    isCompleted: $isCompleted
+                )
+                .onTapGesture {
+                    onToDoTap(todo)
+                }
                 
             case .schedule(let schedule):
                 ScheduleListCell(
@@ -265,16 +215,13 @@ struct TodayListItemView: View {
                     endDate: schedule.endDate,
                     timeDuration: schedule.timeDuration
                 )
-                .contentShape(Rectangle())
-                .padding(.trailing, -20)
-                //                    .onTapGesture {
-                //                        onScheduleTap(schedule)
-                //                    }
+                .onTapGesture {
+                    onScheduleTap(schedule)
+                }
             }
             
             Spacer()
         }
         .padding(.horizontal)
-        .background(.clear)
     }
 }
