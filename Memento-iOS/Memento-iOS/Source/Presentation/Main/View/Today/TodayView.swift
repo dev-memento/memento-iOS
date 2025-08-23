@@ -12,7 +12,7 @@ import MCalendar
 
 struct TodayView: View {
     
-    @ObservedObject var viewModel: TodayWeeklyCalendarViewModel
+    @ObservedObject var viewModel: WeeklyCalendarViewModel
     
     @Binding var isToDoAlertPresented: Bool
     @Binding var isScheduleAlertPresented: Bool
@@ -32,7 +32,7 @@ struct TodayView: View {
                             .padding(.leading, 50)
                             .padding(.bottom, 15)
                         
-                        ForEach($viewModel.todayItems, id: \.wrappedValue.id) { item in
+                        ForEach($viewModel.todayItems, id: \.id) { item in
                             let todayItem = item.wrappedValue
                             
                             TodayListItemView(

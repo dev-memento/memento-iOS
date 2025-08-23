@@ -12,7 +12,7 @@ import MCalendar
 
 struct TodayWeeklyCalendarView: View {
     
-    @ObservedObject var viewModel: TodayWeeklyCalendarViewModel
+    @ObservedObject var viewModel: WeeklyCalendarViewModel
     @StateObject private var settingViewModel = SettingViewModel()
     
     @State private var isToDoAlertPresented: Bool = false
@@ -42,6 +42,7 @@ struct TodayWeeklyCalendarView: View {
                         LazyHStack(spacing: 0) {
                             ForEach(viewModel.mEventDataSource.eventList.indices, id: \.self) { index in
                                 let item = viewModel.mEventDataSource.eventList[index]
+                                
                                 dailyPageView(for: item)
                                     .frame(width: UIScreen.main.bounds.width)
                                     .id(index)
@@ -50,7 +51,7 @@ struct TodayWeeklyCalendarView: View {
                     })
                     .onChange(of: scrollTarget) {
                         userInteractionFlag = false
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        DispatchQueue.main.asyncAfter(deadline: .now()) {
                             userInteractionFlag = true
                             if let target = scrollTarget {
                                 withAnimation {
@@ -74,6 +75,13 @@ struct TodayWeeklyCalendarView: View {
                 viewModel.getAllEvents()
                 viewModel.getSchedulesAllDay()
                 updateScrollTarget()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: Notification.Name("postSchedule"))) { _ in
+                viewModel.getSchedulesTotal()
+                viewModel.getSchedulesAllDay()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: Notification.Name("postToDo"))) { _ in
+                viewModel.getToDoListTotal()
             }
             .background(Color.grayBlack)
             .overlay {

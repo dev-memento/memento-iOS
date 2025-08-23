@@ -12,7 +12,7 @@ import MCalendar
 
 struct ToDoListWeeklyCalendarView: View {
     
-    @ObservedObject var viewModel: ToDoListViewModel
+    @ObservedObject var viewModel: WeeklyCalendarViewModel
     @StateObject private var settingViewModel = SettingViewModel()
     
     @State private var isToDoAlertPresented = false

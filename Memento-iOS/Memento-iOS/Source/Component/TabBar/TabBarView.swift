@@ -10,17 +10,11 @@ struct TabBarView: View {
     @GestureState private var translation: CGFloat = .zero
     
     @StateObject var segmentedViewModel = SegmentedMenuViewModel()
-    @StateObject var calendarViewModel = TodayWeeklyCalendarViewModel(
+    @StateObject var calendarViewModel = WeeklyCalendarViewModel(
         scheduleService: ScheduleAPIService(),
         toDoService: ToDoListAPIService(),
         userUptimeService: UserUptimeAPIService(),
         mCalendarDataSource: MCalendarDataSource(),
-        mEventDataSource: MEventDatasource()
-    )
-    
-    @StateObject var todolistViewModel = ToDoListViewModel(
-        toDoService: ToDoListAPIService(),
-        mCallendarDataSource: MCalendarDataSource(),
         mEventDataSource: MEventDatasource()
     )
     
@@ -45,7 +39,7 @@ struct TabBarView: View {
                     }
                     .tag(TabBarItem.today)
                 
-                // 가운데 Addition 탭
+                // Add 탭
                 Color.clear
                     .tabItem {
                         selectedTab == .addition
@@ -53,24 +47,20 @@ struct TabBarView: View {
                         : TabBarItem.addition.normalItem
                     }
                     .tag(TabBarItem.addition)
-                    .onAppear {
-                        segmentedViewModel.isPresented = true
-                        selectedTab = previousTab
-                    }
                     .onChange(of: selectedTab) { oldValue, newValue in
-                        if newValue != .addition {
+                        guard newValue == .addition else {
                             previousTab = newValue
+                            return
                         }
                         
-                        if newValue == .addition {
-                            withAnimation {
-                                segmentedViewModel.isPresented = true
-                            }
-                            selectedTab = previousTab
+                        withAnimation {
+                            segmentedViewModel.isPresented = true
                         }
+                        selectedTab = previousTab
                     }
-                
-                ToDoListWeeklyCalendarView(viewModel: todolistViewModel)
+
+                // ToDoList 탭
+                ToDoListWeeklyCalendarView(viewModel: calendarViewModel)
                     .tabItem {
                         selectedTab == .todo
                         ? TabBarItem.todo.selectedItem
@@ -114,7 +104,6 @@ struct TabBarView: View {
         .onAppear {
             calendarViewModel.getToDoListTotal()
             calendarViewModel.getSchedulesTotal()
-            todolistViewModel.getToDoListTotal()
         }
     }
     

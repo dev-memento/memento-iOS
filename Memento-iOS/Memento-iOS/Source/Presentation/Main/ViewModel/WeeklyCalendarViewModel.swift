@@ -1,5 +1,5 @@
 //
-//  TodayWeeklyCalendarViewModel.swift
+//  WeeklyCalendarViewModel.swift
 //  Memento-iOS
 //
 //  Created by Kimgahyun on 1/14/25.
@@ -11,7 +11,7 @@ import SwiftUI
 import MDSKit
 import MCalendar
 
-final class TodayWeeklyCalendarViewModel: ObservableObject {
+final class WeeklyCalendarViewModel: ObservableObject {
     
     // MARK: - Dependencies
     
@@ -61,23 +61,18 @@ final class TodayWeeklyCalendarViewModel: ObservableObject {
         
         makeDummyEvent()
         updateSelectedDateOnScroll()
-
-        setSendNotificationObserver()
+        
         preProcessingForAllEvents()
     }
     
-    deinit {
-        removeObserver()
-    }
-    
-    func makeDummyEvent() {
+    private func makeDummyEvent() {
         mEventDataSource.setCalendarData(mCallendarDataSource.wholeMonthDate)
     }
     
     // MARK: - Combine
     
     private var cancellable = Set<AnyCancellable>()
-     
+    
     // 주간 캘린더 스크롤할 때 현재 페이지에 맞춰 selectedDate를 업데이트하고 캘린더 이동
     private func updateSelectedDateOnScroll() {
         $currentOffset
@@ -93,10 +88,49 @@ final class TodayWeeklyCalendarViewModel: ObservableObject {
             .store(in: &cancellable)
     }
     
-    // MARK: - Today Items Handling
+    private func preProcessingForAllEvents() {
+        Publishers.CombineLatest($getAllToDoList, $getAllScheduleList)
+            .filter { $0 && $1 }
+            .sink { [weak self] _ in
+                guard let self else { return }
+                if let date = self.selectedDate.date() {
+                    self.updateTodayItems(for: date)
+                }
+            }
+            .store(in: &cancellable)
+    }
     
+    // MARK: - Drag And Drop
+    
+    @Published var dragTodayItem: TodayItem?
+    @Published var dragTodoItem: ToDoItem?
+    @Published var dropIndex: Int?
+    
+    //    func dropActionForToday(dragItem: TodayItemDataModel?, dropItem: TodayItemDataModel) {
+    //        guard let dragItem,
+    //              let dropIndex = todayItems.firstIndex(where: { $0.id == dropItem.id }),
+    //              let fromIndex = todayItems.firstIndex(where: { $0.id == dragItem.id }),
+    //              case .todo = dragItem else { return }
+    //
+    //        todayItems.move(fromOffsets: IndexSet(integer: fromIndex),
+    //                        toOffset: dropIndex > fromIndex ? dropIndex + 1 : dropIndex)
+    //    }
+    //
+    //    func dropActionForToDoList(dragItem: ToDoItem?, dropItem: ToDoItem) {
+    //        guard let dragItem,
+    //              let dropIndex = toDoListDict.firstIndex(where: { $0.id == dropItem.id }),
+    //              let fromIndex = toDoListDict.firstIndex(where: { $0.id == dragItem.id }) else { return }
+    //
+    //        toDoListItems.move(fromOffsets: IndexSet(integer: fromIndex),
+    //                           toOffset: dropIndex > fromIndex ? dropIndex + 1 : dropIndex)
+    //    }
+}
+
+// MARK: - Today(ToDo + Schedule) Items Handling
+
+extension WeeklyCalendarViewModel {
     // 일정이 하루라도 겹치는 스케줄, 투두를 가져와 투데이에 업데이트
-    func updateTodayItems(for date: Date) {
+    private func updateTodayItems(for date: Date) {
         todayItems = []
         
         let dayStart = date.startOfDay
@@ -133,9 +167,11 @@ final class TodayWeeklyCalendarViewModel: ObservableObject {
     private func dateFromScheduleString(_ date: String) -> Date? {
         return Date.dateFromString(date, format: "yyyy-MM-dd'T'HH:mm:ss.SSS") ?? Date.dateFromString(date, format: "yyyy-MM-dd'T'HH:mm:ss")
     }
-    
-    // MARK: - View Helpers
-    
+}
+
+// MARK: - ToDo Items Handling
+
+extension WeeklyCalendarViewModel {
     func bindingForToDoCompletion(_ toDoId: Int) -> Binding<Bool> {
         Binding<Bool>(
             get: {
@@ -161,32 +197,13 @@ final class TodayWeeklyCalendarViewModel: ObservableObject {
         return incompleteTodos.first?.id == todo.id
     }
     
-    // MARK: - Drag And Drop
-    
-    @Published var dragTodayItem: TodayItem?
-    @Published var dragTodoItem: ToDoItem?
-    @Published var dropIndex: Int?
-    
-    //    func dropActionForToday(dragItem: TodayItemDataModel?, dropItem: TodayItemDataModel) {
-    //        guard let dragItem,
-    //              let dropIndex = todayItems.firstIndex(where: { $0.id == dropItem.id }),
-    //              let fromIndex = todayItems.firstIndex(where: { $0.id == dragItem.id }),
-    //              case .todo = dragItem else { return }
-    //
-    //        todayItems.move(fromOffsets: IndexSet(integer: fromIndex),
-    //                        toOffset: dropIndex > fromIndex ? dropIndex + 1 : dropIndex)
-    //    }
-    //
-    //    func dropActionForToDoList(dragItem: ToDoItem?, dropItem: ToDoItem) {
-    //        guard let dragItem,
-    //              let dropIndex = toDoListDict.firstIndex(where: { $0.id == dropItem.id }),
-    //              let fromIndex = toDoListDict.firstIndex(where: { $0.id == dragItem.id }) else { return }
-    //
-    //        toDoListItems.move(fromOffsets: IndexSet(integer: fromIndex),
-    //                           toOffset: dropIndex > fromIndex ? dropIndex + 1 : dropIndex)
-    //    }
-    
-    // MARK: - toDoListDict Helpers
+    func isTopPriorityItem(at item: ToDoItem, items: [ToDoItem]) -> Bool {
+        guard !item.isCompleted else { return false }
+        
+        let incompleteItems = items.filter { !$0.isCompleted }
+        
+        return incompleteItems.first?.id == item.id
+    }
     
     private func mapToDoDictByDate() {
         let dateFormatter = DateFormatter()
@@ -196,16 +213,6 @@ final class TodayWeeklyCalendarViewModel: ObservableObject {
             toDoListDict[date] = toDoItems.filter {
                 dateFormatter.date(from: $0.startDate)! == date.date()!
             }
-        }
-    }
-    
-    private func removeToDoFromDict(toDoId: Int) {
-        guard let date = toDoListDict.first(where: { $0.value.contains(where: { $0.id == toDoId }) })?.key,
-              let index = toDoListDict[date]?.firstIndex(where: { $0.id == toDoId }) else { return }
-        
-        toDoListDict[date]?.remove(at: index)
-        if toDoListDict[date]?.isEmpty == true {
-            toDoListDict.removeValue(forKey: date)
         }
     }
     
@@ -223,7 +230,7 @@ final class TodayWeeklyCalendarViewModel: ObservableObject {
 
 // MARK: - API
 
-extension TodayWeeklyCalendarViewModel {
+extension WeeklyCalendarViewModel {
     func getAllEvents() {
         getSchedulesTotal()
         getToDoListTotal()
@@ -253,6 +260,9 @@ extension TodayWeeklyCalendarViewModel {
                 
                 DispatchQueue.main.async {
                     self.scheduleItems = scheduleResponse.map { ScheduleItem(from: $0) }
+                    if let date = self.selectedDate.date() {
+                        self.updateTodayItems(for: date)
+                    }
                     self.getAllScheduleList = true
                 }
             }
@@ -263,16 +273,14 @@ extension TodayWeeklyCalendarViewModel {
         scheduleService.deleteSchedule(scheduleId: scheduleId) { [weak self] result in
             guard let self = self else { return }
             
-            DispatchQueue.main.async {
-                if case .success = result {
-                    if let index = self.todayItems.firstIndex(where: {
-                        if case .schedule(let s) = $0 { return s.id == scheduleId }
-                        return false
-                    }) {
-                        self.todayItems.remove(at: index)
+            if case .success = result {
+                DispatchQueue.main.async {
+                    self.todayItems.removeAll { if case .schedule(let s) = $0 { return s.id == scheduleId } else { return false } }
+                    self.scheduleItems.removeAll { $0.id == scheduleId }
+                    
+                    if let date = self.selectedDate.date() {
+                        self.updateTodayItems(for: date)
                     }
-                } else {
-                    print("삭제 실패")
                 }
             }
         }
@@ -314,7 +322,19 @@ extension TodayWeeklyCalendarViewModel {
             
             if case .success = result {
                 DispatchQueue.main.async {
-                    self.removeToDoFromDict(toDoId: toDoId)
+                    self.todayItems.removeAll { if case .todo(let t) = $0 { return t.id == toDoId } else { return false } }
+                    self.toDoItems.removeAll { $0.id == toDoId }
+                    
+                    for (key, value) in self.toDoListDict {
+                        self.toDoListDict[key] = value.filter { $0.id != toDoId }
+                        if self.toDoListDict[key]?.isEmpty == true {
+                            self.toDoListDict.removeValue(forKey: key)
+                        }
+                    }
+                    
+                    if let date = self.selectedDate.date() {
+                        self.updateTodayItems(for: date)
+                    }
                 }
             }
         }
@@ -338,40 +358,5 @@ extension TodayWeeklyCalendarViewModel {
         //                print("시간 가져오기 실패")
         //            }
         //        }
-    }
-}
-
-
-// TODO: - 질문
-
-extension TodayWeeklyCalendarViewModel {
-    func setSendNotificationObserver() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(didReceiveNotification),
-                                               name: .init("postScheduleComplete"),
-                                               object: nil)
-    }
-    
-    func removeObserver() {
-        NotificationCenter.default.removeObserver(self,
-                                                  name: .init("postScheduleComplete"),
-                                                  object: nil)
-    }
-    
-    @objc
-    private func didReceiveNotification() {
-        self.getAllEvents()
-    }
-    
-    private func preProcessingForAllEvents() {
-        Publishers.CombineLatest($getAllToDoList, $getAllScheduleList)
-            .filter { $0 && $1 }
-            .sink { [weak self] _ in
-                guard let self else { return }
-                if let date = self.selectedDate.date() {
-                    self.updateTodayItems(for: date)
-                }
-            }
-            .store(in: &cancellable)
     }
 }

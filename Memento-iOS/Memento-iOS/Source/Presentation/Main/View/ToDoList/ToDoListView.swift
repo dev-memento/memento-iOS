@@ -12,7 +12,7 @@ import MCalendar
 
 struct ToDoListView: View {
     
-    @ObservedObject var viewModel: ToDoListViewModel
+    @ObservedObject var viewModel: WeeklyCalendarViewModel
     
     var onTap: (ToDoItem) -> Void
     
@@ -27,7 +27,7 @@ struct ToDoListView: View {
                             .padding(.bottom, 8)
                         
                         if let events = viewModel.toDoListDict[date], !events.isEmpty {
-                            ForEach(events, id: \.self) { event in
+                            ForEach(events, id: \.id) { event in
                                 
                                 ToDoListItemView(
                                     item: event,
@@ -46,6 +46,9 @@ struct ToDoListView: View {
             }
             .background(Color.grayBlack)
             .onAppear {
+                viewModel.getToDoListTotal()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: Notification.Name("postToDo"))) { _ in
                 viewModel.getToDoListTotal()
             }
         }

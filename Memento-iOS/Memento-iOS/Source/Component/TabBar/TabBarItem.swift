@@ -36,31 +36,5 @@ enum TabBarItem: CaseIterable {
             return Image(.btn_todo_selected)
         }
     }
-    
-    // 탭 별 전환될 화면
-    var targetView: AnyView {
-        switch self {
-        case .today:
-            return AnyView(TodayWeeklyCalendarView(viewModel: TodayWeeklyCalendarViewModel(
-                        scheduleService: ScheduleAPIService(),
-                        toDoService: ToDoListAPIService(),
-                        userUptimeService: UserUptimeAPIService(),
-                        mCalendarDataSource: MCalendarDataSource(),
-                        mEventDataSource: MEventDatasource()
-                    )))
-        case .todo:
-            return AnyView(
-                ToDoListWeeklyCalendarView(
-                    viewModel: ToDoListViewModel(
-                        toDoService: ToDoListAPIService(),
-                        mCallendarDataSource: MCalendarDataSource(),
-                        mEventDataSource: MEventDatasource()
-                    )
-                )
-            )
-        case .addition:
-            return AnyView(VStack{})
-        }
-    }
 }
 
