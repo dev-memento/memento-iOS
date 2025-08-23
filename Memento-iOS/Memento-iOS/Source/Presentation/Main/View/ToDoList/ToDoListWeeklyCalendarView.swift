@@ -59,29 +59,7 @@ struct ToDoListWeeklyCalendarView: View {
             }
             .background(Color.grayBlack)
             .overlay {
-                AlertOverlay(isPresented: isToDoAlertPresented, onDismiss: {
-                    isToDoAlertPresented = false
-                }) {
-                    if let item = selectedItem {
-                        ToDoAlertView(
-                            toDoId: item.id,
-                            toDoTitle: item.description,
-                            deadline: item.endDate,
-                            tagName: item.tagName,
-                            tagColorCode: item.tagColor,
-                            priority: item.priorityType,
-                            onDelete: {
-                                viewModel.deleteToDo(toDoId: item.id)
-                                isToDoAlertPresented = false
-                            },
-                            onEdit: {
-                                isToDoAlertPresented = false
-                                isEditSheetPresented = true
-                            },
-                            isChecked: viewModel.bindingForToDoCompletion(item.id)
-                        )
-                    }
-                }
+                alertView()
             }
         }
     }
@@ -159,5 +137,32 @@ struct ToDoListWeeklyCalendarView: View {
                                         color: .gray04)
         
         .setTodayColor(color: .mainGreen)
+    }
+    
+    @ViewBuilder
+    private func alertView() -> some View {
+        AlertOverlay(isPresented: isToDoAlertPresented, onDismiss: {
+            isToDoAlertPresented = false
+        }) {
+            if let item = selectedItem {
+                ToDoAlertView(
+                    toDoId: item.id,
+                    toDoTitle: item.description,
+                    deadline: item.endDate,
+                    tagName: item.tagName,
+                    tagColorCode: item.tagColor,
+                    priority: item.priorityType,
+                    onDelete: {
+                        viewModel.deleteToDo(toDoId: item.id)
+                        isToDoAlertPresented = false
+                    },
+                    onEdit: {
+                        isToDoAlertPresented = false
+                        isEditSheetPresented = true
+                    },
+                    isChecked: viewModel.bindingForToDoCompletion(item.id)
+                )
+            }
+        }
     }
 }
