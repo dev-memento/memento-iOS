@@ -26,10 +26,8 @@ final class ToDoListViewModel: ObservableObject {
     @Published var toDoListDict: [MCalendarDataModel: [ToDoItem]] = [:]
     
     @Published var currentOffset: CGPoint = .zero
-    @Published var selectedDate: MCalendarDataModel = .init(year: "2025",
-                                                            month: "1",
-                                                            day: "10",
-                                                            weekday: .fri)
+    @Published var selectedDate: MCalendarDataModel = Date().makeTargetDate() ?? MCalendarDataModel(year: "2025", month: "08", day: "24", weekday: .sun)
+
     
     // MARK: - Initializer
     
