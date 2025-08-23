@@ -28,42 +28,7 @@ struct TodayWeeklyCalendarView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                HStack(spacing: 0) {
-                    if let date = viewModel.selectedDate.date() {
-                        Text("\(date.makeTodayMonthForMMM()) \(date.makeTodayDayString())")
-                            .foregroundStyle(.white)
-                            .applyFont(.suiteExtraBold(size: 32),
-                                       lineHeight: 36)
-                            .onTapGesture {
-                                let date = Date()
-                                viewModel.mCallendarDataSource.moveOtherWeekday(targetDate: date)
-                                if let targetDateModel = date.makeTargetDate() {
-                                    viewModel.selectedDate = targetDateModel
-                                    makeIndex()
-                                }
-                            }
-                            .padding(.leading, 22)
-                        Spacer()
-                        VStack {
-                            Text("\(date.makeTodayYearString())") // 2025
-                                .foregroundStyle(Color.gray07)
-                                .applyFont(.detail_b_12)
-                                .padding(.top, 11)
-                            Spacer()
-                        }
-                        .padding(.trailing, 17)
-                        
-                        Button {
-                            isSettingViewPresented = true
-                        } label: {
-                            Image(.ic_settings)
-                                .resizable()
-                                .frame(width: 26, height: 26)
-                                .padding(.trailing, 34)
-                        }
-                    }
-                }
-                .frame(height: 56)
+                headerView()
                 
                 calendarView()
                     .background(Color.grayBlack)
@@ -77,7 +42,7 @@ struct TodayWeeklyCalendarView: View {
                         LazyHStack(spacing: 0) {
                             ForEach(viewModel.mEventDataSource.eventList.indices, id: \.self) { index in
                                 let item = viewModel.mEventDataSource.eventList[index]
-                                pageView(for: item)
+                                dailyPageView(for: item)
                                     .frame(width: UIScreen.main.bounds.width)
                                     .id(index)
                             }
@@ -102,53 +67,57 @@ struct TodayWeeklyCalendarView: View {
                 SettingView()
                     .environmentObject(settingViewModel)
             }
+            .onChange(of: viewModel.selectedDate) {
+                updateScrollTarget()
+            }
             .onAppear {
-                viewModel.getSchedulesTotal()
+                viewModel.getAllEvents()
                 viewModel.getSchedulesAllDay()
-                viewModel.userUptimeAPI()
-                viewModel.makeDummyEvent()
-                makeIndex()
+                updateScrollTarget()
             }
             .background(Color.grayBlack)
             .overlay {
-                AlertOverlay(isPresented: isToDoAlertPresented, onDismiss: { isToDoAlertPresented = false }) {
-                    if let todo = selectedToDo {
-                        ToDoAlertView(
-                            toDoId: todo.id,
-                            toDoTitle: todo.description,
-                            deadline: todo.endDate,
-                            tagName: todo.tagName,
-                            tagColorCode: todo.tagColor,
-                            priority: todo.priorityType,
-                            onDelete: {
-                                viewModel.deleteToDo(toDoId: todo.id)
-                                isToDoAlertPresented = false
-                            },
-                            onEdit: { isToDoAlertPresented = false },
-                            isChecked: viewModel.bindingForToDoCompletion(todo.id)
-                        )
+                alertsView()
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func headerView() -> some View {
+        if let date = viewModel.selectedDate.date() {
+            HStack(spacing: 0) {
+                Text("\(date.makeTodayMonthForMMM()) \(date.makeTodayDayString())")
+                    .foregroundStyle(.white)
+                    .applyFont(.suiteExtraBold(size: 32), lineHeight: 36)
+                    .onTapGesture {
+                        let today = Date()
+                        viewModel.mCallendarDataSource.moveOtherWeekday(targetDate: today)
+                        if let targetDateModel = today.makeTargetDate() {
+                            viewModel.selectedDate = targetDateModel
+                        }
                     }
-                }
+                    .padding(.leading, 22)
                 
-                AlertOverlay(isPresented: isScheduleAlertPresented, onDismiss: { isScheduleAlertPresented = false }) {
-                    if let schedule = selectedSchedule {
-                        ScheduleAlertView(
-                            scheduleId: schedule.id,
-                            scheduleTitle: schedule.description,
-                            startDate: schedule.startDate,
-                            endDate: schedule.endDate,
-                            tagName: schedule.tagName,
-                            tagColorCode: schedule.tagColorCode,
-                            scheduleType: "Notion",
-                            onDelete: {
-                                viewModel.deleteSchedule(scheduleId: schedule.id)
-                                isScheduleAlertPresented = false
-                            },
-                            onEdit: { isScheduleAlertPresented = false }
-                        )
-                    }
+                Spacer()
+                
+                VStack(spacing: 0) {
+                    Text("\(date.makeTodayYearString())")
+                        .foregroundStyle(Color.gray07)
+                        .applyFont(.detail_b_12)
+                        .padding(.top, 11)
+                    
+                    Spacer()
+                }
+                .padding(.trailing, 17)
+                
+                Button {
+                    isSettingViewPresented = true
+                } label: {
+                    Image(.ic_settings)
+                        .padding(.trailing, 25)
                 }
             }
+            .frame(height: 56)
         }
     }
     
@@ -164,58 +133,91 @@ struct TodayWeeklyCalendarView: View {
                             mCallendarDatasource: viewModel.mCallendarDataSource,
                             selectedDateCompletion: { date in
             viewModel.selectedDate = date
-            // MCalendarDataModel -> Date 변환
-            if let selectedDate = date.date() {
-                viewModel.updateTodayItems(for: selectedDate)
-            } else { return }
-            print(date, "❤️")
-            makeIndex()
         })
         .setWeekDayFont(MWeekDayOptions.allDays,
                         font: Font(MDSFont.suiteBold(size: 12).font))
-        .setWeekDayTextColors(MWeekDayOptions.allDays,
-                              color: .gray08)
-        .setWeekDaySelectedColor(MWeekDayOptions.allDays,
-                                 color: .gray04)
         .setDayFont(MWeekDayOptions.allDays,
                     font: Font(MDSFont.suiteBold(size: 16).font))
-        .setDayBackgroundColors(MWeekDayOptions.allDays,
-                                color: .grayWhite)
-        .setDayBackgroundColors(MWeekDayOptions.allDays,
-                                color: .clear)
+        
+        .setWeekDayTextColors(MWeekDayOptions.allDays,
+                              color: .gray08)
         .setDayTextColors(MWeekDayOptions.allDays,
                           color: .gray06)
+        
+        .setWeekDaySelectedColor(MWeekDayOptions.allDays,
+                                 color: .gray04)
         .setDaySelectedColor(MWeekDayOptions.allDays,
                              color: .grayBlack)
+        
+        .setDayBackgroundColors(MWeekDayOptions.allDays,
+                                color: .clear)
         .setDaySelectedBackgroundColors(MWeekDayOptions.allDays,
                                         color: .gray04)
+        
         .setTodayColor(color: .mainGreen)
     }
     
     @ViewBuilder
-    private func todayList(item: MCalendarEventList) -> some View {
-        TodayView(
-            viewModel: viewModel,
-            isToDoAlertPresented: $isToDoAlertPresented,
-            isScheduleAlertPresented: $isScheduleAlertPresented,
-            selectedToDo: $selectedToDo,
-            selectedSchedule: $selectedSchedule
-        )
-        .scrollContentBackground(.hidden)
-    }
-    
-    @ViewBuilder
-    private func pageView(for item: MCalendarEventList) -> some View {
+    private func dailyPageView(for item: MCalendarEventList) -> some View {
         VStack(spacing: 8) {
             AllDayListView(items: viewModel.allDayItems)
                 .padding(.vertical, 4)
             
-            todayList(item: item)
+            TodayView(
+                viewModel: viewModel,
+                isToDoAlertPresented: $isToDoAlertPresented,
+                isScheduleAlertPresented: $isScheduleAlertPresented,
+                selectedToDo: $selectedToDo,
+                selectedSchedule: $selectedSchedule
+            )
+            .scrollContentBackground(.hidden)
         }
     }
     
-    private func makeIndex() {
+    @ViewBuilder
+    private func alertsView() -> some View {
+        AlertOverlay(isPresented: isToDoAlertPresented, onDismiss: { isToDoAlertPresented = false }) {
+            if let todo = selectedToDo {
+                ToDoAlertView(
+                    toDoId: todo.id,
+                    toDoTitle: todo.description,
+                    deadline: todo.endDate,
+                    tagName: todo.tagName,
+                    tagColorCode: todo.tagColor,
+                    priority: todo.priorityType,
+                    onDelete: {
+                        viewModel.deleteToDo(toDoId: todo.id)
+                        isToDoAlertPresented = false
+                    },
+                    onEdit: { isToDoAlertPresented = false },
+                    isChecked: viewModel.bindingForToDoCompletion(todo.id)
+                )
+            }
+        }
+        
+        AlertOverlay(isPresented: isScheduleAlertPresented, onDismiss: { isScheduleAlertPresented = false }) {
+            if let schedule = selectedSchedule {
+                ScheduleAlertView(
+                    scheduleId: schedule.id,
+                    scheduleTitle: schedule.description,
+                    startDate: schedule.startDate,
+                    endDate: schedule.endDate,
+                    tagName: schedule.tagName,
+                    tagColorCode: schedule.tagColorCode,
+                    scheduleType: "Notion",
+                    onDelete: {
+                        viewModel.deleteSchedule(scheduleId: schedule.id)
+                        isScheduleAlertPresented = false
+                    },
+                    onEdit: { isScheduleAlertPresented = false }
+                )
+            }
+        }
+    }
+    
+    private func updateScrollTarget() {
         self.scrollTarget = (viewModel.mCallendarDataSource.currentIndex * 7) + viewModel.selectedDate.weekday.index
+        
         if let scrollTarget {
             self.viewModel.currentOffset.x = Double(scrollTarget) * UIScreen.main.bounds.width
         }

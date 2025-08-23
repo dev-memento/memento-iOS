@@ -34,10 +34,13 @@ final class TodayWeeklyCalendarViewModel: ObservableObject {
     @Published var windDownTime: String = "11 PM"
     
     @Published var currentOffset: CGPoint = .zero
-    @Published var selectedDate: MCalendarDataModel = .init(year: "2025",
-                                                            month: "1",
-                                                            day: "10",
-                                                            weekday: .fri)
+    @Published var selectedDate: MCalendarDataModel = Date().makeTargetDate()! {
+        didSet {
+            if let date = selectedDate.date() {
+                updateTodayItems(for: date)
+            }
+        }
+    }
     
     @Published var getAllToDoList: Bool = false
     @Published var getAllScheduleList: Bool = false
@@ -58,8 +61,7 @@ final class TodayWeeklyCalendarViewModel: ObservableObject {
         
         makeDummyEvent()
         updateSelectedDateOnScroll()
-        updateTodayItemsOnDateChange()
-        
+
         setSendNotificationObserver()
         preProcessingForAllEvents()
     }
@@ -75,22 +77,7 @@ final class TodayWeeklyCalendarViewModel: ObservableObject {
     // MARK: - Combine
     
     private var cancellable = Set<AnyCancellable>()
-    
-    // 선택한 날짜에 따라 todayItems를 동기화
-    private func updateTodayItemsOnDateChange() {
-        $selectedDate
-            .removeDuplicates()
-            .debounce(for: .seconds(0.2), scheduler: RunLoop.main)
-            .sink(receiveValue: { [weak self] newDate in
-                guard let self else { return }
-                if let date = newDate.date() {
-                    print("선택한 날짜: \(date)")
-                    self.updateTodayItems(for: date)
-                }
-            })
-            .store(in: &cancellable)
-    }
-    
+     
     // 주간 캘린더 스크롤할 때 현재 페이지에 맞춰 selectedDate를 업데이트하고 캘린더 이동
     private func updateSelectedDateOnScroll() {
         $currentOffset
