@@ -19,7 +19,7 @@ struct TodayView: View {
     @Binding var selectedToDo: ToDoItem?
     @Binding var selectedSchedule: ScheduleItem?
     
-    @State private var aiPlottingButtonpPressed: Bool = false
+    @State private var floatingButtonPressed: Bool = false
     
     var body: some View {
         ZStack {
@@ -77,25 +77,14 @@ struct TodayView: View {
                     ZStack {
                         Circle()
                             .frame(width: 52, height: 52)
-                            .foregroundColor(aiPlottingButtonpPressed ? Color.mainGreen : Color.gray09)
+                            .foregroundColor(floatingButtonPressed ? Color.mainGreen : Color.gray09)
                         
                         Button {
-                            aiPlottingButtonpPressed.toggle()
-                            let apiService = PrioritizationAPIService()
-                            let request = PrioritizationRequest(targetDate: "2025-08-18")
-                            
-                            apiService.fetchPrioritization(request: request) { result in
-                                switch result {
-                                case .success(let response):
-                                    print("fetchPrioritization 성공")
-                                default:
-                                    print("fetchPrioritization 실패:")
-                                }
-                            }
+                            floatingButtonPressed.toggle()
                         } label: {
                             Image(.ic_prio)
                                 .renderingMode(.template)
-                                .foregroundColor(aiPlottingButtonpPressed ? .grayBlack : .grayWhite)
+                                .foregroundColor(floatingButtonPressed ? .grayBlack : .grayWhite)
                         }
                     }
                     .padding(20)
@@ -103,14 +92,14 @@ struct TodayView: View {
             }
         }
         .overlay {
-            if aiPlottingButtonpPressed {
+            if floatingButtonPressed {
                 NeonAnimationView(
                     width: UIScreen.main.bounds.width,
                     height: UIScreen.main.bounds.height
                 )
                 .onAppear {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                        aiPlottingButtonpPressed = false
+                        floatingButtonPressed = false
                     }
                 }
             }

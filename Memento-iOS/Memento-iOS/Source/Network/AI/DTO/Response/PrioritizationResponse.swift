@@ -8,10 +8,6 @@
 import Foundation
 
 struct PrioritizationResponse: Codable {
-    let data: PrioritizationData
-}
-
-struct PrioritizationData: Codable {
     let todos: [[ToDos]]
 }
 
