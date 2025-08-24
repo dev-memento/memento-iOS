@@ -14,7 +14,7 @@ enum TabBarItem: CaseIterable {
     case today, addition, todo
     
     // 선택되지 않은 탭
-    var normalItem: Image? {
+    var normalItem: Image {
         switch self {
         case .today:
             return Image(.btn_today_unselected)
@@ -26,7 +26,7 @@ enum TabBarItem: CaseIterable {
     }
     
     // 선택된 탭
-    var selectedItem: Image? {
+    var selectedItem: Image {
         switch self {
         case .today:
             return Image(.btn_today_selected)

@@ -43,8 +43,19 @@ struct TodayWeeklyCalendarView: View {
                                                    scrollOffset: $viewModel.currentOffset,
                                                    content: { view in
                             LazyHStack(spacing: 0) {
-                                ForEach(viewModel.mEventDataSource.eventList.indices, id: \.self) { index in
-                                    let item = viewModel.mEventDataSource.eventList[index]
+                                var visibleEvents: [MCalendarEventList] {
+                                    guard !viewModel.mEventDataSource.eventList.isEmpty,
+                                          let selectedIndex = viewModel.mEventDataSource.eventList.firstIndex(where: { $0.dateModel == viewModel.selectedDate })
+                                    else { return [] }
+                                    
+                                    let lowerBound = max(selectedIndex - 2, 0)
+                                    let upperBound = min(selectedIndex + 2, viewModel.mEventDataSource.eventList.count - 1)
+                                    
+                                    return Array(viewModel.mEventDataSource.eventList[lowerBound...upperBound])
+                                }
+                                
+                                ForEach(visibleEvents.indices, id: \.self) { index in
+                                    let item = visibleEvents[index]
                                     
                                     dailyPageView(for: item)
                                         .frame(width: UIScreen.main.bounds.width)
@@ -77,7 +88,10 @@ struct TodayWeeklyCalendarView: View {
                 .onAppear {
                     viewModel.getAllEvents()
                     viewModel.getSchedulesAllDay()
+                    
                     updateScrollTarget()
+
+                    viewModel.isInitialScrollDone = true
                 }
                 .onReceive(NotificationCenter.default.publisher(for: Notification.Name("postSchedule"))) { _ in
                     viewModel.getSchedulesTotal()

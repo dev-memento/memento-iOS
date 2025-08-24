@@ -20,7 +20,17 @@ struct ToDoListView: View {
         ZStack {
             ScrollView {
                 LazyVStack(spacing: 0) {
-                    ForEach(viewModel.mCallendarDataSource.wholeMonthDate, id: \.self) { date in
+                    var visibleDates: [MCalendarDataModel] {
+                        guard let currentIndex = viewModel.mCallendarDataSource.wholeMonthDate.firstIndex(of: viewModel.selectedDate) else {
+                            return []
+                        }
+                        
+                        let lowerBound = max(currentIndex - 14, 0)
+                        let upperBound = min(currentIndex + 14, viewModel.mCallendarDataSource.wholeMonthDate.count - 1)
+                        return Array(viewModel.mCallendarDataSource.wholeMonthDate[lowerBound...upperBound])
+                    }
+
+                    ForEach(visibleDates, id: \.self) { date in
                         
                         ToDoListDateView(date: "\(Date.makeMonthDate(month: date.month)) \(date.day)")
                             .id(date)
@@ -28,11 +38,13 @@ struct ToDoListView: View {
                         
                         if let events = viewModel.toDoListDict[date], !events.isEmpty {
                             ForEach(events, id: \.id) { event in
+                                let isTop = viewModel.isTopPriorityItem(at: event, items: events)
+                                let isCompletedBinding = viewModel.bindingForToDoCompletion(event.id)
                                 
                                 ToDoListItemView(
                                     item: event,
-                                    isHighlighted: viewModel.isTopPriorityItem(at: event, items: events),
-                                    isCompleted: viewModel.bindingForToDoCompletion(event.id)
+                                    isHighlighted: isTop,
+                                    isCompleted: isCompletedBinding
                                 )
                                 .onTapGesture {
                                     onTap(event)

@@ -101,10 +101,6 @@ struct TabBarView: View {
                     .animation(.spring, value: segmentedViewModel.isPresented)
             }
         }
-        .onAppear {
-            calendarViewModel.getToDoListTotal()
-            calendarViewModel.getSchedulesTotal()
-        }
     }
     
     private func dismissKeyboard() {

@@ -23,7 +23,7 @@ final class WeeklyCalendarViewModel: ObservableObject {
     
     @Published var mCallendarDataSource: MCalendarDataSource
     @Published var mEventDataSource: MEventDatasource
-    
+
     @Published var todayItems: [TodayItem] = []
     @Published var scheduleItems: [ScheduleItem] = []
     @Published var allDayItems: [AllDayItem] = []
@@ -42,6 +42,7 @@ final class WeeklyCalendarViewModel: ObservableObject {
             }
         }
     }
+    @Published var isInitialScrollDone = false
     
     @Published var getAllToDoList: Bool = false
     @Published var getAllScheduleList: Bool = false
@@ -80,8 +81,11 @@ final class WeeklyCalendarViewModel: ObservableObject {
             .debounce(for: .seconds(0.2), scheduler: RunLoop.main)
             .sink { [weak self] offset in
                 guard let self else { return }
+                if !isInitialScrollDone { return }
+                
                 let index = Int(offset.x / UIScreen.main.bounds.width)
                 self.selectedDate = self.mEventDataSource.eventList[index].dateModel
+                
                 if let date = self.mEventDataSource.eventList[index].dateModel.date() {
                     self.mCallendarDataSource.moveOtherWeekday(targetDate: date)
                 }
@@ -135,24 +139,27 @@ extension WeeklyCalendarViewModel {
         let dayStart = date.startOfDay
         let dayEnd = date.endOfDay
         
-        var newTodayItems: [TodayItem] = []
+        var updatedItems: [TodayItem] = []
         
         for schedule in scheduleItems {
             guard let start = dateFromScheduleString(schedule.startDate),
                   let end   = dateFromScheduleString(schedule.endDate),
                   start <= dayEnd, end >= dayStart else { continue }
-            newTodayItems.append(.schedule(schedule))
+            updatedItems.append(.schedule(schedule))
         }
         
         for todo in toDoItems {
             guard let start = Date.dateFromString(todo.startDate, format: "yyyy-MM-dd"),
                   let end   = Date.dateFromString(todo.endDate, format: "yyyy-MM-dd"),
                   start <= dayEnd, end >= dayStart else { continue }
-            newTodayItems.append(.todo(todo))
+            updatedItems.append(.todo(todo))
         }
         
-        if todayItems != newTodayItems {
-            todayItems = newTodayItems
+        let diff = updatedItems.difference(from: todayItems)
+        if !diff.isEmpty {
+            withAnimation(.easeInOut(duration: 0.1)) {
+                todayItems = updatedItems
+            }
         }
     }
     
