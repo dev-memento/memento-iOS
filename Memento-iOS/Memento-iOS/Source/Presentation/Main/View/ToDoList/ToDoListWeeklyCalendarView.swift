@@ -64,13 +64,15 @@ struct ToDoListWeeklyCalendarView: View {
                 FloatingButton(floatingButtonPressed: $floatingButtonPressed)
                 
                 if floatingButtonPressed {
-                    NeonAnimationView(
-                        width: UIScreen.main.bounds.width,
-                        height: UIScreen.main.bounds.height
-                    )
-                    .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                            floatingButtonPressed = false
+                    GeometryReader { geo in
+                        NeonAnimationView(
+                            width: geo.size.width,
+                            height: geo.size.height
+                        )
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                floatingButtonPressed = false
+                            }
                         }
                     }
                 }
