@@ -188,7 +188,7 @@ struct TodayWeeklyCalendarView: View {
     @ViewBuilder
     private func dailyPageView(for item: MCalendarEventList) -> some View {
         VStack(spacing: 8) {
-            AllDayListView(items: viewModel.allDayItems)
+            AllDayListView(items: viewModel.allDayDict[viewModel.selectedDate] ?? [])
                 .padding(.vertical, 4)
             
             TodayView(

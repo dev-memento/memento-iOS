@@ -27,6 +27,7 @@ final class WeeklyCalendarViewModel: ObservableObject {
     @Published var todayItems: [TodayItem] = []
     @Published var scheduleItems: [ScheduleItem] = []
     @Published var allDayItems: [AllDayItem] = []
+    @Published var allDayDict: [MCalendarDataModel: [AllDayItem]] = [:]
     @Published var toDoItems: [ToDoItem] = []
     @Published var toDoListDict: [MCalendarDataModel: [ToDoItem]] = [:]
     
@@ -130,42 +131,44 @@ final class WeeklyCalendarViewModel: ObservableObject {
 
 extension WeeklyCalendarViewModel {
     // 일정이 하루라도 겹치는 스케줄, 투두를 가져와 투데이에 업데이트
-    private func updateTodayItems(for date: Date) {
-        todayItems = []
-        
+    func updateTodayItems(for date: Date) {
         let dayStart = date.startOfDay
         let dayEnd = date.endOfDay
         
-        let scheduleItem = scheduleItems.filter { scheduleItem in
-            guard
-                let start = dateFromScheduleString(scheduleItem.startDate),
-                let end   = dateFromScheduleString(scheduleItem.endDate)
-            else {
-                return false
-            }
-            
-            return start <= dayEnd && end >= dayStart
-        }
-            .map { TodayItem.schedule($0) }
+        var newTodayItems: [TodayItem] = []
         
-        let toDoItem = toDoItems.filter { toDoItem in
-            guard
-                let start = Date.dateFromString(toDoItem.startDate, format: "yyyy-MM-dd"),
-                let end   = Date.dateFromString(toDoItem.endDate, format: "yyyy-MM-dd")
-            else {
-                return false
-            }
-            
-            return start <= dayEnd && end >= dayStart
+        for schedule in scheduleItems {
+            guard let start = dateFromScheduleString(schedule.startDate),
+                  let end   = dateFromScheduleString(schedule.endDate),
+                  start <= dayEnd, end >= dayStart else { continue }
+            newTodayItems.append(.schedule(schedule))
         }
-            .map { TodayItem.todo($0) }
         
-        todayItems.append(contentsOf: scheduleItem)
-        todayItems.append(contentsOf: toDoItem)
+        for todo in toDoItems {
+            guard let start = Date.dateFromString(todo.startDate, format: "yyyy-MM-dd"),
+                  let end   = Date.dateFromString(todo.endDate, format: "yyyy-MM-dd"),
+                  start <= dayEnd, end >= dayStart else { continue }
+            newTodayItems.append(.todo(todo))
+        }
+        
+        if todayItems != newTodayItems {
+            todayItems = newTodayItems
+        }
     }
     
     private func dateFromScheduleString(_ date: String) -> Date? {
         return Date.dateFromString(date, format: "yyyy-MM-dd'T'HH:mm:ss.SSS") ?? Date.dateFromString(date, format: "yyyy-MM-dd'T'HH:mm:ss")
+    }
+    
+    private func mapAllDayItemsByDate() {
+        allDayDict.removeAll()
+        
+        for dateModel in mCallendarDataSource.wholeMonthDate {
+            allDayDict[dateModel] = allDayItems.filter { allDayItem in
+                guard let itemDate = dateFromScheduleString(allDayItem.startDate) else { return false }
+                return itemDate.startOfDay == dateModel.date()?.startOfDay
+            }
+        }
     }
 }
 
@@ -246,6 +249,7 @@ extension WeeklyCalendarViewModel {
                 
                 DispatchQueue.main.async {
                     self.allDayItems = allDayResponse.map { AllDayItem(from: $0) }
+                    self.mapAllDayItemsByDate()
                 }
             }
         }

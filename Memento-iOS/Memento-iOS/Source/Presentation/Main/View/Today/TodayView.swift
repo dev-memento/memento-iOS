@@ -30,18 +30,16 @@ struct TodayView: View {
                             .padding(.leading, 50)
                             .padding(.bottom, 15)
                         
-                        ForEach($viewModel.todayItems, id: \.id) { item in
-                            let todayItem = item.wrappedValue
-                            
+                        ForEach(viewModel.todayItems, id: \.id) { item in
                             TodayListItemView(
-                                item: todayItem,
-                                isArrow: todayItem == viewModel.todayItems.first,
-                                isHighlighted: viewModel.isTopPriorityItem(item: todayItem),
-                                isCompleted: viewModel.bindingForToDoCompletion(todayItem.id)
+                                item: item,
+                                isArrow: item == viewModel.todayItems.first,
+                                isHighlighted: viewModel.isTopPriorityItem(item: item),
+                                isCompleted: viewModel.bindingForToDoCompletion(item.id)
                             )
                             .padding(.bottom, 10)
                             .onTapGesture {
-                                switch todayItem {
+                                switch item {
                                 case .todo(let todo):
                                     selectedToDo = todo
                                     isToDoAlertPresented = true

@@ -19,7 +19,7 @@ struct ToDoListView: View {
     var body: some View {
         ZStack {
             ScrollView {
-                VStack(spacing: 0) {
+                LazyVStack(spacing: 0) {
                     ForEach(viewModel.mCallendarDataSource.wholeMonthDate, id: \.self) { date in
                         
                         ToDoListDateView(date: "\(Date.makeMonthDate(month: date.month)) \(date.day)")
