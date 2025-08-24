@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-
 import MDSKit
 import MCalendar
 
@@ -20,44 +19,62 @@ struct ToDoListWeeklyCalendarView: View {
     @State private var isSettingViewPresented = false
     
     @State private var selectedItem: ToDoItem? = nil
-    
     @State private var scrollTarget: MCalendarDataModel? = nil
+    
+    @State private var floatingButtonPressed: Bool = false
     
     var body: some View {
         NavigationView {
-            VStack(spacing: 0) {
-                headerView()
+            ZStack(alignment: .bottomTrailing) {
                 
-                calendarView()
-                    .background(Color.grayBlack)
-                
-                ScrollViewReader { proxy in
-                    ToDoListView(viewModel: viewModel) { tappedItem in
-                        selectedItem = tappedItem
-                        isToDoAlertPresented = true
+                VStack(spacing: 0) {
+                    headerView()
+                    
+                    calendarView()
+                        .background(Color.grayBlack)
+                    
+                    ScrollViewReader { proxy in
+                        ToDoListView(viewModel: viewModel) { tappedItem in
+                            selectedItem = tappedItem
+                            isToDoAlertPresented = true
+                        }
+                        .scrollContentBackground(.hidden)
+                        .padding(.vertical, 4)
+                        .onChange(of: scrollTarget) {
+                            withAnimation {
+                                proxy.scrollTo(scrollTarget, anchor: .top)
+                            }
+                        }
                     }
-                    .scrollContentBackground(.hidden)
-                    .padding(.vertical, 4)
-                    .onChange(of: scrollTarget) {
-                        withAnimation {
-                            proxy.scrollTo(scrollTarget, anchor: .top)
+                }
+                .fullScreenCover(isPresented: $isSettingViewPresented) {
+                    SettingView()
+                        .environmentObject(settingViewModel)
+                }
+                .onChange(of: viewModel.selectedDate) {
+                    scrollTarget = viewModel.selectedDate
+                }
+                .onAppear {
+                    DispatchQueue.main.async {
+                        scrollTarget = viewModel.selectedDate
+                    }
+                }
+                .background(Color.grayBlack)
+                
+                FloatingButton(floatingButtonPressed: $floatingButtonPressed)
+                
+                if floatingButtonPressed {
+                    NeonAnimationView(
+                        width: UIScreen.main.bounds.width,
+                        height: UIScreen.main.bounds.height
+                    )
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            floatingButtonPressed = false
                         }
                     }
                 }
             }
-            .fullScreenCover(isPresented: $isSettingViewPresented) {
-                SettingView()
-                    .environmentObject(settingViewModel)
-            }
-            .onChange(of: viewModel.selectedDate) {
-                scrollTarget = viewModel.selectedDate
-            }
-            .onAppear {
-                DispatchQueue.main.async {
-                    scrollTarget = viewModel.selectedDate
-                }
-            }
-            .background(Color.grayBlack)
             .overlay {
                 alertView()
             }

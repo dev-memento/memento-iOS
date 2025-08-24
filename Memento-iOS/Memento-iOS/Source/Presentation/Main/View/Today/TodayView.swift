@@ -19,8 +19,6 @@ struct TodayView: View {
     @Binding var selectedToDo: ToDoItem?
     @Binding var selectedSchedule: ScheduleItem?
     
-    @State private var floatingButtonPressed: Bool = false
-    
     var body: some View {
         ZStack {
             if viewModel.todayItems.isEmpty {
@@ -65,43 +63,6 @@ struct TodayView: View {
                     }
                 }
                 .background(Color.grayBlack)
-            }
-            
-            // 플로팅 버튼
-            VStack {
-                Spacer()
-                
-                HStack {
-                    Spacer()
-                    
-                    ZStack {
-                        Circle()
-                            .frame(width: 52, height: 52)
-                            .foregroundColor(floatingButtonPressed ? Color.mainGreen : Color.gray09)
-                        
-                        Button {
-                            floatingButtonPressed.toggle()
-                        } label: {
-                            Image(.ic_prio)
-                                .renderingMode(.template)
-                                .foregroundColor(floatingButtonPressed ? .grayBlack : .grayWhite)
-                        }
-                    }
-                    .padding(20)
-                }
-            }
-        }
-        .overlay {
-            if floatingButtonPressed {
-                NeonAnimationView(
-                    width: UIScreen.main.bounds.width,
-                    height: UIScreen.main.bounds.height
-                )
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                        floatingButtonPressed = false
-                    }
-                }
             }
         }
     }

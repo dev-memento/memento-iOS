@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-
 import MDSKit
 import MCalendar
 
@@ -25,65 +24,84 @@ struct TodayWeeklyCalendarView: View {
     @State private var scrollTarget: Int? = nil
     @State private var userInteractionFlag: Bool = false
     
+    @State private var floatingButtonPressed: Bool = false
+    
     var body: some View {
         NavigationView {
-            VStack(spacing: 0) {
-                headerView()
+            ZStack(alignment: .bottomTrailing) {
                 
-                calendarView()
-                    .background(Color.grayBlack)
-                    .allowsHitTesting(userInteractionFlag)
-                
-                ScrollViewReader { proxy in
-                    OffsetObservableScrollView(.horizontal,
-                                               showsIndicators: false,
-                                               scrollOffset: $viewModel.currentOffset,
-                                               content: { view in
-                        LazyHStack(spacing: 0) {
-                            ForEach(viewModel.mEventDataSource.eventList.indices, id: \.self) { index in
-                                let item = viewModel.mEventDataSource.eventList[index]
-                                
-                                dailyPageView(for: item)
-                                    .frame(width: UIScreen.main.bounds.width)
-                                    .id(index)
+                VStack(spacing: 0) {
+                    headerView()
+                    
+                    calendarView()
+                        .background(Color.grayBlack)
+                        .allowsHitTesting(userInteractionFlag)
+                    
+                    ScrollViewReader { proxy in
+                        OffsetObservableScrollView(.horizontal,
+                                                   showsIndicators: false,
+                                                   scrollOffset: $viewModel.currentOffset,
+                                                   content: { view in
+                            LazyHStack(spacing: 0) {
+                                ForEach(viewModel.mEventDataSource.eventList.indices, id: \.self) { index in
+                                    let item = viewModel.mEventDataSource.eventList[index]
+                                    
+                                    dailyPageView(for: item)
+                                        .frame(width: UIScreen.main.bounds.width)
+                                        .id(index)
+                                }
                             }
-                        }
-                    })
-                    .onChange(of: scrollTarget) {
-                        userInteractionFlag = false
-                        DispatchQueue.main.asyncAfter(deadline: .now()) {
-                            userInteractionFlag = true
-                            if let target = scrollTarget {
-                                withAnimation {
-                                    proxy.scrollTo(target, anchor: .center)
+                        })
+                        .onChange(of: scrollTarget) {
+                            userInteractionFlag = false
+                            DispatchQueue.main.asyncAfter(deadline: .now()) {
+                                userInteractionFlag = true
+                                if let target = scrollTarget {
+                                    withAnimation {
+                                        proxy.scrollTo(target, anchor: .center)
+                                    }
                                 }
                             }
                         }
+                        .scrollTargetBehavior(.paging)
+                        .scrollContentBackground(.hidden)
                     }
-                    .scrollTargetBehavior(.paging)
-                    .scrollContentBackground(.hidden)
+                }
+                .fullScreenCover(isPresented: $isSettingViewPresented) {
+                    SettingView()
+                        .environmentObject(settingViewModel)
+                }
+                .onChange(of: viewModel.selectedDate) {
+                    updateScrollTarget()
+                }
+                .onAppear {
+                    viewModel.getAllEvents()
+                    viewModel.getSchedulesAllDay()
+                    updateScrollTarget()
+                }
+                .onReceive(NotificationCenter.default.publisher(for: Notification.Name("postSchedule"))) { _ in
+                    viewModel.getSchedulesTotal()
+                    viewModel.getSchedulesAllDay()
+                }
+                .onReceive(NotificationCenter.default.publisher(for: Notification.Name("postToDo"))) { _ in
+                    viewModel.getToDoListTotal()
+                }
+                .background(Color.grayBlack)
+                
+                FloatingButton(floatingButtonPressed: $floatingButtonPressed)
+                
+                if floatingButtonPressed {
+                    NeonAnimationView(
+                        width: UIScreen.main.bounds.width,
+                        height: UIScreen.main.bounds.height
+                    )
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            floatingButtonPressed = false
+                        }
+                    }
                 }
             }
-            .fullScreenCover(isPresented: $isSettingViewPresented) {
-                SettingView()
-                    .environmentObject(settingViewModel)
-            }
-            .onChange(of: viewModel.selectedDate) {
-                updateScrollTarget()
-            }
-            .onAppear {
-                viewModel.getAllEvents()
-                viewModel.getSchedulesAllDay()
-                updateScrollTarget()
-            }
-            .onReceive(NotificationCenter.default.publisher(for: Notification.Name("postSchedule"))) { _ in
-                viewModel.getSchedulesTotal()
-                viewModel.getSchedulesAllDay()
-            }
-            .onReceive(NotificationCenter.default.publisher(for: Notification.Name("postToDo"))) { _ in
-                viewModel.getToDoListTotal()
-            }
-            .background(Color.grayBlack)
             .overlay {
                 alertsView()
             }

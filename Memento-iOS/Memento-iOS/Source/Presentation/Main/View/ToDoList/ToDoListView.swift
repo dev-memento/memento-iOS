@@ -40,8 +40,6 @@ struct ToDoListView: View {
                             }
                         }
                     }
-                    
-                    Spacer()
                 }
             }
             .background(Color.grayBlack)
