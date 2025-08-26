@@ -27,5 +27,7 @@
 		<key>UIImageName</key>
 		<string>img_splash_logo</string>
 	</dict>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 </dict>
 </plist>
