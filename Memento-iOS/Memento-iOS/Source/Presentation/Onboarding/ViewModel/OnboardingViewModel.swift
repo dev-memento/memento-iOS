@@ -170,11 +170,6 @@ extension OnboardingViewModel {
                     // 온보딩 네비 스택 정리
                     self.resetNavigation()
                     
-                case .unAuthorized:
-                    // 세션 만료 등 → 로그인 화면으로
-                    self.errorMessage = "세션이 만료되었습니다. 다시 로그인 해주세요."
-                    AuthSession.shared.clear()
-                    
                 default:
                     self.errorMessage = "회원 개인 정보 업데이트 실패"
                 }

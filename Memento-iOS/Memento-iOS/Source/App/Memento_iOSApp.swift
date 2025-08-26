@@ -18,8 +18,10 @@ import FirebaseAuth
 
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
     
-    func application(_ application: UIApplication,
-                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
+    ) -> Bool {
         
         // Firebase 초기화
         FirebaseApp.configure()
@@ -30,77 +32,47 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         // 알림 센터 델리게이트 지정
         UNUserNotificationCenter.current().delegate = self
         
-        // 실행 시마다 권한 상태 점검 & 요청
-        checkAndRequestPushPermission()
+        // 🚀 권한 여부와 무관하게 항상 APNs 등록 요청
+        UIApplication.shared.registerForRemoteNotifications()
         
+        // 권한 요청 팝업 요청
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if let error = error {
+                print("알림 권한 요청 실패: \(error.localizedDescription)")
+                return
+            }
+            print("알림 권한 상태: \(granted ? "허용 ✅" : "거부 ❌")")
+        }
         
         return true
     }
     
-    // MARK: - 권한 제어 테스트 메서드
-    
-     private func checkAndRequestPushPermission() {
-         UNUserNotificationCenter.current().getNotificationSettings { settings in
-             switch settings.authorizationStatus {
-                 
-             case .notDetermined:
-                 // 아직 권한 요청을 안 한 경우 → 권한 요청
-                 UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-                     if let error = error {
-                         print("알림 권한 요청 실패: \(error.localizedDescription)")
-                         return
-                     }
-                     if granted {
-                         DispatchQueue.main.async {
-                             UIApplication.shared.registerForRemoteNotifications()
-                         }
-                         print("알림 권한 허용")
-                     } else {
-                         print("알림 권한 거부 (처음 요청)")
-                     }
-                 }
-                 
-             case .denied:
-                 // 이미 거부됨 → 설정 화면으로 유도
-                 print("알림 권한 거부 상태 → 설정 앱으로 이동 필요")
-                 DispatchQueue.main.async {
-                     if let appSettings = URL(string: UIApplication.openSettingsURLString) {
-                         UIApplication.shared.open(appSettings)
-                     }
-                 }
-                 
-             case .authorized, .provisional, .ephemeral:
-                 // 이미 허용된 상태 → 바로 APNs 등록
-                 DispatchQueue.main.async {
-                     UIApplication.shared.registerForRemoteNotifications()
-                 }
-                 print("이미 알림 권한 있음")
-                 
-             @unknown default:
-                 break
-             }
-         }
-     }
-    
-    // APNs 등록 성공
-    func application(_ application: UIApplication,
-                     didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        print("APNs 디바이스 토큰 등록 성공")
+    // MARK: - APNs 등록 성공
+    func application(
+        _ application: UIApplication,
+        didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+    ) {
+        let tokenString = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
+        print("📌 APNs 디바이스 토큰 등록 성공: \(tokenString)")
+        
+        // FCM에 연결
         Messaging.messaging().apnsToken = deviceToken
     }
     
-    // APNs 등록 실패
-    func application(_ application: UIApplication,
-                     didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        print("APNs 디바이스 토큰 등록 실패: \(error.localizedDescription)")
+    // MARK: - APNs 등록 실패
+    func application(
+        _ application: UIApplication,
+        didFailToRegisterForRemoteNotificationsWithError error: Error
+    ) {
+        print("⚠️ APNs 디바이스 토큰 등록 실패: \(error.localizedDescription)")
     }
     
-    // FCM 토큰 수신 (최신 방식)
+    // MARK: - FCM 토큰 수신 (최신 방식)
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         guard let token = fcmToken else { return }
         print("📌 Firebase FCM 등록 토큰: \(token)")
         
-        // 👉 서버에 전송 or UserDefaults 저장
+        // 서버 전송 or 로컬 저장
         // MyAPIService.shared.updateFCMToken(token)
     }
     
@@ -115,10 +87,12 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         }
     }
     
-    // 외부 앱 (예: 구글 로그인) 콜백 처리
-    func application(_ app: UIApplication,
-                     open url: URL,
-                     options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+    // MARK: - 외부 앱 콜백 처리 (예: 구글 로그인)
+    func application(
+        _ app: UIApplication,
+        open url: URL,
+        options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+    ) -> Bool {
         return GIDSignIn.sharedInstance.handle(url)
     }
 }
