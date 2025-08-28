@@ -98,7 +98,37 @@ final class AuthSession: ObservableObject {
             }
         }
     }
-
     
-    // MARK: - 추후 로그아웃, 탈퇴 로직 여기에 위치
+    // MARK: - 로그아웃
+    func logout() {
+        print("로그아웃 실행: 세션/토큰 정리")
+        clear()
+        GIDSignIn.sharedInstance.signOut()
+        try? Auth.auth().signOut()
+    }
+    
+    // MARK: - 회원 탈퇴
+    func withdraw() async {
+        guard let _ = try? keychain.getAccessToken() else {
+            print("⚠️ AccessToken 없음 → 탈퇴 API 호출 생략")
+            clear()
+            return
+        }
+        
+        await withCheckedContinuation { (cont: CheckedContinuation<Void, Never>) in
+            memberService.withdraw { result in
+                switch result {
+                case .success:
+                    print("회원 탈퇴 성공")
+                    self.logout() // 로그아웃과 동일하게 세션 정리
+                case .unAuthorized:
+                    print("401 Unauthorized: 이미 만료된 토큰")
+                    self.clear()
+                default:
+                    print("회원 탈퇴 실패(서버 오류)")
+                }
+                cont.resume()
+            }
+        }
+    }
 }

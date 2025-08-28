@@ -138,9 +138,9 @@ struct MementoApp: App {
                 .task {
                     authSession.autoLoginOnLaunch()
                 }
-            //                .onAppear { // 탈퇴시 로그인 된 탭 화면에서 해당 코드 실행 해야함
-            //                    Task { await withdrawAndSignOut() }
-            //                }
+                //.onAppear { // 탈퇴시 로그인 된 탭 화면에서 해당 코드 실행 해야함
+                //    Task { await authSession.withdraw() }
+                //}
         }
     }
     
@@ -157,37 +157,6 @@ struct MementoApp: App {
                 LoginView()
                     .environmentObject(onboardingViewModel)
                     .preferredColorScheme(.dark)
-            }
-        }
-    }
-    
-    /// 회원 탈퇴 + 세션/토큰 정리
-    private func withdrawAndSignOut() async {
-        // (선택) 토큰 없으면 바로 종료
-        if (try? TokenKeychainManager.shared.getAccessToken()) == nil {
-            print("⚠️ AccessToken 없음: 탈퇴 API 호출 생략")
-            return
-        }
-        
-        let service = MemberAPIService() // DELETE /api/v1/members 호출하는 서비스
-        await withCheckedContinuation { (cont: CheckedContinuation<Void, Never>) in
-            service.withdraw { result in
-                switch result {
-                case .success:
-                    // 토큰/세션 정리
-                    print("✅ 회원 탈퇴 완료")
-                    try? TokenKeychainManager.shared.clearTokens()
-                    GIDSignIn.sharedInstance.signOut()
-                    try? Auth.auth().signOut()
-                    Task { @MainActor in
-                        authSession.isLoggedIn = false
-                    }
-                case .unAuthorized:
-                    print("⚠️ 401 Unauthorized: 토큰 만료/로그인 필요")
-                default:
-                    print("❌ 회원 탈퇴 실패(서버 오류)")
-                }
-                cont.resume()
             }
         }
     }
