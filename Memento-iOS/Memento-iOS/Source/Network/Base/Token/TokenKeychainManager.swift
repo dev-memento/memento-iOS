@@ -70,6 +70,21 @@ final class TokenKeychainManager {
         return value
     }
     
+    // MARK: - 삭제 메서드
+    
+    func delete(key: String) throws {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: key
+        ]
+        
+        let status = SecItemDelete(query as CFDictionary)
+        if status != errSecSuccess && status != errSecItemNotFound {
+            throw KeychainError.unhandledError(status)
+        }
+    }
+    
+    
     // MARK: - Access Token 저장, 가져오기
     
     func saveAccessToken(_ token: String) throws {
@@ -97,19 +112,9 @@ final class TokenKeychainManager {
     func clearTokens() throws {
         try delete(key: "AccessToken")
         try delete(key: "RefreshToken")
+        try delete(key: "FCMToken")
     }
     
-    func delete(key: String) throws {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key
-        ]
-        
-        let status = SecItemDelete(query as CFDictionary)
-        if status != errSecSuccess && status != errSecItemNotFound {
-            throw KeychainError.unhandledError(status)
-        }
-    }
     
     // MARK: - Token 유효성 검사 (만료시각 확인)
     /// 키체인에서 액세스 토큰을 꺼내서 비어있지 않고, 만료되지 않았는지 확인
@@ -123,6 +128,21 @@ final class TokenKeychainManager {
         } catch {
             return false
         }
+    }
+    
+    // MARK: - FCM Token 저장 / 가져오기
+    
+    func saveFCMToken(_ token: String) throws {
+        print("FCM Token 저장 완료")
+        try save(key: "FCMToken", value: token)
+    }
+    
+    func getFCMToken() throws -> String? {
+        return try load(key: "FCMToken")
+    }
+    
+    func deleteFCMToken() throws {
+        try delete(key: "FCMToken")
     }
 
     func isTokenExpired(_ token: String) -> Bool {

@@ -32,7 +32,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         // 알림 센터 델리게이트 지정
         UNUserNotificationCenter.current().delegate = self
         
-        // 🚀 권한 여부와 무관하게 항상 APNs 등록 요청
+        // 권한 여부와 무관하게 항상 APNs 등록 요청
         UIApplication.shared.registerForRemoteNotifications()
         
         // 권한 요청 팝업 요청
@@ -48,6 +48,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     }
     
     // MARK: - APNs 등록 성공
+    
     func application(
         _ application: UIApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
@@ -60,6 +61,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     }
     
     // MARK: - APNs 등록 실패
+    
     func application(
         _ application: UIApplication,
         didFailToRegisterForRemoteNotificationsWithError error: Error
@@ -68,12 +70,36 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     }
     
     // MARK: - FCM 토큰 수신 (최신 방식)
+    
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         guard let token = fcmToken else { return }
-        print("📌 Firebase FCM 등록 토큰: \(token)")
+        print("📌 Firebase FCM 등록 토큰 수신: \(token)")
         
-        // 서버 전송 or 로컬 저장
-        // MyAPIService.shared.updateFCMToken(token)
+        do {
+            let cached = try TokenKeychainManager.shared.getFCMToken()
+            
+            if cached == token {
+                print("기존 FCM 토큰과 동일 → 서버 전송 생략")
+            } else {
+                try TokenKeychainManager.shared.saveFCMToken(token)
+                print("FCM 토큰 저장 완료 & 서버 동기화 필요")
+                
+                // 서버에 최신 FCM 토큰 전송
+                // MyAPIService.shared.updateFCMToken(token)
+            }
+            
+        } catch {
+            // Keychain 조회 실패 → 그냥 새 값 저장
+            do {
+                try TokenKeychainManager.shared.saveFCMToken(token)
+                print("📌 FCM 토큰 신규 저장 완료 & 서버 동기화 필요")
+                
+                // 서버에 최신 FCM 토큰 전송
+                // MyAPIService.shared.updateFCMToken(token)
+            } catch {
+                print("❌ FCM 토큰 저장 실패: \(error)")
+            }
+        }
     }
     
     // 필요시 직접 가져오기
