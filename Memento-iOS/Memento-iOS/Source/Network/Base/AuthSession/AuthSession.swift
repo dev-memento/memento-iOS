@@ -18,22 +18,22 @@ import GoogleSignIn
 @MainActor
 final class AuthSession: ObservableObject {
     static let shared = AuthSession()
-
+    
     // MARK: - Session State
     
     @Published var isLoggedIn: Bool = false
     @Published var isLoading: Bool = false
     @Published var shouldStartOnboarding: Bool = false
     @Published var errorMessage: String?
-
+    
     // MARK: - Dependencies
     
     let keychain = TokenKeychainManager.shared
     let memberService = MemberAPIService()
     var hasValidAccessToken: Bool {
-          keychain.hasValidToken()
-      }
-
+        keychain.hasValidToken()
+    }
+    
     private init() {
         isLoggedIn = keychain.hasValidToken()
     }
@@ -49,7 +49,7 @@ final class AuthSession: ObservableObject {
         errorMessage = nil
         isLoading = false
     }
-
+    
     // MARK: - Error/Helper
     
     func handleError(_ error: Error?, defaultMessage: String) {
@@ -62,18 +62,43 @@ final class AuthSession: ObservableObject {
     // MARK: - 자동 로그인
     
     func autoLoginOnLaunch() {
-        // Access 토큰이 있고 아직 만료 전이면 로그인 상태로만 세팅
-        if let token = try? keychain.getAccessToken(),
-            !token.isEmpty,
-           !keychain.isTokenExpired(token) {
+        // 1. AccessToken이 유효 → 바로 로그인 유지
+        if let access = try? TokenKeychainManager.shared.getAccessToken(),
+           !access.isEmpty,
+           !TokenKeychainManager.shared.isTokenExpired(access) {
+            print("AccessToken 유효 → 로그인 유지")
             isLoggedIn = true
-            shouldStartOnboarding = false
-        } else {
-            // 만료/부재 → 로그인 화면. 실제 호출 시 401이면 인터셉터가 갱신 시도
-            isLoggedIn = false
-            shouldStartOnboarding = false
+            return
+        }
+        
+        // 2. AccessToken이 없거나 만료 → Refresh 시도
+        RefreshService.refreshTokens { result in
+            switch result {
+            case .success(let tokenData):
+                do {
+                    try TokenKeychainManager.shared.saveAccessToken(tokenData.accessToken)
+                    try TokenKeychainManager.shared.saveRefreshToken(tokenData.refreshToken)
+                    print("AccessToken만료 -> Refresh 성공 → 새 토큰 저장")
+                    
+                    DispatchQueue.main.async {
+                        self.isLoggedIn = true
+                    }
+                } catch {
+                    print("❌ 새 토큰 저장 실패: \(error.localizedDescription)")
+                    DispatchQueue.main.async {
+                        self.isLoggedIn = false
+                    }
+                }
+                
+            case .failure(let error):
+                print("❌ Refresh 실패: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    self.isLoggedIn = false
+                }
+            }
         }
     }
+
     
     // MARK: - 추후 로그아웃, 탈퇴 로직 여기에 위치
 }
