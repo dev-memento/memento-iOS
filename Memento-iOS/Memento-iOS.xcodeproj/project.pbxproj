@@ -53,7 +53,6 @@
 				Source/Network/AI/DTO/Request/PrioritizationRequest.swift,
 				Source/Network/AI/DTO/Response/PrioritizationResponse.swift,
 				Source/Network/AI/PrioritizationAPIService.swift,
-				Source/Network/AI/TargetType/PrioritizationTargetType.swift,
 				"Source/Network/Base/AuthSession/AuthSession+Apple.swift",
 				"Source/Network/Base/AuthSession/AuthSession+Google.swift",
 				"Source/Network/Base/AuthSession/AuthSession+Network.swift",
@@ -86,9 +85,7 @@
 				Source/Presentation/Add/ToDo/View/AddToDoToolbarView.swift,
 				Source/Presentation/Add/ToDo/View/AddToDoView.swift,
 				Source/Presentation/Add/ToDo/ViewModel/AddToDoViewModel.swift,
-				Source/Presentation/Main/View/DragAndDrop/DropViewDelegate.swift,
 				Source/Presentation/Main/View/ToDoList/ToDoListWeeklyCalendarView.swift,
-				Source/Presentation/Main/ViewModel/ToDoListViewModel.swift,
 				Source/Presentation/Onboarding/ViewModel/OnboardingViewModel.swift,
 				Source/Utils/DynamicPresentationDetent.swift,
 			);
