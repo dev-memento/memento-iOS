@@ -180,6 +180,11 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
         )
         
         scheduleService.postSchedule(body: body) { _ in
+            NotificationCenter.default.post(
+                name: Notification.Name("postSchedule"),
+                object: nil
+            )
+            
             completion()
         }
     }

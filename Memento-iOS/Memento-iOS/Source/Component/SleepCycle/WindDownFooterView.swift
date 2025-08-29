@@ -12,9 +12,15 @@ struct WindDownFooterView: View {
     let windDownTime: String
     
     var body: some View {
-        HStack {
+        HStack(spacing: 6) {
+            Image(.ic_winddown)
+                .renderingMode(.template)
+                .resizable()
+                .frame(width: 17, height: 17)
+                .foregroundStyle(Color.gray07)
+            
             Text(windDownTime)
-                .padding(.trailing, 10)
+            
             Text(StringLiteral.Today.windDown)
             
             Spacer()
