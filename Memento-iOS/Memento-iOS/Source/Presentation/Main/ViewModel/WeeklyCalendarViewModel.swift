@@ -13,313 +13,340 @@ import MCalendar
 
 final class WeeklyCalendarViewModel: ObservableObject {
     
-    @Published var schedules: [ScheduleWithOrderInfos] = []
-    @Published var tag: [TagResponse] = []
-    @Published var toDoList: [ToDoGetResponses] = []
-    @Published var allday: [AllDaySchedulesList] = []
-    @Published var wakeUpTime: String = "8 AM"
-    @Published var windDownTime: String = "11 PM"
+    // MARK: - Dependencies
     
     private let scheduleService: ScheduleAPIServiceProtocol
-    private let tagService: TagAPIServiceProtocol
-    private let toDoListService: ToDoListAPIServiceProtocol
+    private var toDoService: ToDoListAPIServiceProtocol
     private let userUptimeService: UserUptimeAPIServiceProtocol
     
-    init(mCalendarDataSource: MCalendarDataSource,
-         mEventDataSource: MEventDatasource,
-         scheduleService: ScheduleAPIServiceProtocol,
-         tagService: TagAPIServiceProtocol,
-         toDoListService: ToDoListAPIServiceProtocol,
-         userUptimeService: UserUptimeAPIServiceProtocol) {
-        
-        self.mCallendarDataSource = mCalendarDataSource
-        self.mEventDataSource = mEventDataSource
-        self.scheduleService = scheduleService
-        self.tagService = tagService
-        self.toDoListService = toDoListService
-        self.userUptimeService = userUptimeService
-        
-        makeDummyEvent()
-        addOffsetDebounce()
-        bindSelectedDateSubject()
-        setSendNotificationObserver()
-        preProcessingForAllEvents()
-    }
-    
-    deinit {
-        removeObserver()
-    }
-    
-    @Published var todayItems: [TodayItemDataModel] = []
-    
-    @Published var toDoListItems: [ToDoListDataModel] = []
-    
-    @Published var dragTodayItem: TodayItemDataModel?
-    @Published var dragTodoItem: ToDoListDataModel?
-    @Published var dropIndex: Int?
+    // MARK: - Published Properties
     
     @Published var mCallendarDataSource: MCalendarDataSource
     @Published var mEventDataSource: MEventDatasource
-    @Published var currentIndex: Int = 1
+
+    @Published var todayItems: [TodayItem] = []
+    @Published var scheduleItems: [ScheduleItem] = []
+    @Published var allDayItems: [AllDayItem] = []
+    @Published var allDayDict: [MCalendarDataModel: [AllDayItem]] = [:]
+    @Published var toDoItems: [ToDoItem] = []
+    @Published var toDoListDict: [MCalendarDataModel: [ToDoItem]] = [:]
+    
+    @Published var wakeUpTime: String = "8 AM"
+    @Published var windDownTime: String = "11 PM"
+    
     @Published var currentOffset: CGPoint = .zero
-    @Published var selectedDate: MCalendarDataModel = .init(year: "2025",
-                                                            month: "1",
-                                                            day: "10",
-                                                            weekday: .fri)
+    @Published var selectedDate: MCalendarDataModel = Date().makeTargetDate()! {
+        didSet {
+            if let date = selectedDate.date() {
+                updateTodayItems(for: date)
+            }
+        }
+    }
+    @Published var isInitialScrollDone = false
     
-    private var cancellable = Set<AnyCancellable>()
-    
-    @Published var getAllTodoList: Bool = false
+    @Published var getAllToDoList: Bool = false
     @Published var getAllScheduleList: Bool = false
     
+    // MARK: - Initializer
     
-    private let dateFormatter = DateFormatter()
-    @Published var toDoListItemDict: [MCalendarDataModel: [ToDoListDataModel]] = [:]
-    
-    private func preProcessingForAllEvents() {
-        Publishers.CombineLatest($getAllTodoList, $getAllScheduleList)
-            .filter { $0 && $1 }
-            .sink { [weak self] _ in
-                guard let self else { return }
-                self.mapToTodayItemList()
-            }
-            .store(in: &cancellable)
-    }
-    
-    func mapToTodayItemList() {
-        //        todayItems = schedules.map { .schedule(
-        //            .init(
-        //                id: $0.id,
-        //                description: $0.description,
-        //                startDate: $0.startDate,
-        //                endDate: $0.endDate,
-        //                timeDuration: $0.timeDuration,
-        //                isAllDay: $0.isAllDay,
-        //                scheduleType: $0.scheduleType,
-        //                order: $0.order,
-        //                tagName: $0.tagName,
-        //                tagColorCode: $0.tagColorCode
-        //            )
-        //        )}
-        //        
-        //        todayItems = toDoListItems.map {
-        //            .todo(
-        //                .init(
-        //                    id: $0.id,
-        //                    colorType: $0.colorType,
-        //                    toDoTitle: $0.toDoTitle,
-        //                    date: $0.date,
-        //                    dueDate: $0.dueDate,
-        //                    priorityType: $0.priorityType,
-        //                    isChecked: $0.isChecked
-        //                )
-        //            )
-        //        }
-        getAllTodoList = false
-        getAllScheduleList = false
-    }
-    
-    func preprocessingForEventDate() {
-        for date in mCallendarDataSource.wholeMonthDate {
-            toDoListItemDict[date] = filteredTargetEvent(date)
-        }
-    }
-    
-    private func filteredTargetEvent(_ date: MCalendarDataModel) -> [ToDoListDataModel] {
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        return toDoListItems.filter {
-            dateFormatter.date(from: $0.date)! == date.date()!
-        }
-    }
-    
-    private func bindSelectedDateSubject() {
-        $selectedDate
-            .removeDuplicates()
-            .debounce(for: .seconds(0.2), scheduler: RunLoop.main)
-            .sink(receiveValue: { [weak self] newDate in
-                guard let self else { return }
-                if let date = newDate.date() {
-                    self.onDateSelected(date: date)
-                }
-            })
-            .store(in: &cancellable)
-    }
-    
-    func setSendNotificationObserver() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(didReceiveNotification),
-                                               name: .init("postScheduleComplete"),
-                                               object: nil)
-    }
-    
-    func removeObserver() {
-        NotificationCenter.default.removeObserver(self,
-                                                  name: .init("postScheduleComplete"),
-                                                  object: nil)
-    }
-    
-    @objc
-    private func didReceiveNotification() {
+    init(scheduleService: ScheduleAPIServiceProtocol,
+         toDoService: ToDoListAPIServiceProtocol,
+         userUptimeService: UserUptimeAPIServiceProtocol,
+         mCalendarDataSource: MCalendarDataSource,
+         mEventDataSource: MEventDatasource
+    ) {
+        self.toDoService = toDoService
+        self.scheduleService = scheduleService
+        self.userUptimeService = userUptimeService
+        self.mCallendarDataSource = mCalendarDataSource
+        self.mEventDataSource = mEventDataSource
         
-        self.getAllEvents()
-    }
-}
-
-extension WeeklyCalendarViewModel {
-    func dropActionForToday(dragItem: TodayItemDataModel?, dropItem: TodayItemDataModel) {
-        guard let dragItem,
-              let dropIndex = todayItems.firstIndex(where: { $0.id == dropItem.id }),
-              let fromIndex = todayItems.firstIndex(where: { $0.id == dragItem.id }),
-              case .todo = dragItem else { return }
+        makeDummyEvent()
+        updateSelectedDateOnScroll()
         
-        todayItems.move(fromOffsets: IndexSet(integer: fromIndex),
-                        toOffset: dropIndex > fromIndex ? dropIndex + 1 : dropIndex)
+        preProcessingForAllEvents()
     }
     
-    func dropActionForToDoList(dragItem: ToDoListDataModel?, dropItem: ToDoListDataModel) {
-        guard let dragItem,
-              let dropIndex = toDoListItems.firstIndex(where: { $0.id == dropItem.id }),
-              let fromIndex = toDoListItems.firstIndex(where: { $0.id == dragItem.id }) else { return }
-        
-        toDoListItems.move(fromOffsets: IndexSet(integer: fromIndex),
-                           toOffset: dropIndex > fromIndex ? dropIndex + 1 : dropIndex)
-    }
-    
-    func makeDummyEvent() {
+    private func makeDummyEvent() {
         mEventDataSource.setCalendarData(mCallendarDataSource.wholeMonthDate)
     }
     
-    private func addOffsetDebounce() {
+    // MARK: - Combine
+    
+    private var cancellable = Set<AnyCancellable>()
+    
+    // 주간 캘린더 스크롤할 때 현재 페이지에 맞춰 selectedDate를 업데이트하고 캘린더 이동
+    private func updateSelectedDateOnScroll() {
         $currentOffset
             .debounce(for: .seconds(0.2), scheduler: RunLoop.main)
             .sink { [weak self] offset in
                 guard let self else { return }
+                if !isInitialScrollDone { return }
+                
                 let index = Int(offset.x / UIScreen.main.bounds.width)
                 self.selectedDate = self.mEventDataSource.eventList[index].dateModel
+                
                 if let date = self.mEventDataSource.eventList[index].dateModel.date() {
                     self.mCallendarDataSource.moveOtherWeekday(targetDate: date)
                 }
             }
             .store(in: &cancellable)
     }
+    
+    private func preProcessingForAllEvents() {
+        Publishers.CombineLatest($getAllToDoList, $getAllScheduleList)
+            .filter { $0 && $1 }
+            .sink { [weak self] _ in
+                guard let self else { return }
+                if let date = self.selectedDate.date() {
+                    self.updateTodayItems(for: date)
+                }
+            }
+            .store(in: &cancellable)
+    }
+    
+    // MARK: - Drag And Drop
+    
+    @Published var dragTodayItem: TodayItem?
+    @Published var dragTodoItem: ToDoItem?
+    @Published var dropIndex: Int?
+    
+    //    func dropActionForToday(dragItem: TodayItemDataModel?, dropItem: TodayItemDataModel) {
+    //        guard let dragItem,
+    //              let dropIndex = todayItems.firstIndex(where: { $0.id == dropItem.id }),
+    //              let fromIndex = todayItems.firstIndex(where: { $0.id == dragItem.id }),
+    //              case .todo = dragItem else { return }
+    //
+    //        todayItems.move(fromOffsets: IndexSet(integer: fromIndex),
+    //                        toOffset: dropIndex > fromIndex ? dropIndex + 1 : dropIndex)
+    //    }
+    //
+    //    func dropActionForToDoList(dragItem: ToDoItem?, dropItem: ToDoItem) {
+    //        guard let dragItem,
+    //              let dropIndex = toDoListDict.firstIndex(where: { $0.id == dropItem.id }),
+    //              let fromIndex = toDoListDict.firstIndex(where: { $0.id == dragItem.id }) else { return }
+    //
+    //        toDoListItems.move(fromOffsets: IndexSet(integer: fromIndex),
+    //                           toOffset: dropIndex > fromIndex ? dropIndex + 1 : dropIndex)
+    //    }
 }
+
+// MARK: - Today(ToDo + Schedule) Items Handling
+
+extension WeeklyCalendarViewModel {
+    // 일정이 하루라도 겹치는 스케줄, 투두를 가져와 투데이에 업데이트
+    func updateTodayItems(for date: Date) {
+        let dayStart = date.startOfDay
+        let dayEnd = date.endOfDay
+        
+        var updatedItems: [TodayItem] = []
+        
+        for schedule in scheduleItems {
+            guard let start = dateFromScheduleString(schedule.startDate),
+                  let end   = dateFromScheduleString(schedule.endDate),
+                  start <= dayEnd, end >= dayStart else { continue }
+            updatedItems.append(.schedule(schedule))
+        }
+        
+        for todo in toDoItems {
+            guard let start = Date.dateFromString(todo.startDate, format: "yyyy-MM-dd"),
+                  let end   = Date.dateFromString(todo.endDate, format: "yyyy-MM-dd"),
+                  start <= dayEnd, end >= dayStart else { continue }
+            updatedItems.append(.todo(todo))
+        }
+        
+        let diff = updatedItems.difference(from: todayItems)
+        if !diff.isEmpty {
+            withAnimation(.easeInOut(duration: 0.1)) {
+                todayItems = updatedItems
+            }
+        }
+    }
+    
+    private func dateFromScheduleString(_ date: String) -> Date? {
+        return Date.dateFromString(date, format: "yyyy-MM-dd'T'HH:mm:ss.SSS") ?? Date.dateFromString(date, format: "yyyy-MM-dd'T'HH:mm:ss")
+    }
+    
+    private func mapAllDayItemsByDate() {
+        allDayDict.removeAll()
+        
+        for dateModel in mCallendarDataSource.wholeMonthDate {
+            allDayDict[dateModel] = allDayItems.filter { allDayItem in
+                guard let itemDate = dateFromScheduleString(allDayItem.startDate) else { return false }
+                return itemDate.startOfDay == dateModel.date()?.startOfDay
+            }
+        }
+    }
+}
+
+// MARK: - ToDo Items Handling
+
+extension WeeklyCalendarViewModel {
+    func bindingForToDoCompletion(_ toDoId: Int) -> Binding<Bool> {
+        Binding<Bool>(
+            get: {
+                if let date = self.toDoListDict.first(where: { $0.value.contains(where: { $0.id == toDoId }) })?.key,
+                   let index = self.toDoListDict[date]?.firstIndex(where: { $0.id == toDoId }) {
+                    return self.toDoListDict[date]?[index].isCompleted ?? false
+                }
+                return false
+            },
+            set: { _ in
+                self.updateToDoCompletion(toDoId: toDoId)
+            }
+        )
+    }
+    
+    func isTopPriorityItem(item: TodayItem) -> Bool {
+        guard case .todo(let todo) = item, !todo.isCompleted else { return false }
+        
+        let incompleteTodos = todayItems.compactMap {
+            if case .todo(let t) = $0, !t.isCompleted { return t }
+            return nil
+        }
+        return incompleteTodos.first?.id == todo.id
+    }
+    
+    func isTopPriorityItem(at item: ToDoItem, items: [ToDoItem]) -> Bool {
+        guard !item.isCompleted else { return false }
+        
+        let incompleteItems = items.filter { !$0.isCompleted }
+        
+        return incompleteItems.first?.id == item.id
+    }
+    
+    private func mapToDoDictByDate() {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        
+        for date in mCallendarDataSource.wholeMonthDate {
+            toDoListDict[date] = toDoItems.filter {
+                dateFormatter.date(from: $0.startDate)! == date.date()!
+            }
+        }
+    }
+    
+    private func updateToDoCompletionInDict(toDoId: Int) {
+        if let index = self.toDoItems.firstIndex(where: { $0.id == toDoId }) {
+            self.toDoItems[index].isCompleted.toggle()
+        }
+        
+        if let date = self.toDoListDict.first(where: { $0.value.contains(where: { $0.id == toDoId }) })?.key,
+           let index = self.toDoListDict[date]?.firstIndex(where: { $0.id == toDoId }) {
+            self.toDoListDict[date]?[index].isCompleted.toggle()
+        }
+    }
+}
+
+// MARK: - API
 
 extension WeeklyCalendarViewModel {
     func getAllEvents() {
-        getSchedulesTotalAPI()
-        getToDoListTotalAPI()
+        getSchedulesTotal()
+        getToDoListTotal()
     }
     
-    func getSchedulesTotalAPI() {
-        scheduleService.getSchedulesTotal { [weak self] result in
-            switch result {
-            case .success(let response):
+    func getSchedulesAllDay() {
+        scheduleService.getSchedulesAllDay { [weak self] result in
+            guard let self = self else { return }
+            
+            if case let .success(response) = result,
+               let allDayResponse = response?.data.allDaySchedulesList,
+               !allDayResponse.isEmpty {
+                
                 DispatchQueue.main.async {
-                    if let scheduleData = response?.data.scheduleWithOrderInfos {
-                        self?.schedules = scheduleData
-                        self?.getAllScheduleList = true
-                    } else {
-                        print("데이터변환 실패")
-                        self?.schedules = []
-                    }
+                    self.allDayItems = allDayResponse.map { AllDayItem(from: $0) }
+                    self.mapAllDayItemsByDate()
                 }
-            default:
-                print("ERROR")
+            }
+        }
+    }
+    
+    func getSchedulesTotal() {
+        scheduleService.getSchedulesTotal { [weak self] result in
+            guard let self = self else { return }
+            
+            if case let .success(response) = result,
+               let scheduleResponse = response?.data.scheduleWithOrderInfos, !scheduleResponse.isEmpty {
+                
+                DispatchQueue.main.async {
+                    self.scheduleItems = scheduleResponse.map { ScheduleItem(from: $0) }
+                    if let date = self.selectedDate.date() {
+                        self.updateTodayItems(for: date)
+                    }
+                    self.getAllScheduleList = true
+                }
             }
         }
     }
     
     func deleteSchedule(scheduleId: Int) {
-        scheduleService.deleteSchedule(scheduleId: scheduleId) { result in
-            DispatchQueue.main.async {
-                if case .success = result {
-                    if let index = self.todayItems.firstIndex(where: {
-                        if case .schedule(let s) = $0 { return s.id == scheduleId }
-                        return false
-                    }) {
-                        self.todayItems.remove(at: index)
-                    }
-                } else {
-                    print("삭제 실패")
-                }
-            }
-        }
-    }
-    
-    func getTagsAPI() {
-        tagService.getTags() { [weak self] result in
-            switch result {
-            case .success(let response):
-                print("SUCCESS")
-            default:
-                print("ERROR")
-            }
-        }
-    }
-    
-    func getToDoListTotalAPI() {
-        toDoListService.getToDoListTotal { [weak self] result in
-            switch result {
-            case .success(let response):
+        scheduleService.deleteSchedule(scheduleId: scheduleId) { [weak self] result in
+            guard let self = self else { return }
+            
+            if case .success = result {
                 DispatchQueue.main.async {
-                    if let toDoData = response?.data.toDoGetResponses {
-                        self?.toDoList = toDoData
-                        self?.toDoListItems = toDoData.map { item in
-                            ToDoListDataModel(
-                                id: item.id,
-                                colorType: item.tagColor,
-                                toDoTitle: item.description,
-                                date: item.startDate,
-                                dueDate: item.endDate,
-                                priorityType: Priority(rawValue: item.priorityType) ?? .low,
-                                isChecked: item.isCompleted,
-                                tagName: item.tagName
-                            )
-                        }
-                        self?.getAllTodoList = true
-                    } else {
-                        print("데이터변환 실패")
-                        self?.toDoListItems = []
+                    self.todayItems.removeAll { if case .schedule(let s) = $0 { return s.id == scheduleId } else { return false } }
+                    self.scheduleItems.removeAll { $0.id == scheduleId }
+                    
+                    if let date = self.selectedDate.date() {
+                        self.updateTodayItems(for: date)
                     }
-                    self?.preprocessingForEventDate()
                 }
-            default:
-                print("ERROR")
+            }
+        }
+    }
+    
+    func getToDoListTotal() {
+        toDoService.getToDoListTotal { [weak self] result in
+            guard let self = self else { return }
+            
+            if case let .success(response) = result,
+               let toDoResponse = response?.data.toDoGetResponses, !toDoResponse.isEmpty {
+                
+                DispatchQueue.main.async {
+                    self.toDoItems = toDoResponse.map { ToDoItem(from: $0) }
+                    self.mapToDoDictByDate()
+                    self.getAllToDoList = true
+                }
             }
         }
     }
     
     func updateToDoCompletion(toDoId: Int) {
-        toDoListService.updateToDoCompletion(toDoId: toDoId) { [weak self] result in
-            switch result {
-            case .success(let response):
+        toDoService.updateToDoCompletion(toDoId: toDoId) { [weak self] result in
+            guard let self = self else { return }
+            
+            if case let .success(response) = result,
+               response?.data != nil {
+                
                 DispatchQueue.main.async {
-                    if response?.data != nil {
-                        if let index = self?.toDoList.firstIndex(where: { $0.id == toDoId }) {
-                            self?.toDoListItems[index].isChecked.toggle()
-                        }
-                    }
+                    self.updateToDoCompletionInDict(toDoId: toDoId)
                 }
-            default:
-                print("ERROR")
             }
         }
     }
     
-    
-    func getSchedulesAllDayAPI() {
-        scheduleService.getSchedulesAllDay { [weak self] result in
-            switch result {
-            case .success(let response):
+    func deleteToDo(toDoId: Int) {
+        toDoService.deleteToDo(toDoId: toDoId) { [weak self] result in
+            guard let self = self else { return }
+            
+            if case .success = result {
                 DispatchQueue.main.async {
-                    if let scheduleData = response?.data.allDaySchedulesList {
-                        self?.allday = scheduleData
-                    } else {
-                        self?.allday = []
+                    self.todayItems.removeAll { if case .todo(let t) = $0 { return t.id == toDoId } else { return false } }
+                    self.toDoItems.removeAll { $0.id == toDoId }
+                    
+                    for (key, value) in self.toDoListDict {
+                        self.toDoListDict[key] = value.filter { $0.id != toDoId }
+                        if self.toDoListDict[key]?.isEmpty == true {
+                            self.toDoListDict.removeValue(forKey: key)
+                        }
+                    }
+                    
+                    if let date = self.selectedDate.date() {
+                        self.updateTodayItems(for: date)
                     }
                 }
-            default:
-                print("ERROR")
             }
         }
     }
@@ -342,126 +369,5 @@ extension WeeklyCalendarViewModel {
         //                print("시간 가져오기 실패")
         //            }
         //        }
-    }
-}
-
-extension Date {
-    /// 예) 2025-01-12 15:00 이면 → 2025-01-12 23:59:59
-    var endOfDay: Date {
-        let start = self.startOfDay
-        // start + 1일 - 1초 (즉 다음날 0시 직전)
-        return Calendar.current.date(byAdding: DateComponents(day: 1, second: -1), to: start)!
-    }
-}
-
-extension WeeklyCalendarViewModel {
-    func filterSchedules(for date: Date) {
-        todayItems = []
-        // 1) "하루의 시작"과 "하루의 끝" 구하기
-        let dayStart = date.startOfDay
-        let dayEnd = date.endOfDay
-        
-        // 2) schedules 배열에서 일정이 하루라도 겹치는 것만 필터링
-        let scheudle = schedules.filter { schedule in
-            guard
-                let start = toDateFromString(schedule.startDate),
-                let end   = toDateFromString(schedule.endDate)
-            else {
-                print("💔날짜 변환 실패 \(schedule)💔")
-                return false
-            }
-            
-            // 3) 일정이 [dayStart, dayEnd] 범위와 겹치는지 확인
-            //    일정의 시작 ≤ dayEnd && 일정의 끝 ≥ dayStart
-            return start <= dayEnd && end >= dayStart
-        }
-            .map {
-                TodayItemDataModel.schedule(
-                    .init(
-                        id: $0.id,
-                        description: $0.description,
-                        startDate: $0.startDate,
-                        endDate: $0.endDate,
-                        timeDuration: $0.timeDuration,
-                        isAllDay: $0.isAllDay,
-                        scheduleType: $0.scheduleType,
-                        order: $0.order,
-                        tagName: $0.tagName,
-                        tagColorCode: $0.tagColorCode
-                    )
-                )
-            }
-        
-        let today = toDoListItems.filter { todoItem in
-            guard
-                let start = makeDateToString(todoItem.date),
-                let end   = makeDateToString(todoItem.dueDate)
-            else {
-                print("💔날짜 변환 실패 \(todoItem)💔")
-                return false
-            }
-            
-            // 3) 일정이 [dayStart, dayEnd] 범위와 겹치는지 확인
-            //    일정의 시작 ≤ dayEnd && 일정의 끝 ≥ dayStart
-            return start <= dayEnd && end >= dayStart
-        }
-            .map {
-                TodayItemDataModel
-                    .todo(
-                        .init(
-                            id: $0.id,
-                            colorType: $0.colorType,
-                            toDoTitle: $0.toDoTitle,
-                            date: $0.date,
-                            dueDate: $0.dueDate,
-                            priorityType: $0.priorityType,
-                            isChecked: $0.isChecked,
-                            tagName: $0.tagName
-                        )
-                    )
-            }
-        todayItems.append(contentsOf: scheudle)
-        todayItems.append(contentsOf: today)
-    }
-    
-    private func toDateFromString(_ date: String) -> Date? {
-        if let date1 = date.toDate() {
-            return date1
-        } else {
-            if let date2 = date.toDateForNotContainMiliseconds() {
-                return date2
-            } else {
-                return nil
-            }
-        }
-    }
-    
-    private func makeDateToString(_ date: String) -> Date? {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter.date(from: date)
-    }
-    
-}
-
-extension String {
-    func toDate() -> Date? {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
-        return formatter.date(from: self)
-    }
-    
-    func toDateForNotContainMiliseconds() -> Date? {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-        return formatter.date(from: self)
-    }
-}
-
-
-extension WeeklyCalendarViewModel {
-    func onDateSelected(date: Date) {
-        print("선택한 날짜: \(date)")
-        filterSchedules(for: date)
     }
 }

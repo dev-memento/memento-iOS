@@ -97,6 +97,11 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
         )
         
         toDoService.postToDo(body: body) { _ in
+            NotificationCenter.default.post(
+                name: Notification.Name("postToDo"),
+                object: nil
+            )
+            
             completion()
         }
     }

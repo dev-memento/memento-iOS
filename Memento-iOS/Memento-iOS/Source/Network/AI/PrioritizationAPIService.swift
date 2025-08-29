@@ -11,7 +11,7 @@ import Moya
 // MARK: - PrioritizationAPIServiceProtocol
 
 protocol PrioritizationAPIServiceProtocol {
-    func fetchPrioritization(request: PrioritizationRequest, completion: @escaping (NetworkResult<PrioritizationResponse>) -> Void)
+    func fetchWeeklyPrioritization(body: PrioritizationRequest, completion: @escaping (NetworkResult<PrioritizationResponseDTO>) -> Void)
 }
 
 extension PrioritizationAPIServiceProtocol {
@@ -27,26 +27,31 @@ final class PrioritizationAPIService: BaseAPIService, PrioritizationAPIServicePr
         plugins: [MoyaPlugin.shared]
     )
     
-    func fetchPrioritization(request: PrioritizationRequest, completion: @escaping (NetworkResult<PrioritizationResponse>) -> Void) {
-        provider.request(.todo(request: request)) { result in
+    func fetchWeeklyPrioritization(body: PrioritizationRequest, completion: @escaping (NetworkResult<PrioritizationResponseDTO>) -> Void) {
+        provider.request(.fetchWeeklyPrioritization(body: body)) { [weak self] result in
+            guard let self = self else { return }
+            
+            let networkResult: NetworkResult<PrioritizationResponseDTO>
+            
             switch result {
             case .success(let response):
-                let networkResult: NetworkResult<PrioritizationResponse> = self.fetchNetworkResult(
+                networkResult = self.fetchNetworkResult(
                     statusCode: response.statusCode,
                     data: response.data
                 )
-                completion(networkResult)
             case .failure(let error):
                 if let response = error.response {
-                    let networkResult: NetworkResult<PrioritizationResponse> = self.fetchNetworkResult(
+                    networkResult = self.fetchNetworkResult(
                         statusCode: response.statusCode,
                         data: response.data
                     )
-                    completion(networkResult)
                 } else {
-                    completion(.networkFail)
+                    networkResult = .networkFail
                 }
             }
+            
+            print(networkResult.stateDescription)
+            completion(networkResult)
         }
     }
 }

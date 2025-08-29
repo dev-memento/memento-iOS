@@ -10,7 +10,7 @@ import SwiftUI
 import MDSKit
 
 struct AllDayListView: View {
-    let items: [AllDaySchedulesList]
+    let items: [AllDayItem]
     
     var body: some View {
         let isScroll = items.count >= 5

@@ -12,10 +12,17 @@ struct WakeUpHeaderView: View {
     let wakeUpTime: String
     
     var body: some View {
-        HStack {
+        HStack(spacing: 6) {
+            Image(.ic_wakeup)
+                .renderingMode(.template)
+                .resizable()
+                .frame(width: 17, height: 17)
+                .foregroundStyle(Color.gray07)
+            
             Text(wakeUpTime)
-                .padding(.trailing, 10)
+            
             Text(StringLiteral.Today.wakeUp)
+            
             Spacer()
         }
         .applyFont(.detail_b_12)
