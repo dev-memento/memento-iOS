@@ -6,14 +6,15 @@
 //
 
 import Foundation
+import UserNotifications
+import UIKit
 
 // MARK: - Setting Destinations
 
 enum SettingNavigationDestination: Hashable {
     case Tag
-    case TagDetail(TagItem?, Bool) 
+    case TagDetail(TagItem?, Bool)
     case Time
-    case Integrations
     case Feedback
     case Terms
 }
@@ -25,9 +26,30 @@ final class SettingViewModel: ObservableObject {
     
     /// 네비게이션 스택을 관리
     @Published var navigationPath: [SettingNavigationDestination] = []
+    @Published var isNotificationEnabled: Bool = false
     
     var wakeUpTime: Date? = nil
     var sleepTime: Date? = nil
+    
+    init() {
+        refreshNotificationStatus()
+    }
+    
+    /// 현재 알림 권한 상태 확인
+    func refreshNotificationStatus() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            DispatchQueue.main.async {
+                self.isNotificationEnabled = (settings.authorizationStatus == .authorized)
+            }
+        }
+    }
+    
+    /// 앱 설정 화면으로 이동 (알림 설정 사용자가 직접 제어)
+    func openAppSettings() {
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url)
+        }
+    }
 }
 
 // MARK: - Setting Navigation Logic

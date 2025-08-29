@@ -11,6 +11,8 @@ import MDSKit
 struct SettingView: View {
     @EnvironmentObject var viewModel: SettingViewModel
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) var scenePhase
+    
     var body: some View {
         NavigationStack(path: $viewModel.navigationPath) {
             ScrollView(.vertical, showsIndicators: false) {
@@ -49,17 +51,20 @@ struct SettingView: View {
                         TimeView()
                             .environmentObject(viewModel)
                             .navigationBarBackButtonHidden()
-                    case .Integrations:
-                        IntegrationsView()
-                            .environmentObject(viewModel)
-                            .navigationBarBackButtonHidden()
                     case .Terms:
-                        CalendarConnectView()
-                            .environmentObject(viewModel)
-                            .navigationBarBackButtonHidden()
+                        EmptyView()
+                        
                     case .Feedback:
                         EmptyView()
                     }
+                }
+            }
+            .onAppear {
+                viewModel.refreshNotificationStatus()
+            }
+            .onChange(of: scenePhase) { newPhase in
+                if newPhase == .active {
+                    viewModel.refreshNotificationStatus()
                 }
             }
         }
@@ -102,11 +107,7 @@ struct SettingView: View {
                     
                     Spacer()
                     
-                    Button {
-                        
-                    } label: {
-                        Image(.btn_setting_on)
-                    }
+                    NotificationSettingsSection()
                 }
                 .padding(.horizontal, 26)
                 .padding(.top, 16)
@@ -121,8 +122,19 @@ struct SettingView: View {
                     action: { viewModel.navigateToNext(.Time) }
                 )
                 
-                
                 SettingsRowDivider()
+            }
+        }
+    }
+    
+    struct NotificationSettingsSection: View {
+        @EnvironmentObject var viewModel: SettingViewModel
+        
+        var body: some View {
+            Button {
+                viewModel.openAppSettings()
+            } label: {
+                Image(viewModel.isNotificationEnabled ? .btn_setting_on : .btn_setting_off)
             }
         }
     }
@@ -132,14 +144,6 @@ struct SettingView: View {
         
         var body: some View {
             VStack {
-                
-                SettingsRowButton(
-                    title: SettingsSettingViewText.integrations,
-                    action: { viewModel.navigateToNext(.Integrations) }
-                )
-                
-                SettingsRowDivider()
-                
                 SettingsRowButton(
                     title: SettingsSettingViewText.feedback,
                     action: { viewModel.navigateToNext(.Feedback) }
