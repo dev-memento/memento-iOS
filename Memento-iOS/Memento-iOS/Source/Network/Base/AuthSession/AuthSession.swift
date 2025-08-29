@@ -122,7 +122,6 @@ final class AuthSession: ObservableObject {
                     print("회원 탈퇴 성공")
                     self.logout() // 로그아웃과 동일하게 세션 정리
                 case .unAuthorized:
-                    print("401 Unauthorized: 이미 만료된 토큰")
                     self.clear()
                 default:
                     print("회원 탈퇴 실패(서버 오류)")

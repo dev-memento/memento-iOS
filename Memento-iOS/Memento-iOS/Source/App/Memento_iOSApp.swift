@@ -85,7 +85,6 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
                 print("FCM 토큰 저장 완료 & 서버 동기화 필요")
                 
                 // 서버에 최신 FCM 토큰 전송
-                // MyAPIService.shared.updateFCMToken(token)
             }
             
         } catch {
@@ -95,7 +94,6 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
                 print("📌 FCM 토큰 신규 저장 완료 & 서버 동기화 필요")
                 
                 // 서버에 최신 FCM 토큰 전송
-                // MyAPIService.shared.updateFCMToken(token)
             } catch {
                 print("❌ FCM 토큰 저장 실패: \(error)")
             }
@@ -138,9 +136,9 @@ struct MementoApp: App {
                 .task {
                     authSession.autoLoginOnLaunch()
                 }
-                //.onAppear { // 탈퇴시 로그인 된 탭 화면에서 해당 코드 실행 해야함
-                //    Task { await authSession.withdraw() }
-                //}
+            //.onAppear { // 탈퇴시 로그인 된 탭 화면에서 해당 코드 실행 해야함
+            //    Task { await authSession.withdraw() }
+            //}
         }
     }
     
