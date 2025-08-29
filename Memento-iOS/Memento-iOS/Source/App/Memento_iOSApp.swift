@@ -16,49 +16,107 @@ import FirebaseMessaging
 import UserNotifications
 import FirebaseAuth
 
-class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
     
-    func application(_ application: UIApplication,
-                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
+    ) -> Bool {
         
-        registerFonts()
+        // Firebase 초기화
         FirebaseApp.configure()
-        Messaging.messaging().isAutoInitEnabled = true
-        Messaging.messaging().apnsToken = Data(repeating: 0, count: 32)
+        
+        // FCM 메시징 델리게이트 지정
+        Messaging.messaging().delegate = self
+        
+        // 알림 센터 델리게이트 지정
         UNUserNotificationCenter.current().delegate = self
         
-        //        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-        //            if let error = error {
-        //                print("알림 권한 요청 실패: \(error.localizedDescription)")
-        //                return
-        //            }
-        //            if granted {
-        //                DispatchQueue.main.async {
-        //                    UIApplication.shared.registerForRemoteNotifications()
-        //                }
-        //            } else {
-        //                print("알림 권한 거부")
-        //            }
-        //        }
+        // 권한 여부와 무관하게 항상 APNs 등록 요청
+        UIApplication.shared.registerForRemoteNotifications()
         
-        Thread.sleep(forTimeInterval: 2)
+        // 권한 요청 팝업 요청
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if let error = error {
+                print("알림 권한 요청 실패: \(error.localizedDescription)")
+                return
+            }
+            print("알림 권한 상태: \(granted ? "허용 ✅" : "거부 ❌")")
+        }
+        
         return true
     }
     
-    func application(_ application: UIApplication,
-                     didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        print("APNs 디바이스 토큰 등록 성공")
+    // MARK: - APNs 등록 성공
+    
+    func application(
+        _ application: UIApplication,
+        didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+    ) {
+        let tokenString = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
+        print("📌 APNs 디바이스 토큰 등록 성공: \(tokenString)")
+        
+        // FCM에 연결
         Messaging.messaging().apnsToken = deviceToken
     }
     
-    func application(_ application: UIApplication,
-                     didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        print("APNs 디바이스 토큰 등록 실패: \(error.localizedDescription)")
+    // MARK: - APNs 등록 실패
+    
+    func application(
+        _ application: UIApplication,
+        didFailToRegisterForRemoteNotificationsWithError error: Error
+    ) {
+        print("⚠️ APNs 디바이스 토큰 등록 실패: \(error.localizedDescription)")
     }
     
-    func application(_ app: UIApplication,
-                     open url: URL,
-                     options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+    // MARK: - FCM 토큰 수신 (최신 방식)
+    
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        guard let token = fcmToken else { return }
+        print("📌 Firebase FCM 등록 토큰 수신: \(token)")
+        
+        do {
+            let cached = try TokenKeychainManager.shared.getFCMToken()
+            
+            if cached == token {
+                print("기존 FCM 토큰과 동일 → 서버 전송 생략")
+            } else {
+                try TokenKeychainManager.shared.saveFCMToken(token)
+                print("FCM 토큰 저장 완료 & 서버 동기화 필요")
+                
+                // 서버에 최신 FCM 토큰 전송
+            }
+            
+        } catch {
+            // Keychain 조회 실패 → 그냥 새 값 저장
+            do {
+                try TokenKeychainManager.shared.saveFCMToken(token)
+                print("📌 FCM 토큰 신규 저장 완료 & 서버 동기화 필요")
+                
+                // 서버에 최신 FCM 토큰 전송
+            } catch {
+                print("❌ FCM 토큰 저장 실패: \(error)")
+            }
+        }
+    }
+    
+    // 필요시 직접 가져오기
+    func fetchFCMTokenManually() {
+        Messaging.messaging().token { token, error in
+            if let error = error {
+                print("❌ FCM 토큰 가져오기 실패: \(error.localizedDescription)")
+            } else if let token = token {
+                print("📌 수동으로 가져온 FCM 토큰: \(token)")
+            }
+        }
+    }
+    
+    // MARK: - 외부 앱 콜백 처리 (예: 구글 로그인)
+    func application(
+        _ app: UIApplication,
+        open url: URL,
+        options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+    ) -> Bool {
         return GIDSignIn.sharedInstance.handle(url)
     }
 }
@@ -70,21 +128,17 @@ struct MementoApp: App {
     @StateObject private var authSession = AuthSession.shared
     @StateObject private var onboardingViewModel = OnboardingViewModel()
     @State var showLottieAnimation: Bool = true
-    @State private var didRunAutoLoginOnce = false
-    
     
     var body: some Scene {
         WindowGroup {
             rootView
                 .environmentObject(authSession) // 앱 전체에서 사용자 세션 감시 (사용 가능하게)
-                .onAppear {
-                    guard !didRunAutoLoginOnce else { return }
-                    didRunAutoLoginOnce = true
-                    authSession.autoLoginOnLaunch() 
+                .task {
+                    authSession.autoLoginOnLaunch()
                 }
-//                .onAppear { // 탈퇴시 로그인 된 탭 화면에서 해당 코드 실행 해야함
-//                    Task { await withdrawAndSignOut() }
-//                }
+            //.onAppear { // 탈퇴시 로그인 된 탭 화면에서 해당 코드 실행 해야함
+            //    Task { await authSession.withdraw() }
+            //}
         }
     }
     
@@ -101,37 +155,6 @@ struct MementoApp: App {
                 LoginView()
                     .environmentObject(onboardingViewModel)
                     .preferredColorScheme(.dark)
-            }
-        }
-    }
-    
-    /// 회원 탈퇴 + 세션/토큰 정리
-    private func withdrawAndSignOut() async {
-        // (선택) 토큰 없으면 바로 종료
-        if (try? TokenKeychainManager.shared.getAccessToken()) == nil {
-            print("⚠️ AccessToken 없음: 탈퇴 API 호출 생략")
-            return
-        }
-        
-        let service = MemberAPIService() // DELETE /api/v1/members 호출하는 서비스
-        await withCheckedContinuation { (cont: CheckedContinuation<Void, Never>) in
-            service.withdraw { result in
-                switch result {
-                case .success:
-                    // 토큰/세션 정리
-                    print("✅ 회원 탈퇴 완료")
-                    try? TokenKeychainManager.shared.clearTokens()
-                    GIDSignIn.sharedInstance.signOut()
-                    try? Auth.auth().signOut()
-                    Task { @MainActor in
-                        authSession.isLoggedIn = false
-                    }
-                case .unAuthorized:
-                    print("⚠️ 401 Unauthorized: 토큰 만료/로그인 필요")
-                default:
-                    print("❌ 회원 탈퇴 실패(서버 오류)")
-                }
-                cont.resume()
             }
         }
     }

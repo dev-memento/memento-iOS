@@ -156,12 +156,18 @@ struct SettingView: View {
     }
     
     struct AccountSettingsSection: View {
+        @EnvironmentObject var authSession: AuthSession
+        
         var body: some View {
             VStack {
                 HStack {
-                    Text(SettingsSettingViewText.logout)
-                        .applyFont(.body_r_14)
-                        .foregroundColor(Color.mementoRed)
+                    Button {
+                        authSession.logout()
+                    } label: {
+                        Text(SettingsSettingViewText.logout)
+                            .applyFont(.body_r_14)
+                            .foregroundColor(Color.mementoRed)
+                    }
                     
                     Spacer()
                 }
@@ -169,10 +175,15 @@ struct SettingView: View {
                 .padding(.horizontal, 26)
                 
                 HStack {
-                    Text(SettingsSettingViewText.deleteAccount)
-                        .applyFont(.body_r_14)
-                        .foregroundColor(Color.mementoRed)
-                    
+                    Button {
+                        Task {
+                            await authSession.withdraw()
+                        }
+                    } label: {
+                        Text(SettingsSettingViewText.deleteAccount)
+                            .applyFont(.body_r_14)
+                            .foregroundColor(Color.mementoRed)
+                    }
                     Spacer()
                 }
                 .padding(.top, 15)
