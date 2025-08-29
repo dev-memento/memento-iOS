@@ -79,7 +79,7 @@ extension SettingViewModel {
     func updateUserUptime() {
         guard let wake = wakeUpTime else { return }
         
-        let request = UserUptimeRequest(wakeUpTime: wake.toServerString())
+        let request = UserUptimeRequest(wakeUpTime: wake.formattedHourMinute())
         
         userInfoUpdateAPIService.updateUserUptime(request: request) { result in
             switch result {
