@@ -27,9 +27,11 @@ final class SettingViewModel: ObservableObject {
     /// 네비게이션 스택을 관리
     @Published var navigationPath: [SettingNavigationDestination] = []
     @Published var isNotificationEnabled: Bool = false
+    @Published var wakeUpTime: Date? = nil
+    @Published var sleepTime: Date? = nil
     
-    var wakeUpTime: Date? = nil
-    var sleepTime: Date? = nil
+    private let userUptimeAPIService = UserUptimeAPIService()
+    private let userInfoUpdateAPIService = UserInfoUpdateAPIService()
     
     init() {
         refreshNotificationStatus()
@@ -48,6 +50,44 @@ final class SettingViewModel: ObservableObject {
     func openAppSettings() {
         if let url = URL(string: UIApplication.openSettingsURLString) {
             UIApplication.shared.open(url)
+        }
+    }
+}
+
+// MARK: - Uptime 관련 API 통신 로직
+
+extension SettingViewModel {
+    
+    // MARK: - 서버에서 Uptime 조회
+    @MainActor
+    func fetchUserUptime() {
+        userUptimeAPIService.fetchUptime { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .success(let dto):
+                if let data = dto?.data {
+                    self.wakeUpTime = data.wakeUpTime.toHourMinuteDate()
+                }
+            default:
+                print("시간 가져오기 실패")
+            }
+        }
+    }
+    
+    // MARK: - 서버에 Uptime 업데이트
+    @MainActor
+    func updateUserUptime() {
+        guard let wake = wakeUpTime else { return }
+        
+        let request = UserUptimeRequest(wakeUpTime: wake.toServerString())
+        
+        userInfoUpdateAPIService.updateUserUptime(request: request) { result in
+            switch result {
+            case .success:
+                print("✅ Uptime 업데이트 성공")
+            default:
+                print("Uptime 업데이트 실패")
+            }
         }
     }
 }
@@ -72,3 +112,23 @@ extension SettingViewModel {
         navigationPath.removeAll()
     }
 }
+
+extension String {
+    func toHourMinuteDate() -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        formatter.timeZone = TimeZone.current
+        return formatter.date(from: self)
+    }
+}
+
+extension Date {
+    func formattedHourMinute() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        formatter.timeZone = TimeZone.current
+        return formatter.string(from: self)
+    }
+}
+
+

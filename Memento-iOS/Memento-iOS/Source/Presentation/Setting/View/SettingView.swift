@@ -38,6 +38,7 @@ struct SettingView: View {
                     Spacer()
                     
                 }
+                .background(Color.black)
                 .navigationDestination(for: SettingNavigationDestination.self) { destination in
                     switch destination {
                     case .Tag:
@@ -62,8 +63,8 @@ struct SettingView: View {
             .onAppear {
                 viewModel.refreshNotificationStatus()
             }
-            .onChange(of: scenePhase) { newPhase in
-                if newPhase == .active {
+            .onChange(of: scenePhase) {
+                if scenePhase == .active {
                     viewModel.refreshNotificationStatus()
                 }
             }

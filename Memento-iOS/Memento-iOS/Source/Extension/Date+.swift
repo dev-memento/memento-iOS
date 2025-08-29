@@ -57,10 +57,6 @@ extension Date {
         return formatter.string(from: date)
     }
     
-    
-    
-    
-    
     /// 현재 시간을 기준으로 가장 가까운 30분 단위로 반올림한 시간을 반환
     func roundedToNearestHalfHour() -> Date {
         let calendar = Calendar.current
