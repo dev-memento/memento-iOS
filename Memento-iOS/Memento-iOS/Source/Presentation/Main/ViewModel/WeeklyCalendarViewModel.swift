@@ -250,9 +250,17 @@ extension WeeklyCalendarViewModel {
         tagService.getTags() { [weak self] result in
             switch result {
             case .success(let response):
-                print("SUCCESS")
+                guard let tagResponse = response else {
+                    return
+                }
+                
+                DispatchQueue.main.async {
+                    self?.tag = tagResponse.data
+                    TagManager.shared.saveTags(tagResponse.data)
+                }
+                
             default:
-                print("ERROR")
+                print("태그 API 실패 - \(result.stateDescription)")
             }
         }
     }
