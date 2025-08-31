@@ -61,10 +61,6 @@ extension Date {
         return formatter.string(from: date)
     }
     
-    
-    
-    
-    
     /// 현재 시간을 기준으로 가장 가까운 30분 단위로 반올림한 시간을 반환
     func roundedToNearestHalfHour() -> Date {
         let calendar = Calendar.current
@@ -103,5 +99,14 @@ extension Date {
             return false
         }
         return Date() > date
+    }
+    
+    /// 셋팅뷰에서 wakeUpTime / sleepTime 등을 표시할 때 사용
+    /// 현재 Date 값을 "HH:mm" 형식(24시간제 시:분) 문자열로 반환
+    func formattedHourMinute() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        formatter.timeZone = TimeZone.current
+        return formatter.string(from: self)
     }
 }

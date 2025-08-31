@@ -69,7 +69,6 @@ final class OnboardingViewModel: ObservableObject {
     @Published var mementoStart: Bool = false
     
     private let userInfoAPIService = UserInfoAPIService()
-    private let userUptimeAPIService = UserUptimeAPIService()
     private var cancellables = Set<AnyCancellable>()
     
     init() {

@@ -10,56 +10,108 @@ import MDSKit
 
 struct SettingView: View {
     @EnvironmentObject var viewModel: SettingViewModel
+    @EnvironmentObject var authSession: AuthSession
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) var scenePhase
+    
+    @State private var showLogoutAlert = false
+    @State private var showDeleteAlert = false
+    
     var body: some View {
         NavigationStack(path: $viewModel.navigationPath) {
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack {
-                    CustomNavigationBar(
-                        title: SettingsSettingViewText.navigationTitle,
-                        showBackButton: true,
-                        showSkipButton: false,
-                        backButtonAction: {
-                            dismiss()
-                        }
-                    )
-                    .padding(.top, 25)
-                    
-                    UserInfoCard()
-                    
-                    GeneralSettingsSection()
-                    
-                    AdditionalSettingsSection()
-                    
-                    AccountSettingsSection()
-                    
-                    Spacer()
-                    
-                }
-                .navigationDestination(for: SettingNavigationDestination.self) { destination in
-                    switch destination {
-                    case .Tag:
-                        TagEditView()
-                            .navigationBarBackButtonHidden()
-                    case .TagDetail(let tag, let isNew):
-                        TagEditDetailView(tag: tag, isNew: isNew)
-                            .environmentObject(viewModel)
-                            .navigationBarBackButtonHidden()
-                    case .Time:
-                        TimeView()
-                            .environmentObject(viewModel)
-                            .navigationBarBackButtonHidden()
-                    case .Integrations:
-                        IntegrationsView()
-                            .environmentObject(viewModel)
-                            .navigationBarBackButtonHidden()
-                    case .Terms:
-                        CalendarConnectView()
-                            .environmentObject(viewModel)
-                            .navigationBarBackButtonHidden()
-                    case .Feedback:
-                        EmptyView()
+            ZStack {
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack {
+                        CustomNavigationBar(
+                            title: SettingsSettingViewText.navigationTitle,
+                            showBackButton: true,
+                            showSkipButton: false,
+                            backButtonAction: { dismiss() }
+                        )
+                        .padding(.top, 25)
+                        
+                        UserInfoCard()
+                        
+                        GeneralSettingsSection()
+                        
+                        AdditionalSettingsSection()
+                        
+                        AccountSettingsSection(
+                            onTapLogout: { showLogoutAlert = true },
+                            onTapDelete: { showDeleteAlert = true }
+                        )
+                        
+                        Spacer()
                     }
+                    .background(Color.black)
+                    .navigationDestination(for: SettingNavigationDestination.self) { destination in
+                        switch destination {
+                        case .Tag:
+                            TagEditView()
+                                .navigationBarBackButtonHidden()
+                        case .TagDetail(let tag, let isNew):
+                            TagEditDetailView(tag: tag, isNew: isNew)
+                                .environmentObject(viewModel)
+                                .navigationBarBackButtonHidden()
+                        case .Time:
+                            TimeView()
+                                .environmentObject(viewModel)
+                                .navigationBarBackButtonHidden()
+                        case .Terms:
+                            EmptyView()
+                        case .Feedback:
+                            EmptyView()
+                        }
+                    }
+                }
+                
+                if showLogoutAlert || showDeleteAlert {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .transition(.opacity)
+                        .onTapGesture { // 바깥 탭하면 닫기
+                            showLogoutAlert = false
+                            showDeleteAlert = false
+                        }
+                }
+                
+                if showLogoutAlert {
+                    CustomAlertView(
+                        title: "Do you really want to logout?",
+                        message: nil,
+                        cancelTitle: "Cancel",
+                        confirmTitle: "Logout",
+                        confirmAction: {
+                            authSession.logout()
+                            showLogoutAlert = false
+                        },
+                        cancelAction: { showLogoutAlert = false }
+                    )
+                    .padding(.horizontal, 32)
+                    .transition(.scale.combined(with: .opacity))
+                }
+                
+                if showDeleteAlert {
+                    CustomAlertView(
+                        title: "Would you like to delete account?",
+                        message: "Permanently delete the account and remove access from all workspaces.",
+                        cancelTitle: "Cancel",
+                        confirmTitle: "Delete",
+                        confirmAction: {
+                            Task { await authSession.withdraw() }
+                            showDeleteAlert = false
+                        },
+                        cancelAction: { showDeleteAlert = false }
+                    )
+                    .padding(.horizontal, 32)
+                    .transition(.scale.combined(with: .opacity))
+                }
+            }
+            .animation(.easeInOut(duration: 0.25), value: showLogoutAlert || showDeleteAlert)
+            .onAppear { viewModel.refreshNotificationStatus() }
+            .onChange(of: scenePhase) {
+                if scenePhase == .active {
+                    viewModel.refreshNotificationStatus()
                 }
             }
         }
@@ -102,11 +154,7 @@ struct SettingView: View {
                     
                     Spacer()
                     
-                    Button {
-                        
-                    } label: {
-                        Image(.btn_setting_on)
-                    }
+                    NotificationSettingsSection()
                 }
                 .padding(.horizontal, 26)
                 .padding(.top, 16)
@@ -121,8 +169,19 @@ struct SettingView: View {
                     action: { viewModel.navigateToNext(.Time) }
                 )
                 
-                
                 SettingsRowDivider()
+            }
+        }
+    }
+    
+    struct NotificationSettingsSection: View {
+        @EnvironmentObject var viewModel: SettingViewModel
+        
+        var body: some View {
+            Button {
+                viewModel.openAppSettings()
+            } label: {
+                Image(viewModel.isNotificationEnabled ? .btn_setting_on : .btn_setting_off)
             }
         }
     }
@@ -132,14 +191,6 @@ struct SettingView: View {
         
         var body: some View {
             VStack {
-                
-                SettingsRowButton(
-                    title: SettingsSettingViewText.integrations,
-                    action: { viewModel.navigateToNext(.Integrations) }
-                )
-                
-                SettingsRowDivider()
-                
                 SettingsRowButton(
                     title: SettingsSettingViewText.feedback,
                     action: { viewModel.navigateToNext(.Feedback) }
@@ -156,30 +207,24 @@ struct SettingView: View {
     }
     
     struct AccountSettingsSection: View {
-        @EnvironmentObject var authSession: AuthSession
+        let onTapLogout: () -> Void
+        let onTapDelete: () -> Void
         
         var body: some View {
             VStack {
                 HStack {
-                    Button {
-                        authSession.logout()
-                    } label: {
+                    Button(action: onTapLogout) {
                         Text(SettingsSettingViewText.logout)
                             .applyFont(.body_r_14)
                             .foregroundColor(Color.mementoRed)
                     }
-                    
                     Spacer()
                 }
                 .padding(.top, 15)
                 .padding(.horizontal, 26)
                 
                 HStack {
-                    Button {
-                        Task {
-                            await authSession.withdraw()
-                        }
-                    } label: {
+                    Button(action: onTapDelete) {
                         Text(SettingsSettingViewText.deleteAccount)
                             .applyFont(.body_r_14)
                             .foregroundColor(Color.mementoRed)

@@ -4,13 +4,14 @@
 //
 //  Created by 정정욱 on 1/23/25.
 //
-
 import Foundation
 import Moya
 
 enum UserInfoTargetType {
     case updateUserInfo(request: UserInfoRequest)
     case getUserUptime
+    case updateUserUptime(request: UserUptimeRequest)
+    case updateUserTimezone(request: UserTimezoneRequest)
 }
 
 extension UserInfoTargetType: BaseTargetType {
@@ -31,18 +32,29 @@ extension UserInfoTargetType: BaseTargetType {
         switch self {
         case .updateUserInfo:
             return "\(utilPath.rawValue)/personal-info"
-        case .getUserUptime:
+        case .getUserUptime, .updateUserUptime:
             return "\(utilPath.rawValue)/personal-info/uptime"
+        case .updateUserTimezone:
+            return "\(utilPath.rawValue)/personal-info/timezone"
         }
     }
     
     var method: Moya.Method {
-        return .patch
+        switch self {
+        case .getUserUptime:
+            return .get
+        default:
+            return .patch
+        }
     }
     
     var requestBodyParameter: Codable? {
         switch self {
         case .updateUserInfo(let request):
+            return request
+        case .updateUserUptime(let request):
+            return request
+        case .updateUserTimezone(let request):
             return request
         case .getUserUptime:
             return nil
