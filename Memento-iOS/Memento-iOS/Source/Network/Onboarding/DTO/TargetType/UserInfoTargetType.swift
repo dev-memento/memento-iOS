@@ -32,9 +32,7 @@ extension UserInfoTargetType: BaseTargetType {
         switch self {
         case .updateUserInfo:
             return "\(utilPath.rawValue)/personal-info"
-        case .getUserUptime:
-            return "\(utilPath.rawValue)/personal-info/uptime"
-        case .updateUserUptime:
+        case .getUserUptime, .updateUserUptime:
             return "\(utilPath.rawValue)/personal-info/uptime"
         case .updateUserTimezone:
             return "\(utilPath.rawValue)/personal-info/timezone"

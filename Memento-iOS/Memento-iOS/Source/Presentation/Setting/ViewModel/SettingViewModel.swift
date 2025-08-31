@@ -84,7 +84,7 @@ extension SettingViewModel {
         userInfoUpdateAPIService.updateUserUptime(request: request) { result in
             switch result {
             case .success:
-                print("✅ Uptime 업데이트 성공")
+                print("Uptime 업데이트 성공")
             default:
                 print("Uptime 업데이트 실패")
             }
@@ -112,23 +112,3 @@ extension SettingViewModel {
         navigationPath.removeAll()
     }
 }
-
-extension String {
-    func toHourMinuteDate() -> Date? {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        formatter.timeZone = TimeZone.current
-        return formatter.date(from: self)
-    }
-}
-
-extension Date {
-    func formattedHourMinute() -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        formatter.timeZone = TimeZone.current
-        return formatter.string(from: self)
-    }
-}
-
-
