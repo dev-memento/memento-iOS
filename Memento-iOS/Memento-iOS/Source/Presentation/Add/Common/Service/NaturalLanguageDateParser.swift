@@ -22,6 +22,9 @@ final class NaturalLanguageDateParser {
     private let timeRangeRegex = try! NSRegularExpression(
         pattern: "(오전|오후)?\\s?(\\d{1,2})시부터\\s?(오전|오후)?\\s?(\\d{1,2})시까지"
     )
+    private let singleTimeRegex = try! NSRegularExpression(
+        pattern: "(오전|오후)?\\s?(\\d{1,2})시"
+    )
     private let dateRangeRegex = try! NSRegularExpression(
         pattern: "(?:([\\s\\S]+?)부터)?\\s*([\\s\\S]+?)까지"
     )
@@ -41,7 +44,16 @@ final class NaturalLanguageDateParser {
         var startDate: Date?
         var endDate: Date?
         
-        // 1. 시간 범위 처리 (오후 3시부터 오후 5시까지)
+        // 1. 단일 날짜 처리
+        if let match = firstMatch(for: korDateRegex, in: text) {
+            let expr = match.value.trimmingCharacters(in: .whitespaces)
+            let parsed = parseDateOnly(expr, now: now)
+            if startDate == nil { startDate = parsed }
+            if endDate == nil { endDate = parsed }
+            text = text.replacingOccurrences(of: match.value, with: "")
+        }
+        
+        // 2. 시간 범위 처리 (오후 3시부터 오후 5시까지)
         if parseTime, let match = firstMatch(for: timeRangeRegex, in: text) {
             let sm = match[1], sh = match[2], em = match[3], eh = match[4]
             let startHour = adjustTo24Hour(hour: Int(sh) ?? 0, meridiem: sm)
@@ -55,17 +67,23 @@ final class NaturalLanguageDateParser {
             text = text.replacingOccurrences(of: match.value, with: "")
         }
         
-        // 2. 날짜 범위 처리 (오늘부터 내일까지 / 5일부터 8일까지 / 내일까지)
-        if let match = firstMatch(for: dateRangeRegex, in: text) {
-            let fromExpr = match[1].trimmingCharacters(in: .whitespaces)
-            let toExpr = match[2].trimmingCharacters(in: .whitespaces)
+        // 3. 단일 시간 범위 처리
+        if parseTime, let match = firstMatch(for: singleTimeRegex, in: text) {
+            let meridiem = match[1]
+            let hour = Int(match[2]) ?? 0
+            let hour24 = adjustTo24Hour(hour: hour, meridiem: meridiem)
             
-            startDate = fromExpr.isEmpty ? now.startOfDay : parseDateOnly(fromExpr, now: now)
-            endDate = parseDateOnly(toExpr, now: now)
+            let baseDate = startDate ?? now
+            let calendar = Calendar.current
+            startDate = calendar.date(bySettingHour: hour24, minute: 0, second: 0, of: baseDate)
+            if let start = startDate {
+                endDate = calendar.date(byAdding: .hour, value: 2, to: start)
+            }
+            
             text = text.replacingOccurrences(of: match.value, with: "")
         }
         
-        // 3. 한국어 요일 처리 (이번주 금요일 / 다음주 토요일)
+        // 4. 한국어 요일 처리 (이번주 금요일 / 다음주 토요일)
         if startDate == nil, let match = firstMatch(for: korWeekdayRegex, in: text) {
             let weekCtx = match[1]
             let dayKor = match[2]
@@ -81,15 +99,6 @@ final class NaturalLanguageDateParser {
                 startDate = targetDate
                 endDate = targetDate
             }
-            text = text.replacingOccurrences(of: match.value, with: "")
-        }
-        
-        // 4. 단일 날짜 처리 (parseDateOnly 활용)
-        if let match = firstMatch(for: korDateRegex, in: text) {
-            let expr = match.value.trimmingCharacters(in: .whitespaces)
-            let parsed = parseDateOnly(expr, now: now)
-            if startDate == nil { startDate = parsed }
-            if endDate == nil { endDate = parsed }
             text = text.replacingOccurrences(of: match.value, with: "")
         }
         
