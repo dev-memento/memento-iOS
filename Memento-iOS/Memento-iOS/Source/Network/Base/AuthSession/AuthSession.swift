@@ -65,6 +65,7 @@ final class AuthSession: ObservableObject {
     // MARK: - 자동 로그인
     
     func autoLoginOnLaunch() {
+
         // 1. AccessToken이 유효 → 바로 로그인 유지
         if let access = try? TokenKeychainManager.shared.getAccessToken(),
            !access.isEmpty,

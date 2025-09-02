@@ -64,7 +64,6 @@ extension AuthSession {
         do {
             // Firebase 로그인 (세션 연결)
             let result = try await Auth.auth().signIn(with: firebaseCredential)
-            isLoggedIn = true
             
             // 서버에도 로그인 요청
             await requestLogin(provider: "APPLE", idToken: idTokenString)

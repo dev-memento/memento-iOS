@@ -55,14 +55,7 @@ private struct AppStartButton: View {
             Button {
                 // 1. 데이터 전송
                 viewModel.submitOnboardingData()
-                
-                // 2. 전송 성공 시 → 세션 갱신
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    withAnimation(.easeInOut) {
-                        authSession.shouldStartOnboarding = false
-                        authSession.isLoggedIn = true
-                    }
-                }
+            
             } label: {
                 Text(OnboardingStartMementoViewText.startMementoButton)
                     .applyFont(.body_b_16)
