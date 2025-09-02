@@ -199,16 +199,26 @@ struct SettingView: View {
         
         var body: some View {
             VStack {
-                SettingsRowButton(
-                    title: SettingsSettingViewText.feedback,
-                    action: { viewModel.navigateToNext(.Feedback) }
-                )
-                
-                SettingsRowButton(
-                    title: SettingsSettingViewText.terms,
-                    action: { viewModel.navigateToNext(.Terms) }
-                )
-                
+                HStack {
+                    Link(SettingsSettingViewText.feedback, destination: URL(string: "https://memento.featurebase.app/en")!)
+                        .applyFont(.body_r_14)
+                        .foregroundColor(Color.gray05)
+                    
+                    Spacer()
+                }
+                .padding(.top, 15)
+                .padding(.horizontal, 26)
+           
+                HStack {
+                    Link(SettingsSettingViewText.terms, destination: URL(string: "https://memento.today/terms")!)
+                        .applyFont(.body_r_14)
+                        .foregroundColor(Color.gray05)
+                    
+                    Spacer()
+                }
+                .padding(.top, 15)
+                .padding(.horizontal, 26)
+
                 SettingsRowDivider()
             }
         }
