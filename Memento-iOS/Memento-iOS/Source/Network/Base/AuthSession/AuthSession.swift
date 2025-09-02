@@ -34,6 +34,9 @@ final class AuthSession: ObservableObject {
         keychain.hasValidToken()
     }
     
+    /// Apple 로그인 공격 방지용
+    var currentNonce: String?
+    
     private init() {
         isLoggedIn = keychain.hasValidToken()
     }
