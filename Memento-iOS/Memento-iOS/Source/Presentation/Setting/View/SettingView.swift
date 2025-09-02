@@ -8,6 +8,8 @@
 import SwiftUI
 import MDSKit
 
+import FirebaseAuth
+
 struct SettingView: View {
     @EnvironmentObject var viewModel: SettingViewModel
     @EnvironmentObject var authSession: AuthSession
@@ -17,6 +19,10 @@ struct SettingView: View {
     @State private var showLogoutAlert = false
     @State private var showDeleteAlert = false
     
+    private var userEmail: String {
+        Auth.auth().currentUser?.email ?? "이메일 없음"
+    }
+
     var body: some View {
         NavigationStack(path: $viewModel.navigationPath) {
             ZStack {
@@ -30,7 +36,7 @@ struct SettingView: View {
                         )
                         .padding(.top, 25)
                         
-                        UserInfoCard()
+                        UserInfoCard(userEmail: userEmail)
                         
                         GeneralSettingsSection()
                         
@@ -118,6 +124,8 @@ struct SettingView: View {
     }
     
     struct UserInfoCard: View {
+        var userEmail: String
+        
         var body: some View {
             HStack(spacing: 15) {
                 Image(.img_logo_memento_white)
@@ -125,7 +133,7 @@ struct SettingView: View {
                     .scaledToFit()
                     .frame(width: 46, height: 44)
                 
-                Text(verbatim: "memento@gmail.com")
+                Text(verbatim: userEmail)
                     .applyFont(.body_b_14)
                     .foregroundColor(Color.gray04)
                 
