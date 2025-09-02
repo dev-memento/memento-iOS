@@ -57,7 +57,12 @@ enum StringLiteral {
             static let calendarConnectHeaderTitle = "기존의 사용하던 캘린더로부터 일정을 불러옵니다."
             static let connectGoogleCalendar = "Connect Google Calendar"
             static let connectAppleCalendar = "Connect Apple Calendar"
-            static let startMementoButton = "Start MEMENTO"
+            static let startMementoButton = "START MEMENTO"
+        }
+        
+        enum StartMementoView {
+            static let startMementoTitle = "MEMENTO와 함께 당신의 삶을 동기화하세요"
+            static let startMementoButton = "START MEMENTO"
         }
 
         static let nextButton = "Next"
@@ -146,6 +151,7 @@ typealias OnboardingSleepCycleText = StringLiteral.Onboarding.SleepCycleSettingV
 typealias OnboardingWorkSelectionText = StringLiteral.Onboarding.WorkSelectionView
 typealias OnboardingWorkPreferenceText = StringLiteral.Onboarding.WorkPreferenceView
 typealias OnboardingCalendarConnectText = StringLiteral.Onboarding.CalendarConnectView
+typealias OnboardingStartMementoViewText = StringLiteral.Onboarding.StartMementoView
 typealias OnboardingPublicText = StringLiteral.Onboarding
 typealias SettingsSettingViewText = StringLiteral.Setting.SettingView
 typealias SettingsTimeViewText = StringLiteral.Setting.TimeView

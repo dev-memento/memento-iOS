@@ -25,7 +25,7 @@ struct SleepCycleSettingView: View {
                         viewModel.navigateBack()
                     },
                     skipButtonAction: {
-                        viewModel.navigateToNext(.calendarConnect)
+                        viewModel.navigateToNext(.startMemento)
                     }
                 )
                 .padding([.trailing, .top], 16)
