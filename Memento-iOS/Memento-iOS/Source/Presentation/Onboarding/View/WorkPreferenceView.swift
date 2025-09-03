@@ -23,7 +23,7 @@ struct WorkPreferenceView: View {
                         viewModel.navigateBack()
                     },
                     skipButtonAction: {
-                        viewModel.navigateToNext(.calendarConnect)
+                        viewModel.navigateToNext(.startMemento)
                     }
                 )
                 .padding([.trailing, .top], 16)
@@ -126,7 +126,7 @@ private struct NextButton: View {
     var body: some View {
         Button {
             if viewModel.isNextButtonEnabledForWorkPreference {
-                viewModel.navigateToNext(.calendarConnect)
+                viewModel.navigateToNext(.startMemento)
             }
         } label: {
             Text(OnboardingPublicText.nextButton)

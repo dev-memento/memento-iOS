@@ -93,6 +93,7 @@
 				Source/Presentation/Main/View/Common/AlertOverlay.swift,
 				Source/Presentation/Main/View/Common/DropViewDelegate.swift,
 				Source/Presentation/Main/View/ToDoList/ToDoListWeeklyCalendarView.swift,
+				Source/Presentation/Onboarding/View/StartMementoView.swift,
 				Source/Presentation/Onboarding/ViewModel/OnboardingViewModel.swift,
 				Source/Utils/DynamicPresentationDetent.swift,
 			);

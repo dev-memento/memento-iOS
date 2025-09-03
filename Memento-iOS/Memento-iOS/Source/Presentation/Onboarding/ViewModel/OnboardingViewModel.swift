@@ -17,7 +17,7 @@ enum OnboardingNavigationDestination: String, Hashable {
     case sleepCycleSetting = "SleepCycleSettingView"
     case workSelection = "WorkSelectionView"
     case workPreference = "WorkPreferenceView"
-    case calendarConnect = "CalendarConnectView"
+    case startMemento = "StartMementoView"
 }
 
 // MARK: - Data Models

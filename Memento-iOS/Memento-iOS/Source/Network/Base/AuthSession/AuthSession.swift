@@ -34,6 +34,9 @@ final class AuthSession: ObservableObject {
         keychain.hasValidToken()
     }
     
+    /// Apple 로그인 공격 방지용
+    var currentNonce: String?
+    
     private init() {
         isLoggedIn = keychain.hasValidToken()
     }
@@ -62,6 +65,7 @@ final class AuthSession: ObservableObject {
     // MARK: - 자동 로그인
     
     func autoLoginOnLaunch() {
+
         // 1. AccessToken이 유효 → 바로 로그인 유지
         if let access = try? TokenKeychainManager.shared.getAccessToken(),
            !access.isEmpty,
@@ -100,6 +104,7 @@ final class AuthSession: ObservableObject {
     }
     
     // MARK: - 로그아웃
+    
     func logout() {
         print("로그아웃 실행: 세션/토큰 정리")
         clear()
@@ -108,6 +113,7 @@ final class AuthSession: ObservableObject {
     }
     
     // MARK: - 회원 탈퇴
+    
     func withdraw() async {
         guard let _ = try? keychain.getAccessToken() else {
             print("⚠️ AccessToken 없음 → 탈퇴 API 호출 생략")

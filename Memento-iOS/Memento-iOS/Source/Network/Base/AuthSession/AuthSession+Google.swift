@@ -16,6 +16,12 @@ import FirebaseMessaging
 
 @MainActor
 extension AuthSession {
+    
+    // MARK: Google 로그인 요청을 시작하는 메서드.
+    /// - 이미 로그인된 세션이 있다면 `restorePreviousSignIn`으로 복구.
+    /// - 없으면 새롭게 Google 로그인 플로우 시작.
+    /// - 로그인 완료 시 `authenticateGoogleUser` 호출.
+
     func signInWithGoogle() {
         Task { @MainActor in
             guard !isLoading else { return }
@@ -38,39 +44,55 @@ extension AuthSession {
             
             GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: clientID)
             
-            guard let rootVC = UIApplication.shared.keyWindow?.rootViewController else {
+            guard
+                let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                let rootVC = windowScene.windows.first?.rootViewController
+            else {
                 handleError(nil, defaultMessage: "루트 뷰 컨트롤러를 찾을 수 없습니다.")
                 return
             }
             
-            GIDSignIn.sharedInstance.signIn(withPresenting: rootVC) { [weak self] result, error in
-                Task { @MainActor in
-                    guard let self else { return }
-                    if let result { await self.authenticateGoogleUser(for: result.user, with: error) }
-                    else { self.handleError(error, defaultMessage: "Google 로그인 실패") }
-                }
+            do {
+                let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: rootVC)
+                await authenticateGoogleUser(for: result.user, with: nil)
+            } catch {
+                handleError(error, defaultMessage: "Google 로그인 실패")
             }
         }
     }
     
-    func signOut() {
-        GIDSignIn.sharedInstance.signOut()
-        do {
-            try Auth.auth().signOut()
-            print("Google 로그아웃 성공")
-        } catch {
-            print("Google 로그아웃 실패: \(error.localizedDescription)")
-        }
-    }
-    
+    // MARK: Google 로그인 완료 후 사용자 인증 정보를 처리하는 메서드.
+    /// - idToken, accessToken 추출.
+    /// - Firebase Auth Credential 생성.
+    /// - Firebase 세션 연결 후 서버 로그인 요청 실행.
     fileprivate func authenticateGoogleUser(for user: GIDGoogleUser?, with error: Error?) async {
         defer { isLoading = false }
-        if let error { handleError(error, defaultMessage: "Google 로그인 실패"); return }
         
-        guard let idToken = user?.idToken?.tokenString else {
+        if let error {
+            handleError(error, defaultMessage: "Google 로그인 실패")
+            return
+        }
+        
+        guard
+            let idToken = user?.idToken?.tokenString,
+            let accessToken = user?.accessToken.tokenString
+        else {
             handleError(nil, defaultMessage: "Google 사용자 토큰 누락")
             return
         }
-        await requestLogin(provider: "GOOGLE", idToken: idToken)
+        
+        let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: accessToken)
+        
+        do {
+            
+            // Firebase 로그인 (세션 연결)
+            let result = try await Auth.auth().signIn(with: credential)
+            
+            // 서버에도 로그인 요청
+            await requestLogin(provider: "GOOGLE", idToken: idToken)
+            
+        } catch {
+            handleError(error, defaultMessage: "Firebase 세션 연결 실패")
+        }
     }
 }
