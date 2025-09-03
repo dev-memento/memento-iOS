@@ -263,8 +263,13 @@ extension WeeklyCalendarViewModel {
     }
     
     func getSchedulesTotal() {
+        let startTime = Date()
+        
         scheduleService.getSchedulesTotal { [weak self] result in
             guard let self = self else { return }
+            
+            // 호출 카운트 + 시간 측정
+            APICallLogger.shared.logScheduleCall(start: startTime)
             
             if case let .success(response) = result,
                let scheduleResponse = response?.data.scheduleWithOrderInfos, !scheduleResponse.isEmpty {
@@ -298,8 +303,13 @@ extension WeeklyCalendarViewModel {
     }
     
     func getToDoListTotal() {
+        let startTime = Date()
+        
         toDoService.getToDoListTotal { [weak self] result in
             guard let self = self else { return }
+            
+            // 호출 카운트 + 시간 측정
+            APICallLogger.shared.logToDoCall(start: startTime)
             
             if case let .success(response) = result,
                let toDoResponse = response?.data.toDoGetResponses, !toDoResponse.isEmpty {

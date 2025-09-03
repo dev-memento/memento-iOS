@@ -46,6 +46,7 @@
 				Source/Component/CustomTextEditor.swift,
 				Source/Component/NeonAnimationView.swift,
 				Source/Component/RefreshAnimationView.swift,
+				Source/Component/Test/APICallCounter.swift,
 				Source/Const/PresentationFraction.swift,
 				Source/Const/TimeInterval.swift,
 				Source/Data/MCalendarEventList.swift,
