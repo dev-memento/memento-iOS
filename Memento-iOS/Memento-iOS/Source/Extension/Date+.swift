@@ -16,41 +16,27 @@ extension Date {
         return Calendar.current.date(byAdding: DateComponents(day: 1, second: -1), to: startOfDay)!
     }
     
-    /// 특정 포맷의 날짜 문자열 반환
-    func formattedDate(with format: String, timeZone: TimeZone = .current) -> String {
+    /// Date → String 변환
+    func stringFromDate(with format: String, timeZone: TimeZone = .current) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = format
         dateFormatter.timeZone = timeZone
         dateFormatter.locale = Locale(identifier: "en_US")
+        
         return dateFormatter.string(from: self)
     }
     
-    /// ISO 8601 포맷 반환
-    func makeCurrentDate() -> String {
-        return self.formattedDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX", timeZone: TimeZone(abbreviation: "UTC")!)
-    }
-    
-    /// 문자열 날짜를 특정 포맷 날짜로 반환
-    static func dateFromString(_ dateString: String, format: String = "yyyy-MM-dd HH:mm:ss.SSSSSS") -> Date? {
+    /// String → Date 변환
+    static func dateFromString(_ dateString: String, format: String) -> Date? {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = format
         dateFormatter.timeZone = TimeZone.current
         dateFormatter.locale = Locale(identifier: "en_US")
+        
         return dateFormatter.date(from: dateString)
     }
     
-    /// Start Date와 End Date의 소요 시간 (Duration Time)을 계산해주는 메소드
-    static func calculateDuration(startDate: String, endDate: String, format: String = "yyyy-MM-dd HH:mm:ss.SSSSSS") -> Int {
-        guard let start = Date.dateFromString(startDate, format: format),
-              let end = Date.dateFromString(endDate, format: format) else {
-            // 변환 실패 시 기본값 반환
-            return 0
-        }
-        
-        // 초 단위 시간 차이 반환
-        return Int(end.timeIntervalSince(start))
-    }
-    
+    /// ToDoListView 에서 month를 영문 약어로 변환
     static func makeMonthDate(month: String) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "M"
@@ -74,7 +60,7 @@ extension Date {
         return calendar.date(byAdding: .minute, value: roundedMinutes, to: baseHour) ?? self
     }
     
-    /// ToDoListCell 에서 endDate가 오늘 날짜면 "Today"를 반환하고,
+    /// ToDoListCell, ToDoAlertView 에서 endDate가 오늘 날짜면 "Today"를 반환하고,
     /// 오늘이 아니면 "MMM dd, YYYY" 형식의 문자열로 변환
     static func displayEndDate(_ endDate: String) -> String {
         let formatter = DateFormatter()
@@ -84,7 +70,7 @@ extension Date {
             if Calendar.current.isDate(date, inSameDayAs: Date()) {
                 return "Today"
             }
-            return date.formattedDate(with: "MMM dd, YYYY")
+            return date.stringFromDate(with: "MMM dd, YYYY")
         }
         
         return endDate
@@ -99,14 +85,5 @@ extension Date {
             return false
         }
         return Date() > date
-    }
-    
-    /// 셋팅뷰에서 wakeUpTime / sleepTime 등을 표시할 때 사용
-    /// 현재 Date 값을 "HH:mm" 형식(24시간제 시:분) 문자열로 반환
-    func formattedHourMinute() -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        formatter.timeZone = TimeZone.current
-        return formatter.string(from: self)
     }
 }
