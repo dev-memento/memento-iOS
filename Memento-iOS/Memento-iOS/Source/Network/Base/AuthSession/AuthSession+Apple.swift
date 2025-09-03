@@ -18,6 +18,10 @@ import CryptoKit
 extension AuthSession {
     
     // MARK: Apple 로그인 요청 준비
+    /// Apple 로그인 요청을 초기화할 때 호출되는 메서드.
+    /// - nonce(랜덤 문자열)를 생성해 요청에 심어 넣음 → 보안 공격(리플레이 공격) 방지.
+    /// - 로그인 시 사용자 정보(fullName, email) 스코프 요청.
+
     func prepareAppleSignIn(_ request: ASAuthorizationAppleIDRequest) {
         let nonce = randomNonceString()
         currentNonce = nonce
@@ -27,6 +31,10 @@ extension AuthSession {
     }
     
     // MARK: Apple 로그인 완료 핸들러
+    /// Apple 로그인 UI 완료 후 결과(Result)를 받아 처리하는 메서드.
+    /// - 성공 시: `processAppleAuthorization` 호출.
+    /// - 실패 시: 에러 메시지 출력.
+    
     func handleAppleSignInCompletion(_ result: Result<ASAuthorization, Error>) {
         Task { @MainActor in
             guard !isLoading else { return }
@@ -43,6 +51,11 @@ extension AuthSession {
     }
     
     // MARK: Firebase 세션 연결
+    /// Apple 로그인 성공 시 내려온 credential에서 idToken 추출 후 Firebase Auth와 연결.
+    /// - Apple ID Credential에서 identityToken 추출.
+    /// - Firebase OAuthCredential 생성 후 `Auth.auth().signIn` 실행.
+    /// - Firebase 세션 연결 성공 시, 서버 API 로그인까지 요청.
+    
     fileprivate func processAppleAuthorization(_ authorization: ASAuthorization) async {
         guard
             let cred = authorization.credential as? ASAuthorizationAppleIDCredential,

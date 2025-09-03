@@ -104,6 +104,7 @@ final class AuthSession: ObservableObject {
     }
     
     // MARK: - 로그아웃
+    
     func logout() {
         print("로그아웃 실행: 세션/토큰 정리")
         clear()
@@ -112,6 +113,7 @@ final class AuthSession: ObservableObject {
     }
     
     // MARK: - 회원 탈퇴
+    
     func withdraw() async {
         guard let _ = try? keychain.getAccessToken() else {
             print("⚠️ AccessToken 없음 → 탈퇴 API 호출 생략")

@@ -16,6 +16,12 @@ import FirebaseMessaging
 
 @MainActor
 extension AuthSession {
+    
+    // MARK: Google 로그인 요청을 시작하는 메서드.
+    /// - 이미 로그인된 세션이 있다면 `restorePreviousSignIn`으로 복구.
+    /// - 없으면 새롭게 Google 로그인 플로우 시작.
+    /// - 로그인 완료 시 `authenticateGoogleUser` 호출.
+
     func signInWithGoogle() {
         Task { @MainActor in
             guard !isLoading else { return }
@@ -55,6 +61,10 @@ extension AuthSession {
         }
     }
     
+    // MARK: Google 로그인 완료 후 사용자 인증 정보를 처리하는 메서드.
+    /// - idToken, accessToken 추출.
+    /// - Firebase Auth Credential 생성.
+    /// - Firebase 세션 연결 후 서버 로그인 요청 실행.
     fileprivate func authenticateGoogleUser(for user: GIDGoogleUser?, with error: Error?) async {
         defer { isLoading = false }
         
