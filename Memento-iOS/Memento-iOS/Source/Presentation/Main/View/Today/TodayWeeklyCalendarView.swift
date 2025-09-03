@@ -86,19 +86,22 @@ struct TodayWeeklyCalendarView: View {
                     updateScrollTarget()
                 }
                 .onAppear {
-                    viewModel.getAllEvents()
+                    if viewModel.isFirstFetch {
+                        viewModel.getAllEvents(useCache: false) // 최초 → 캐시 사용 x
+                        viewModel.isFirstFetch = false
+                    } else {
+                        viewModel.getAllEvents(useCache: true) // 이후 → 캐시 허용
+                    }
                     viewModel.getSchedulesAllDay()
-                    
                     updateScrollTarget()
-
                     viewModel.isInitialScrollDone = true
                 }
                 .onReceive(NotificationCenter.default.publisher(for: Notification.Name("postSchedule"))) { _ in
-                    viewModel.getSchedulesTotal()
+                    viewModel.getSchedulesTotal(useCache: false) // 새로 만들면 캐시 무시
                     viewModel.getSchedulesAllDay()
                 }
                 .onReceive(NotificationCenter.default.publisher(for: Notification.Name("postToDo"))) { _ in
-                    viewModel.getToDoListTotal()
+                    viewModel.getToDoListTotal(useCache: false) // 새로 만들면 캐시 무시
                 }
                 .background(Color.grayBlack)
                 

@@ -58,6 +58,15 @@ struct ToDoListWeeklyCalendarView: View {
                     DispatchQueue.main.async {
                         scrollTarget = viewModel.selectedDate
                     }
+                    
+                    viewModel.getToDoListTotal(
+                        useCache: true,
+                        isInitial: viewModel.isFirstFetch
+                    )
+                    viewModel.getSchedulesTotal(
+                        useCache: true,
+                        isInitial: viewModel.isFirstFetch
+                    )
                 }
                 .background(Color.grayBlack)
                 
