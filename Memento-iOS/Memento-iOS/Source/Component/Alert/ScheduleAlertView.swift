@@ -84,23 +84,23 @@ struct ScheduleAlertView: View {
             .padding(.top, 16)
             .padding(.leading, 46)
             
-            HStack(spacing: 47) {
-                Text(StringLiteral.Alert.from)
-                    .applyFont(.detail_r_12)
-                    .foregroundColor(.gray05)
-                
-                HStack(spacing: 3) {
-                    Image(.img_notion)
-
-                    Text(scheduleType)
-                        .applyFont(.detail_r_12)
-                        .foregroundColor(.gray05)
-                }
-                
-                Spacer()
-            }
-            .padding(.top, 16)
-            .padding(.leading, 46)
+//            HStack(spacing: 47) {
+//                Text(StringLiteral.Alert.from)
+//                    .applyFont(.detail_r_12)
+//                    .foregroundColor(.gray05)
+//                
+//                HStack(spacing: 3) {
+//                    Image(.img_notion)
+//
+//                    Text(scheduleType)
+//                        .applyFont(.detail_r_12)
+//                        .foregroundColor(.gray05)
+//                }
+//                
+//                Spacer()
+//            }
+//            .padding(.top, 16)
+//            .padding(.leading, 46)
             
             Spacer()
             
