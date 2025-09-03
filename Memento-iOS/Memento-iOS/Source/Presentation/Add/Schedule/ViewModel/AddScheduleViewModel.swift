@@ -18,9 +18,22 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     
     // MARK: - User Input
     
-    @Published var isNaturalLanguageEnabled: Bool = false
-    @Published var description: String = ""
-    
+    @Published var isNaturalLanguageEnabled: Bool = false {
+        didSet {
+            if isNaturalLanguageEnabled {
+                parseNaturalLanguage()
+            }
+        }
+    }
+
+    @Published var description: String = "" {
+        didSet {
+            if isNaturalLanguageEnabled {
+                debouncedParse()
+            }
+        }
+    }
+
     @Published var startDate: Date = Date().startOfDay {
         didSet { autoUpdateAllDayStatus() }
     }
@@ -64,8 +77,40 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     
     var tagId: Int { selectedTag.tagId }
     
+    private var parseWorkItem: DispatchWorkItem?
+    
     // MARK: - Date Time Helpers
     
+    private func debouncedParse() {
+        parseWorkItem?.cancel()
+        
+        let workItem = DispatchWorkItem { [weak self] in
+            self?.parseNaturalLanguage()
+        }
+        parseWorkItem = workItem
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: workItem)
+    }
+
+    func parseNaturalLanguage() {
+        let result = NaturalLanguageDateParser.shared.parse(description, parseTime: true)
+        
+        if let s = result.startDate {
+            startDate = Calendar.current.startOfDay(for: s)
+            startTime = s
+        }
+        if let e = result.endDate {
+            endDate = Calendar.current.startOfDay(for: e) 
+            endTime = e
+        }
+        
+        if description != result.title {
+            DispatchQueue.main.async { [weak self] in
+                self?.description = result.title
+            }
+        }
+    }
+
     // 날짜랑 시간 결합
     func combineDateAndTime(date: Date, time: Date) -> Date {
         let calendar = Calendar.current
