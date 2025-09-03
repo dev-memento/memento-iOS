@@ -41,7 +41,7 @@ struct ScheduleAlertView: View {
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
                 
-                Text(startDate)
+                Text(Date.displayDate(startDate))
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
                 
@@ -55,7 +55,7 @@ struct ScheduleAlertView: View {
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
                 
-                Text(endDate)
+                Text(Date.displayDate(endDate))
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
                 
