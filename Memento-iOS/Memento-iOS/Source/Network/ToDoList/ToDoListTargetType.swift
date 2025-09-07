@@ -18,7 +18,7 @@ enum ToDoListTargetType {
     
     case deleteToDo(todoId: Int) // 투두 삭제
     
-    case updateToDo(todoId: Int) // 투두 수정
+    case updateToDo(todoId: Int, body: ToDoPostRequest) // 투두 수정
     case updateToDoCompletion(toDoId: Int) // 투두 완료 업데이트
 }
 
@@ -49,6 +49,8 @@ extension ToDoListTargetType: BaseTargetType {
         switch self {
         case .postToDo(let body):
             return body
+        case .updateToDo(_, let body):
+            return body
         default:
             return nil
         }
@@ -60,7 +62,7 @@ extension ToDoListTargetType: BaseTargetType {
             return "\(utilPath.rawValue)/\(toDoId)/completion"
         case .getToDoDetail(let toDoId),
                 .deleteToDo(let toDoId),
-                .updateToDo(let toDoId):
+                .updateToDo(let toDoId, _):
             return "\(utilPath.rawValue)/\(toDoId)"
         case .getToDoByDate:
             return "\(utilPath.rawValue)/date"

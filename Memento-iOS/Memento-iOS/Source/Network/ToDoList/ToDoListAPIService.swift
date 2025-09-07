@@ -153,7 +153,7 @@ final class ToDoListAPIService: BaseAPIService, ToDoListAPIServiceProtocol {
     
     // 투두 수정
     func updateToDo(toDoId: Int, body: ToDoPostRequest, completion: @escaping (NetworkResult<Void>) -> Void) {
-        provider.request(.updateToDo(todoId: toDoId)) { [weak self] result in
+        provider.request(.updateToDo(todoId: toDoId, body: body)) { [weak self] result in
             guard let self = self else { return }
             let networkResult: NetworkResult<Void>
             
