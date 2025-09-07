@@ -111,7 +111,6 @@ struct TabBarView: View {
             
             if isEditSheetPresented, let item = editItem {
                 EditToDoView(isPresented: $isEditSheetPresented, toDoItem: item)
-                    .zIndex(2)
             }
         }
     }

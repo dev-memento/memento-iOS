@@ -130,12 +130,9 @@ struct EditToDoView: View {
                     }
                     .padding(.top, 15)
                     .padding(.horizontal, 23)
-                    
-                    Spacer()
                 }
                 .frame(height: calculatedSheetHeight)
                 .background(Color.gray10)
-                .offset(y: translation)
                 .gesture(
                     DragGesture()
                         .updating($translation) { value, state, _ in
@@ -149,16 +146,17 @@ struct EditToDoView: View {
                             }
                         }
                 )
-                .onAppear { sheetHeight = calculatedSheetHeight }
+                
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .frame(maxWidth: .infinity, alignment: .bottom)
+            .onAppear { sheetHeight = calculatedSheetHeight }
             .background(Color.black.opacity(0.5)
                 .ignoresSafeArea()
                 .onTapGesture { isPresented = false })
             .transition(.move(edge: .bottom))
             .animation(.spring, value: isPresented)
         }
-        .ignoresSafeArea()
+        .ignoresSafeArea(.all, edges: .bottom)
     }
     
     private func scrollToBottom(proxy: ScrollViewProxy, animated: Bool = true) {
