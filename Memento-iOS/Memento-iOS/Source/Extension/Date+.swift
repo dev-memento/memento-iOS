@@ -68,19 +68,19 @@ extension Date {
 
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
         if let date = formatter.date(from: endDate) {
-            return date.stringFromDate(with: "MMM dd, yyyy  ha")
+            return date.stringFromDate(with: "MMM d, yyyy  ha")
         }
         
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
         if let date = formatter.date(from: endDate) {
-            return date.stringFromDate(with: "MMM dd, yyyy  ha")
+            return date.stringFromDate(with: "MMM d, yyyy  ha")
         }
 
         return endDate
     }
     
     /// ToDoListCell, ToDoAlertView 에서 endDate가 오늘 날짜면 "Today"를 반환하고,
-    /// 오늘이 아니면 "MMM dd, YYYY" 형식의 문자열로 변환
+    /// 오늘이 아니면 "MMM d, YYYY" 형식의 문자열로 변환
     static func displayEndDate(_ endDate: String) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
@@ -89,7 +89,23 @@ extension Date {
             if Calendar.current.isDate(date, inSameDayAs: Date()) {
                 return "Today"
             }
-            return date.stringFromDate(with: "MMM dd, YYYY")
+            return date.stringFromDate(with: "MMM d, YYYY")
+        }
+        
+        return endDate
+    }
+    
+    /// EditToDoView 에서 endDate가 오늘 날짜면 "Today"를 반환하고,
+    /// 오늘이 아니면 "MMM d" 형식의 문자열로 변환
+    static func displayEndDate2(_ endDate: String) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        
+        if let date = formatter.date(from: endDate) {
+            if Calendar.current.isDate(date, inSameDayAs: Date()) {
+                return "Today"
+            }
+            return date.stringFromDate(with: "MMM d")
         }
         
         return endDate
