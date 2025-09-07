@@ -8,6 +8,8 @@ struct TabBarView: View {
     @State private var previousTab: TabBarItem = .today
     @State private var segmentedViewHeight: CGFloat = .zero
     @GestureState private var translation: CGFloat = .zero
+    @State private var isEditSheetPresented: Bool = false
+    @State private var editItem: ToDoItem? = nil
     
     @StateObject var segmentedViewModel = SegmentedMenuViewModel()
     @StateObject var calendarViewModel = WeeklyCalendarViewModel(
@@ -58,15 +60,21 @@ struct TabBarView: View {
                         }
                         selectedTab = previousTab
                     }
-
+                
                 // ToDoList 탭
-                ToDoListWeeklyCalendarView(viewModel: calendarViewModel)
-                    .tabItem {
-                        selectedTab == .todo
-                        ? TabBarItem.todo.selectedItem
-                        : TabBarItem.todo.normalItem
+                ToDoListWeeklyCalendarView(
+                    viewModel: calendarViewModel,
+                    editAction: { item in
+                        editItem = item
+                        isEditSheetPresented = true
                     }
-                    .tag(TabBarItem.todo)
+                )
+                .tabItem {
+                    selectedTab == .todo
+                    ? TabBarItem.todo.selectedItem
+                    : TabBarItem.todo.normalItem
+                }
+                .tag(TabBarItem.todo)
             }
             
             if segmentedViewModel.isPresented {
@@ -99,6 +107,11 @@ struct TabBarView: View {
                     )
                     .transition(.move(edge: .bottom))
                     .animation(.spring, value: segmentedViewModel.isPresented)
+            }
+            
+            if isEditSheetPresented, let item = editItem {
+                EditToDoView(isPresented: $isEditSheetPresented, toDoItem: item)
+                    .zIndex(2)
             }
         }
     }
