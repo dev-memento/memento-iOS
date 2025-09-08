@@ -96,11 +96,8 @@ final class EditScheduleViewModel: ObservableObject {
     }
     
     private func normalizeDatesForAllDay() {
-        let startOfDay = Calendar.current.startOfDay(for: startDateTime)
-        let endOfDay = Calendar.current.startOfDay(for: endDateTime)
-        
-        startDate = startOfDay.stringFromDate(with: "yyyy-MM-dd'T'HH:mm:ss")
-        endDate = endOfDay.stringFromDate(with: "yyyy-MM-dd'T'HH:mm:ss")
+        startDate = startDateTime.startOfDay.stringFromDate(with: "yyyy-MM-dd'T'HH:mm:ss")
+        endDate = endDateTime.startOfDay.stringFromDate(with: "yyyy-MM-dd'T'HH:mm:ss")
     }
     
     func toggleAllDay() {
@@ -109,7 +106,7 @@ final class EditScheduleViewModel: ObservableObject {
     }
     
     func isOverOneDay() -> Bool {
-        endDateTime.timeIntervalSince(startDateTime) >= 24 * 60 * 60
+        endDateTime.timeIntervalSince(startDateTime) >= TimeInterval.oneDay
     }
     
     // MARK: - API
