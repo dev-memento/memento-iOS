@@ -127,7 +127,7 @@ struct TabBarView: View {
             }
             
             if isEditToDoSheetPresented, let item = editToDo {
-                EditToDoView(isPresented: $isEditToDoSheetPresented, toDoItem: item)
+                EditToDoView(isEditViewPresented: $isEditToDoSheetPresented, toDoItem: item)
             }
         }
     }

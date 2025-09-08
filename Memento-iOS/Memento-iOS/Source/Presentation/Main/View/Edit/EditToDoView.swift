@@ -12,7 +12,7 @@ import MDSKit
 struct EditToDoView: View {
     @StateObject private var viewModel: EditToDoViewModel
     
-    @Binding var isPresented: Bool
+    @Binding var isEditViewPresented: Bool
     
     @State private var isStartDatePickerPresented = false
     @State private var isDeadlinePickerPresented = false
@@ -24,8 +24,8 @@ struct EditToDoView: View {
     @State private var sheetHeight: CGFloat = .zero
     @State private var keyboardHeight: CGFloat = 0
     
-    init(isPresented: Binding<Bool>, toDoItem: ToDoItem) {
-        self._isPresented = isPresented
+    init(isEditViewPresented: Binding<Bool>, toDoItem: ToDoItem) {
+        self._isEditViewPresented = isEditViewPresented
         _viewModel = StateObject(wrappedValue: EditToDoViewModel(toDoItem: toDoItem))
     }
     
@@ -38,7 +38,7 @@ struct EditToDoView: View {
                 
                 VStack(spacing: 0) {
                     HStack {
-                        Button { isPresented = false } label: {
+                        Button { isEditViewPresented = false } label: {
                             Text("Cancel")
                                 .applyFont(.body_r_16)
                                 .foregroundStyle(Color.red)
@@ -50,7 +50,7 @@ struct EditToDoView: View {
                         
                         Button {
                             viewModel.updateToDo {
-                                isPresented = false
+                                isEditViewPresented = false
                             }
                         } label: {
                             Text("Done")
@@ -142,7 +142,7 @@ struct EditToDoView: View {
                         }
                         .onEnded { value in
                             if value.translation.height > calculatedSheetHeight / 3 {
-                                isPresented = false
+                                isEditViewPresented = false
                             }
                         }
                 )
@@ -151,9 +151,9 @@ struct EditToDoView: View {
             .onAppear { sheetHeight = calculatedSheetHeight }
             .background(Color.black.opacity(0.5)
                 .ignoresSafeArea()
-                .onTapGesture { isPresented = false })
+                .onTapGesture { isEditViewPresented = false })
             .transition(.move(edge: .bottom))
-            .animation(.spring, value: isPresented)
+            .animation(.spring, value: isEditViewPresented)
         }
         .ignoresSafeArea(.all, edges: .bottom)
     }
