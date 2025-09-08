@@ -23,15 +23,26 @@ final class EditScheduleViewModel: ObservableObject {
     
     @Published var description: String
     
-    @Published var startDate: String
-    @Published var endDate: String
+    @Published var startDate: String {
+        didSet { updateAllDayStatus() }
+    }
     
-    @Published var isAllDay: Bool = false
+    @Published var endDate: String {
+        didSet { updateAllDayStatus() }
+    }
+    
+    @Published var isAllDay: Bool {
+        didSet {
+            if isAllDay {
+                normalizeDatesForAllDay()
+            }
+        }
+    }
     
     @Published var tagName: String
     @Published var tagColorCode: String
     @Published var tagList: [Tag] = []
-
+    
     init(
         scheduleItem: ScheduleItem,
         scheduleService: ScheduleAPIServiceProtocol = ScheduleAPIService(),
@@ -43,11 +54,62 @@ final class EditScheduleViewModel: ObservableObject {
         self.endDate = scheduleItem.endDate
         self.tagName = scheduleItem.tagName
         self.tagColorCode = scheduleItem.tagColorCode
+        self.isAllDay = scheduleItem.isAllDay
         
         self.scheduleService = scheduleService
         self.tagService = tagService
         
         getTags()
+        updateAllDayStatus()
+    }
+    
+    // MARK: - All-Day Handling
+    
+    private var startDateTime: Date {
+        Date.dateFromString(startDate, format: "yyyy-MM-dd'T'HH:mm:ss.SSS")
+        ?? Date.dateFromString(startDate, format: "yyyy-MM-dd'T'HH:mm:ss")
+        ?? Date()
+    }
+    
+    private var endDateTime: Date {
+        Date.dateFromString(endDate, format: "yyyy-MM-dd'T'HH:mm:ss.SSS")
+        ?? Date.dateFromString(endDate, format: "yyyy-MM-dd'T'HH:mm:ss")
+        ?? Date()
+    }
+    
+    private var dayDifference: Int {
+        Calendar.current.dateComponents([.day],
+                                        from: Calendar.current.startOfDay(for: startDateTime),
+                                        to: Calendar.current.startOfDay(for: endDateTime)
+        ).day ?? 0
+    }
+    
+    var isAllDayToggleEnabled: Bool {
+        dayDifference < 2
+    }
+    
+    private func updateAllDayStatus() {
+        let shouldBeAllDay = isOverOneDay()
+        if shouldBeAllDay != isAllDay {
+            isAllDay = shouldBeAllDay
+        }
+    }
+    
+    private func normalizeDatesForAllDay() {
+        let startOfDay = Calendar.current.startOfDay(for: startDateTime)
+        let endOfDay = Calendar.current.startOfDay(for: endDateTime)
+        
+        startDate = startOfDay.stringFromDate(with: "yyyy-MM-dd'T'HH:mm:ss")
+        endDate = endOfDay.stringFromDate(with: "yyyy-MM-dd'T'HH:mm:ss")
+    }
+    
+    func toggleAllDay() {
+        guard isAllDayToggleEnabled else { return }
+        isAllDay.toggle()
+    }
+    
+    func isOverOneDay() -> Bool {
+        endDateTime.timeIntervalSince(startDateTime) >= 24 * 60 * 60
     }
     
     // MARK: - API

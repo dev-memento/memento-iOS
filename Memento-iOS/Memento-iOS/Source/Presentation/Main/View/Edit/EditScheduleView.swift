@@ -93,20 +93,20 @@ struct EditScheduleView: View {
                         HStack {
                             Spacer()
                             
-                            Button() {
+                            Button(action: viewModel.toggleAllDay) {
                                 HStack(spacing: 10) {
                                     Image(viewModel.isAllDay ? .btn_check_selected_square : .btn_check_unselected_square)
                                         .renderingMode(.template)
-                                        .foregroundColor(viewModel.isOverOneDay() ? .gray05 : .gray07)
-                                        .opacity(viewModel.isOverOneDay() ? 1.0 : 0.5)
+                                        .foregroundColor(viewModel.isAllDayToggleEnabled ? .gray05 : .gray07)
+                                        .opacity(viewModel.isAllDayToggleEnabled ? 1.0 : 0.5)
                                     
                                     Text(StringLiteral.AddSchedule.allDay)
                                         .applyFont(.body_r_14)
-                                        .foregroundColor(viewModel.isOverOneDay() ? .gray05 : .gray07)
-                                        .opacity(viewModel.isOverOneDay() ? 1.0 : 0.5)
+                                        .foregroundColor(viewModel.isAllDayToggleEnabled ? .gray05 : .gray07)
+                                        .opacity(viewModel.isAllDayToggleEnabled ? 1.0 : 0.5)
                                 }
                             }
-                            .disabled(!viewModel.isOverOneDay())
+                            .disabled(!viewModel.isAllDayToggleEnabled)
                             .padding(.trailing, 11)
                         }
                         .padding(.top, 12)
@@ -250,7 +250,7 @@ struct EditScheduleView: View {
                 }
                 
                 PickerButton(
-                    label: date.stringFromDate(with: "h:mm a"),
+                    label: viewModel.isAllDay ? StringLiteral.AddSchedule.allDay : date.stringFromDate(with: "h:mm a"),
                     isPresented: isTimePickerPresented,
                     onTap: { if !viewModel.isAllDay { isTimePickerPresented.wrappedValue.toggle() } },
                     width: 96
