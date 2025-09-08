@@ -58,7 +58,7 @@ struct ToDoListView: View {
             .onAppear {
                 viewModel.getToDoListTotal()
             }
-            .onReceive(NotificationCenter.default.publisher(for: Notification.Name("refresh"))) { _ in
+            .onReceive(NotificationCenter.default.publisher(for: Notification.Name("refreshToDoList"))) { _ in
                 viewModel.getToDoListTotal()
             }
         }

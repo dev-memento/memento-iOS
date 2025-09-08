@@ -146,7 +146,6 @@ struct EditToDoView: View {
                             }
                         }
                 )
-                
             }
             .frame(maxWidth: .infinity, alignment: .bottom)
             .onAppear { sheetHeight = calculatedSheetHeight }

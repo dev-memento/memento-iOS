@@ -98,7 +98,7 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
         
         toDoService.postToDo(body: body) { _ in
             NotificationCenter.default.post(
-                name: Notification.Name("refresh"),
+                name: Notification.Name("refreshToDoList"),
                 object: nil
             )
             

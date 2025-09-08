@@ -83,7 +83,7 @@ final class EditToDoViewModel: ObservableObject {
         
         toDoService.updateToDo(toDoId: toDoId, body: body) { _ in
             NotificationCenter.default.post(
-                name: Notification.Name("refresh"),
+                name: Notification.Name("refreshToDoList"),
                 object: nil
             )
             
