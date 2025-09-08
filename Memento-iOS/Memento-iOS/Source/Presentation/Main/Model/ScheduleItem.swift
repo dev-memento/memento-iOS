@@ -10,13 +10,13 @@ import Foundation
 struct ScheduleItem: Identifiable, Equatable, Hashable {
     var id: Int
     var description: String
-    let startDate: String
-    let endDate: String
-    let timeDuration: String
-    let isAllDay: Bool
-    let scheduleType: String
-    let tagName: String
-    let tagColorCode: String
+    var startDate: String
+    var endDate: String
+    var timeDuration: String
+    var isAllDay: Bool
+    var scheduleType: String
+    var tagName: String
+    var tagColorCode: String
     
     
     init(from response: ScheduleWithOrderInfos) {
