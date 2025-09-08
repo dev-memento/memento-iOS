@@ -61,11 +61,9 @@ struct ToDoListWeeklyCalendarView: View {
                     
                     viewModel.getToDoListTotal(
                         useCache: true,
-                        isInitial: viewModel.isFirstFetch
                     )
                     viewModel.getSchedulesTotal(
                         useCache: true,
-                        isInitial: viewModel.isFirstFetch
                     )
                 }
                 .background(Color.grayBlack)

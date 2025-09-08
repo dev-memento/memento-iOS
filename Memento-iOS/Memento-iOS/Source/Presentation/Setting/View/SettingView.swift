@@ -115,7 +115,8 @@ struct SettingView: View {
             }
             .animation(.easeInOut(duration: 0.25), value: showLogoutAlert || showDeleteAlert)
             .onAppear { viewModel.refreshNotificationStatus()
-                APICallLogger.shared.report() // 테스트 리포트
+                APICacheLogger.shared.report(apiName: "ToDo")
+                APICacheLogger.shared.report(apiName: "Schedule")
             }
             .onChange(of: scenePhase) {
                 if scenePhase == .active {
