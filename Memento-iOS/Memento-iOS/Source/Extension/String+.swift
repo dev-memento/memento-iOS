@@ -8,7 +8,6 @@
 import Foundation
 
 extension String {
-
     func base64Padded() -> String {
         let padding = 4 - count % 4
         return self + String(repeating: "=", count: padding % 4)

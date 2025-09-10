@@ -27,7 +27,6 @@ struct TimeView: View {
             
             TimeSelectionView(
                 wakeUpTime: $viewModel.wakeUpTime,
-                windDownTime: $viewModel.sleepTime,
                 isPickerPresented: $isPickerPresented,
                 selectedTimeType: $selectedTimeType
             )
@@ -36,7 +35,9 @@ struct TimeView: View {
             
             Spacer()
         }
-        .sheet(isPresented: $isPickerPresented) {
+        .sheet(isPresented: $isPickerPresented, onDismiss: {
+            viewModel.updateUserUptime()
+        }) {
             TimePickerView(
                 isPickerPresented: $isPickerPresented,
                 selectedTimeType: $selectedTimeType,
@@ -44,43 +45,32 @@ struct TimeView: View {
                 windDownTime: $viewModel.sleepTime
             )
         }
+        .onAppear {
+            viewModel.fetchUserUptime()
+        }
     }
-    
 }
 
 private struct TimeSelectionView: View {
     @Binding var wakeUpTime: Date?
-    @Binding var windDownTime: Date?
     @Binding var isPickerPresented: Bool
     @Binding var selectedTimeType: TimeType
     
     var body: some View {
         VStack(alignment: .leading, spacing: 29) {
-            // 텍스트 수정 필요
             timeSelectionRow(
                 icon: .ic_wakeup,
                 title: SettingsTimeViewText.wakeUpTitle,
-                time: wakeUpTime,
+                time: wakeUpTime ?? Date(),
                 action: {
                     selectedTimeType = .wakeUp
                     isPickerPresented = true
                 }
             )
-            /*
-            timeSelectionRow(
-                icon: .ic_winddown,
-                title: OnboardingSleepCycleText.windDownTitle,
-                time: windDownTime,
-                action: {
-                    selectedTimeType = .windDown
-                    isPickerPresented = true
-                }
-            )
-             */
         }
     }
     
-    private func timeSelectionRow(icon: MDSImageName, title: String, time: Date?, action: @escaping () -> Void) -> some View {
+    private func timeSelectionRow(icon: MDSImageName, title: String, time: Date, action: @escaping () -> Void) -> some View {
         HStack {
             Image(icon)
                 .resizable()
@@ -95,7 +85,7 @@ private struct TimeSelectionView: View {
             Spacer()
             
             Button(action: action) {
-                Text(time.map { $0.formattedDate(with: "hh:mm a") } ?? OnboardingSleepCycleText.defaultTime)
+                Text(time.stringFromDate(with: "HH:mm"))
                     .applyFont(.body_r_14)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, alignment: .center)
@@ -106,7 +96,6 @@ private struct TimeSelectionView: View {
         }
     }
 }
-
 
 #Preview {
     TimeView()

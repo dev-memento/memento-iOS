@@ -105,8 +105,7 @@ struct AddToDoToolbarView: View {
         .sheet(isPresented: $viewModel.isPriorityPickerPresented) {
             PickerSheet(type: .addToDo(.priority)) {
                 AddToDoPrioritySheet(
-                    viewModel: viewModel,
-                    viewType: .add
+                    viewModel: viewModel
                 )
             }
         }

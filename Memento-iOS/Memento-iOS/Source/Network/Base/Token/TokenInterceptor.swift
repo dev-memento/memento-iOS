@@ -160,6 +160,7 @@ final class TokenInterceptor: RequestInterceptor {
         return path == refreshPath
     }
 
+    // 리프래시 토큰 만료시 모든 토큰을 지우고 강제 로그인
     private func forceRelogin() {
         try? TokenKeychainManager.shared.clearTokens()
         DispatchQueue.main.async {

@@ -41,7 +41,7 @@ struct ScheduleAlertView: View {
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
                 
-                Text(startDate)
+                Text(Date.displayDate(startDate))
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
                 
@@ -55,7 +55,7 @@ struct ScheduleAlertView: View {
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
                 
-                Text(endDate)
+                Text(Date.displayDate(endDate))
                     .applyFont(.detail_r_12)
                     .foregroundColor(.gray05)
                 
@@ -84,23 +84,23 @@ struct ScheduleAlertView: View {
             .padding(.top, 16)
             .padding(.leading, 46)
             
-            HStack(spacing: 47) {
-                Text(StringLiteral.Alert.from)
-                    .applyFont(.detail_r_12)
-                    .foregroundColor(.gray05)
-                
-                HStack(spacing: 3) {
-                    Image(.img_notion)
-
-                    Text(scheduleType)
-                        .applyFont(.detail_r_12)
-                        .foregroundColor(.gray05)
-                }
-                
-                Spacer()
-            }
-            .padding(.top, 16)
-            .padding(.leading, 46)
+//            HStack(spacing: 47) {
+//                Text(StringLiteral.Alert.from)
+//                    .applyFont(.detail_r_12)
+//                    .foregroundColor(.gray05)
+//                
+//                HStack(spacing: 3) {
+//                    Image(.img_notion)
+//
+//                    Text(scheduleType)
+//                        .applyFont(.detail_r_12)
+//                        .foregroundColor(.gray05)
+//                }
+//                
+//                Spacer()
+//            }
+//            .padding(.top, 16)
+//            .padding(.leading, 46)
             
             Spacer()
             

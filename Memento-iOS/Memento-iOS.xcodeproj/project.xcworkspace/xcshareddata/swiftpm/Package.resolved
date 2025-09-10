@@ -159,8 +159,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/dev-memento/memento-design-system-iOS",
       "state" : {
-        "revision" : "2fcced5f3c148a8ce0fcb51a5f609a77403735ba",
-        "version" : "1.0.15"
+        "revision" : "622ef695469cd8df6049cba8be747c8f4c39cff4",
+        "version" : "1.0.16"
       }
     },
     {

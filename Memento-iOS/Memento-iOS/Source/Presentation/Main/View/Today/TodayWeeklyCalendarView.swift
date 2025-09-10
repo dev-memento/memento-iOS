@@ -6,104 +6,164 @@
 //
 
 import SwiftUI
-
 import MDSKit
 import MCalendar
 
 struct TodayWeeklyCalendarView: View {
+    
     @ObservedObject var viewModel: WeeklyCalendarViewModel
     @StateObject private var settingViewModel = SettingViewModel()
+    
+    @State private var isToDoAlertPresented: Bool = false
+    @State private var isScheduleAlertPresented: Bool = false
+    @State private var isSettingViewPresented = false
+    
+    @State private var selectedToDo: ToDoItem? = nil
+    @State private var selectedSchedule: ScheduleItem? = nil
+    
     @State private var scrollTarget: Int? = nil
     @State private var userInteractionFlag: Bool = false
-    @State private var isSettingPresented = false
-
+    
+    @State private var floatingButtonPressed: Bool = false
+    
+    var editScheduleAction: (ScheduleItem) -> Void
+    var editToDoAction: (ToDoItem) -> Void
+    
     var body: some View {
         NavigationView {
-            VStack(spacing: 0) {
-                HStack(spacing: 0) {
-                    if let date = viewModel.selectedDate.date() {
-                        Text("\(date.makeTodayMonthForMMM()) \(date.makeTodayDayString())")
-                            .foregroundStyle(.white)
-                            .applyFont(.suiteExtraBold(size: 32),
-                                       lineHeight: 36)
-                            .onTapGesture {
-                                let date = Date()
-                                viewModel.mCallendarDataSource.moveOtherWeekday(targetDate: date)
-                                if let targetDateModel = date.makeTargetDate() {
-                                    viewModel.selectedDate = targetDateModel
-                                    makeIndex()
+            ZStack(alignment: .bottomTrailing) {
+                
+                VStack(spacing: 0) {
+                    headerView()
+                    
+                    calendarView()
+                        .background(Color.grayBlack)
+                        .allowsHitTesting(userInteractionFlag)
+                    
+                    ScrollViewReader { proxy in
+                        OffsetObservableScrollView(.horizontal,
+                                                   showsIndicators: false,
+                                                   scrollOffset: $viewModel.currentOffset,
+                                                   content: { view in
+                            LazyHStack(spacing: 0) {
+                                var visibleEvents: [MCalendarEventList] {
+                                    guard !viewModel.mEventDataSource.eventList.isEmpty,
+                                          let selectedIndex = viewModel.mEventDataSource.eventList.firstIndex(where: { $0.dateModel == viewModel.selectedDate })
+                                    else { return [] }
+                                    
+                                    let lowerBound = max(selectedIndex - 2, 0)
+                                    let upperBound = min(selectedIndex + 2, viewModel.mEventDataSource.eventList.count - 1)
+                                    
+                                    return Array(viewModel.mEventDataSource.eventList[lowerBound...upperBound])
+                                }
+                                
+                                ForEach(visibleEvents.indices, id: \.self) { index in
+                                    let item = visibleEvents[index]
+                                    
+                                    dailyPageView(for: item)
+                                        .frame(width: UIScreen.main.bounds.width)
+                                        .id(index)
                                 }
                             }
-                            .padding(.leading, 22)
-                        Spacer()
-                        VStack {
-                            Text("\(date.makeTodayYearString())") // 2025
-                                .foregroundStyle(Color.gray07)
-                                .applyFont(.detail_b_12)
-                                .padding(.top, 11)
-                            Spacer()
+                        })
+                        .onChange(of: scrollTarget) {
+                            userInteractionFlag = false
+                            DispatchQueue.main.asyncAfter(deadline: .now()) {
+                                userInteractionFlag = true
+                                if let target = scrollTarget {
+                                    withAnimation {
+                                        proxy.scrollTo(target, anchor: .center)
+                                    }
+                                }
+                            }
                         }
-                        .padding(.trailing, 17)
-    
-                        Button {
-                            isSettingPresented = true
-                        } label: {
-                            Image(.ic_settings)
-                                .resizable()
-                                .frame(width: 26, height: 26)
-                                .padding(.trailing, 34)
-                        }
+                        .scrollTargetBehavior(.paging)
+                        .scrollContentBackground(.hidden)
                     }
                 }
-                .frame(height: 56)
+                .fullScreenCover(isPresented: $isSettingViewPresented) {
+                    SettingView()
+                        .environmentObject(settingViewModel)
+                }
+                .onChange(of: viewModel.selectedDate) {
+                    updateScrollTarget()
+                }
+                .onAppear {
+                    viewModel.getAllEvents()
+                    viewModel.getSchedulesAllDay()
+                    
+                    updateScrollTarget()
+
+                    viewModel.isInitialScrollDone = true
+                }
+                .onReceive(NotificationCenter.default.publisher(for: Notification.Name("refreshSchedule"))) { _ in
+                    viewModel.getSchedulesTotal()
+                    viewModel.getSchedulesAllDay()
+                }
+                .onReceive(NotificationCenter.default.publisher(for: Notification.Name("refreshToDoList"))) { _ in
+                    viewModel.getToDoListTotal()
+                }
+                .background(Color.grayBlack)
                 
-                calendarView()
-                    .background(Color.grayBlack)
-                    .allowsHitTesting(userInteractionFlag)
+                FloatingButton(floatingButtonPressed: $floatingButtonPressed)
                 
-                ScrollViewReader { proxy in
-                    OffsetObservableScrollView(.horizontal,
-                                               showsIndicators: false,
-                                               scrollOffset: $viewModel.currentOffset,
-                                               content: { view in
-                        LazyHStack(spacing: 0) {
-                            ForEach(viewModel.mEventDataSource.eventList.indices, id: \.self) { index in
-                                let item = viewModel.mEventDataSource.eventList[index]
-                                pageView(for: item)
-                                    .frame(width: UIScreen.main.bounds.width)
-                                    .id(index)
-                            }
-                        }
-                    })
-                    .onChange(of: scrollTarget) {
-                        userInteractionFlag = false
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            userInteractionFlag = true
-                            if let target = scrollTarget {
-                                withAnimation {
-                                    proxy.scrollTo(target, anchor: .center)
-                                }
+                if floatingButtonPressed {
+                    GeometryReader { geo in
+                        NeonAnimationView(
+                            width: geo.size.width,
+                            height: geo.size.height
+                        )
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                floatingButtonPressed = false
                             }
                         }
                     }
-                    .scrollTargetBehavior(.paging)
-                    .scrollContentBackground(.hidden)
                 }
             }
+            .overlay {
+                alertsView()
+            }
         }
-        .fullScreenCover(isPresented: $isSettingPresented) {
-            SettingView()
-                .environmentObject(settingViewModel)
+    }
+    
+    @ViewBuilder
+    private func headerView() -> some View {
+        if let date = viewModel.selectedDate.date() {
+            HStack(spacing: 0) {
+                Text("\(date.makeTodayMonthForMMM()) \(date.makeTodayDayString())")
+                    .foregroundStyle(.white)
+                    .applyFont(.suiteExtraBold(size: 32), lineHeight: 36)
+                    .onTapGesture {
+                        let today = Date()
+                        viewModel.mCallendarDataSource.moveOtherWeekday(targetDate: today)
+                        if let targetDateModel = today.makeTargetDate() {
+                            viewModel.selectedDate = targetDateModel
+                        }
+                    }
+                    .padding(.leading, 22)
+                
+                Spacer()
+                
+                VStack(spacing: 0) {
+                    Text("\(date.makeTodayYearString())")
+                        .foregroundStyle(Color.gray07)
+                        .applyFont(.detail_b_12)
+                        .padding(.top, 11)
+                    
+                    Spacer()
+                }
+                .padding(.trailing, 17)
+                
+                Button {
+                    isSettingViewPresented = true
+                } label: {
+                    Image(.ic_settings)
+                        .padding(.trailing, 25)
+                }
+            }
+            .frame(height: 56)
         }
-        .onAppear {
-            viewModel.getTagsAPI()
-//            viewModel.getSchedulesTotalAPI()
-            viewModel.getSchedulesAllDayAPI()
-            viewModel.userUptimeAPI()
-            viewModel.makeDummyEvent()
-            makeIndex()
-        }
-        .background(Color.grayBlack)
     }
     
     @ViewBuilder
@@ -118,52 +178,97 @@ struct TodayWeeklyCalendarView: View {
                             mCallendarDatasource: viewModel.mCallendarDataSource,
                             selectedDateCompletion: { date in
             viewModel.selectedDate = date
-            // MCalendarDataModel -> Date 변환
-            if let selectedDate = date.date() {
-                viewModel.filterSchedules(for: selectedDate) 
-            } else { return }
-            print(date, "❤️")
-            makeIndex()
         })
         .setWeekDayFont(MWeekDayOptions.allDays,
                         font: Font(MDSFont.suiteBold(size: 12).font))
-        .setWeekDayTextColors(MWeekDayOptions.allDays,
-                              color: .gray08)
-        .setWeekDaySelectedColor(MWeekDayOptions.allDays,
-                                 color: .gray04)
         .setDayFont(MWeekDayOptions.allDays,
                     font: Font(MDSFont.suiteBold(size: 16).font))
-        .setDayBackgroundColors(MWeekDayOptions.allDays,
-                                color: .grayWhite)
-        .setDayBackgroundColors(MWeekDayOptions.allDays,
-                                color: .clear)
+        
+        .setWeekDayTextColors(MWeekDayOptions.allDays,
+                              color: .gray08)
         .setDayTextColors(MWeekDayOptions.allDays,
                           color: .gray06)
+        
+        .setWeekDaySelectedColor(MWeekDayOptions.allDays,
+                                 color: .gray04)
         .setDaySelectedColor(MWeekDayOptions.allDays,
                              color: .grayBlack)
+        
+        .setDayBackgroundColors(MWeekDayOptions.allDays,
+                                color: .clear)
         .setDaySelectedBackgroundColors(MWeekDayOptions.allDays,
                                         color: .gray04)
+        
         .setTodayColor(color: .mainGreen)
     }
     
     @ViewBuilder
-    private func todayList(item: MCalendarEventList) -> some View {
-        TodayView(viewModel: viewModel)
-            .scrollContentBackground(.hidden)
-    }
-    
-    @ViewBuilder
-    private func pageView(for item: MCalendarEventList) -> some View {
+    private func dailyPageView(for item: MCalendarEventList) -> some View {
         VStack(spacing: 8) {
-            AllDayListView(items: viewModel.allday)
+            AllDayListView(items: viewModel.allDayDict[viewModel.selectedDate] ?? [])
                 .padding(.vertical, 4)
             
-            todayList(item: item)
+            TodayView(
+                viewModel: viewModel,
+                isToDoAlertPresented: $isToDoAlertPresented,
+                isScheduleAlertPresented: $isScheduleAlertPresented,
+                selectedToDo: $selectedToDo,
+                selectedSchedule: $selectedSchedule
+            )
+            .scrollContentBackground(.hidden)
         }
     }
     
-    private func makeIndex() {
+    @ViewBuilder
+    private func alertsView() -> some View {
+        AlertOverlay(isPresented: isToDoAlertPresented, onDismiss: { isToDoAlertPresented = false }) {
+            if let todo = selectedToDo {
+                ToDoAlertView(
+                    toDoId: todo.id,
+                    toDoTitle: todo.description,
+                    deadline: todo.endDate,
+                    tagName: todo.tagName,
+                    tagColorCode: todo.tagColor,
+                    priority: todo.priorityType,
+                    onDelete: {
+                        viewModel.deleteToDo(toDoId: todo.id)
+                        isToDoAlertPresented = false
+                    },
+                    onEdit: {
+                        isToDoAlertPresented = false
+                        editToDoAction(todo)
+                    },
+                    isChecked: viewModel.bindingForToDoCompletion(todo.id)
+                )
+            }
+        }
+        
+        AlertOverlay(isPresented: isScheduleAlertPresented, onDismiss: { isScheduleAlertPresented = false }) {
+            if let schedule = selectedSchedule {
+                ScheduleAlertView(
+                    scheduleId: schedule.id,
+                    scheduleTitle: schedule.description,
+                    startDate: schedule.startDate,
+                    endDate: schedule.endDate,
+                    tagName: schedule.tagName,
+                    tagColorCode: schedule.tagColorCode,
+                    scheduleType: "Notion",
+                    onDelete: {
+                        viewModel.deleteSchedule(scheduleId: schedule.id)
+                        isScheduleAlertPresented = false
+                    },
+                    onEdit: {
+                        isScheduleAlertPresented = false
+                        editScheduleAction(schedule)
+                    }
+                )
+            }
+        }
+    }
+    
+    private func updateScrollTarget() {
         self.scrollTarget = (viewModel.mCallendarDataSource.currentIndex * 7) + viewModel.selectedDate.weekday.index
+        
         if let scrollTarget {
             self.viewModel.currentOffset.x = Double(scrollTarget) * UIScreen.main.bounds.width
         }

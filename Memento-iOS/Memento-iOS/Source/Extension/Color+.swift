@@ -8,28 +8,21 @@
 import SwiftUI
 
 extension Color {
-    static func distinguishColorType(_ colorType: String) -> Color {
-        switch colorType {
-        case "mementoRed": return Color.mementoRed
-        case "mementoBlue": return Color.mementoBlue
-        case "mementoCyan": return Color.mementoCyan
-        case "mementoMint": return Color.mementoMint
-        case "mementoPink": return Color.mementoPink
-        case "mementoOrange": return Color.mementoOrange
-        case "mementoPurple": return Color.mementoPurple
-        case "mementoYellow": return Color.mementoYellow
-        case "mementoLightGreen": return Color.mementoLightGreen
-        default: return Color.gray05
-        }
-    }
-}
-
-extension Color {
-
-    /// 헥스 코드 문자열로부터 색상 반환 (유효하지 않으면 기본값 반환)
     static func fromHex(_ hex: String) -> Color {
-       return  Color(hex: hex)
-
+        return  Color(hex: hex)
     }
+    
+    func toHex() -> String {
+            let uiColor = UIColor(self)
+            var r: CGFloat = 0
+            var g: CGFloat = 0
+            var b: CGFloat = 0
+            var a: CGFloat = 0
 
+            if !uiColor.getRed(&r, green: &g, blue: &b, alpha: &a) {
+                return "#000000"
+            }
+            let rgb: Int = (Int)(r*255)<<16 | (Int)(g*255)<<8 | (Int)(b*255)
+            return String(format:"#%06X", rgb)
+        }
 }

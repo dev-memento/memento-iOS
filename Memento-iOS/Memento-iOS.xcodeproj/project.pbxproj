@@ -73,7 +73,6 @@
 				Source/Network/ToDoList/ToDoListTargetType.swift,
 				Source/Presentation/Add/Common/Model/SegmentedMenuType.swift,
 				Source/Presentation/Add/Common/Model/Tag.swift,
-				Source/Presentation/Add/Common/Model/ViewType.swift,
 				Source/Presentation/Add/Common/View/PickerSheet.swift,
 				Source/Presentation/Add/Common/View/SegmentedMenuView.swift,
 				Source/Presentation/Add/Common/View/TagPickerSheet.swift,

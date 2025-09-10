@@ -54,8 +54,8 @@ struct LoginView: View {
                     WorkPreferenceView()
                         .navigationBarBackButtonHidden()
                         .environmentObject(viewModel)
-                case .calendarConnect:
-                    CalendarConnectView()
+                case .startMemento:
+                    StartMementoView()
                         .navigationBarBackButtonHidden()
                         .environmentObject(viewModel)
                         .environmentObject(authSession)

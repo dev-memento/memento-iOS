@@ -6,107 +6,67 @@
 //
 
 import SwiftUI
+
 import MDSKit
 import MCalendar
 
 struct ToDoListView: View {
-    @ObservedObject var viewModel: ToDoListViewModel
     
-    @State private var showTodoAlert = false
-    @State private var showEditSheet = false
-    @State private var selectedItem: ToDoListDataModel?
+    @ObservedObject var viewModel: WeeklyCalendarViewModel
+    
+    var onTap: (ToDoItem) -> Void
     
     var body: some View {
         ZStack {
             ScrollView {
-                VStack(spacing: 0) {
-                    ForEach(viewModel.mCallendarDataSource.wholeMonthDate, id: \.self) { date in
+                LazyVStack(spacing: 0) {
+                    var visibleDates: [MCalendarDataModel] {
+                        guard let currentIndex = viewModel.mCallendarDataSource.wholeMonthDate.firstIndex(of: viewModel.selectedDate) else {
+                            return []
+                        }
+                        
+                        let lowerBound = max(currentIndex - 14, 0)
+                        let upperBound = min(currentIndex + 14, viewModel.mCallendarDataSource.wholeMonthDate.count - 1)
+                        return Array(viewModel.mCallendarDataSource.wholeMonthDate[lowerBound...upperBound])
+                    }
+
+                    ForEach(visibleDates, id: \.self) { date in
+                        
                         ToDoListDateView(date: "\(Date.makeMonthDate(month: date.month)) \(date.day)")
-                            .padding(.bottom, 8)
                             .id(date)
-                        if let events = viewModel.toDoListItemDict[date], !events.isEmpty {
-                            ForEach(events, id: \.self) { event in
+                            .padding(.bottom, 8)
+                        
+                        if let events = viewModel.toDoListDict[date], !events.isEmpty {
+                            ForEach(events, id: \.id) { event in
+                                let isTop = viewModel.isTopPriorityItem(at: event, items: events)
+                                let isCompletedBinding = viewModel.bindingForToDoCompletion(event.id)
+                                
                                 ToDoListItemView(
-                                    item: event.mapToToDoItem(),
-                                    isChecked: Binding(
-                                        get: { event.isChecked },
-                                        set: { newValue in
-                                            if let index = viewModel.toDoListItemDict[date]?.firstIndex(where: { $0.id == event.id }) {
-                                                viewModel.toDoListItemDict[date]?[index].isChecked = newValue
-                                                viewModel.updateToDoCompletion(toDoId: event.id)
-                                            }
-                                        }
-                                    ),
-                                    isHighlighted: isTopPriorityItem(at: event, items: events),
-                                    backgroundColor: Color.grayBlack,
-                                    onTodoTap: { selectedItem in }
+                                    item: event,
+                                    isHighlighted: isTop,
+                                    isCompleted: isCompletedBinding
                                 )
                                 .onTapGesture {
-                                    selectedItem = event
-                                    showTodoAlert = true
+                                    onTap(event)
                                 }
                             }
                         }
                     }
-                    Spacer()
                 }
             }
             .background(Color.grayBlack)
             .onAppear {
-                viewModel.getToDoListTotalAPI()  // ✅ 캐싱된 데이터 먼저 표시
-                //                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                //                    viewModel.getToDoListTotalAPI(forceRefresh: true)  // ✅ 최신 데이터 갱신
-                //                }
+                viewModel.getToDoListTotal()
             }
-            
-            if showTodoAlert, let todo = selectedItem {
-                ToDoAlertView(
-                    toDoId: todo.mapToToDoItem().id,
-                    toDoTitle: todo.mapToToDoItem().description,
-                    deadline: todo.mapToToDoItem().endDate ?? "",
-                    tagName: todo.mapToToDoItem().tagName ?? "",
-                    tagColorCode: todo.mapToToDoItem().tagColor ?? "",
-                    priority: todo.priorityType ?? .none,
-                    onDelete: {
-                        viewModel.deleteTodo(todoId: todo.id)
-                        showTodoAlert = false
-                    },
-                    onEdit: {
-                        showTodoAlert = false
-                        showEditSheet = true
-                    },
-                    isChecked: Binding(
-                        get: { todo.isChecked },
-                        set: { newValue in
-                            if let date = viewModel.toDoListItemDict.first(where: { $0.value.contains(where: { $0.id == todo.id }) })?.key,
-                               let index = viewModel.toDoListItemDict[date]?.firstIndex(where: { $0.id == todo.id }) {
-                                viewModel.toDoListItemDict[date]?[index].isChecked = newValue
-                                viewModel.updateToDoCompletion(toDoId: todo.id)
-                                
-                                selectedItem?.isChecked = newValue
-                            }
-                        }
-                    )
-                )
-                .background(Color.black.opacity(0.4))
-                .edgesIgnoringSafeArea(.all)
+            .onReceive(NotificationCenter.default.publisher(for: Notification.Name("refreshToDoList"))) { _ in
+                viewModel.getToDoListTotal()
             }
         }
-        .sheet(isPresented: $showEditSheet) {
-            EmptyView()
-        }
-    }
-    
-    private func isTopPriorityItem(at item: ToDoListDataModel, items: [ToDoListDataModel]) -> Bool {
-        guard !item.isChecked else { return false }
-        
-        let uncheckedItems = items.filter { !$0.isChecked }
-        
-        return uncheckedItems.first == item
     }
 }
 
 struct ToDoListDateView: View {
+    
     var date: String
     
     var body: some View {
@@ -121,6 +81,7 @@ struct ToDoListDateView: View {
                     .applyFont(.body_b_14)
                     .foregroundColor(Color.gray05)
                     .padding(.leading, 22)
+                
                 Spacer()
             }
             .frame(height: 20)
@@ -130,24 +91,11 @@ struct ToDoListDateView: View {
 }
 
 struct ToDoListItemView: View {
-    var item: ToDoGetResponses
-    @Binding var isChecked: Bool
     
+    var item: ToDoItem
     var isHighlighted: Bool
-    var backgroundColor: Color
     
-    var onTodoTap: (ToDoListTotalResponse) -> Void
-    
-    private var toDoListCompletedBinding: Binding<ToDoCompletionResponse> {
-        Binding<ToDoCompletionResponse>(
-            get: {
-                ToDoCompletionResponse(id: item.id, isCompleted: isChecked)
-            },
-            set: { newValue in
-                isChecked = newValue.isCompleted
-            }
-        )
-    }
+    @Binding var isCompleted: Bool
     
     var body: some View {
         VStack(spacing: 10) {
@@ -156,12 +104,12 @@ struct ToDoListItemView: View {
                 title: item.description,
                 toDoType: item.toDoType,
                 endDate: item.endDate,
-                priority: Priority(rawValue: item.priorityType.lowercased()) ?? .none,
+                priority: item.priorityType,
                 isHighlighted: isHighlighted,
-                isCompleted: $isChecked
+                isCompleted: $isCompleted
             )
         }
+        .padding(.horizontal)
         .padding(.bottom, 8)
     }
 }
-

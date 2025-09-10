@@ -6,60 +6,39 @@
 //
 
 import SwiftUI
-
 import MDSKit
 import MCalendar
 
 struct ToDoListWeeklyCalendarView: View {
-    @ObservedObject var viewModel: ToDoListViewModel
+    
+    @ObservedObject var viewModel: WeeklyCalendarViewModel
     @StateObject private var settingViewModel = SettingViewModel()
+    
+    @State private var isToDoAlertPresented = false
+    @State private var isSettingViewPresented = false
+    
+    @State private var selectedItem: ToDoItem? = nil
     @State private var scrollTarget: MCalendarDataModel? = nil
-    @State private var userInteractionFlag: Bool = false
-    @State private var isSettingPresented = false
-
+    
+    @State private var floatingButtonPressed: Bool = false
+    
+    var editAction: (ToDoItem) -> Void
+    
     var body: some View {
         NavigationView {
-            VStack(spacing: 0) {
-                HStack(spacing: 0) {
-                    if let date = viewModel.selectedDate.date() {
-                        Text("\(date.makeTodayMonthForMMM()) \(date.makeTodayDayString())")
-                            .foregroundStyle(.white)
-                            .applyFont(.suiteExtraBold(size: 32),
-                                       lineHeight: 36)
-                            .onTapGesture {
-                                let date = Date()
-                                viewModel.mCallendarDataSource.moveOtherWeekday(targetDate: date)
-                                if let targetDateModel = date.makeTargetDate() {
-                                    viewModel.selectedDate = targetDateModel
-                                }
-                            }
-                            .padding(.leading, 22)
-                        Spacer()
-                        VStack {
-                            Text("\(date.makeTodayYearString())")
-                                .foregroundStyle(Color.gray07)
-                                .applyFont(.detail_b_12)
-                                .padding(.top, 11)
-                            Spacer()
-                        }
-                        .padding(.trailing, 17)
-                        Button {
-                            isSettingPresented = true
-                        } label: {
-                            Image(.ic_settings)
-                                .resizable()
-                                .frame(width: 26, height: 26)
-                                .padding(.trailing, 34)
-                        }
-                    }
-                }
-                .frame(height: 56)
+            ZStack(alignment: .bottomTrailing) {
                 
-                calendarView()
-                    .background(Color.grayBlack)
-                
-                ScrollViewReader { proxy in
-                    ToDoListView(viewModel: viewModel)
+                VStack(spacing: 0) {
+                    headerView()
+                    
+                    calendarView()
+                        .background(Color.grayBlack)
+                    
+                    ScrollViewReader { proxy in
+                        ToDoListView(viewModel: viewModel) { tappedItem in
+                            selectedItem = tappedItem
+                            isToDoAlertPresented = true
+                        }
                         .scrollContentBackground(.hidden)
                         .padding(.vertical, 4)
                         .onChange(of: scrollTarget) {
@@ -67,16 +46,80 @@ struct ToDoListWeeklyCalendarView: View {
                                 proxy.scrollTo(scrollTarget, anchor: .top)
                             }
                         }
+                    }
+                }
+                .fullScreenCover(isPresented: $isSettingViewPresented) {
+                    SettingView()
+                        .environmentObject(settingViewModel)
+                }
+                .onChange(of: viewModel.selectedDate) {
+                    scrollTarget = viewModel.selectedDate
+                }
+                .onAppear {
+                    DispatchQueue.main.async {
+                        scrollTarget = viewModel.selectedDate
+                    }
+                }
+                .background(Color.grayBlack)
+                
+                FloatingButton(floatingButtonPressed: $floatingButtonPressed)
+                
+                if floatingButtonPressed {
+                    GeometryReader { geo in
+                        NeonAnimationView(
+                            width: geo.size.width,
+                            height: geo.size.height
+                        )
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                floatingButtonPressed = false
+                            }
+                        }
+                    }
                 }
             }
-            .fullScreenCover(isPresented: $isSettingPresented) {
-                SettingView()
-                    .environmentObject(settingViewModel)
+            .overlay {
+                alertView()
             }
-            .onAppear {
-                makeIndex()
+        }
+    }
+    
+    @ViewBuilder
+    private func headerView() -> some View {
+        if let date = viewModel.selectedDate.date() {
+            HStack(spacing: 0) {
+                Text("\(date.makeTodayMonthForMMM()) \(date.makeTodayDayString())")
+                    .foregroundStyle(.white)
+                    .applyFont(.suiteExtraBold(size: 32), lineHeight: 36)
+                    .onTapGesture {
+                        let today = Date()
+                        viewModel.mCallendarDataSource.moveOtherWeekday(targetDate: today)
+                        if let targetDateModel = today.makeTargetDate() {
+                            viewModel.selectedDate = targetDateModel
+                        }
+                    }
+                    .padding(.leading, 22)
+                
+                Spacer()
+                
+                VStack(spacing: 0) {
+                    Text("\(date.makeTodayYearString())")
+                        .foregroundStyle(Color.gray07)
+                        .applyFont(.detail_b_12)
+                        .padding(.top, 11)
+                    
+                    Spacer()
+                }
+                .padding(.trailing, 17)
+                
+                Button {
+                    isSettingViewPresented = true
+                } label: {
+                    Image(.ic_settings)
+                        .padding(.trailing, 25)
+                }
             }
-            .background(Color.grayBlack)
+            .frame(height: 56)
         }
     }
     
@@ -92,32 +135,54 @@ struct ToDoListWeeklyCalendarView: View {
                             mCallendarDatasource: viewModel.mCallendarDataSource,
                             selectedDateCompletion: { date in
             viewModel.selectedDate = date
-            makeIndex()
         })
         .setWeekDayFont(MWeekDayOptions.allDays,
                         font: Font(MDSFont.suiteBold(size: 12).font))
-        .setWeekDayTextColors(MWeekDayOptions.allDays,
-                              color: .gray08)
-        .setWeekDaySelectedColor(MWeekDayOptions.allDays,
-                                 color: .gray04)
         .setDayFont(MWeekDayOptions.allDays,
                     font: Font(MDSFont.suiteBold(size: 16).font))
-        .setDayBackgroundColors(MWeekDayOptions.allDays,
-                                color: .grayWhite)
-        .setDayBackgroundColors(MWeekDayOptions.allDays,
-                                color: .clear)
+        
+        .setWeekDayTextColors(MWeekDayOptions.allDays,
+                              color: .gray08)
         .setDayTextColors(MWeekDayOptions.allDays,
                           color: .gray06)
+        
+        .setWeekDaySelectedColor(MWeekDayOptions.allDays,
+                                 color: .gray04)
         .setDaySelectedColor(MWeekDayOptions.allDays,
                              color: .grayBlack)
+        
+        .setDayBackgroundColors(MWeekDayOptions.allDays,
+                                color: .clear)
         .setDaySelectedBackgroundColors(MWeekDayOptions.allDays,
                                         color: .gray04)
+        
         .setTodayColor(color: .mainGreen)
     }
     
-    private func makeIndex() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            scrollTarget = viewModel.selectedDate
+    @ViewBuilder
+    private func alertView() -> some View {
+        AlertOverlay(isPresented: isToDoAlertPresented, onDismiss: {
+            isToDoAlertPresented = false
+        }) {
+            if let item = selectedItem {
+                ToDoAlertView(
+                    toDoId: item.id,
+                    toDoTitle: item.description,
+                    deadline: item.endDate,
+                    tagName: item.tagName,
+                    tagColorCode: item.tagColor,
+                    priority: item.priorityType,
+                    onDelete: {
+                        viewModel.deleteToDo(toDoId: item.id)
+                        isToDoAlertPresented = false
+                    },
+                    onEdit: {
+                        isToDoAlertPresented = false
+                        editAction(item)
+                    },
+                    isChecked: viewModel.bindingForToDoCompletion(item.id)
+                )
+            }
         }
     }
 }

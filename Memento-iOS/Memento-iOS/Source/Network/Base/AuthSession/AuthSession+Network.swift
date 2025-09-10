@@ -8,22 +8,40 @@
 import Foundation
 
 import FirebaseMessaging
+import FirebaseAuth
 
 @MainActor
 extension AuthSession {
     
     /// 서버 로그인 공통 메서드
     /// 첫 로그인 토큰 저장 로직 여기에 위치함
-     func requestLogin(provider: String, idToken: String) async {
+    func requestLogin(provider: String, idToken: String) async {
         do {
-            let fcmToken = try await Messaging.messaging().token()
+            // 1. Keychain에 저장된 FCM 토큰 확인
+            let cachedToken = try? keychain.getFCMToken()
+            
+            // 2. Firebase에서 최신 토큰 가져오기
+            let newToken = try await Messaging.messaging().token()
+            
+            // 3. 캐시와 비교 후 필요한 경우만 서버 전송
+            let fcmTokenToSend: String
+            if cachedToken == newToken {
+                print("📌 기존 FCM 토큰과 동일 → 캐시 사용")
+                fcmTokenToSend = cachedToken ?? newToken
+            } else {
+                print("📌 새로운 FCM 토큰 감지 → 저장 & 전송")
+                try? keychain.saveFCMToken(newToken)
+                fcmTokenToSend = newToken
+            }
+            
             let timeZoneOffset = Self.currentTimeZoneOffset()
-
+            
+            
             memberService.socialLogin(
                 provider: provider,
                 idToken: idToken,
                 timeZoneOffset: timeZoneOffset,
-                fcmToken: fcmToken
+                fcmToken: fcmTokenToSend
             ) { [weak self] result in
                 Task { @MainActor in
                     guard let self else { return }
@@ -34,9 +52,10 @@ extension AuthSession {
                             self.isLoading = false
                             return
                         }
-
+                        
                         self.setTokens(accessToken: data.accessToken, refreshToken: data.refreshToken)
-
+                        
+                        /// 온보딩 전환유무는  여기에서만 처리
                         if data.isNewUser {
                             self.shouldStartOnboarding = true
                             self.isLoggedIn = false
@@ -45,22 +64,27 @@ extension AuthSession {
                             self.isLoggedIn = true
                         }
                         self.isLoading = false
-
+                        
                     case .unAuthorized:
-                        self.errorMessage = "인증 실패. 다시 로그인하세요."
-                        self.isLoading = false
-
+                        self.handleServerError("인증 실패. 다시 로그인하세요.")
+                        
                     default:
-                        self.errorMessage = "서버 오류가 발생했습니다."
-                        self.isLoading = false
+                        self.handleServerError("서버 오류가 발생했습니다.")
                     }
                 }
             }
         } catch {
-            handleError(error, defaultMessage: "FCM 토큰을 가져올 수 없습니다.")
+            self.handleServerError("로그인 중 예외 발생: \(error.localizedDescription)")
         }
     }
     
+    /// 서버 로그인 실패 시 Firebase 세션도 정리
+    private func handleServerError(_ message: String) {
+        print("🚨 서버 로그인 실패: \(message)")
+        try? Auth.auth().signOut()
+        clear()
+        self.errorMessage = message
+    }
     
     func setTokens(accessToken: String, refreshToken: String) {
         let acc = accessToken.replacingOccurrences(of: "Bearer ", with: "")

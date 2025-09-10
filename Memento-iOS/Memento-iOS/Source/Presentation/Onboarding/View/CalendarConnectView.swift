@@ -33,9 +33,7 @@ struct CalendarConnectView: View {
 
                 Spacer()
 
-                AppStartButton()
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 10)
+                // 추후 버튼 위치
             }
         }
     }
@@ -178,36 +176,9 @@ private struct CalendarConnectButtons: View {
         }
     }
 }
-private struct AppStartButton: View {
-    @EnvironmentObject var viewModel: OnboardingViewModel
-    @EnvironmentObject var authSession: AuthSession
-
-    var body: some View {
-        Button {
-            // 1. 데이터 전송
-            viewModel.submitOnboardingData()
-            
-            // 2. 전송 성공 시 → 세션 갱신
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                withAnimation(.easeInOut) {
-                    authSession.shouldStartOnboarding = false
-                    authSession.isLoggedIn = true
-                }
-            }
-        } label: {
-            Text(OnboardingCalendarConnectText.startMementoButton)
-                .applyFont(.body_b_16)
-                .foregroundColor(Color.black)
-                .padding(.vertical, 13)
-                .frame(maxWidth: .infinity)
-        }
-        .background(Color.mainGreen)
-        .frame(height: 50)
-        .cornerRadius(2)
-        .disabled(!authSession.shouldStartOnboarding)
-    }
-}
 
 #Preview {
-    CalendarConnectView().environmentObject(OnboardingViewModel())
+    CalendarConnectView()
+        .environmentObject(OnboardingViewModel())
+        .environmentObject(AuthSession.shared)
 }

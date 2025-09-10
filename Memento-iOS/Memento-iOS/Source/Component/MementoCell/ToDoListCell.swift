@@ -54,7 +54,7 @@ struct ToDoListCell: View {
                 )
             )
         } else {
-            return AnyView(Color.mainNavy)
+            return AnyView(Color.grayBlack)
         }
     }
 }
