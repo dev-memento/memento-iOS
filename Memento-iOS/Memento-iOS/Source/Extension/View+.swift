@@ -8,7 +8,7 @@
 import SwiftUI
 
 extension View {
-
+    
     /// navigationBarTitleText의 색상을 변경해주는 메소드입니다.
     /// 사용법: .navigationBarTitleTextColor(.red)
     @available(iOS 14, *)
@@ -18,14 +18,9 @@ extension View {
         UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: uiColor ]
         return self
     }
-
-    /// 사용 예시:
-    /// ```
-    /// ExampleView()
-    ///     .applyDynamicSheetForTagCount()
-    /// ```
-    ///
-    /// - Returns: 동적으로 동작하는 시트 반환
+    
+    /// 조건에 따라 시트를 동적으로 적용
+    /// 사용법: ExampleView().applyDynamicSheetForTagCount(10)
     @ViewBuilder
     func applyDynamicSheetForTagCount(tagCount: Int) -> some View {
         if tagCount > 3 {

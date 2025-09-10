@@ -18,6 +18,8 @@ enum ScheduleTargetType {
     case postSchedule(body: SchedulePostRequest) // 일정 생성
     
     case deleteSchedule(scheduleId: Int) // 일정 삭제
+    
+    case updateSchedule(scheduleId: Int, body: SchedulePostRequest) // 일정 수정
 }
 
 extension ScheduleTargetType: BaseTargetType {
@@ -46,6 +48,8 @@ extension ScheduleTargetType: BaseTargetType {
         switch self {
         case .postSchedule(let body):
             return body
+        case .updateSchedule(_, let body):
+            return body
         default:
             return nil
         }
@@ -58,7 +62,8 @@ extension ScheduleTargetType: BaseTargetType {
         case .getSchedulesAllDay:
             return utilPath.rawValue + "/all-days"
         case .getSchedulesDetail(let scheduleId),
-                .deleteSchedule(let scheduleId):
+                .deleteSchedule(let scheduleId),
+                .updateSchedule(let scheduleId, _):
             return utilPath.rawValue + "/\(scheduleId)"
         default:
             return utilPath.rawValue
@@ -71,6 +76,8 @@ extension ScheduleTargetType: BaseTargetType {
             return .post
         case .deleteSchedule:
             return .delete
+        case .updateSchedule:
+            return .patch
         default:
             return .get
         }

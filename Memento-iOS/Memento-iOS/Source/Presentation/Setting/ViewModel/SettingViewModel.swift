@@ -66,7 +66,7 @@ extension SettingViewModel {
             switch result {
             case .success(let dto):
                 if let data = dto?.data {
-                    self.wakeUpTime = data.wakeUpTime.toHourMinuteDate()
+                    self.wakeUpTime = Date.dateFromString(data.wakeUpTime, format: "HH:mm")
                 }
             default:
                 print("시간 가져오기 실패")
@@ -79,7 +79,7 @@ extension SettingViewModel {
     func updateUserUptime() {
         guard let wake = wakeUpTime else { return }
         
-        let request = UserUptimeRequest(wakeUpTime: wake.formattedHourMinute())
+        let request = UserUptimeRequest(wakeUpTime: wake.stringFromDate(with: "HH:mm"))
         
         userInfoUpdateAPIService.updateUserUptime(request: request) { result in
             switch result {

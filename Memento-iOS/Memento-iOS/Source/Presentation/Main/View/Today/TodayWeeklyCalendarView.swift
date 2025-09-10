@@ -26,6 +26,9 @@ struct TodayWeeklyCalendarView: View {
     
     @State private var floatingButtonPressed: Bool = false
     
+    var editScheduleAction: (ScheduleItem) -> Void
+    var editToDoAction: (ToDoItem) -> Void
+    
     var body: some View {
         NavigationView {
             ZStack(alignment: .bottomTrailing) {
@@ -96,11 +99,11 @@ struct TodayWeeklyCalendarView: View {
                     updateScrollTarget()
                     viewModel.isInitialScrollDone = true
                 }
-                .onReceive(NotificationCenter.default.publisher(for: Notification.Name("postSchedule"))) { _ in
+                .onReceive(NotificationCenter.default.publisher(for: Notification.Name("refreshSchedule"))) { _ in
                     viewModel.getSchedulesTotal(useCache: false) // 새로 만들면 캐시 무시
                     viewModel.getSchedulesAllDay()
                 }
-                .onReceive(NotificationCenter.default.publisher(for: Notification.Name("postToDo"))) { _ in
+                .onReceive(NotificationCenter.default.publisher(for: Notification.Name("refreshToDoList"))) { _ in
                     viewModel.getToDoListTotal(useCache: false) // 새로 만들면 캐시 무시
                 }
                 .background(Color.grayBlack)
@@ -234,7 +237,10 @@ struct TodayWeeklyCalendarView: View {
                         viewModel.deleteToDo(toDoId: todo.id)
                         isToDoAlertPresented = false
                     },
-                    onEdit: { isToDoAlertPresented = false },
+                    onEdit: {
+                        isToDoAlertPresented = false
+                        editToDoAction(todo)
+                    },
                     isChecked: viewModel.bindingForToDoCompletion(todo.id)
                 )
             }
@@ -254,7 +260,10 @@ struct TodayWeeklyCalendarView: View {
                         viewModel.deleteSchedule(scheduleId: schedule.id)
                         isScheduleAlertPresented = false
                     },
-                    onEdit: { isScheduleAlertPresented = false }
+                    onEdit: {
+                        isScheduleAlertPresented = false
+                        editScheduleAction(schedule)
+                    }
                 )
             }
         }

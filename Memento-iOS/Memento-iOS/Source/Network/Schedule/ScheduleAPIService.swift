@@ -20,6 +20,8 @@ protocol ScheduleAPIServiceProtocol {
     func postSchedule(body: SchedulePostRequest, completion: @escaping (NetworkResult<Void>) -> Void)
     
     func deleteSchedule(scheduleId: Int, completion: @escaping (NetworkResult<Void>) -> Void)
+    
+    func updateSchedule(scheduleId: Int, body: SchedulePostRequest, completion: @escaping (NetworkResult<Void>) -> Void)
 }
 
 extension ScheduleAPIServiceProtocol {
@@ -153,6 +155,28 @@ final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
     // 일정 삭제
     func deleteSchedule(scheduleId: Int, completion: @escaping (NetworkResult<Void>) -> Void) {
         provider.request(.deleteSchedule(scheduleId: scheduleId)) { [weak self] result in
+            guard let self = self else { return }
+            let networkResult: NetworkResult<Void>
+            
+            switch result {
+            case .success(let response):
+                networkResult = self.fetchNetworkResult(statusCode: response.statusCode)
+            case .failure(let error):
+                if let response = error.response {
+                    networkResult = self.fetchNetworkResult(statusCode: response.statusCode)
+                } else {
+                    networkResult = .networkFail
+                }
+            }
+            
+            print(networkResult.stateDescription)
+            completion(networkResult)
+        }
+    }
+    
+    // 일정 수정
+    func updateSchedule(scheduleId: Int, body: SchedulePostRequest, completion: @escaping (NetworkResult<Void>) -> Void) {
+        provider.request(.updateSchedule(scheduleId: scheduleId, body: body)) { [weak self] result in
             guard let self = self else { return }
             let networkResult: NetworkResult<Void>
             

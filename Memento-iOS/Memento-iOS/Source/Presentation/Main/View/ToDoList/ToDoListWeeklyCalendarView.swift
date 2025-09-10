@@ -15,13 +15,14 @@ struct ToDoListWeeklyCalendarView: View {
     @StateObject private var settingViewModel = SettingViewModel()
     
     @State private var isToDoAlertPresented = false
-    @State private var isEditSheetPresented = false
     @State private var isSettingViewPresented = false
     
     @State private var selectedItem: ToDoItem? = nil
     @State private var scrollTarget: MCalendarDataModel? = nil
     
     @State private var floatingButtonPressed: Bool = false
+    
+    var editAction: (ToDoItem) -> Void
     
     var body: some View {
         NavigationView {
@@ -184,7 +185,7 @@ struct ToDoListWeeklyCalendarView: View {
                     },
                     onEdit: {
                         isToDoAlertPresented = false
-                        isEditSheetPresented = true
+                        editAction(item)
                     },
                     isChecked: viewModel.bindingForToDoCompletion(item.id)
                 )
