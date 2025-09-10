@@ -11,18 +11,14 @@ final class ToDoCache {
     static let shared = ToDoCache()
     private init() {}
 
-    private var cache: [String: (data: [ToDoItem], timestamp: Date)] = [:]
-    private let ttl: TimeInterval = 300 // 5분 캐시
+    private var cache: [String: [ToDoItem]] = [:]
 
     func get(key: String) -> [ToDoItem]? {
-        guard let entry = cache[key] else { return nil }
-        if Date().timeIntervalSince(entry.timestamp) < ttl {
-            return entry.data
-        }
-        return nil
+        return cache[key]
     }
 
     func set(key: String, data: [ToDoItem]) {
-        cache[key] = (data, Date())
+        cache[key] = data
     }
 }
+
