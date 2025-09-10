@@ -33,7 +33,7 @@ final class ToDoListViewModel: ObservableObject {
         tagService: TagAPIServiceProtocol,
         toDoListService: ToDoListAPIServiceProtocol,
         mCallendarDataSource: MCalendarDataSource,
-        mEventDataSource: MEventDatasource,
+        mEventDataSource: MEventDatasource
     ) {
         self.tagService = tagService
         self.toDoListService = toDoListService
