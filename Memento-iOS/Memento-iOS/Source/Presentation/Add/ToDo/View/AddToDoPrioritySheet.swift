@@ -13,8 +13,6 @@ struct AddToDoPrioritySheet: View {
     
     @ObservedObject var viewModel: AddToDoViewModel
     
-    let viewType: ViewType
-    
     var body: some View {
         ZStack {
             Color.gray10
@@ -22,7 +20,6 @@ struct AddToDoPrioritySheet: View {
             
             VStack {
                 HeaderView(
-                    viewType: viewType,
                     onDone: {
                         viewModel.isPriorityPickerPresented = false
                     })
@@ -41,27 +38,14 @@ struct AddToDoPrioritySheet: View {
 
 struct HeaderView: View {
     
-    let viewType: ViewType
     let onDone: () -> Void
     
     var body: some View {
         HStack {
-            switch viewType {
-            case .add:
-                Button {
-                    onDone()
-                } label: {
-                    Image(.btn_back)
-                }
-            case .edit:
-                Button {
-                    onDone()
-                } label: {
-                    Text("Cancel")
-                        .applyFont(.body_r_16)
-                        .foregroundStyle(Color.red)
-                }
-                .frame(width: 84, height: 48)
+            Button {
+                onDone()
+            } label: {
+                Image(.btn_back)
             }
             
             Spacer()
@@ -76,7 +60,7 @@ struct HeaderView: View {
             .padding(.horizontal, 18)
             .padding(.vertical, 12)
         }
-        .frame(height: 60)
+        .padding(.vertical, 6)
     }
 }
 

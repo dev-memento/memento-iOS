@@ -85,7 +85,7 @@ private struct TimeSelectionView: View {
             Spacer()
             
             Button(action: action) {
-                Text(time.formattedHourMinute())
+                Text(time.stringFromDate(with: "HH:mm"))
                     .applyFont(.body_r_14)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, alignment: .center)

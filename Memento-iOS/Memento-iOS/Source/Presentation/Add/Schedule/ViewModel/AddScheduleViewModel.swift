@@ -69,8 +69,8 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     
     var isTextEmpty: Bool { description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
     
-    var formattedStartDate: String { startDate.formattedDate(with: "MMM d, yyyy") }
-    var formattedEndDate: String { endDate.formattedDate(with: "MMM d, yyyy") }
+    var formattedStartDate: String { startDate.stringFromDate(with: "MMM d, yyyy") }
+    var formattedEndDate: String { endDate.stringFromDate(with: "MMM d, yyyy") }
     
     var formattedStartTime: String { formatTime(startTime) }
     var formattedEndTime: String { formatTime(endTime) }
@@ -124,12 +124,12 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     }
     
     func formatDate(date: Date, time: Date) -> String {
-        combineDateAndTime(date: date, time: time).formattedDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        combineDateAndTime(date: date, time: time).stringFromDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     }
     
     // All-Day 상태면 Time Picker에 All-Day 표시
     func formatTime(_ date: Date) -> String {
-        isAllDay ? StringLiteral.AddSchedule.allDay : date.formattedDate(with: "h:mm a")
+        isAllDay ? StringLiteral.AddSchedule.allDay : date.stringFromDate(with: "h:mm a")
     }
     
     // MARK: - All-Day Handling
@@ -226,7 +226,7 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
         
         scheduleService.postSchedule(body: body) { _ in
             NotificationCenter.default.post(
-                name: Notification.Name("postSchedule"),
+                name: Notification.Name("refreshSchedule"),
                 object: nil
             )
             

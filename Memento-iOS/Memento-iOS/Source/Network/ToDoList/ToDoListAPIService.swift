@@ -19,6 +19,7 @@ protocol ToDoListAPIServiceProtocol {
     
     func deleteToDo(toDoId: Int, completion: @escaping (NetworkResult<Void>) -> Void)
     
+    func updateToDo(toDoId: Int, body: ToDoPostRequest, completion: @escaping (NetworkResult<Void>) -> Void)
     func updateToDoCompletion(toDoId: Int, completion: @escaping (NetworkResult<ToDoCompletionResponseDTO>) -> Void)
 }
 
@@ -131,6 +132,28 @@ final class ToDoListAPIService: BaseAPIService, ToDoListAPIServiceProtocol {
     // 투두 삭제
     func deleteToDo(toDoId: Int, completion: @escaping (NetworkResult<Void>) -> Void) {
         provider.request(.deleteToDo(todoId: toDoId)) { [weak self] result in
+            guard let self = self else { return }
+            let networkResult: NetworkResult<Void>
+            
+            switch result {
+            case .success(let response):
+                networkResult = self.fetchNetworkResult(statusCode: response.statusCode)
+            case .failure(let error):
+                if let response = error.response {
+                    networkResult = self.fetchNetworkResult(statusCode: response.statusCode)
+                } else {
+                    networkResult = .networkFail
+                }
+            }
+            
+            print(networkResult.stateDescription)
+            completion(networkResult)
+        }
+    }
+    
+    // 투두 수정
+    func updateToDo(toDoId: Int, body: ToDoPostRequest, completion: @escaping (NetworkResult<Void>) -> Void) {
+        provider.request(.updateToDo(todoId: toDoId, body: body)) { [weak self] result in
             guard let self = self else { return }
             let networkResult: NetworkResult<Void>
             

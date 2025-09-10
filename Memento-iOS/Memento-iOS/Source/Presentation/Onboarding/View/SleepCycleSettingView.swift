@@ -133,7 +133,7 @@ private struct TimeSelectionView: View {
             Spacer()
             
             Button(action: action) {
-                Text(time.map { $0.formattedDate(with: "hh:mm a") } ?? OnboardingSleepCycleText.defaultTime)
+                Text(time.map { $0.stringFromDate(with: "hh:mm a") } ?? OnboardingSleepCycleText.defaultTime)
                     .applyFont(.body_r_14)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, alignment: .center)

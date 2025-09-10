@@ -76,7 +76,7 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
     // MARK: - Date Helpers
     
     func formatDate(_ date: Date) -> String {
-        Calendar.current.isDateInToday(date) ? StringLiteral.AddToDo.today : date.formattedDate(with: "MMM d")
+        Calendar.current.isDateInToday(date) ? StringLiteral.AddToDo.today : date.stringFromDate(with: "MMM d")
     }
     
     private func debouncedParse() {
@@ -127,9 +127,9 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
     
     func postToDo(completion: @escaping () -> Void) {
         let body = ToDoPostRequest(
-            startDate: startDate.formattedDate(with: "yyyy-MM-dd"),
+            startDate: startDate.stringFromDate(with: "yyyy-MM-dd"),
             description: description,
-            endDate: endDate.formattedDate(with: "yyyy-MM-dd"),
+            endDate: endDate.stringFromDate(with: "yyyy-MM-dd"),
             tagId: selectedTag.tagId,
             priorityUrgency: priorityUrgency,
             priorityImportance: priorityImportance
@@ -137,7 +137,7 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
         
         toDoService.postToDo(body: body) { _ in
             NotificationCenter.default.post(
-                name: Notification.Name("postToDo"),
+                name: Notification.Name("refreshToDoList"),
                 object: nil
             )
             

@@ -67,7 +67,7 @@ struct TimeInfoView: View {
     
     var body: some View {
         HStack(spacing: 12) {
-            Image(.img_notion)
+//            Image(.img_notion)
             
             Text(timeDuration)
                 .applyFont(.detail_r_12)
