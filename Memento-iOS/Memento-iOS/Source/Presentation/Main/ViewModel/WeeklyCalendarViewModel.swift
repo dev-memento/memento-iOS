@@ -18,6 +18,7 @@ final class WeeklyCalendarViewModel: ObservableObject {
     private let scheduleService: ScheduleAPIServiceProtocol
     private var toDoService: ToDoListAPIServiceProtocol
     private let userUptimeService: UserUptimeAPIServiceProtocol
+    private let tagService: TagAPIServiceProtocol
     
     // MARK: - Published Properties
     
@@ -30,6 +31,7 @@ final class WeeklyCalendarViewModel: ObservableObject {
     @Published var allDayDict: [MCalendarDataModel: [AllDayItem]] = [:]
     @Published var toDoItems: [ToDoItem] = []
     @Published var toDoListDict: [MCalendarDataModel: [ToDoItem]] = [:]
+    @Published var tag: [TagItem] = []
     
     @Published var wakeUpTime: String = "8 AM"
     @Published var windDownTime: String = "11 PM"
@@ -53,12 +55,14 @@ final class WeeklyCalendarViewModel: ObservableObject {
     init(scheduleService: ScheduleAPIServiceProtocol,
          toDoService: ToDoListAPIServiceProtocol,
          userUptimeService: UserUptimeAPIServiceProtocol,
+         tagService: TagAPIServiceProtocol,
          mCalendarDataSource: MCalendarDataSource,
          mEventDataSource: MEventDatasource
     ) {
         self.toDoService = toDoService
         self.scheduleService = scheduleService
         self.userUptimeService = userUptimeService
+        self.tagService = tagService
         self.mCallendarDataSource = mCalendarDataSource
         self.mEventDataSource = mEventDataSource
         
@@ -316,6 +320,10 @@ extension WeeklyCalendarViewModel {
                         self.updateTodayItems(for: date)
                     }
                 }
+            }
+        }
+    }
+    
     func getTagsAPI() {
         tagService.getTags() { [weak self] result in
             switch result {
@@ -325,8 +333,16 @@ extension WeeklyCalendarViewModel {
                 }
                 
                 DispatchQueue.main.async {
-                    self?.tag = tagResponse.data
                     TagManager.shared.saveTags(tagResponse.data)
+                    print("TagManager에 \(tagResponse.data.count)개 태그 저장 완료")
+                    
+                    self?.tag = tagResponse.data.map { tagResponse in
+                        TagItem(
+                            title: tagResponse.name,
+                            color: Color.fromHex(tagResponse.colorCode),
+                            isChevronVisible: true
+                        )
+                    }
                 }
                 
             default:
@@ -367,14 +383,14 @@ extension WeeklyCalendarViewModel {
                     ToDoCache.shared.set(key: "todos", data: mapped) // 캐시에 저장
                     self.isFirstFetch = false // 최초 실행 완료
                     if let date = self.selectedDate.date() {
-                        self.updateTodayItems(for: date)  
+                        self.updateTodayItems(for: date)
                     }
                 }
             }
             APICacheLogger.shared.logServerCall(start: start, apiName: "ToDo")
         }
     }
-
+    
     
     func updateToDoCompletion(toDoId: Int) {
         toDoService.updateToDoCompletion(toDoId: toDoId) { [weak self] result in
