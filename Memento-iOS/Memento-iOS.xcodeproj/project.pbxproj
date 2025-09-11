@@ -43,6 +43,8 @@
 				Source/Component/Alert/CustomActionSheetView.swift,
 				Source/Component/Alert/ScheduleAlertView.swift,
 				Source/Component/Button/FloatingButton.swift,
+				Source/Component/Cache/ScheduleCache.swift,
+				Source/Component/Cache/ToDoCache.swift,
 				Source/Component/CustomTextEditor.swift,
 				Source/Component/NeonAnimationView.swift,
 				Source/Component/RefreshAnimationView.swift,
