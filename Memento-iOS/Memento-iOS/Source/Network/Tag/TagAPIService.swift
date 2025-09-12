@@ -13,10 +13,12 @@ import Moya
 
 protocol TagAPIServiceProtocol {
     func getTags(completion: @escaping (NetworkResult<TagResponseDTO>) -> Void)
+    func postTag(request: TagPostRequest, completion: @escaping (NetworkResult<TagPostResponseDTO>) -> Void)
 }
 
 extension TagAPIServiceProtocol {
     typealias TagResponseDTO = BaseDTO<[TagResponse]>
+    typealias TagPostResponseDTO = BaseDTO<TagPostResponse>
 }
 
 // MARK: - TagAPIService
@@ -32,6 +34,28 @@ final class TagAPIService: BaseAPIService, TagAPIServiceProtocol {
         provider.request(.getTags) { [weak self] result in
             guard let self else { return }
             let networkResult: NetworkResult<TagResponseDTO>
+            
+            switch result {
+            case .success(let response):
+                networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
+            case .failure(let error):
+                if let response = error.response {
+                    networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
+                }
+                else {
+                    networkResult = .networkFail
+                }
+            }
+            
+            print(networkResult.stateDescription)
+            completion(networkResult)
+        }
+    }
+    
+    func postTag(request: TagPostRequest, completion: @escaping (NetworkResult<TagPostResponseDTO>) -> Void) {
+        provider.request(.postTag(request)) { [weak self] result in
+            guard let self else { return }
+            let networkResult: NetworkResult<TagPostResponseDTO>
             
             switch result {
             case .success(let response):

@@ -11,15 +11,8 @@ import MDSKit
 struct TagEditView: View {
     
     @EnvironmentObject var viewModel: SettingViewModel
-    let categories: [TagItem] = [
-        TagItem(title: "Untitled", color: Color.gray05, isChevronVisible: false),
-        TagItem(title: "Family", color: Color.mementoRed, isChevronVisible: true),
-        TagItem(title: "Hobby", color: Color.mementoOrange, isChevronVisible: true),
-        TagItem(title: "Self-Development", color: Color.mementoMint, isChevronVisible: true),
-        TagItem(title: "Work", color: Color.mementoCyan, isChevronVisible: true),
-        TagItem(title: "Personal", color: Color.mementoBlue, isChevronVisible: true),
-    ]
-
+    @State private var savedTags: [TagResponse] = []
+    
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             
@@ -34,11 +27,22 @@ struct TagEditView: View {
             .padding(.top, 25)
             
             VStack(spacing: 6) {
-                ForEach(categories) { item in
+                ForEach(savedTags, id: \.id) { tag in
                     Button {
-                        viewModel.navigateToNext(.TagDetail(item, item.isChevronVisible))
+                        let tagItem = TagItem(
+                            title: tag.name,
+                            color: Color.fromHex(tag.colorCode),
+                            isChevronVisible: true
+                        )
+                        viewModel.navigateToNext(.TagDetail(tagItem, true))
                     } label: {
-                        CategoryRowView(item: item)
+                        CategoryRowView(
+                            item: TagItem(
+                                title: tag.name,
+                                color: Color.fromHex(tag.colorCode),
+                                isChevronVisible: true
+                            )
+                        )
                     }
                 }
 
@@ -67,6 +71,14 @@ struct TagEditView: View {
             .padding(.top, 26)
             .padding(.horizontal, 16)
         }
+        .onAppear {
+            loadSavedTags()
+        }
+    }
+
+    private func loadSavedTags() {
+        savedTags = TagManager.shared.getSavedTags()
+        print("로컬에서 로드된 태그: \(savedTags.count)개")
     }
 }
 

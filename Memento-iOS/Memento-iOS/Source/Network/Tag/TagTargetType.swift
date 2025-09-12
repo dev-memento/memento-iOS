@@ -11,6 +11,7 @@ import Moya
 
 enum TagTargetType {
     case getTags
+    case postTag(TagPostRequest)
 }
 
 extension TagTargetType: BaseTargetType {
@@ -31,7 +32,12 @@ extension TagTargetType: BaseTargetType {
     }
     
     var requestBodyParameter: Codable? {
-        return nil
+        switch self {
+        case .getTags:
+            return nil
+        case .postTag(let request):
+            return request
+        }
     }
     
     var path: String {
@@ -39,6 +45,11 @@ extension TagTargetType: BaseTargetType {
     }
     
     var method: Moya.Method {
-        return .get
+        switch self {
+        case .getTags:
+            return .get
+        case .postTag:
+            return .post
+        }
     }
 }

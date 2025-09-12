@@ -61,10 +61,10 @@ struct ToDoListWeeklyCalendarView: View {
                     }
                     
                     viewModel.getToDoListTotal(
-                        useCache: true,
+                        useCache: true
                     )
                     viewModel.getSchedulesTotal(
-                        useCache: true,
+                        useCache: true
                     )
                 }
                 .background(Color.grayBlack)
