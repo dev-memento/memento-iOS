@@ -53,13 +53,19 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     }
     
     @Published var tagList: [Tag] = []
-    @Published var selectedTag: Tag = Tag(tagId: 1, name: "Untitled", color: .gray05)
+    @Published var selectedTag: Tag
     
     // MARK: - Initializer
     
     init(scheduleService: ScheduleAPIServiceProtocol = ScheduleAPIService()) {
         
         self.scheduleService = scheduleService
+        
+        if let untitledTag = TagManager.shared.getTag(by: "Untitled") {
+            self.selectedTag = Tag(tagId: untitledTag.id, name: untitledTag.name, color: Color(hex: untitledTag.colorCode))
+        } else {
+            self.selectedTag = Tag(tagId: 0, name: "Loading...", color: .gray05)
+        }
     }
     
     // MARK: - Computed Properties
