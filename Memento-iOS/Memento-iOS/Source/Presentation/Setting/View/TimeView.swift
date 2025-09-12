@@ -23,8 +23,7 @@ struct TimeView: View {
                     viewModel.navigateBack()
                 }
             )
-            .padding(.top, 25)
-            
+
             TimeSelectionView(
                 wakeUpTime: $viewModel.wakeUpTime,
                 isPickerPresented: $isPickerPresented,

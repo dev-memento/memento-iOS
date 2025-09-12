@@ -25,17 +25,17 @@ struct SettingView: View {
 
     var body: some View {
         NavigationStack(path: $viewModel.navigationPath) {
+            CustomNavigationBar(
+                title: SettingsSettingViewText.navigationTitle,
+                showBackButton: true,
+                showSkipButton: false,
+                backButtonAction: { dismiss() }
+            )
+            .padding(.bottom, 12)
+            
             ZStack {
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack {
-                        CustomNavigationBar(
-                            title: SettingsSettingViewText.navigationTitle,
-                            showBackButton: true,
-                            showSkipButton: false,
-                            backButtonAction: { dismiss() }
-                        )
-                        .padding(.top, 25)
-                        
                         UserInfoCard(userEmail: userEmail)
                         
                         GeneralSettingsSection()
