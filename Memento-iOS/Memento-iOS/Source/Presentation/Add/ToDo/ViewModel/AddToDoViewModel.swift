@@ -37,7 +37,7 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
     @Published var endDate: Date = Date()
     
     @Published var tagList: [Tag] = []
-    @Published var selectedTag: Tag = Tag(tagId: 1, name: "Untitled", color: .gray05)
+    @Published var selectedTag: Tag
     
     @Published var priorityUrgency: Double = 0.0
     @Published var priorityImportance: Double = 0.0
@@ -57,6 +57,12 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
     init(toDoService: ToDoListAPIServiceProtocol = ToDoListAPIService()) {
         
         self.toDoService = toDoService
+        
+        if let untitledTag = TagManager.shared.getTag(by: "Untitled") {
+            self.selectedTag = Tag(tagId: untitledTag.id, name: untitledTag.name, color: Color(hex: untitledTag.colorCode))
+        } else {
+            self.selectedTag = Tag(tagId: 0, name: "Loading...", color: .gray05)
+        }
     }
     
     // MARK: - Computed Properties
@@ -126,8 +132,8 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
             description: description,
             endDate: endDate.stringFromDate(with: "yyyy-MM-dd"),
             tagId: selectedTag.tagId,
-            priorityUrgency: priorityUrgency,
-            priorityImportance: priorityImportance
+            priorityUrgency: selectedPriority == .none ? nil : priorityUrgency,
+            priorityImportance: selectedPriority == .none ? nil : priorityImportance
         )
         
         toDoService.postToDo(body: body) { _ in
