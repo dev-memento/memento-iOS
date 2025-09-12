@@ -43,11 +43,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
             }
             print("알림 권한 상태: \(granted ? "허용 ✅" : "거부 ❌")")
         }
-        
-        TagManager.shared.fetchAndSaveTags { success in
-            print(success ? "태그 동기화 완료" : "태그 동기화 실패")
-        }
-        
+
         return true
     }
     

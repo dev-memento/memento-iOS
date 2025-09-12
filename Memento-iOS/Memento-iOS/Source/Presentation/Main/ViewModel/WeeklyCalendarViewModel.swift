@@ -18,7 +18,6 @@ final class WeeklyCalendarViewModel: ObservableObject {
     private let scheduleService: ScheduleAPIServiceProtocol
     private var toDoService: ToDoListAPIServiceProtocol
     private let userUptimeService: UserUptimeAPIServiceProtocol
-    private let tagService: TagAPIServiceProtocol
     
     // MARK: - Published Properties
     
@@ -55,14 +54,12 @@ final class WeeklyCalendarViewModel: ObservableObject {
     init(scheduleService: ScheduleAPIServiceProtocol,
          toDoService: ToDoListAPIServiceProtocol,
          userUptimeService: UserUptimeAPIServiceProtocol,
-         tagService: TagAPIServiceProtocol,
          mCalendarDataSource: MCalendarDataSource,
          mEventDataSource: MEventDatasource
     ) {
         self.toDoService = toDoService
         self.scheduleService = scheduleService
         self.userUptimeService = userUptimeService
-        self.tagService = tagService
         self.mCallendarDataSource = mCalendarDataSource
         self.mEventDataSource = mEventDataSource
         
@@ -70,6 +67,10 @@ final class WeeklyCalendarViewModel: ObservableObject {
         updateSelectedDateOnScroll()
         
         preProcessingForAllEvents()
+        
+        TagManager.shared.fetchAndSaveTags { success in
+            print(success ? "태그 동기화 완료" : "태그 동기화 실패")
+        }
     }
     
     private func makeDummyEvent() {
@@ -320,33 +321,6 @@ extension WeeklyCalendarViewModel {
                         self.updateTodayItems(for: date)
                     }
                 }
-            }
-        }
-    }
-    
-    func getTagsAPI() {
-        tagService.getTags() { [weak self] result in
-            switch result {
-            case .success(let response):
-                guard let tagResponse = response else {
-                    return
-                }
-                
-                DispatchQueue.main.async {
-                    TagManager.shared.saveTags(tagResponse.data)
-                    print("TagManager에 \(tagResponse.data.count)개 태그 저장 완료")
-                    
-                    self?.tag = tagResponse.data.map { tagResponse in
-                        TagItem(
-                            title: tagResponse.name,
-                            color: Color.fromHex(tagResponse.colorCode),
-                            isChevronVisible: true
-                        )
-                    }
-                }
-                
-            default:
-                print("태그 API 실패 - \(result.stateDescription)")
             }
         }
     }
