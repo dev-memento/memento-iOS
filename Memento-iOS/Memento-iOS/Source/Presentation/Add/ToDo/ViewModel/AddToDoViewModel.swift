@@ -14,7 +14,6 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
     // MARK: - Dependencies
     
     private var toDoService: ToDoListAPIServiceProtocol
-    private let tagService: TagAPIServiceProtocol
     
     // MARK: - User Input
     
@@ -38,7 +37,7 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
     @Published var endDate: Date = Date()
     
     @Published var tagList: [Tag] = []
-    @Published var selectedTag: Tag = Tag(tagId: 1, name: "Untitled", color: .gray05)
+    @Published var selectedTag: Tag
     
     @Published var priorityUrgency: Double = 0.0
     @Published var priorityImportance: Double = 0.0
@@ -55,11 +54,15 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
     
     // MARK: - Initializer
     
-    init(toDoService: ToDoListAPIServiceProtocol = ToDoListAPIService(),
-         tagService: TagAPIServiceProtocol = TagAPIService()) {
+    init(toDoService: ToDoListAPIServiceProtocol = ToDoListAPIService()) {
         
         self.toDoService = toDoService
-        self.tagService = tagService
+        
+        if let untitledTag = TagManager.shared.getTag(by: "Untitled") {
+            self.selectedTag = Tag(tagId: untitledTag.id, name: untitledTag.name, color: Color(hex: untitledTag.colorCode))
+        } else {
+            self.selectedTag = Tag(tagId: 0, name: "Loading...", color: .gray05)
+        }
     }
     
     // MARK: - Computed Properties
@@ -113,16 +116,14 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
     // MARK: - API
     
     func getTags() {
-        tagService.getTags { [weak self] result in
-            guard let self = self else { return }
-            
-            if case let .success(response) = result,
-               let tags = response?.data, !tags.isEmpty {
-                
-                self.tagList = tags.map { Tag(tagId: $0.id, name: $0.name, color: Color(hex: $0.colorCode)) }
-                self.selectedTag = self.tagList.first ?? self.selectedTag
-            }
+        guard TagManager.shared.hasLocalTags() else {
+            return
         }
+        
+        let localTags = TagManager.shared.getSavedTags()
+        
+        self.tagList = localTags.map { Tag(tagId: $0.id, name: $0.name, color: Color(hex: $0.colorCode)) }
+        self.selectedTag = self.tagList.first ?? self.selectedTag
     }
     
     func postToDo(completion: @escaping () -> Void) {
@@ -131,8 +132,8 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
             description: description,
             endDate: endDate.stringFromDate(with: "yyyy-MM-dd"),
             tagId: selectedTag.tagId,
-            priorityUrgency: priorityUrgency,
-            priorityImportance: priorityImportance
+            priorityUrgency: selectedPriority == .none ? nil : priorityUrgency,
+            priorityImportance: selectedPriority == .none ? nil : priorityImportance
         )
         
         toDoService.postToDo(body: body) { _ in

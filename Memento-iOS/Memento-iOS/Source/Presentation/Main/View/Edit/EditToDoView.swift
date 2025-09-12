@@ -327,7 +327,11 @@ struct EditToDoToolbarView: View {
                                 LazyVGrid(columns: gridItem, spacing: 8) {
                                     ForEach(items) { item in
                                         Button {
-                                            viewModel.priorityType = item.priority
+                                            if viewModel.priorityType == item.priority {
+                                                viewModel.priorityType = .none
+                                            } else {
+                                                viewModel.priorityType = item.priority
+                                            }
                                         } label: {
                                             ZStack {
                                                 Rectangle()
