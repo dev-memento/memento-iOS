@@ -100,9 +100,9 @@ struct SettingView: View {
                 if showDeleteAlert {
                     CustomAlertView(
                         title: "Would you like to delete account?",
-                        message: "Permanently delete the account and remove access from all workspaces.",
+                        message: "Permanently delete the account and \nremove access from all workspaces.",
                         cancelTitle: "Cancel",
-                        confirmTitle: "Delete",
+                        confirmTitle: "Delete account",
                         confirmAction: {
                             Task { await authSession.withdraw() }
                             showDeleteAlert = false

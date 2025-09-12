@@ -120,12 +120,13 @@ struct TagEditDetailView: View {
         if showDeleteAlert {
             CustomAlertView(
                 title: "Are you sure you want to delete this tag?",
-                message: "If you delete it, associated items will be moved to 'Untitled'.",
+                message: "If you delete it, associated items \nwill be moved to 'Untitled'.",
                 cancelTitle: "Cancel",
                 confirmTitle: "Delete",
                 confirmAction: { showDeleteAlert = false; deleteTag() },
                 cancelAction: { showDeleteAlert = false }
             )
+            .padding(.horizontal, 32)
             .preferredColorScheme(.dark)
         }
     }
