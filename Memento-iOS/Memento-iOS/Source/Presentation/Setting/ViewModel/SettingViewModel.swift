@@ -30,8 +30,7 @@ final class SettingViewModel: ObservableObject {
     @Published var wakeUpTime: Date? = nil
     @Published var sleepTime: Date? = nil
     
-    private let userUptimeAPIService = UserUptimeAPIService()
-    private let userInfoUpdateAPIService = UserInfoUpdateAPIService()
+    private let userUptimeService = UserUptimeAPIService()
     
     init() {
         refreshNotificationStatus()
@@ -60,16 +59,13 @@ extension SettingViewModel {
     
     // MARK: - 서버에서 Uptime 조회
     @MainActor
-    func fetchUserUptime() {
-        userUptimeAPIService.fetchUptime { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case .success(let dto):
-                if let data = dto?.data {
-                    self.wakeUpTime = Date.dateFromString(data.wakeUpTime, format: "HH:mm")
-                }
-            default:
-                print("시간 가져오기 실패")
+    func getUserUptime() {
+        userUptimeService.getUserUptime { [weak self] result in
+            guard let self = self else { return }
+            
+            if case let .success(response) = result,
+               let data = response?.data {
+                self.wakeUpTime = Date.dateFromString(data.wakeUpTime, format: "HH:mm")
             }
         }
     }
@@ -81,13 +77,7 @@ extension SettingViewModel {
         
         let request = UserUptimeRequest(wakeUpTime: wake.stringFromDate(with: "HH:mm"))
         
-        userInfoUpdateAPIService.updateUserUptime(request: request) { result in
-            switch result {
-            case .success:
-                print("Uptime 업데이트 성공")
-            default:
-                print("Uptime 업데이트 실패")
-            }
+        userUptimeService.updateUserUptime(body: request) { _ in
         }
     }
 }

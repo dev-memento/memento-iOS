@@ -155,7 +155,7 @@ extension OnboardingViewModel {
         let userInfoRequest = UserInfoRequest(onboardingData: data)
         
         // 2) API 호출
-        userInfoAPIService.updateUserInfo(request: userInfoRequest) { [weak self] result in
+        userInfoAPIService.updateUserInfo(body: userInfoRequest) { [weak self] result in
             Task { @MainActor in
                 guard let self = self else { return }
                 

@@ -46,7 +46,7 @@ struct TimeView: View {
             )
         }
         .onAppear {
-            viewModel.fetchUserUptime()
+            viewModel.getUserUptime()
         }
     }
 }
