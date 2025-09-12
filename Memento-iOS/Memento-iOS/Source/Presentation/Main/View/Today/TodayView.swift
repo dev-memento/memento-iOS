@@ -64,6 +64,9 @@ struct TodayView: View {
                 .onAppear {
                     viewModel.getUserUptime()
                 }
+                .onReceive(NotificationCenter.default.publisher(for: Notification.Name("updateUptime"))) { _ in
+                    viewModel.getUserUptime()
+                }
             }
         }
     }

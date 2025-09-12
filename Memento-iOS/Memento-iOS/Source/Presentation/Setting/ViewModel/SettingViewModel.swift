@@ -78,6 +78,10 @@ extension SettingViewModel {
         let request = UserUptimeRequest(wakeUpTime: wake.stringFromDate(with: "HH:mm"))
         
         userUptimeService.updateUserUptime(body: request) { _ in
+            NotificationCenter.default.post(
+                name: Notification.Name("updateUptime"),
+                object: nil
+            )
         }
     }
 }
