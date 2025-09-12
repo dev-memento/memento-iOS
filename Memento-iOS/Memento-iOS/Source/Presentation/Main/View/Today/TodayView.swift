@@ -61,6 +61,9 @@ struct TodayView: View {
                     }
                 }
                 .background(Color.grayBlack)
+                .onAppear {
+                    viewModel.getUserUptime()
+                }
             }
         }
     }
