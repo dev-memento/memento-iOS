@@ -43,7 +43,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
             }
             print("알림 권한 상태: \(granted ? "허용 ✅" : "거부 ❌")")
         }
-        
+
         return true
     }
     

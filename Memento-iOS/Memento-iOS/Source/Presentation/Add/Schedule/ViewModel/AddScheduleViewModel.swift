@@ -14,7 +14,6 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     // MARK: - Dependencies
     
     private var scheduleService: ScheduleAPIServiceProtocol
-    private let tagService: TagAPIServiceProtocol
     
     // MARK: - User Input
     
@@ -25,7 +24,7 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
             }
         }
     }
-
+    
     @Published var description: String = "" {
         didSet {
             if isNaturalLanguageEnabled {
@@ -33,7 +32,7 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
             }
         }
     }
-
+    
     @Published var startDate: Date = Date().startOfDay {
         didSet { autoUpdateAllDayStatus() }
     }
@@ -54,15 +53,19 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     }
     
     @Published var tagList: [Tag] = []
-    @Published var selectedTag: Tag = Tag(tagId: 1, name: "Untitled", color: .gray05)
+    @Published var selectedTag: Tag
     
     // MARK: - Initializer
     
-    init(scheduleService: ScheduleAPIServiceProtocol = ScheduleAPIService(),
-         tagService: TagAPIServiceProtocol = TagAPIService()) {
+    init(scheduleService: ScheduleAPIServiceProtocol = ScheduleAPIService()) {
         
         self.scheduleService = scheduleService
-        self.tagService = tagService
+        
+        if let untitledTag = TagManager.shared.getTag(by: "Untitled") {
+            self.selectedTag = Tag(tagId: untitledTag.id, name: untitledTag.name, color: Color(hex: untitledTag.colorCode))
+        } else {
+            self.selectedTag = Tag(tagId: 0, name: "Loading...", color: .gray05)
+        }
     }
     
     // MARK: - Computed Properties
@@ -91,7 +94,7 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: workItem)
     }
-
+    
     func parseNaturalLanguage() {
         let result = NaturalLanguageDateParser.shared.parse(description, parseTime: true)
         
@@ -100,7 +103,7 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
             startTime = s
         }
         if let e = result.endDate {
-            endDate = Calendar.current.startOfDay(for: e) 
+            endDate = Calendar.current.startOfDay(for: e)
             endTime = e
         }
         
@@ -110,7 +113,7 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
             }
         }
     }
-
+    
     // 날짜랑 시간 결합
     func combineDateAndTime(date: Date, time: Date) -> Date {
         let calendar = Calendar.current
@@ -203,16 +206,14 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     // MARK: - API
     
     func getTags() {
-        tagService.getTags { [weak self] result in
-            guard let self = self else { return }
-            
-            if case let .success(response) = result,
-               let tags = response?.data, !tags.isEmpty {
-                
-                self.tagList = tags.map { Tag(tagId: $0.id, name: $0.name, color: Color(hex: $0.colorCode)) }
-                self.selectedTag = self.tagList.first ?? self.selectedTag
-            }
+        guard TagManager.shared.hasLocalTags() else {
+            return
         }
+        
+        let localTags = TagManager.shared.getSavedTags()
+        
+        self.tagList = localTags.map { Tag(tagId: $0.id, name: $0.name, color: Color(hex: $0.colorCode)) }
+        self.selectedTag = self.tagList.first ?? self.selectedTag
     }
     
     func postSchedule(completion: @escaping () -> Void) {

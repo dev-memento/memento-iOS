@@ -20,14 +20,14 @@ struct AddToDoView: View {
             HStack(spacing: 0) {
                 Text(StringLiteral.AddToDo.title)
                     .foregroundColor(.gray07)
-                    .applyFont(.body_r_14)
+                    .applyFont(.body_r_18)
                     .padding(.trailing, 5)
                 
                 Button(viewModel.formattedStartDate) {
                     viewModel.isStartDatePickerPresented = true
                 }
                 .foregroundColor(.gray04)
-                .applyFont(.body_r_14)
+                .applyFont(.body_r_18)
                 .sheet(isPresented: $viewModel.isStartDatePickerPresented) {
                     PickerSheet(type: .addToDo(.date)) {
                         SheetOKButton { viewModel.isStartDatePickerPresented = false }

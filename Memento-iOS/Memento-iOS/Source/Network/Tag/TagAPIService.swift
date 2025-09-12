@@ -37,8 +37,7 @@ final class TagAPIService: BaseAPIService, TagAPIServiceProtocol {
     )
     
     func getTags(completion: @escaping (NetworkResult<TagResponseDTO>) -> Void) {
-        provider.request(.getTags) { [weak self] result in
-            guard let self else { return }
+        provider.request(.getTags) { result in
             let networkResult: NetworkResult<TagResponseDTO>
             
             switch result {
@@ -47,8 +46,7 @@ final class TagAPIService: BaseAPIService, TagAPIServiceProtocol {
             case .failure(let error):
                 if let response = error.response {
                     networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
-                }
-                else {
+                } else {
                     networkResult = .networkFail
                 }
             }

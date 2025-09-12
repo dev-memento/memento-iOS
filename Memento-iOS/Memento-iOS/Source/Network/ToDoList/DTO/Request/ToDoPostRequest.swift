@@ -12,6 +12,6 @@ struct ToDoPostRequest: Codable {
     let description: String
     let endDate: String
     let tagId: Int
-    let priorityUrgency: Double
-    let priorityImportance: Double
+    let priorityUrgency: Double?
+    let priorityImportance: Double?
 }
