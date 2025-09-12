@@ -14,6 +14,7 @@ struct CustomNavigationBar: View {
     let title: String?
     let showBackButton: Bool
     let showSkipButton: Bool
+    let skipButtonTitle: String 
     let backButtonAction: () -> Void
     let skipButtonAction: () -> Void
     
@@ -23,12 +24,14 @@ struct CustomNavigationBar: View {
         title: String? = nil,
         showBackButton: Bool = true,
         showSkipButton: Bool = false,
+        skipButtonTitle: String = "Skip",
         backButtonAction: @escaping () -> Void = {},
         skipButtonAction: @escaping () -> Void = {}
     ) {
         self.title = title
         self.showBackButton = showBackButton
         self.showSkipButton = showSkipButton
+        self.skipButtonTitle = skipButtonTitle
         self.backButtonAction = backButtonAction
         self.skipButtonAction = skipButtonAction
     }
@@ -63,7 +66,7 @@ struct CustomNavigationBar: View {
             // 오른쪽 버튼
             if showSkipButton {
                 Button(action: skipButtonAction) {
-                    Text("Skip")
+                    Text(skipButtonTitle)
                         .applyFont(.body_b_14)
                         .foregroundColor(.gray06)
                 }
