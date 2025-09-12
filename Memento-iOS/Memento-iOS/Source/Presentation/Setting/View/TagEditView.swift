@@ -27,14 +27,24 @@ struct TagEditView: View {
             .padding(.top, 25)
             
             VStack(spacing: 6) {
-                ForEach(savedTags, id: \.id) { tag in
+                // default라서 버튼 제거 
+                CategoryRowView(
+                    item: TagItem(
+                        title: "Untitled",
+                        color: Color.fromHex("#A9ADBB"),
+                        isChevronVisible: false
+                    )
+                )
+                
+                // 기존 저장된 태그들 (Untitled 제외)
+                ForEach(savedTags.filter { $0.name != "Untitled" }, id: \.id) { tag in
                     Button {
                         let tagItem = TagItem(
                             title: tag.name,
                             color: Color.fromHex(tag.colorCode),
                             isChevronVisible: true
                         )
-                        viewModel.navigateToNext(.TagDetail(tagItem, true))
+                        viewModel.navigateToNext(.TagDetail(tagItem, false))
                     } label: {
                         CategoryRowView(
                             item: TagItem(
@@ -47,7 +57,7 @@ struct TagEditView: View {
                 }
 
                 Button(action: {
-                    viewModel.navigateToNext(.TagDetail(nil, false))
+                    viewModel.navigateToNext(.TagDetail(nil, true))
                 }) {
                     HStack {
                         Image(systemName: "plus")
