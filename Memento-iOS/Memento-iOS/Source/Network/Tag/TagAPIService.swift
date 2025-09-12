@@ -14,18 +14,14 @@ import Moya
 protocol TagAPIServiceProtocol {
     func getTags(completion: @escaping (NetworkResult<TagResponseDTO>) -> Void)
     func postTag(request: TagPostRequest, completion: @escaping (NetworkResult<TagPostResponseDTO>) -> Void)
-    func deleteTag(tagId: Int, completion: @escaping (NetworkResult<TagDeleteResponseDTO>) -> Void)
-    func patchTag(tagId: Int, request: TagPostRequest, completion: @escaping (NetworkResult<TagPatchResponseDTO>) -> Void)
+    func deleteTag(tagId: Int, completion: @escaping (NetworkResult<EmptyDTO>) -> Void)
+    func patchTag(tagId: Int, request: TagPostRequest, completion: @escaping (NetworkResult<EmptyDTO>) -> Void)
 }
 
 extension TagAPIServiceProtocol {
     typealias TagResponseDTO = BaseDTO<[TagResponse]>
     typealias TagPostResponseDTO = BaseDTO<TagPostResponse>
-    typealias TagDeleteResponseDTO = BaseDTO<EmptyData>
-    typealias TagPatchResponseDTO = BaseDTO<EmptyData>
 }
-
-struct EmptyData: Codable {}
 
 // MARK: - TagAPIService
 
@@ -77,9 +73,9 @@ final class TagAPIService: BaseAPIService, TagAPIServiceProtocol {
         }
     }
     
-    func deleteTag(tagId: Int, completion: @escaping (NetworkResult<TagDeleteResponseDTO>) -> Void) {
+    func deleteTag(tagId: Int, completion: @escaping (NetworkResult<EmptyDTO>) -> Void) {
         provider.request(.deleteTag(tagId)) { result in
-            let networkResult: NetworkResult<TagDeleteResponseDTO>
+            let networkResult: NetworkResult<EmptyDTO>
             
             switch result {
             case .success(let response):
@@ -98,9 +94,9 @@ final class TagAPIService: BaseAPIService, TagAPIServiceProtocol {
         }
     }
     
-    func patchTag(tagId: Int, request: TagPostRequest, completion: @escaping (NetworkResult<TagPatchResponseDTO>) -> Void) {
+    func patchTag(tagId: Int, request: TagPostRequest, completion: @escaping (NetworkResult<EmptyDTO>) -> Void) {
         provider.request(.patchTag(tagId, request)) { result in
-            let networkResult: NetworkResult<TagPatchResponseDTO>
+            let networkResult: NetworkResult<EmptyDTO>
             
             switch result {
             case .success(let response):
