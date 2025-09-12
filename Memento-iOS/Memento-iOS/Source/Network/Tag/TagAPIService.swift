@@ -57,8 +57,7 @@ final class TagAPIService: BaseAPIService, TagAPIServiceProtocol {
     }
     
     func postTag(request: TagPostRequest, completion: @escaping (NetworkResult<TagPostResponseDTO>) -> Void) {
-        provider.request(.postTag(request)) { [weak self] result in
-            guard let self else { return }
+        provider.request(.postTag(request)) { result in
             let networkResult: NetworkResult<TagPostResponseDTO>
             
             switch result {
@@ -79,8 +78,7 @@ final class TagAPIService: BaseAPIService, TagAPIServiceProtocol {
     }
     
     func deleteTag(tagId: Int, completion: @escaping (NetworkResult<TagDeleteResponseDTO>) -> Void) {
-        provider.request(.deleteTag(tagId)) { [weak self] result in
-            guard let self else { return }
+        provider.request(.deleteTag(tagId)) { result in
             let networkResult: NetworkResult<TagDeleteResponseDTO>
             
             switch result {
@@ -101,8 +99,7 @@ final class TagAPIService: BaseAPIService, TagAPIServiceProtocol {
     }
     
     func patchTag(tagId: Int, request: TagPostRequest, completion: @escaping (NetworkResult<TagPatchResponseDTO>) -> Void) {
-        provider.request(.patchTag(tagId, request)) { [weak self] result in
-            guard let self else { return }
+        provider.request(.patchTag(tagId, request)) { result in
             let networkResult: NetworkResult<TagPatchResponseDTO>
             
             switch result {
