@@ -15,7 +15,6 @@ final class EditScheduleViewModel: ObservableObject {
     // MARK: - Dependencies
     
     private let scheduleService: ScheduleAPIServiceProtocol
-    private let tagService: TagAPIServiceProtocol
     
     private let scheduleId: Int
     
@@ -45,8 +44,7 @@ final class EditScheduleViewModel: ObservableObject {
     
     init(
         scheduleItem: ScheduleItem,
-        scheduleService: ScheduleAPIServiceProtocol = ScheduleAPIService(),
-        tagService: TagAPIServiceProtocol = TagAPIService()
+        scheduleService: ScheduleAPIServiceProtocol = ScheduleAPIService()
     ) {
         self.scheduleId = scheduleItem.id
         self.description = scheduleItem.description
@@ -57,7 +55,6 @@ final class EditScheduleViewModel: ObservableObject {
         self.isAllDay = scheduleItem.isAllDay
         
         self.scheduleService = scheduleService
-        self.tagService = tagService
         
         getTags()
         updateAllDayStatus()
@@ -112,19 +109,18 @@ final class EditScheduleViewModel: ObservableObject {
     // MARK: - API
     
     func getTags() {
-        tagService.getTags { [weak self] result in
-            guard let self = self else { return }
-            
-            guard case let .success(response) = result,
-                  let tags = response?.data.map({ Tag(tagId: $0.id, name: $0.name, color: Color(hex: $0.colorCode)) })
-            else { return }
-            
-            self.tagList = tags
-            
-            if let selected = tags.first(where: { $0.name == self.tagName }) ?? tags.first {
-                self.tagName = selected.name
-                self.tagColorCode = selected.color.toHex()
-            }
+        guard TagManager.shared.hasLocalTags() else {
+            return
+        }
+        
+        let localTags = TagManager.shared.getSavedTags()
+        
+        let tags = localTags.map { Tag(tagId: $0.id, name: $0.name, color: Color(hex: $0.colorCode)) }
+        self.tagList = tags
+        
+        if let selected = tags.first(where: { $0.name == self.tagName }) ?? tags.first {
+            self.tagName = selected.name
+            self.tagColorCode = selected.color.toHex()
         }
     }
     

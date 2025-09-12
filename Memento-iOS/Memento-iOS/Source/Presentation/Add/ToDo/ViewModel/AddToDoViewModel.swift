@@ -14,7 +14,6 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
     // MARK: - Dependencies
     
     private var toDoService: ToDoListAPIServiceProtocol
-    private let tagService: TagAPIServiceProtocol
     
     // MARK: - User Input
     
@@ -55,11 +54,9 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
     
     // MARK: - Initializer
     
-    init(toDoService: ToDoListAPIServiceProtocol = ToDoListAPIService(),
-         tagService: TagAPIServiceProtocol = TagAPIService()) {
+    init(toDoService: ToDoListAPIServiceProtocol = ToDoListAPIService()) {
         
         self.toDoService = toDoService
-        self.tagService = tagService
     }
     
     // MARK: - Computed Properties
@@ -113,16 +110,14 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
     // MARK: - API
     
     func getTags() {
-        tagService.getTags { [weak self] result in
-            guard let self = self else { return }
-            
-            if case let .success(response) = result,
-               let tags = response?.data, !tags.isEmpty {
-                
-                self.tagList = tags.map { Tag(tagId: $0.id, name: $0.name, color: Color(hex: $0.colorCode)) }
-                self.selectedTag = self.tagList.first ?? self.selectedTag
-            }
+        guard TagManager.shared.hasLocalTags() else {
+            return
         }
+        
+        let localTags = TagManager.shared.getSavedTags()
+        
+        self.tagList = localTags.map { Tag(tagId: $0.id, name: $0.name, color: Color(hex: $0.colorCode)) }
+        self.selectedTag = self.tagList.first ?? self.selectedTag
     }
     
     func postToDo(completion: @escaping () -> Void) {

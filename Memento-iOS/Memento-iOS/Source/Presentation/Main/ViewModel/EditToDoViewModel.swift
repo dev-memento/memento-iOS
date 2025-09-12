@@ -15,7 +15,6 @@ final class EditToDoViewModel: ObservableObject {
     // MARK: - Dependencies
     
     private let toDoService: ToDoListAPIServiceProtocol
-    private let tagService: TagAPIServiceProtocol
     
     private let toDoId: Int
     
@@ -34,7 +33,6 @@ final class EditToDoViewModel: ObservableObject {
     
     init(
         toDoItem: ToDoItem,
-        tagService: TagAPIServiceProtocol = TagAPIService(),
         toDoService: ToDoListAPIServiceProtocol = ToDoListAPIService()
     ) {
         self.startDate = toDoItem.startDate
@@ -44,7 +42,7 @@ final class EditToDoViewModel: ObservableObject {
         self.tagColor = toDoItem.tagColor
         self.priorityType = toDoItem.priorityType
         self.toDoId = toDoItem.id
-        self.tagService = tagService
+        
         self.toDoService = toDoService
         
         getTags()
@@ -53,19 +51,18 @@ final class EditToDoViewModel: ObservableObject {
     // MARK: - API
     
     func getTags() {
-        tagService.getTags { [weak self] result in
-            guard let self = self else { return }
-            
-            guard case let .success(response) = result,
-                  let tags = response?.data.map({ Tag(tagId: $0.id, name: $0.name, color: Color(hex: $0.colorCode)) })
-            else { return }
-            
-            self.tagList = tags
-            
-            if let selected = tags.first(where: { $0.name == self.tagName }) ?? tags.first {
-                self.tagName = selected.name
-                self.tagColor = selected.color.toHex()
-            }
+        guard TagManager.shared.hasLocalTags() else {
+            return
+        }
+        
+        let localTags = TagManager.shared.getSavedTags()
+        
+        let tags = localTags.map { Tag(tagId: $0.id, name: $0.name, color: Color(hex: $0.colorCode)) }
+        self.tagList = tags
+        
+        if let selected = tags.first(where: { $0.name == self.tagName }) ?? tags.first {
+            self.tagName = selected.name
+            self.tagColor = selected.color.toHex()
         }
     }
     
