@@ -101,4 +101,56 @@ final class TagManager {
         currentTags.append(tag)
         saveTags(currentTags)
     }
+    
+    // 태그 수정
+    func updateTag(tagId: Int, request: TagPostRequest, completion: @escaping (Bool) -> Void) {
+        let apiService = TagAPIService()
+        
+        apiService.patchTag(tagId: tagId, request: request) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    // 로컬 데이터 업데이트
+                    self?.updateTagInLocal(tagId: tagId, name: request.name, colorCode: request.hexCode)
+                    completion(true)
+                default:
+                    completion(false)
+                }
+            }
+        }
+    }
+
+    // 태그 삭제
+    func deleteTag(tagId: Int, completion: @escaping (Bool) -> Void) {
+        let apiService = TagAPIService()
+        
+        apiService.deleteTag(tagId: tagId) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    // 로컬에서 제거
+                    self?.removeTagFromLocal(tagId: tagId)
+                    completion(true)
+                default:
+                    completion(false)
+                }
+            }
+        }
+    }
+
+    // 로컬 태그 업데이트
+    private func updateTagInLocal(tagId: Int, name: String, colorCode: String) {
+        var currentTags = getSavedTags()
+        if let index = currentTags.firstIndex(where: { $0.id == tagId }) {
+            currentTags[index] = TagResponse(id: tagId, name: name, colorCode: colorCode)
+            saveTags(currentTags)
+        }
+    }
+
+    // 로컬에서 태그 제거
+    private func removeTagFromLocal(tagId: Int) {
+        var currentTags = getSavedTags()
+        currentTags.removeAll { $0.id == tagId }
+        saveTags(currentTags)
+    }
 }
