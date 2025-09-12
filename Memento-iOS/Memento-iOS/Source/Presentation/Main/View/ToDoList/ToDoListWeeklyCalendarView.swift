@@ -78,6 +78,8 @@ struct ToDoListWeeklyCalendarView: View {
                             height: geo.size.height
                         )
                         .onAppear {
+                            viewModel.fetchDailyPrioritization()
+
                             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                                 floatingButtonPressed = false
                             }

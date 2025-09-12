@@ -19,6 +19,7 @@ struct TabBarView: View {
         scheduleService: ScheduleAPIService(),
         toDoService: ToDoListAPIService(),
         userUptimeService: UserUptimeAPIService(),
+        prioritizationService: PrioritizationAPIService(),
         mCalendarDataSource: MCalendarDataSource(),
         mEventDataSource: MEventDatasource()
     )

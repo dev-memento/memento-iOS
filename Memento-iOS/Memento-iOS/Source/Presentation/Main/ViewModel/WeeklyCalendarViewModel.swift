@@ -18,6 +18,7 @@ final class WeeklyCalendarViewModel: ObservableObject {
     private let scheduleService: ScheduleAPIServiceProtocol
     private var toDoService: ToDoListAPIServiceProtocol
     private let userUptimeService: UserUptimeAPIServiceProtocol
+    private let prioritizationService: PrioritizationAPIServiceProtocol
     
     // MARK: - Published Properties
     
@@ -54,12 +55,14 @@ final class WeeklyCalendarViewModel: ObservableObject {
     init(scheduleService: ScheduleAPIServiceProtocol,
          toDoService: ToDoListAPIServiceProtocol,
          userUptimeService: UserUptimeAPIServiceProtocol,
+         prioritizationService: PrioritizationAPIServiceProtocol,
          mCalendarDataSource: MCalendarDataSource,
          mEventDataSource: MEventDatasource
     ) {
         self.toDoService = toDoService
         self.scheduleService = scheduleService
         self.userUptimeService = userUptimeService
+        self.prioritizationService = prioritizationService
         self.mCallendarDataSource = mCalendarDataSource
         self.mEventDataSource = mEventDataSource
         
@@ -400,6 +403,25 @@ extension WeeklyCalendarViewModel {
                         self.updateTodayItems(for: date)
                     }
                 }
+            }
+        }
+    }
+    
+    func fetchDailyPrioritization() {
+        guard let date = selectedDate.date() else {
+            return
+        }
+        
+        let targetDate = date.stringFromDate(with: "yyyy-MM-dd")
+        
+        let body = PrioritizationRequest(targetDate: targetDate)
+        
+        prioritizationService.fetchDailyPrioritization(body: body) { result in
+            if case let .success(response) = result,
+               let todos = response?.data.todos {
+                print("Success: ", todos)
+            } else {
+                print("Fail")
             }
         }
     }
