@@ -10,7 +10,7 @@ import Foundation
 import Moya
 
 enum PrioritizationTargetType {
-    case fetchWeeklyPrioritization(body: PrioritizationRequest)
+    case fetchDailyPrioritization(body: PrioritizationRequest)
 }
 
 extension PrioritizationTargetType: BaseTargetType {
@@ -33,15 +33,15 @@ extension PrioritizationTargetType: BaseTargetType {
     
     var requestBodyParameter: Codable? {
         switch self {
-        case .fetchWeeklyPrioritization(let body):
+        case .fetchDailyPrioritization(let body):
             return body
         }
     }
     
     var path: String {
         switch self {
-        case .fetchWeeklyPrioritization:
-            return "\(utilPath.rawValue)/prioritization/weekly"
+        case .fetchDailyPrioritization:
+            return "\(utilPath.rawValue)/prioritization/daily"
         }
     }
     
