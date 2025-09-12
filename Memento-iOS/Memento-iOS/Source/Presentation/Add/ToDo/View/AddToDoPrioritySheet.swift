@@ -121,7 +121,11 @@ struct MatrixGridView: View {
                 LazyVGrid(columns: gridItem, spacing: 8) {
                     ForEach(items) { item in
                         Button {
-                            selectedPriority = item.priority
+                            if selectedPriority == item.priority {
+                                selectedPriority = .none
+                            } else {
+                                selectedPriority = item.priority
+                            }
                         } label: {
                             ZStack {
                                 Rectangle()
@@ -136,6 +140,7 @@ struct MatrixGridView: View {
                             }
                         }
                     }
+
                 }
                 
                 Spacer()
