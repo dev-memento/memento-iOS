@@ -62,7 +62,7 @@ final class TagManager {
     func createAndSaveTag(request: TagPostRequest, completion: @escaping (TagPostResponse?) -> Void) {
         let apiService = TagAPIService()
         
-        apiService.postTag(request: request) { [weak self] result in
+        apiService.postTag(request: request) { result in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let response):
@@ -71,12 +71,17 @@ final class TagManager {
                         return
                     }
                     
+                    self.fetchAndSaveTags { _ in }
+                    guard let tagId = self.getTag(by: tagResponse.data.name) else { return }
+                            
                     let newTag = TagResponse(
-                        id: Int.random(in: 10000...99999),
+                        id: tagId.id,
                         name: tagResponse.data.name,
                         colorCode: tagResponse.data.colorCode
                     )
-                    self?.addTagToLocal(newTag)
+                    
+                    self.addTagToLocal(newTag)
+                    
                     completion(tagResponse.data)
                     
                 default:
