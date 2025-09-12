@@ -30,15 +30,6 @@ final class TagManager {
                         return
                     }
                     
-                    if let encoded = try? JSONEncoder().encode(tagResponse.data) {
-                        UserDefaults.standard.set(encoded, forKey: "saved_tags")
-                        
-                        let savedTags = self?.getSavedTags() ?? []
-                        
-                    } else {
-                        print("JSON 인코딩 실패")
-                    }
-                    
                     self?.saveTags(tagResponse.data)
                     completion(true)
                     
