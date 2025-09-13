@@ -23,6 +23,8 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
     ) -> Bool {
         
+        registerFonts()
+        
         // Firebase 초기화
         FirebaseApp.configure()
         
