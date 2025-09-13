@@ -25,17 +25,17 @@ struct SettingView: View {
 
     var body: some View {
         NavigationStack(path: $viewModel.navigationPath) {
+            CustomNavigationBar(
+                title: SettingsSettingViewText.navigationTitle,
+                showBackButton: true,
+                showSkipButton: false,
+                backButtonAction: { dismiss() }
+            )
+            .padding(.bottom, 12)
+            
             ZStack {
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack {
-                        CustomNavigationBar(
-                            title: SettingsSettingViewText.navigationTitle,
-                            showBackButton: true,
-                            showSkipButton: false,
-                            backButtonAction: { dismiss() }
-                        )
-                        .padding(.top, 25)
-                        
                         UserInfoCard(userEmail: userEmail)
                         
                         GeneralSettingsSection()
@@ -100,9 +100,9 @@ struct SettingView: View {
                 if showDeleteAlert {
                     CustomAlertView(
                         title: "Would you like to delete account?",
-                        message: "Permanently delete the account and remove access from all workspaces.",
+                        message: "Permanently delete the account and \nremove access from all workspaces.",
                         cancelTitle: "Cancel",
-                        confirmTitle: "Delete",
+                        confirmTitle: "Delete account",
                         confirmAction: {
                             Task { await authSession.withdraw() }
                             showDeleteAlert = false

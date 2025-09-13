@@ -12,6 +12,8 @@ import Moya
 enum TagTargetType {
     case getTags
     case postTag(TagPostRequest)
+    case deleteTag(Int)
+    case patchTag(Int, TagPostRequest)
 }
 
 extension TagTargetType: BaseTargetType {
@@ -24,7 +26,12 @@ extension TagTargetType: BaseTargetType {
     }
     
     var pathParameter: String? {
-        return .none
+        switch self {
+        case .getTags, .postTag:
+            return .none
+        case .deleteTag(let tagId), .patchTag(let tagId, _):
+            return "\(tagId)"
+        }
     }
     
     var queryParameter: [String: Any]? {
@@ -33,15 +40,20 @@ extension TagTargetType: BaseTargetType {
     
     var requestBodyParameter: Codable? {
         switch self {
-        case .getTags:
+        case .getTags, .deleteTag:
             return nil
-        case .postTag(let request):
+        case .postTag(let request), .patchTag(_, let request):
             return request
         }
     }
     
     var path: String {
-        return utilPath.rawValue
+        switch self {
+        case .getTags, .postTag:
+            return utilPath.rawValue
+        case .deleteTag(let tagId), .patchTag(let tagId, _):
+            return "\(utilPath.rawValue)/\(tagId)"
+        }
     }
     
     var method: Moya.Method {
@@ -50,6 +62,10 @@ extension TagTargetType: BaseTargetType {
             return .get
         case .postTag:
             return .post
+        case .deleteTag:
+            return .delete
+        case .patchTag:
+            return .patch
         }
     }
 }

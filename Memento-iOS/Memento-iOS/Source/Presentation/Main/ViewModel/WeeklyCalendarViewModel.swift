@@ -31,8 +31,7 @@ final class WeeklyCalendarViewModel: ObservableObject {
     @Published var allDayDict: [MCalendarDataModel: [AllDayItem]] = [:]
     @Published var toDoItems: [ToDoItem] = []
     @Published var toDoListDict: [MCalendarDataModel: [ToDoItem]] = [:]
-    @Published var tag: [TagItem] = []
-    
+
     @Published var wakeUpTime: String = "8 AM"
     @Published var windDownTime: String = "11 PM"
     

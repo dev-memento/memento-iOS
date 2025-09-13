@@ -36,9 +36,7 @@ struct CustomAlertView: View {
                     Text(cancelTitle)
                         .applyFont(.body_r_14)
                         .foregroundColor(Color.gray03)
-                        .frame(height: 36)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 8)
+                        .frame(width: 137, height: 36)
                         .background(Color.gray08)
                         .cornerRadius(4)
                 }
@@ -46,10 +44,8 @@ struct CustomAlertView: View {
                 Button(action: confirmAction) {
                     Text(confirmTitle)
                         .applyFont(.body_r_14)
-                        .foregroundColor(.white)
-                        .frame(height: 36)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 8)
+                        .foregroundColor(.grayBlack)
+                        .frame(width: 137, height: 36)
                         .background(Color.mementoRed)
                         .cornerRadius(4)
                 }

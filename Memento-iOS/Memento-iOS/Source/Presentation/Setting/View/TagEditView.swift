@@ -14,40 +14,43 @@ struct TagEditView: View {
     @State private var savedTags: [TagResponse] = []
     
     var body: some View {
+        CustomNavigationBar(
+            title: SettingsTagViewText.navigationTitle,
+            showBackButton: true,
+            showSkipButton: false,
+            backButtonAction: {
+                viewModel.navigateBack()
+            }
+        )
+        
         ScrollView(.vertical, showsIndicators: false) {
-            
-            CustomNavigationBar(
-                title: SettingsTagViewText.navigationTitle,
-                showBackButton: true,
-                showSkipButton: false,
-                backButtonAction: {
-                    viewModel.navigateBack()
-                }
-            )
-            .padding(.top, 25)
-            
             VStack(spacing: 6) {
-                ForEach(savedTags, id: \.id) { tag in
+                // default라서 버튼 제거 
+                CategoryRowView(
+                    item: TagItem(
+                        title: "Untitled",
+                        color: Color.fromHex("#A9ADBB"),
+                        isChevronVisible: false
+                    )
+                )
+                
+                // 기존 저장된 태그들 (Untitled 제외)
+                ForEach(savedTags.filter { $0.name != "Untitled" }, id: \.id) { tag in
+                    let tagItem = TagItem(
+                        title: tag.name,
+                        color: Color.fromHex(tag.colorCode),
+                        isChevronVisible: true
+                    )
+                    
                     Button {
-                        let tagItem = TagItem(
-                            title: tag.name,
-                            color: Color.fromHex(tag.colorCode),
-                            isChevronVisible: true
-                        )
-                        viewModel.navigateToNext(.TagDetail(tagItem, true))
+                        viewModel.navigateToNext(.TagDetail(tagItem, false))
                     } label: {
-                        CategoryRowView(
-                            item: TagItem(
-                                title: tag.name,
-                                color: Color.fromHex(tag.colorCode),
-                                isChevronVisible: true
-                            )
-                        )
+                        CategoryRowView(item: tagItem)
                     }
                 }
 
                 Button(action: {
-                    viewModel.navigateToNext(.TagDetail(nil, false))
+                    viewModel.navigateToNext(.TagDetail(nil, true))
                 }) {
                     HStack {
                         Image(systemName: "plus")
