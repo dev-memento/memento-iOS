@@ -11,7 +11,7 @@ import Moya
 // MARK: - PrioritizationAPIServiceProtocol
 
 protocol PrioritizationAPIServiceProtocol {
-    func fetchWeeklyPrioritization(body: PrioritizationRequest, completion: @escaping (NetworkResult<PrioritizationResponseDTO>) -> Void)
+    func fetchDailyPrioritization(body: PrioritizationRequest, completion: @escaping (NetworkResult<PrioritizationResponseDTO>) -> Void)
 }
 
 extension PrioritizationAPIServiceProtocol {
@@ -27,8 +27,8 @@ final class PrioritizationAPIService: BaseAPIService, PrioritizationAPIServicePr
         plugins: [MoyaPlugin.shared]
     )
     
-    func fetchWeeklyPrioritization(body: PrioritizationRequest, completion: @escaping (NetworkResult<PrioritizationResponseDTO>) -> Void) {
-        provider.request(.fetchWeeklyPrioritization(body: body)) { [weak self] result in
+    func fetchDailyPrioritization(body: PrioritizationRequest, completion: @escaping (NetworkResult<PrioritizationResponseDTO>) -> Void) {
+        provider.request(.fetchDailyPrioritization(body: body)) { [weak self] result in
             guard let self = self else { return }
             
             let networkResult: NetworkResult<PrioritizationResponseDTO>

@@ -61,6 +61,12 @@ struct TodayView: View {
                     }
                 }
                 .background(Color.grayBlack)
+                .onAppear {
+                    viewModel.getUserUptime()
+                }
+                .onReceive(NotificationCenter.default.publisher(for: Notification.Name("updateUptime"))) { _ in
+                    viewModel.getUserUptime()
+                }
             }
         }
     }

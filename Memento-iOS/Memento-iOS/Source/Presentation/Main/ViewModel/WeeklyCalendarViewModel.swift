@@ -18,6 +18,7 @@ final class WeeklyCalendarViewModel: ObservableObject {
     private let scheduleService: ScheduleAPIServiceProtocol
     private var toDoService: ToDoListAPIServiceProtocol
     private let userUptimeService: UserUptimeAPIServiceProtocol
+    private let prioritizationService: PrioritizationAPIServiceProtocol
     
     // MARK: - Published Properties
     
@@ -54,12 +55,14 @@ final class WeeklyCalendarViewModel: ObservableObject {
     init(scheduleService: ScheduleAPIServiceProtocol,
          toDoService: ToDoListAPIServiceProtocol,
          userUptimeService: UserUptimeAPIServiceProtocol,
+         prioritizationService: PrioritizationAPIServiceProtocol,
          mCalendarDataSource: MCalendarDataSource,
          mEventDataSource: MEventDatasource
     ) {
         self.toDoService = toDoService
         self.scheduleService = scheduleService
         self.userUptimeService = userUptimeService
+        self.prioritizationService = prioritizationService
         self.mCallendarDataSource = mCalendarDataSource
         self.mEventDataSource = mEventDataSource
         
@@ -404,23 +407,34 @@ extension WeeklyCalendarViewModel {
         }
     }
     
-    func userUptimeAPI() {
-        //        userUptimeService.fetchUptime{ result in
-        //            switch result {
-        //            case .success(let response):
-        //                print("시간 가져오기 성공")
-        //                // 추가 작업 필요 시 여기에 작성
-        //                if let wakeUpTime = response?.data.wakeUpTime, let windDownTime = response?.data.windDownTime {
-        //                    self.wakeUpTime = wakeUpTime
-        //                    self.windDownTime = wakeUpTime
-        //                    print("시간 가져오기 성공 \(self.wakeUpTime) \(self.windDownTime)")
-        //                } else {
-        //                    self.wakeUpTime = "8 AM"
-        //                    self.windDownTime = "11 PM"
-        //                }
-        //            default:
-        //                print("시간 가져오기 실패")
-        //            }
-        //        }
+    func fetchDailyPrioritization() {
+        guard let date = selectedDate.date() else {
+            return
+        }
+        
+        let targetDate = date.stringFromDate(with: "yyyy-MM-dd")
+        
+        let body = PrioritizationRequest(targetDate: targetDate)
+        
+        prioritizationService.fetchDailyPrioritization(body: body) { result in
+            if case let .success(response) = result,
+               let todos = response?.data.todos {
+                print("Success: ", todos)
+            } else {
+                print("Fail")
+            }
+        }
+    }
+    
+    func getUserUptime() {
+        userUptimeService.getUserUptime { [weak self] result in
+            guard let self = self else { return }
+            
+            if case let .success(response) = result,
+               let data = response?.data {
+                self.wakeUpTime = data.wakeUpTime
+                self.windDownTime = data.windDownTime
+            }
+        }
     }
 }

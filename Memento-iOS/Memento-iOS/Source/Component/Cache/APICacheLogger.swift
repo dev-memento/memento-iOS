@@ -32,14 +32,14 @@ final class APICacheLogger {
             let avg = server.reduce(0,+) / Double(server.count)
             let minVal = server.min() ?? 0
             let maxVal = server.max() ?? 0
-            print("📊 \(apiName) 서버 통계 → 호출: \(server.count), 평균: \(String(format: "%.2f", avg))ms, 최소: \(String(format: "%.2f", minVal))ms, 최대: \(String(format: "%.2f", maxVal))ms")
+//            print("📊 \(apiName) 서버 통계 → 호출: \(server.count), 평균: \(String(format: "%.2f", avg))ms, 최소: \(String(format: "%.2f", minVal))ms, 최대: \(String(format: "%.2f", maxVal))ms")
         }
 
         if let cache = cacheTimes[apiName], !cache.isEmpty {
             let avg = cache.reduce(0,+) / Double(cache.count)
             let minVal = cache.min() ?? 0
             let maxVal = cache.max() ?? 0
-            print("📊 \(apiName) 캐시 통계 → 호출: \(cache.count), 평균: \(String(format: "%.2f", avg))ms, 최소: \(String(format: "%.2f", minVal))ms, 최대: \(String(format: "%.2f", maxVal))ms")
+//            print("📊 \(apiName) 캐시 통계 → 호출: \(cache.count), 평균: \(String(format: "%.2f", avg))ms, 최소: \(String(format: "%.2f", minVal))ms, 최대: \(String(format: "%.2f", maxVal))ms")
         }
 
         if let server = serverTimes[apiName], let cache = cacheTimes[apiName], !server.isEmpty, !cache.isEmpty {
@@ -47,7 +47,7 @@ final class APICacheLogger {
             let cacheAvg = cache.reduce(0,+) / Double(cache.count)
             let improvement = (serverAvg - cacheAvg) / serverAvg * 100
             let absolute = serverAvg - cacheAvg
-            print("🚀 \(apiName) 개선율: \(String(format: "%.2f", improvement))% (↓\(String(format: "%.2f", absolute))ms)")
+//            print("🚀 \(apiName) 개선율: \(String(format: "%.2f", improvement))% (↓\(String(format: "%.2f", absolute))ms)")
         }
     }
 
