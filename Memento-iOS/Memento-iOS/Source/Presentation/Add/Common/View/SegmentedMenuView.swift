@@ -35,6 +35,9 @@ struct SegmentedMenuView: View {
             .onAppear { sheetHeight = calculatedSheetHeight }
         }
         .ignoresSafeArea(.all, edges: .bottom)
+        .onTapGesture {
+            hideKeyboard()
+        }
     }
 }
 
@@ -76,5 +79,14 @@ extension SegmentedMenuView {
         case .event:
             AddScheduleView(isAddViewPresented: $viewModel.isPresented)
         }
+    }
+    
+    private func hideKeyboard() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil,
+            from: nil,
+            for: nil
+        )
     }
 }

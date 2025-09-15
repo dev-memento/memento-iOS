@@ -24,6 +24,9 @@ struct AddScheduleView: View {
     var body: some View {
         ZStack {
             Color.gray10.ignoresSafeArea()
+                .onTapGesture {
+                    hideKeyboard()
+                }
             
             VStack {
                 CustomToggleView(isOn: $viewModel.isNaturalLanguageEnabled)
@@ -224,5 +227,14 @@ struct AddScheduleView: View {
             .padding(.bottom, 40)
             .disabled(viewModel.isTextEmpty)
         }
+    }
+    
+    private func hideKeyboard() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil,
+            from: nil,
+            for: nil
+        )
     }
 }
