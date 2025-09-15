@@ -21,52 +21,48 @@ struct TodayView: View {
     
     var body: some View {
         ZStack {
-            if viewModel.todayItems.isEmpty {
-                EmptyView()
-            } else {
-                ScrollView {
-                    VStack(spacing: 0) {
-                        WakeUpHeaderView(wakeUpTime: viewModel.wakeUpTime)
-                            .padding(.leading, 50)
-                            .padding(.bottom, 15)
-                        
-                        ForEach(viewModel.todayItems, id: \.id) { item in
-                            TodayListItemView(
-                                item: item,
-                                isArrow: item == viewModel.todayItems.first,
-                                isHighlighted: viewModel.isTopPriorityItem(item: item),
-                                isCompleted: viewModel.bindingForToDoCompletion(item.id)
-                            )
-                            .padding(.bottom, 10)
-                            .onTapGesture {
-                                switch item {
-                                case .todo(let todo):
-                                    selectedToDo = todo
-                                    isToDoAlertPresented = true
-                                case .schedule(let schedule):
-                                    selectedSchedule = schedule
-                                    isScheduleAlertPresented = true
-                                }
+            ScrollView {
+                VStack(spacing: 0) {
+                    WakeUpHeaderView(wakeUpTime: viewModel.wakeUpTime)
+                        .padding(.leading, 50)
+                        .padding(.bottom, 15)
+                    
+                    ForEach(viewModel.todayItems, id: \.id) { item in
+                        TodayListItemView(
+                            item: item,
+                            isArrow: item == viewModel.todayItems.first,
+                            isHighlighted: viewModel.isTopPriorityItem(item: item),
+                            isCompleted: viewModel.bindingForToDoCompletion(item.id)
+                        )
+                        .padding(.bottom, 10)
+                        .onTapGesture {
+                            switch item {
+                            case .todo(let todo):
+                                selectedToDo = todo
+                                isToDoAlertPresented = true
+                            case .schedule(let schedule):
+                                selectedSchedule = schedule
+                                isScheduleAlertPresented = true
                             }
-                            //        .onDrag {
-                            //            viewModel.dragTodayItem = currentItem
-                            //            return NSItemProvider(object: String(currentItem.id.hashValue) as NSString)
-                            //        }
-                            //        .onDrop(of: [.text], delegate: DropViewDelegate(item: item, draggedItem: $viewModel.dragTodayItem, onDrop: viewModel.dropActionForToday))
                         }
-                        
-                        WindDownFooterView(windDownTime: viewModel.windDownTime)
-                            .padding(.leading, 50)
-                            .padding(.top, 17)
+                        //        .onDrag {
+                        //            viewModel.dragTodayItem = currentItem
+                        //            return NSItemProvider(object: String(currentItem.id.hashValue) as NSString)
+                        //        }
+                        //        .onDrop(of: [.text], delegate: DropViewDelegate(item: item, draggedItem: $viewModel.dragTodayItem, onDrop: viewModel.dropActionForToday))
                     }
+                    
+                    WindDownFooterView(windDownTime: viewModel.windDownTime)
+                        .padding(.leading, 50)
+                        .padding(.top, 17)
                 }
-                .background(Color.grayBlack)
-                .onAppear {
-                    viewModel.getUserUptime()
-                }
-                .onReceive(NotificationCenter.default.publisher(for: Notification.Name("updateUptime"))) { _ in
-                    viewModel.getUserUptime()
-                }
+            }
+            .background(Color.grayBlack)
+            .onAppear {
+                viewModel.getUserUptime()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: Notification.Name("updateUptime"))) { _ in
+                viewModel.getUserUptime()
             }
         }
     }

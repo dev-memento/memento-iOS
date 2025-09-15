@@ -207,18 +207,28 @@ struct TodayWeeklyCalendarView: View {
     
     @ViewBuilder
     private func dailyPageView(for item: MCalendarEventList) -> some View {
-        VStack(spacing: 8) {
-            AllDayListView(items: viewModel.allDayDict[viewModel.selectedDate] ?? [])
-                .padding(.vertical, 4)
+        ZStack {
+            VStack(spacing: 8) {
+                AllDayListView(items: viewModel.allDayDict[viewModel.selectedDate] ?? [])
+                    .padding(.vertical, 4)
+                
+                if !viewModel.todayItems.isEmpty {
+                    TodayView(
+                        viewModel: viewModel,
+                        isToDoAlertPresented: $isToDoAlertPresented,
+                        isScheduleAlertPresented: $isScheduleAlertPresented,
+                        selectedToDo: $selectedToDo,
+                        selectedSchedule: $selectedSchedule
+                    )
+                    .scrollContentBackground(.hidden)
+                } else {
+                    Spacer()
+                }
+            }
             
-            TodayView(
-                viewModel: viewModel,
-                isToDoAlertPresented: $isToDoAlertPresented,
-                isScheduleAlertPresented: $isScheduleAlertPresented,
-                selectedToDo: $selectedToDo,
-                selectedSchedule: $selectedSchedule
-            )
-            .scrollContentBackground(.hidden)
+            if viewModel.todayItems.isEmpty {
+                EmptyView()
+            }
         }
     }
     

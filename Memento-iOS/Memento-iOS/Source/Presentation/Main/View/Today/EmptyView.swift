@@ -15,6 +15,4 @@ struct EmptyView: View {
             .foregroundColor(.gray08)
             .padding(.horizontal, 48)
     }
-
 }
-
