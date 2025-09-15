@@ -179,9 +179,14 @@ extension WeeklyCalendarViewModel {
         allDayDict.removeAll()
         
         for dateModel in mCallendarDataSource.wholeMonthDate {
+            guard let currentDate = dateModel.date() else { continue }
+            let dayStart = currentDate.startOfDay
+            let dayEnd = currentDate.endOfDay
+            
             allDayDict[dateModel] = allDayItems.filter { allDayItem in
-                guard let itemDate = dateFromScheduleString(allDayItem.startDate) else { return false }
-                return itemDate.startOfDay == dateModel.date()?.startOfDay
+                guard let start = dateFromScheduleString(allDayItem.startDate),
+                      let end = dateFromScheduleString(allDayItem.endDate) else { return false }
+                return start <= dayEnd && end >= dayStart
             }
         }
     }
