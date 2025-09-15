@@ -90,21 +90,21 @@ struct TodayWeeklyCalendarView: View {
                 }
                 .onAppear {
                     if viewModel.isFirstFetch {
-                        viewModel.getAllEvents(useCache: false) // 최초 → 캐시 사용 x
+                        viewModel.getAllEvents(useCache: false)
                         viewModel.isFirstFetch = false
                     } else {
-                        viewModel.getAllEvents(useCache: true) // 이후 → 캐시 허용
+                        viewModel.getAllEvents(useCache: true)
                     }
                     viewModel.getSchedulesAllDay()
                     updateScrollTarget()
                     viewModel.isInitialScrollDone = true
                 }
                 .onReceive(NotificationCenter.default.publisher(for: Notification.Name("refreshSchedule"))) { _ in
-                    viewModel.getSchedulesTotal(useCache: false) // 새로 만들면 캐시 무시
+                    viewModel.getSchedulesTotal(useCache: false)
                     viewModel.getSchedulesAllDay()
                 }
                 .onReceive(NotificationCenter.default.publisher(for: Notification.Name("refreshToDoList"))) { _ in
-                    viewModel.getToDoListTotal(useCache: false) // 새로 만들면 캐시 무시
+                    viewModel.getToDoListTotal(useCache: false)
                 }
                 .background(Color.grayBlack)
                 
