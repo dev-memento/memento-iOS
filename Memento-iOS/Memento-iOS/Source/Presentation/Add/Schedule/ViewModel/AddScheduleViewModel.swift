@@ -36,9 +36,10 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     @Published var startDate: Date = Date().startOfDay {
         didSet { updateDateTimeAllDayState() }
     }
-    @Published var endDate: Date = Date().startOfDay {
+    @Published var endDate: Date = Calendar.current.date(byAdding: .hour, value: 2, to: Date())!.startOfDay {
         didSet { updateDateTimeAllDayState() }
     }
+    
     @Published var startTime: Date = Date().roundedToNearestHalfHour() {
         didSet { updateDateTimeAllDayState() }
     }
