@@ -61,7 +61,7 @@ enum StringLiteral {
         }
         
         enum StartMementoView {
-            static let startMementoTitle = "MEMENTO와 함께 당신의 삶을 동기화하세요"
+            static let startMementoTitle = "MEMENTO\n당신의 삶을 동기화하세요"
             static let startMementoButton = "START MEMENTO"
         }
 
