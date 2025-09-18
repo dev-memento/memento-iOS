@@ -93,20 +93,19 @@ struct EditScheduleView: View {
                         HStack {
                             Spacer()
                             
-                            Button(action: viewModel.toggleAllDay) {
+                            Button(action: {
+                                viewModel.isAllDay.toggle()
+                            }) {
                                 HStack(spacing: 10) {
                                     Image(viewModel.isAllDay ? .btn_check_selected_square : .btn_check_unselected_square)
                                         .renderingMode(.template)
-                                        .foregroundColor(viewModel.isAllDayToggleEnabled ? .gray05 : .gray07)
-                                        .opacity(viewModel.isAllDayToggleEnabled ? 1.0 : 0.5)
+                                        .foregroundColor(.gray05)
                                     
                                     Text(StringLiteral.AddSchedule.allDay)
                                         .applyFont(.body_r_14)
-                                        .foregroundColor(viewModel.isAllDayToggleEnabled ? .gray05 : .gray07)
-                                        .opacity(viewModel.isAllDayToggleEnabled ? 1.0 : 0.5)
+                                        .foregroundColor(.gray05)
                                 }
                             }
-                            .disabled(!viewModel.isAllDayToggleEnabled)
                             .padding(.trailing, 11)
                         }
                         .padding(.top, 12)
@@ -200,6 +199,8 @@ struct EditScheduleView: View {
         }
         .ignoresSafeArea(.all, edges: .bottom)
     }
+    
+    // MARK: - Date Picker
     
     private func dateTimePickerView(type: DateTimeType) -> some View {
         let title = (type == .start) ? StringLiteral.Common.starts : StringLiteral.Common.ends
