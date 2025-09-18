@@ -74,8 +74,8 @@ final class EditToDoViewModel: ObservableObject {
             description: description,
             endDate: endDate,
             tagId: tagId,
-            priorityUrgency: priorityType.getPriorityValues().urgency,
-            priorityImportance: priorityType.getPriorityValues().importance
+            priorityUrgency: priorityType == .none ? nil : priorityType.getPriorityValues().urgency,
+            priorityImportance: priorityType == .none ? nil : priorityType.getPriorityValues().importance
         )
         
         toDoService.updateToDo(toDoId: toDoId, body: body) { _ in
