@@ -89,12 +89,8 @@ struct TodayWeeklyCalendarView: View {
                     updateScrollTarget()
                 }
                 .onAppear {
-                    if viewModel.isFirstFetch {
-                        viewModel.getAllEvents(useCache: false)
-                        viewModel.isFirstFetch = false
-                    } else {
-                        viewModel.getAllEvents(useCache: true)
-                    }
+                    viewModel.getAllEvents(useCache: !viewModel.isFirstFetch)
+                    viewModel.isFirstFetch = false
                     viewModel.getSchedulesAllDay()
                     updateScrollTarget()
                     viewModel.isInitialScrollDone = true
