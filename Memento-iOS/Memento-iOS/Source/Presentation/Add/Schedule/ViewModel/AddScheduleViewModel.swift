@@ -34,16 +34,16 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     }
     
     @Published var startDate: Date = Date().startOfDay {
-        didSet { autoToggleAllDay() }
+        didSet { updateDateTimeAllDayState() }
     }
     @Published var endDate: Date = Date().startOfDay {
-        didSet { autoToggleAllDay() }
+        didSet { updateDateTimeAllDayState() }
     }
     @Published var startTime: Date = Date().roundedToNearestHalfHour() {
-        didSet { autoToggleAllDay() }
+        didSet { updateDateTimeAllDayState() }
     }
     @Published var endTime: Date = Calendar.current.date(byAdding: .hour, value: 2, to: Date().roundedToNearestHalfHour()) ?? Date().roundedToNearestHalfHour() {
-        didSet { autoToggleAllDay() }
+        didSet { updateDateTimeAllDayState() }
     }
     
     @Published var isAllDay: Bool = false {
@@ -51,7 +51,6 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
             if isUpdatingAllDay { return }
             
             if isAllDay {
-                // All-Day 활성화 시 start/end Time을 startDate/endDate로 맞춤
                 startTime = startDate.startOfDay
                 endTime = endDate.startOfDay
             } else {
@@ -141,12 +140,21 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     
     private var isUpdatingAllDay = false
     
-    private func autoToggleAllDay() {
+    private func updateDateTimeAllDayState() {
         if isUpdatingAllDay { return }
         
         let startDateTime = Date().combineDateAndTime(date: startDate, time: startTime)
         let endDateTime = Date().combineDateAndTime(date: endDate, time: endTime)
+        
         let interval = endDateTime.timeIntervalSince(startDateTime)
+        
+        if endDateTime <= startDateTime {
+            isUpdatingAllDay = true
+            let newEnd = Calendar.current.date(byAdding: .hour, value: 2, to: startDateTime) ?? startDateTime
+            endDate = Calendar.current.startOfDay(for: newEnd)
+            endTime = newEnd
+            isUpdatingAllDay = false
+        }
         
         if interval >= .oneDay && !isAllDay {
             isAllDay = true
