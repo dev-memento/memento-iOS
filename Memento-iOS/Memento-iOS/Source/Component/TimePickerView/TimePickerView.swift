@@ -15,6 +15,7 @@ enum TimeType {
 }
 
 // MARK: - Custom Picker (Hour + 00/30 Minute)
+
 struct HalfHourPicker: UIViewRepresentable {
     @Binding var selection: Date
     
@@ -80,6 +81,7 @@ struct HalfHourPicker: UIViewRepresentable {
 }
 
 // MARK: - TimePickerView
+
 struct TimePickerView: View {
     @Binding var isPickerPresented: Bool
     @Binding var selectedTimeType: TimeType
