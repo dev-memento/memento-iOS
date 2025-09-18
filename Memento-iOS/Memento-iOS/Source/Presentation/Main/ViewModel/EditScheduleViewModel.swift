@@ -18,7 +18,7 @@ final class EditScheduleViewModel: ObservableObject {
     
     private let scheduleId: Int
     
-    // MARK: - User Input
+    // MARK: - Published Properties
     
     @Published var description: String
     
@@ -97,6 +97,13 @@ final class EditScheduleViewModel: ObservableObject {
         if isUpdatingAllDay { return }
         
         let interval = endDateTime.timeIntervalSince(startDateTime)
+        
+        if endDateTime <= startDateTime {
+            isUpdatingAllDay = true
+            let newEnd = startDateTime.addingTimeInterval(.twoHours)
+            endDate = newEnd.stringFromDate(with: "yyyy-MM-dd'T'HH:mm:ss")
+            isUpdatingAllDay = false
+        }
         
         if interval >= .oneDay && !isAllDay {
             isAllDay = true
