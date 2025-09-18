@@ -59,6 +59,8 @@ struct EditScheduleView: View {
                         }
                         .padding(.horizontal, 18)
                         .padding(.vertical, 12)
+                        .disabled(viewModel.description.isEmpty)
+                        .opacity(viewModel.description.isEmpty ? 0.3 : 1.0)
                     }
                     .padding(.vertical, 6)
                     
