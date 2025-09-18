@@ -37,7 +37,7 @@ struct WorkPreferenceView: View {
                     .padding(.top, 8)
                 
                 ScrollView {
-                    LazyVStack(spacing: 16) {
+                    LazyVStack(spacing: 14) {
                         ForEach(SurveyQuestion.mockData) { question in
                             QuestionRow(
                                 question: question,
@@ -99,7 +99,7 @@ struct QuestionRow: View {
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(selectedAnswer == true ? .gray08 : Color.mainNavy)
-                        .cornerRadius(8)
+                        .cornerRadius(2)
                 }
                 
                 Button(action: { onSelection(false) }) {
@@ -109,12 +109,13 @@ struct QuestionRow: View {
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(selectedAnswer == false ? .gray08 : Color.mainNavy)
-                        .cornerRadius(8)
+                        .cornerRadius(2)
                 }
             }
         }
         .padding()
         .background(Color.gray10)
+        .cornerRadius(2)
     }
 }
 
