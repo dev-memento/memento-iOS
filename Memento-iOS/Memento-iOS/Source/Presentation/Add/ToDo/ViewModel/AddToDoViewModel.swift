@@ -15,7 +15,7 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
     
     private var toDoService: ToDoListAPIServiceProtocol
     
-    // MARK: - User Input
+    // MARK: - Published Properties
     
     @Published var isNaturalLanguageEnabled: Bool = false {
         didSet {
@@ -37,7 +37,13 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
     @Published var endDate: Date = Date()
     
     @Published var tagList: [Tag] = []
-    @Published var selectedTag: Tag
+    @Published var selectedTag: Tag = {
+        if let untitledTag = TagManager.shared.getTag(by: "Untitled") {
+            return Tag(tagId: untitledTag.id, name: untitledTag.name, color: Color(hex: untitledTag.colorCode))
+        } else {
+            return Tag(tagId: 0, name: "Loading...", color: .gray05)
+        }
+    }()
     
     @Published var priorityUrgency: Double = 0.0
     @Published var priorityImportance: Double = 0.0
@@ -57,30 +63,13 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
     init(toDoService: ToDoListAPIServiceProtocol = ToDoListAPIService()) {
         
         self.toDoService = toDoService
-        
-        if let untitledTag = TagManager.shared.getTag(by: "Untitled") {
-            self.selectedTag = Tag(tagId: untitledTag.id, name: untitledTag.name, color: Color(hex: untitledTag.colorCode))
-        } else {
-            self.selectedTag = Tag(tagId: 0, name: "Loading...", color: .gray05)
-        }
     }
     
-    // MARK: - Computed Properties
+    // MARK: - Description & Natural Language
     
     var isTextEmpty: Bool { description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
     
-    var formattedStartDate: String { formatDate(startDate) }
-    var formattedEndDate: String { formatDate(endDate) }
-    
-    var tagId: Int { selectedTag.tagId }
-    
     private var parseWorkItem: DispatchWorkItem?
-    
-    // MARK: - Date Helpers
-    
-    func formatDate(_ date: Date) -> String {
-        Calendar.current.isDateInToday(date) ? StringLiteral.AddToDo.today : date.stringFromDate(with: "MMM d")
-    }
     
     private func debouncedParse() {
         parseWorkItem?.cancel()
@@ -104,6 +93,15 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
                 self?.description = result.title
             }
         }
+    }
+    
+    // MARK: - Date Handling
+    
+    var formattedStartDate: String { formatDate(startDate) }
+    var formattedEndDate: String { formatDate(endDate) }
+    
+    func formatDate(_ date: Date) -> String {
+        Calendar.current.isDateInToday(date) ? StringLiteral.AddToDo.today : date.stringFromDate(with: "MMM d")
     }
     
     // MARK: - Priority Helpers

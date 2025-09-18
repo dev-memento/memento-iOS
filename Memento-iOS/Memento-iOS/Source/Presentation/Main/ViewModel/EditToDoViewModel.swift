@@ -18,7 +18,7 @@ final class EditToDoViewModel: ObservableObject {
     
     private let toDoId: Int
     
-    // MARK: - User Input
+    // MARK: - Published Properties
     
     @Published var description: String
     
