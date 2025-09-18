@@ -15,7 +15,7 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     
     private var scheduleService: ScheduleAPIServiceProtocol
     
-    // MARK: - User Input
+    // MARK: - Published Properties
     
     @Published var isNaturalLanguageEnabled: Bool = false {
         didSet {
@@ -55,46 +55,33 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
                 endTime = endDate.startOfDay
             } else {
                 isUpdatingAllDay = true
-                startDate = Date().startOfDay
-                endDate = Date().startOfDay
-                startTime = Date().roundedToNearestHalfHour()
-                endTime = Calendar.current.date(byAdding: .hour, value: 2, to: Date().roundedToNearestHalfHour()) ?? Date().roundedToNearestHalfHour()
+                resetDatesToDefault()
                 isUpdatingAllDay = false
             }
         }
     }
     
     @Published var tagList: [Tag] = []
-    @Published var selectedTag: Tag
-    
+    @Published var selectedTag: Tag = {
+        if let untitledTag = TagManager.shared.getTag(by: "Untitled") {
+            return Tag(tagId: untitledTag.id, name: untitledTag.name, color: Color(hex: untitledTag.colorCode))
+        } else {
+            return Tag(tagId: 0, name: "Loading...", color: .gray05)
+        }
+    }()
+
     // MARK: - Initializer
     
     init(scheduleService: ScheduleAPIServiceProtocol = ScheduleAPIService()) {
         
         self.scheduleService = scheduleService
-        
-        if let untitledTag = TagManager.shared.getTag(by: "Untitled") {
-            self.selectedTag = Tag(tagId: untitledTag.id, name: untitledTag.name, color: Color(hex: untitledTag.colorCode))
-        } else {
-            self.selectedTag = Tag(tagId: 0, name: "Loading...", color: .gray05)
-        }
     }
     
-    // MARK: - Computed Properties
+    // MARK: - Description & Natural Language
     
     var isTextEmpty: Bool { description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
     
-    var formattedStartDate: String { startDate.stringFromDate(with: "MMM d, yyyy") }
-    var formattedEndDate: String { endDate.stringFromDate(with: "MMM d, yyyy") }
-    
-    var formattedStartTime: String { formatTime(startTime) }
-    var formattedEndTime: String { formatTime(endTime) }
-    
-    var tagId: Int { selectedTag.tagId }
-    
     private var parseWorkItem: DispatchWorkItem?
-    
-    // MARK: - Date Time Helpers
     
     private func debouncedParse() {
         parseWorkItem?.cancel()
@@ -126,6 +113,14 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
         }
     }
     
+    // MARK: - Date Time Handling
+    
+    var formattedStartDate: String { startDate.stringFromDate(with: "MMM d, yyyy") }
+    var formattedEndDate: String { endDate.stringFromDate(with: "MMM d, yyyy") }
+    
+    var formattedStartTime: String { formatTime(startTime) }
+    var formattedEndTime: String { formatTime(endTime) }
+    
     // Request DTO에 맞게 날짜 시간 결합
     func formatDate(date: Date, time: Date) -> String {
         Date().combineDateAndTime(date: date, time: time).stringFromDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
@@ -140,6 +135,14 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     
     private var isUpdatingAllDay = false
     
+    private func resetDatesToDefault() {
+        startDate = Date().startOfDay
+        endDate = Date().startOfDay
+        startTime = Date().roundedToNearestHalfHour()
+        endTime = Calendar.current.date(byAdding: .hour, value: 2, to: Date().roundedToNearestHalfHour()) ?? Date().roundedToNearestHalfHour()
+    }
+    
+    // 24시간 이상 차이 나면 자동 All-day & 시간 업데이트
     private func updateDateTimeAllDayState() {
         if isUpdatingAllDay { return }
         
