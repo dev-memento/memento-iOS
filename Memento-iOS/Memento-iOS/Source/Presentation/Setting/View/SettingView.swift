@@ -25,104 +25,106 @@ struct SettingView: View {
 
     var body: some View {
         NavigationStack(path: $viewModel.navigationPath) {
-            CustomNavigationBar(
-                title: SettingsSettingViewText.navigationTitle,
-                showBackButton: true,
-                showSkipButton: false,
-                backButtonAction: { dismiss() }
-            )
-            .padding(.bottom, 12)
-            
-            ZStack {
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack {
-                        UserInfoCard(userEmail: userEmail)
-                        
-                        GeneralSettingsSection()
-                        
-                        AdditionalSettingsSection()
-                        
-                        AccountSettingsSection(
-                            onTapLogout: { showLogoutAlert = true },
-                            onTapDelete: { showDeleteAlert = true }
+            VStack{
+                CustomNavigationBar(
+                    title: SettingsSettingViewText.navigationTitle,
+                    showBackButton: true,
+                    showSkipButton: false,
+                    backButtonAction: { dismiss() }
+                )
+                .padding(.bottom, 12)
+                
+                ZStack {
+                    ScrollView(.vertical, showsIndicators: false) {
+                        VStack {
+                            UserInfoCard(userEmail: userEmail)
+                            
+                            GeneralSettingsSection()
+                            
+                            AdditionalSettingsSection()
+                            
+                            AccountSettingsSection(
+                                onTapLogout: { showLogoutAlert = true },
+                                onTapDelete: { showDeleteAlert = true }
+                            )
+                            
+                            Spacer()
+                        }
+                        .navigationDestination(for: SettingNavigationDestination.self) { destination in
+                            switch destination {
+                            case .Tag:
+                                TagEditView()
+                                    .navigationBarBackButtonHidden()
+                            case .TagDetail(let tag, let isNew):
+                                TagEditDetailView(tag: tag, isNew: isNew)
+                                    .environmentObject(viewModel)
+                                    .navigationBarBackButtonHidden()
+                            case .Time:
+                                TimeView()
+                                    .environmentObject(viewModel)
+                                    .navigationBarBackButtonHidden()
+                            case .Terms:
+                                EmptyView()
+                            case .Feedback:
+                                EmptyView()
+                            }
+                        }
+                    }
+                    
+                    if showLogoutAlert || showDeleteAlert {
+                        Color.black.opacity(0.4)
+                            .ignoresSafeArea()
+                            .transition(.opacity)
+                            .onTapGesture { // 바깥 탭하면 닫기
+                                showLogoutAlert = false
+                                showDeleteAlert = false
+                            }
+                    }
+                    
+                    if showLogoutAlert {
+                        CustomAlertView(
+                            title: "Do you really want to logout?",
+                            message: nil,
+                            cancelTitle: "Cancel",
+                            confirmTitle: "Logout",
+                            confirmAction: {
+                                authSession.logout()
+                                showLogoutAlert = false
+                            },
+                            cancelAction: { showLogoutAlert = false }
                         )
-                        
-                        Spacer()
+                        .padding(.horizontal, 32)
+                        .transition(.scale.combined(with: .opacity))
                     }
-                    .background(Color.black)
-                    .navigationDestination(for: SettingNavigationDestination.self) { destination in
-                        switch destination {
-                        case .Tag:
-                            TagEditView()
-                                .navigationBarBackButtonHidden()
-                        case .TagDetail(let tag, let isNew):
-                            TagEditDetailView(tag: tag, isNew: isNew)
-                                .environmentObject(viewModel)
-                                .navigationBarBackButtonHidden()
-                        case .Time:
-                            TimeView()
-                                .environmentObject(viewModel)
-                                .navigationBarBackButtonHidden()
-                        case .Terms:
-                            EmptyView()
-                        case .Feedback:
-                            EmptyView()
-                        }
+                    
+                    if showDeleteAlert {
+                        CustomAlertView(
+                            title: "Would you like to delete account?",
+                            message: "Permanently delete the account and \nremove access from all workspaces.",
+                            cancelTitle: "Cancel",
+                            confirmTitle: "Delete account",
+                            confirmAction: {
+                                Task { await authSession.withdraw() }
+                                showDeleteAlert = false
+                            },
+                            cancelAction: { showDeleteAlert = false }
+                        )
+                        .padding(.horizontal, 32)
+                        .transition(.scale.combined(with: .opacity))
                     }
                 }
-                
-                if showLogoutAlert || showDeleteAlert {
-                    Color.black.opacity(0.4)
-                        .ignoresSafeArea()
-                        .transition(.opacity)
-                        .onTapGesture { // 바깥 탭하면 닫기
-                            showLogoutAlert = false
-                            showDeleteAlert = false
-                        }
+                .animation(.easeInOut(duration: 0.25), value: showLogoutAlert || showDeleteAlert)
+                .onAppear { viewModel.refreshNotificationStatus()
+                    APICacheLogger.shared.report(apiName: "ToDo")
+                    APICacheLogger.shared.report(apiName: "Schedule")
                 }
-                
-                if showLogoutAlert {
-                    CustomAlertView(
-                        title: "Do you really want to logout?",
-                        message: nil,
-                        cancelTitle: "Cancel",
-                        confirmTitle: "Logout",
-                        confirmAction: {
-                            authSession.logout()
-                            showLogoutAlert = false
-                        },
-                        cancelAction: { showLogoutAlert = false }
-                    )
-                    .padding(.horizontal, 32)
-                    .transition(.scale.combined(with: .opacity))
-                }
-                
-                if showDeleteAlert {
-                    CustomAlertView(
-                        title: "Would you like to delete account?",
-                        message: "Permanently delete the account and \nremove access from all workspaces.",
-                        cancelTitle: "Cancel",
-                        confirmTitle: "Delete account",
-                        confirmAction: {
-                            Task { await authSession.withdraw() }
-                            showDeleteAlert = false
-                        },
-                        cancelAction: { showDeleteAlert = false }
-                    )
-                    .padding(.horizontal, 32)
-                    .transition(.scale.combined(with: .opacity))
+                .onChange(of: scenePhase) {
+                    if scenePhase == .active {
+                        viewModel.refreshNotificationStatus()
+                    }
                 }
             }
-            .animation(.easeInOut(duration: 0.25), value: showLogoutAlert || showDeleteAlert)
-            .onAppear { viewModel.refreshNotificationStatus()
-                APICacheLogger.shared.report(apiName: "ToDo")
-                APICacheLogger.shared.report(apiName: "Schedule")
-            }
-            .onChange(of: scenePhase) {
-                if scenePhase == .active {
-                    viewModel.refreshNotificationStatus()
-                }
-            }
+            .background(Color.black)
         }
     }
     
