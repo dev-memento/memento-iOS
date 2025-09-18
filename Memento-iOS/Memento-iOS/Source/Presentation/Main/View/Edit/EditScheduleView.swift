@@ -175,6 +175,10 @@ struct EditScheduleView: View {
                 }
                 .frame(height: calculatedSheetHeight)
                 .background(Color.gray10)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    self.hideKeyboard()
+                }
                 .gesture(
                     DragGesture()
                         .updating($translation) { value, state, _ in

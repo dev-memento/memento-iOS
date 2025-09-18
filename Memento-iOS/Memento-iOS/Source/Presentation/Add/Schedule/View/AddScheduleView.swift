@@ -25,7 +25,7 @@ struct AddScheduleView: View {
         ZStack {
             Color.gray10.ignoresSafeArea()
                 .onTapGesture {
-                    hideKeyboard()
+                    self.hideKeyboard()
                 }
             
             VStack {
@@ -214,11 +214,10 @@ struct AddScheduleView: View {
             Spacer()
             
             Button {
-                viewModel.postSchedule {
-                    withAnimation(.spring()) {
-                        isAddViewPresented = false
-                    }
+                withAnimation(.spring()) {
+                    isAddViewPresented = false
                 }
+                viewModel.postSchedule { }
             } label: {
                 Image( viewModel.isTextEmpty ? .btn_enter_disabled : .btn_enter_active)
             }
@@ -226,14 +225,5 @@ struct AddScheduleView: View {
             .padding(.bottom, 40)
             .disabled(viewModel.isTextEmpty)
         }
-    }
-    
-    private func hideKeyboard() {
-        UIApplication.shared.sendAction(
-            #selector(UIResponder.resignFirstResponder),
-            to: nil,
-            from: nil,
-            for: nil
-        )
     }
 }

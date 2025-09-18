@@ -36,7 +36,7 @@ struct SegmentedMenuView: View {
         }
         .ignoresSafeArea(.all, edges: .bottom)
         .onTapGesture {
-            hideKeyboard()
+            self.hideKeyboard()
         }
     }
 }
@@ -79,14 +79,5 @@ extension SegmentedMenuView {
         case .event:
             AddScheduleView(isAddViewPresented: $viewModel.isPresented)
         }
-    }
-    
-    private func hideKeyboard() {
-        UIApplication.shared.sendAction(
-            #selector(UIResponder.resignFirstResponder),
-            to: nil,
-            from: nil,
-            for: nil
-        )
     }
 }

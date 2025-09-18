@@ -31,4 +31,13 @@ extension View {
             self.presentationDetents([.fraction(0.33)])
         }
     }
+    
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil,
+            from: nil,
+            for: nil
+        )
+    }
 }
