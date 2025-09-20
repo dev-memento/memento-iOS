@@ -33,8 +33,21 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
         }
     }
     
-    @Published var startDate: Date = Date()
-    @Published var endDate: Date = Date()
+    @Published var startDate: Date = Date() {
+        didSet {
+            if startDate > endDate {
+                endDate = startDate
+            }
+        }
+    }
+    
+    @Published var endDate: Date = Date() {
+        didSet {
+            if endDate < startDate {
+                startDate = endDate
+            }
+        }
+    }
     
     @Published var tagList: [Tag] = []
     @Published var selectedTag: Tag = {
