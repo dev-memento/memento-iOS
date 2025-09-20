@@ -15,7 +15,6 @@ protocol ScheduleAPIServiceProtocol {
     func getSchedulesTotal(completion: @escaping (NetworkResult<ScheduleTotalResponseDTO>) -> Void)
     func getSchedulesAllDay(completion: @escaping (NetworkResult<ScheduleAllDayResponseDTO>) -> Void)
     func getSchedulesByDate(date: String, completion: @escaping (NetworkResult<ScheduleByDateResponseDTO>) -> Void)
-    func getSchedulesDetail(scheduleId: Int, completion: @escaping (NetworkResult<ScheduleDetailResponseDTO>) -> Void)
     
     func postSchedule(body: SchedulePostRequest, completion: @escaping (NetworkResult<Void>) -> Void)
     
@@ -28,7 +27,6 @@ extension ScheduleAPIServiceProtocol {
     typealias ScheduleTotalResponseDTO = BaseDTO<ScheduleTotalResponse>
     typealias ScheduleAllDayResponseDTO = BaseDTO<ScheduleAllDayResponse>
     typealias ScheduleByDateResponseDTO = BaseDTO<ScheduleTotalResponse> // 전체 일정 조회랑 같은 DTO
-    typealias ScheduleDetailResponseDTO = BaseDTO<ScheduleDetailResponse>
 }
 
 // MARK: - ScheduleAPIService
@@ -91,28 +89,6 @@ final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
         provider.request(.getSchedulesByDate(date: date)) { [weak self] result in
             guard let self = self else { return }
             let networkResult: NetworkResult<ScheduleByDateResponseDTO>
-            
-            switch result {
-            case .success(let response):
-                networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
-            case .failure(let error):
-                if let response = error.response {
-                    networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
-                } else {
-                    networkResult = .networkFail
-                }
-            }
-            
-            print(networkResult.stateDescription)
-            completion(networkResult)
-        }
-    }
-    
-    // 일정 상세 조회
-    func getSchedulesDetail(scheduleId: Int, completion: @escaping (NetworkResult<ScheduleDetailResponseDTO>) -> Void) {
-        provider.request(.getSchedulesDetail(scheduleId: scheduleId)) { [weak self] result in
-            guard let self = self else { return }
-            let networkResult: NetworkResult<ScheduleDetailResponseDTO>
             
             switch result {
             case .success(let response):
