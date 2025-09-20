@@ -113,11 +113,11 @@ struct AddToDoToolbarView: View {
     
     private var enterButtonView: some View {
         Button(action: {
-            viewModel.postToDo {
-                withAnimation(.spring()) {
-                    isAddViewPresented = false
-                }
+            self.hideKeyboard()
+            withAnimation(.spring()) {
+                isAddViewPresented = false
             }
+            viewModel.postToDo { }
         }) {
             Image(viewModel.isTextEmpty ? .btn_enter_disabled : .btn_enter_active)
         }

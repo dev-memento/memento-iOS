@@ -17,13 +17,13 @@ final class APICacheLogger {
     func logServerCall(start: Date, apiName: String) {
         let elapsed = Date().timeIntervalSince(start) * 1000
         serverTimes[apiName, default: []].append(elapsed)
-        print("📌 [SERVER] \(apiName) — \(String(format: "%.2f", elapsed))ms")
+//        print("📌 [SERVER] \(apiName) — \(String(format: "%.2f", elapsed))ms")
     }
 
     func logCacheCall(start: Date, apiName: String) {
         let elapsed = Date().timeIntervalSince(start) * 1000
         cacheTimes[apiName, default: []].append(elapsed)
-        print("📌 [CACHE] \(apiName) — \(String(format: "%.2f", elapsed))ms")
+//        print("📌 [CACHE] \(apiName) — \(String(format: "%.2f", elapsed))ms")
     }
 
     /// 캐시 vs 서버 개선율 + 일반 통계 모두 출력

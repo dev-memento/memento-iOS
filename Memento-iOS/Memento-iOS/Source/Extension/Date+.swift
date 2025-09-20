@@ -129,4 +129,16 @@ extension Date {
         
         return false
     }
+    
+    /// post Schecule 을 위한 날짜 시간 결합
+    func combineDateAndTime(date: Date, time: Date) -> Date {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.hour, .minute, .second], from: time)
+        return calendar.date(
+            bySettingHour: components.hour ?? 0,
+            minute: components.minute ?? 0,
+            second: components.second ?? 0,
+            of: date
+        ) ?? date
+    }
 }

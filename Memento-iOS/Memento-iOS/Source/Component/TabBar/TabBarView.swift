@@ -95,7 +95,7 @@ struct TabBarView: View {
                 Color.black.opacity(0.5)
                     .ignoresSafeArea(.all)
                     .onTapGesture {
-                        dismissKeyboard()
+                        self.hideKeyboard()
                         segmentedViewModel.isPresented = false
                         segmentedViewModel.selectedMenu = .checkbox
                     }
@@ -113,7 +113,7 @@ struct TabBarView: View {
                             }
                             .onEnded { value in
                                 if value.translation.height > segmentedViewHeight / 3 {
-                                    dismissKeyboard()
+                                    self.hideKeyboard()
                                     segmentedViewModel.isPresented = false
                                     segmentedViewModel.selectedMenu = .checkbox
                                 }
@@ -131,14 +131,5 @@ struct TabBarView: View {
                 EditToDoView(isEditViewPresented: $isEditToDoSheetPresented, toDoItem: item)
             }
         }
-    }
-    
-    private func dismissKeyboard() {
-        UIApplication.shared.sendAction(
-            #selector(UIResponder.resignFirstResponder),
-            to: nil,
-            from: nil,
-            for: nil
-        )
     }
 }

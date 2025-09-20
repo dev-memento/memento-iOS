@@ -18,22 +18,29 @@ final class EditScheduleViewModel: ObservableObject {
     
     private let scheduleId: Int
     
-    // MARK: - User Input
+    // MARK: - Published Properties
     
     @Published var description: String
     
     @Published var startDate: String {
-        didSet { updateAllDayStatus() }
+        didSet { updateDateTimeAllDayState() }
     }
     
     @Published var endDate: String {
-        didSet { updateAllDayStatus() }
+        didSet { updateDateTimeAllDayState() }
     }
     
     @Published var isAllDay: Bool {
         didSet {
+            if isUpdatingAllDay { return }
+            
             if isAllDay {
-                normalizeDatesForAllDay()
+                resetDatesToStartOfDay()
+            } else {
+                isUpdatingAllDay = true
+                startDate = originalStartDate
+                endDate = originalEndDate
+                isUpdatingAllDay = false
             }
         }
     }
@@ -56,11 +63,18 @@ final class EditScheduleViewModel: ObservableObject {
         
         self.scheduleService = scheduleService
         
+        self.originalStartDate = scheduleItem.startDate
+        self.originalEndDate = scheduleItem.endDate
+        
         getTags()
-        updateAllDayStatus()
     }
     
     // MARK: - All-Day Handling
+    
+    private let originalStartDate: String
+    private let originalEndDate: String
+    
+    private var isUpdatingAllDay = false
     
     private var startDateTime: Date {
         Date.dateFromString(startDate, format: "yyyy-MM-dd'T'HH:mm:ss.SSS")
@@ -74,36 +88,26 @@ final class EditScheduleViewModel: ObservableObject {
         ?? Date()
     }
     
-    private var dayDifference: Int {
-        Calendar.current.dateComponents([.day],
-                                        from: Calendar.current.startOfDay(for: startDateTime),
-                                        to: Calendar.current.startOfDay(for: endDateTime)
-        ).day ?? 0
-    }
-    
-    var isAllDayToggleEnabled: Bool {
-        dayDifference < 2
-    }
-    
-    private func updateAllDayStatus() {
-        let shouldBeAllDay = isOverOneDay()
-        if shouldBeAllDay != isAllDay {
-            isAllDay = shouldBeAllDay
-        }
-    }
-    
-    private func normalizeDatesForAllDay() {
+    private func resetDatesToStartOfDay() {
         startDate = startDateTime.startOfDay.stringFromDate(with: "yyyy-MM-dd'T'HH:mm:ss")
         endDate = endDateTime.startOfDay.stringFromDate(with: "yyyy-MM-dd'T'HH:mm:ss")
     }
     
-    func toggleAllDay() {
-        guard isAllDayToggleEnabled else { return }
-        isAllDay.toggle()
-    }
-    
-    func isOverOneDay() -> Bool {
-        endDateTime.timeIntervalSince(startDateTime) >= TimeInterval.oneDay
+    private func updateDateTimeAllDayState() {
+        if isUpdatingAllDay { return }
+        
+        let interval = endDateTime.timeIntervalSince(startDateTime)
+        
+        if endDateTime <= startDateTime {
+            isUpdatingAllDay = true
+            let newEnd = startDateTime.addingTimeInterval(.twoHours)
+            endDate = newEnd.stringFromDate(with: "yyyy-MM-dd'T'HH:mm:ss")
+            isUpdatingAllDay = false
+        }
+        
+        if interval >= .oneDay && !isAllDay {
+            isAllDay = true
+        }
     }
     
     // MARK: - API
@@ -125,7 +129,7 @@ final class EditScheduleViewModel: ObservableObject {
     }
     
     func updateSchedule(completion: @escaping () -> Void) {
-        let tagId = tagList.first(where: { $0.name == tagName })?.tagId ?? tagList.first?.tagId ?? 1
+        let tagId = tagList.first(where: { $0.name == tagName })?.tagId ?? tagList.first?.tagId ?? 0
         
         let body = SchedulePostRequest(
             description: description,

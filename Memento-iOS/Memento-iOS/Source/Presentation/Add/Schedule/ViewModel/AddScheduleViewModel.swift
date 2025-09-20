@@ -15,7 +15,7 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     
     private var scheduleService: ScheduleAPIServiceProtocol
     
-    // MARK: - User Input
+    // MARK: - Published Properties
     
     @Published var isNaturalLanguageEnabled: Bool = false {
         didSet {
@@ -34,55 +34,55 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     }
     
     @Published var startDate: Date = Date().startOfDay {
-        didSet { autoUpdateAllDayStatus() }
+        didSet { updateDateTimeAllDayState() }
     }
-    @Published var endDate: Date = Date().startOfDay {
-        didSet { autoUpdateAllDayStatus() }
+    @Published var endDate: Date = Calendar.current.date(byAdding: .hour, value: 2, to: Date())!.startOfDay {
+        didSet { updateDateTimeAllDayState() }
     }
+    
     @Published var startTime: Date = Date().roundedToNearestHalfHour() {
-        didSet { autoUpdateAllDayStatus() }
+        didSet { updateDateTimeAllDayState() }
     }
     @Published var endTime: Date = Calendar.current.date(byAdding: .hour, value: 2, to: Date().roundedToNearestHalfHour()) ?? Date().roundedToNearestHalfHour() {
-        didSet { autoUpdateAllDayStatus() }
+        didSet { updateDateTimeAllDayState() }
     }
     
     @Published var isAllDay: Bool = false {
         didSet {
-            updateTimeForAllDayStatus()
+            if isUpdatingAllDay { return }
+            
+            if isAllDay {
+                startTime = startDate.startOfDay
+                endTime = endDate.startOfDay
+            } else {
+                isUpdatingAllDay = true
+                resetDatesToDefault()
+                isUpdatingAllDay = false
+            }
         }
     }
     
     @Published var tagList: [Tag] = []
-    @Published var selectedTag: Tag
-    
+    @Published var selectedTag: Tag = {
+        if let untitledTag = TagManager.shared.getTag(by: "Untitled") {
+            return Tag(tagId: untitledTag.id, name: untitledTag.name, color: Color(hex: untitledTag.colorCode))
+        } else {
+            return Tag(tagId: 0, name: "Loading...", color: .gray05)
+        }
+    }()
+
     // MARK: - Initializer
     
     init(scheduleService: ScheduleAPIServiceProtocol = ScheduleAPIService()) {
         
         self.scheduleService = scheduleService
-        
-        if let untitledTag = TagManager.shared.getTag(by: "Untitled") {
-            self.selectedTag = Tag(tagId: untitledTag.id, name: untitledTag.name, color: Color(hex: untitledTag.colorCode))
-        } else {
-            self.selectedTag = Tag(tagId: 0, name: "Loading...", color: .gray05)
-        }
     }
     
-    // MARK: - Computed Properties
+    // MARK: - Description & Natural Language
     
     var isTextEmpty: Bool { description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
     
-    var formattedStartDate: String { startDate.stringFromDate(with: "MMM d, yyyy") }
-    var formattedEndDate: String { endDate.stringFromDate(with: "MMM d, yyyy") }
-    
-    var formattedStartTime: String { formatTime(startTime) }
-    var formattedEndTime: String { formatTime(endTime) }
-    
-    var tagId: Int { selectedTag.tagId }
-    
     private var parseWorkItem: DispatchWorkItem?
-    
-    // MARK: - Date Time Helpers
     
     private func debouncedParse() {
         parseWorkItem?.cancel()
@@ -114,92 +114,54 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
         }
     }
     
-    // 날짜랑 시간 결합
-    func combineDateAndTime(date: Date, time: Date) -> Date {
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.hour, .minute, .second], from: time)
-        return calendar.date(
-            bySettingHour: components.hour ?? 0,
-            minute: components.minute ?? 0,
-            second: components.second ?? 0,
-            of: date
-        ) ?? date
-    }
+    // MARK: - Date Time Handling
     
+    var formattedStartDate: String { startDate.stringFromDate(with: "MMM d, yyyy") }
+    var formattedEndDate: String { endDate.stringFromDate(with: "MMM d, yyyy") }
+    
+    var formattedStartTime: String { formatTime(startTime) }
+    var formattedEndTime: String { formatTime(endTime) }
+    
+    // Request DTO에 맞게 날짜 시간 결합
     func formatDate(date: Date, time: Date) -> String {
-        combineDateAndTime(date: date, time: time).stringFromDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        Date().combineDateAndTime(date: date, time: time).stringFromDate(with: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     }
     
-    // All-Day 상태면 Time Picker에 All-Day 표시
+    // isAllDay가 true 면 Time Picker에 All-Day 표시
     func formatTime(_ date: Date) -> String {
         isAllDay ? StringLiteral.AddSchedule.allDay : date.stringFromDate(with: "h:mm a")
     }
     
     // MARK: - All-Day Handling
     
-    // 사용자의 토글 여부
-    private var hasUserToggledAllDay: Bool = false
+    private var isUpdatingAllDay = false
     
-    // 시작&종료 날짜 시간
-    private var startDateTime: Date { combineDateAndTime(date: startDate, time: startTime) }
-    private var endDateTime: Date { combineDateAndTime(date: endDate, time: endTime) }
-    
-    // 시작일과 종료일 간의 일(day) 차이
-    private var dayDifference: Int {
-        Calendar.current.dateComponents([.day],
-                                        from: Calendar.current.startOfDay(for: startDate),
-                                        to: Calendar.current.startOfDay(for: endDate)).day ?? 0
+    private func resetDatesToDefault() {
+        startDate = Date().startOfDay
+        endDate = Date().startOfDay
+        startTime = Date().roundedToNearestHalfHour()
+        endTime = Calendar.current.date(byAdding: .hour, value: 2, to: Date().roundedToNearestHalfHour()) ?? Date().roundedToNearestHalfHour()
     }
     
-    // 일정 기간이 하루 이상인지 여부
-    func isOverOneDay() -> Bool {
-        endDateTime.timeIntervalSince(startDateTime) >= .oneDay
-    }
-    
-    // All-Day 토글
-    func toggleAllDay() {
-        guard dayDifference < 2 else {
-            print("DEBUG: 2일 이상 일정은 All-Day 해제 불가")
-            return
+    // 24시간 이상 차이 나면 자동 All-day & 시간 업데이트
+    private func updateDateTimeAllDayState() {
+        if isUpdatingAllDay { return }
+        
+        let startDateTime = Date().combineDateAndTime(date: startDate, time: startTime)
+        let endDateTime = Date().combineDateAndTime(date: endDate, time: endTime)
+        
+        let interval = endDateTime.timeIntervalSince(startDateTime)
+        
+        if endDateTime <= startDateTime {
+            isUpdatingAllDay = true
+            let newEnd = Calendar.current.date(byAdding: .hour, value: 2, to: startDateTime) ?? startDateTime
+            endDate = Calendar.current.startOfDay(for: newEnd)
+            endTime = newEnd
+            isUpdatingAllDay = false
         }
         
-        isAllDay.toggle()
-        hasUserToggledAllDay = true
-    }
-    
-    // All-Day 상태에 따라 시작/종료 시간을 자동으로 업데이트
-    func updateTimeForAllDayStatus() {
-        if isAllDay { // All-Day일 경우 시작/종료 시간을 날짜의 시작 시각으로 맞춤
-            startTime = startDate.startOfDay
-            endTime = endDate.startOfDay
-        } else { // 올데이가 아닐 경우, 적절히 반올림된 시간으로 설정
-            let start = Date().roundedToNearestHalfHour()
-            let end = Calendar.current.date(byAdding: .hour, value: 2, to: start) ?? start
-            
-            startTime = start
-            endTime = end
-        }
-    }
-    
-    // All-Day 상태가 활성화되어야 하는지 판단
-    func autoUpdateAllDayStatus() {
-        if hasUserToggledAllDay { return }
-        
-        let autoAllDay: Bool
-        switch dayDifference {
-        case 2...:
-            autoAllDay = true
-        case 1, 0:
-            autoAllDay = isOverOneDay()
-        default:
-            autoAllDay = false
-        }
-        
-        if isAllDay != autoAllDay {
-            if isOverOneDay() && !isAllDay {
-                print("DEBUG: 사용자가 All-Day를 해제했지만 일정 기간이 24시간 이상이므로 isAllDay: true로 전송됨")
-            }
-            isAllDay = autoAllDay
+        if interval >= .oneDay && !isAllDay {
+            isAllDay = true
         }
     }
     

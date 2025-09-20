@@ -35,6 +35,9 @@ struct SegmentedMenuView: View {
             .onAppear { sheetHeight = calculatedSheetHeight }
         }
         .ignoresSafeArea(.all, edges: .bottom)
+        .onTapGesture {
+            self.hideKeyboard()
+        }
     }
 }
 

@@ -24,6 +24,9 @@ struct AddScheduleView: View {
     var body: some View {
         ZStack {
             Color.gray10.ignoresSafeArea()
+                .onTapGesture {
+                    self.hideKeyboard()
+                }
             
             VStack {
                 CustomToggleView(isOn: $viewModel.isNaturalLanguageEnabled)
@@ -149,20 +152,19 @@ struct AddScheduleView: View {
         HStack {
             Spacer()
             
-            Button(action: viewModel.toggleAllDay) {
+            Button(action: {
+                viewModel.isAllDay.toggle()
+            }) {
                 HStack(spacing: 10) {
                     Image(viewModel.isAllDay ? .btn_check_selected_square : .btn_check_unselected_square)
                         .renderingMode(.template)
-                        .foregroundColor(viewModel.isOverOneDay() ? .gray05 : .gray07)
-                        .opacity(viewModel.isOverOneDay() ? 1.0 : 0.5)
+                        .foregroundColor(.gray05)
                     
                     Text(StringLiteral.AddSchedule.allDay)
                         .applyFont(.body_r_14)
-                        .foregroundColor(viewModel.isOverOneDay() ? .gray05 : .gray07)
-                        .opacity(viewModel.isOverOneDay() ? 1.0 : 0.5)
+                        .foregroundColor(.gray05)
                 }
             }
-            .disabled(!viewModel.isOverOneDay())
             .padding(.trailing, 11)
         }
         .padding(.top, 12)
@@ -212,11 +214,10 @@ struct AddScheduleView: View {
             Spacer()
             
             Button {
-                viewModel.postSchedule {
-                    withAnimation(.spring()) {
-                        isAddViewPresented = false
-                    }
+                withAnimation(.spring()) {
+                    isAddViewPresented = false
                 }
+                viewModel.postSchedule { }
             } label: {
                 Image( viewModel.isTextEmpty ? .btn_enter_disabled : .btn_enter_active)
             }

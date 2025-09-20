@@ -31,7 +31,7 @@ final class WeeklyCalendarViewModel: ObservableObject {
     @Published var allDayDict: [MCalendarDataModel: [AllDayItem]] = [:]
     @Published var toDoItems: [ToDoItem] = []
     @Published var toDoListDict: [MCalendarDataModel: [ToDoItem]] = [:]
-
+    
     @Published var wakeUpTime: String = "8 AM"
     @Published var windDownTime: String = "11 PM"
     
@@ -179,9 +179,14 @@ extension WeeklyCalendarViewModel {
         allDayDict.removeAll()
         
         for dateModel in mCallendarDataSource.wholeMonthDate {
+            guard let currentDate = dateModel.date() else { continue }
+            let dayStart = currentDate.startOfDay
+            let dayEnd = currentDate.endOfDay
+            
             allDayDict[dateModel] = allDayItems.filter { allDayItem in
-                guard let itemDate = dateFromScheduleString(allDayItem.startDate) else { return false }
-                return itemDate.startOfDay == dateModel.date()?.startOfDay
+                guard let start = dateFromScheduleString(allDayItem.startDate),
+                      let end = dateFromScheduleString(allDayItem.endDate) else { return false }
+                return start <= dayEnd && end >= dayStart
             }
         }
     }
@@ -243,6 +248,8 @@ extension WeeklyCalendarViewModel {
            let index = self.toDoListDict[date]?.firstIndex(where: { $0.id == toDoId }) {
             self.toDoListDict[date]?[index].isCompleted.toggle()
         }
+        
+        ToDoCache.shared.set(key: "todos", data: self.toDoItems)
     }
 }
 
@@ -271,11 +278,10 @@ extension WeeklyCalendarViewModel {
         }
     }
     
-    // Schedule 불러오기
     func getSchedulesTotal(useCache: Bool = true) {
         let start = Date()
         
-        // 1. 최초 실행이면 캐시 무시
+        // 최초 실행이면 캐시 무시
         if !isFirstFetch, useCache, let cached = ScheduleCache.shared.get(key: "schedules") {
             DispatchQueue.main.async {
                 self.scheduleItems = cached
@@ -284,11 +290,13 @@ extension WeeklyCalendarViewModel {
                     self.updateTodayItems(for: date)
                 }
             }
+            
             APICacheLogger.shared.logCacheCall(start: start, apiName: "Schedule")
+            
             return
         }
         
-        // 2. 서버 호출
+        // 서버 호출
         scheduleService.getSchedulesTotal { [weak self] result in
             guard let self else { return }
             
@@ -299,13 +307,14 @@ extension WeeklyCalendarViewModel {
                 DispatchQueue.main.async {
                     self.scheduleItems = mapped
                     self.getAllScheduleList = true
-                    ScheduleCache.shared.set(key: "schedules", data: mapped) // ✅ 캐시에 저장
-                    self.isFirstFetch = false // 최초 실행 완료
+                    ScheduleCache.shared.set(key: "schedules", data: mapped)
+                    self.isFirstFetch = false
                     if let date = self.selectedDate.date() {
                         self.updateTodayItems(for: date)
                     }
                 }
             }
+            
             APICacheLogger.shared.logServerCall(start: start, apiName: "Schedule")
         }
     }
@@ -330,7 +339,7 @@ extension WeeklyCalendarViewModel {
     func getToDoListTotal(useCache: Bool = true) {
         let start = Date()
         
-        // 1. 최초 실행이면 캐시 무시
+        // 최초 실행이면 캐시 무시
         if !isFirstFetch, useCache, let cached = ToDoCache.shared.get(key: "todos") {
             DispatchQueue.main.async {
                 self.toDoItems = cached
@@ -340,11 +349,13 @@ extension WeeklyCalendarViewModel {
                     self.updateTodayItems(for: date)
                 }
             }
+            
             APICacheLogger.shared.logCacheCall(start: start, apiName: "ToDo")
+            
             return
         }
         
-        // 2. 서버 호출
+        // 서버 호출
         toDoService.getToDoListTotal { [weak self] result in
             guard let self else { return }
             
@@ -356,17 +367,17 @@ extension WeeklyCalendarViewModel {
                     self.toDoItems = mapped
                     self.mapToDoDictByDate()
                     self.getAllToDoList = true
-                    ToDoCache.shared.set(key: "todos", data: mapped) // 캐시에 저장
-                    self.isFirstFetch = false // 최초 실행 완료
+                    ToDoCache.shared.set(key: "todos", data: mapped)
+                    self.isFirstFetch = false
                     if let date = self.selectedDate.date() {
                         self.updateTodayItems(for: date)
                     }
                 }
             }
+            
             APICacheLogger.shared.logServerCall(start: start, apiName: "ToDo")
         }
     }
-    
     
     func updateToDoCompletion(toDoId: Int) {
         toDoService.updateToDoCompletion(toDoId: toDoId) { [weak self] result in

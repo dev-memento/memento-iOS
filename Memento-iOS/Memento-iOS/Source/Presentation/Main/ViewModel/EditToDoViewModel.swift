@@ -18,12 +18,17 @@ final class EditToDoViewModel: ObservableObject {
     
     private let toDoId: Int
     
-    // MARK: - User Input
+    // MARK: - Published Properties
     
     @Published var description: String
     
-    @Published var startDate: String
-    @Published var endDate: String
+    @Published var startDate: String {
+        didSet { validateDates(updatedBy: .start) }
+    }
+    
+    @Published var endDate: String {
+        didSet { validateDates(updatedBy: .end) }
+    }
     
     @Published var tagName: String
     @Published var tagColor: String
@@ -46,6 +51,22 @@ final class EditToDoViewModel: ObservableObject {
         self.toDoService = toDoService
         
         getTags()
+    }
+    
+    // MARK: - Date Handling
+    
+    private func validateDates(updatedBy type: DateTimeType) {
+        guard let start = Date.dateFromString(startDate, format: "yyyy-MM-dd"),
+              let end = Date.dateFromString(endDate, format: "yyyy-MM-dd") else { return }
+        
+        if start > end {
+            switch type {
+            case .start:
+                endDate = start.stringFromDate(with: "yyyy-MM-dd")
+            case .end:
+                startDate = end.stringFromDate(with: "yyyy-MM-dd")
+            }
+        }
     }
     
     // MARK: - API
@@ -74,8 +95,8 @@ final class EditToDoViewModel: ObservableObject {
             description: description,
             endDate: endDate,
             tagId: tagId,
-            priorityUrgency: priorityType.getPriorityValues().urgency,
-            priorityImportance: priorityType.getPriorityValues().importance
+            priorityUrgency: priorityType == .none ? nil : priorityType.getPriorityValues().urgency,
+            priorityImportance: priorityType == .none ? nil : priorityType.getPriorityValues().importance
         )
         
         toDoService.updateToDo(toDoId: toDoId, body: body) { _ in

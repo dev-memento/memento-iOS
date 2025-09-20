@@ -111,7 +111,7 @@ struct ScheduleAlertView: View {
             .padding(.bottom, 26)
             .padding(.horizontal, 24)
         }
-        .frame(width: 343, height: 332)
+        .frame(width: 343, height: 300)
         .background(Color.gray10)
         .cornerRadius(2)
     }
