@@ -60,9 +60,7 @@ struct TodayWeeklyCalendarView: View {
                             DispatchQueue.main.asyncAfter(deadline: .now()) {
                                 userInteractionFlag = true
                                 if let target = scrollTarget {
-                                    withAnimation {
-                                        proxy.scrollTo(target, anchor: .center)
-                                    }
+                                    proxy.scrollTo(target, anchor: .center)
                                 }
                             }
                         }
@@ -265,6 +263,7 @@ struct TodayWeeklyCalendarView: View {
         }
     }
     
+    // 선택된 날짜를 스크롤 위치와 연결
     private func updateScrollTarget() {
         let target = (viewModel.mCallendarDataSource.currentIndex * 7) + viewModel.selectedDate.weekday.index
         
