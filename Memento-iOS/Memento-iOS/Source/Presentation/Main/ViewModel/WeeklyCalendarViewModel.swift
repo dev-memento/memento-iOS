@@ -33,8 +33,7 @@ final class WeeklyCalendarViewModel: ObservableObject {
     @Published var toDoItems: [ToDoItem] = []
     @Published private(set) var toDoListDict: [MCalendarDataModel: [ToDoItem]] = [:]
     
-    @Published var isFetchingSchedules = false
-    @Published var isFetchingToDos = false
+    @Published var isFirstFetch: Bool = true
     
     @Published var wakeUpTime: String = ""
     @Published var windDownTime: String = ""
@@ -42,8 +41,6 @@ final class WeeklyCalendarViewModel: ObservableObject {
     @Published var currentOffset: CGPoint = .zero
     @Published var selectedDate: MCalendarDataModel = Date().makeTargetDate()!
     @Published var isInitialScrollDone = false
-    
-    @Published var isFirstFetch: Bool = true
     
     private var cancellable = Set<AnyCancellable>()
     
@@ -238,14 +235,12 @@ extension WeeklyCalendarViewModel {
     // MARK: - Schedule
     
     func getSchedulesTotal(useCache: Bool = true) {
-        isFetchingSchedules = true
         let start = Date()
         
         // 캐시 사용
         if useCache, let cached = ScheduleCache.shared.get(key: "schedules") {
             DispatchQueue.main.async {
                 self.scheduleItems = cached
-                self.isFetchingSchedules = false
             }
             
             APICacheLogger.shared.logCacheCall(start: start, apiName: "Schedule")
@@ -257,8 +252,6 @@ extension WeeklyCalendarViewModel {
             guard let self = self else { return }
             
             DispatchQueue.main.async {
-                defer { self.isFetchingSchedules = false }
-                
                 if case let .success(response) = result,
                    let scheduleResponse = response?.data.scheduleWithOrderInfos {
                     self.scheduleItems = scheduleResponse.map { ScheduleItem(from: $0) }
@@ -322,14 +315,12 @@ extension WeeklyCalendarViewModel {
     // MARK: - ToDo
     
     func getToDoListTotal(useCache: Bool = true) {
-        isFetchingToDos = true
         let start = Date()
         
         // 캐시 사용
         if useCache, let cached = ToDoCache.shared.get(key: "todos") {
             DispatchQueue.main.async {
                 self.toDoItems = cached
-                self.isFetchingToDos = false
             }
             
             APICacheLogger.shared.logCacheCall(start: start, apiName: "ToDo")
@@ -341,8 +332,6 @@ extension WeeklyCalendarViewModel {
             guard let self = self else { return }
             
             DispatchQueue.main.async {
-                defer { self.isFetchingToDos = false }
-                
                 if case let .success(response) = result,
                    let toDoResponse = response?.data.toDoGetResponses {
                     self.toDoItems = toDoResponse.map { ToDoItem(from: $0) }
