@@ -147,7 +147,14 @@ final class WeeklyCalendarViewModel: ObservableObject {
                 for date in calendarDataSource.wholeMonthDate {
                     guard let currentDate = date.date() else { continue }
                     
-                    toDoDict[date] = todos.filter { formatter.date(from: $0.startDate) == currentDate }
+                    var items = todos.filter { formatter.date(from: $0.startDate) == currentDate }
+                    
+                    let incompletes = items.filter { !$0.isCompleted }
+                    let completes = items.filter { $0.isCompleted }
+                        .sorted { ($0.completedAt ?? .distantPast) < ($1.completedAt ?? .distantPast) }
+                    
+                    items = incompletes + completes
+                    toDoDict[date] = items
                 }
                 
                 return toDoDict
@@ -199,10 +206,17 @@ extension WeeklyCalendarViewModel {
     private func updateToDoCompletionInDict(toDoId: Int) {
         if let index = self.toDoItems.firstIndex(where: { $0.id == toDoId }) {
             self.toDoItems[index].isCompleted.toggle()
+            
+            if self.toDoItems[index].isCompleted {
+                self.toDoItems[index].completedAt = Date()
+            } else {
+                self.toDoItems[index].completedAt = nil
+            }
         }
         
         ToDoCache.shared.set(key: "todos", data: self.toDoItems)
     }
+    
     
     func isTopPriorityItem(item: TodayItem) -> Bool {
         guard case .todo(let todo) = item, !todo.isCompleted else { return false }
