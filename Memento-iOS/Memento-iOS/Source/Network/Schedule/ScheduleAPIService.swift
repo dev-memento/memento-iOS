@@ -88,26 +88,32 @@ final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
         }
     }
     
+    // 전체 일정 조회
     func getSchedulesTotal(completion: @escaping (NetworkResult<ScheduleTotalResponseDTO>) -> Void) {
         request(.getSchedulesTotal, completion: completion)
     }
     
+    // All day 일정 조회
     func getSchedulesAllDay(completion: @escaping (NetworkResult<ScheduleAllDayResponseDTO>) -> Void) {
         request(.getSchedulesAllDay, completion: completion)
     }
     
+    // 특정 날짜 일정 조회
     func getSchedulesByDate(date: String, completion: @escaping (NetworkResult<ScheduleByDateResponseDTO>) -> Void) {
         request(.getSchedulesByDate(date: date), completion: completion)
     }
     
+    // 일정 생성
     func postSchedule(body: SchedulePostRequest, completion: @escaping (NetworkResult<Void>) -> Void) {
         requestWithoutResponse(.postSchedule(body: body), completion: completion)
     }
     
+    // 일정 삭제
     func deleteSchedule(scheduleId: Int, completion: @escaping (NetworkResult<Void>) -> Void) {
         requestWithoutResponse(.deleteSchedule(scheduleId: scheduleId), completion: completion)
     }
     
+    // 일정 수정
     func updateSchedule(scheduleId: Int, body: SchedulePostRequest, completion: @escaping (NetworkResult<Void>) -> Void) {
         requestWithoutResponse(.updateSchedule(scheduleId: scheduleId, body: body), completion: completion)
     }
