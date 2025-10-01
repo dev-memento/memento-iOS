@@ -119,8 +119,8 @@ struct AddToDoToolbarView: View {
             }
             viewModel.postToDo { }
         }) {
-            Image(viewModel.isTextEmpty ? .btn_enter_disabled : .btn_enter_active)
+            Image(viewModel.isTextEmpty || viewModel.isPosting ? .btn_enter_disabled : .btn_enter_active)
         }
-        .disabled(viewModel.isTextEmpty)
+        .disabled(viewModel.isTextEmpty || viewModel.isPosting)
     }
 }

@@ -219,11 +219,11 @@ struct AddScheduleView: View {
                 }
                 viewModel.postSchedule { }
             } label: {
-                Image( viewModel.isTextEmpty ? .btn_enter_disabled : .btn_enter_active)
+                Image(viewModel.isTextEmpty || viewModel.isPosting ? .btn_enter_disabled : .btn_enter_active)
             }
             .padding(.trailing, 10)
             .padding(.bottom, 40)
-            .disabled(viewModel.isTextEmpty)
+            .disabled(viewModel.isTextEmpty || viewModel.isPosting)
         }
     }
 }
