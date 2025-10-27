@@ -70,6 +70,8 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
             return Tag(tagId: 0, name: "Loading...", color: .gray05)
         }
     }()
+    
+    @Published var isPosting: Bool = false
 
     // MARK: - Initializer
     
@@ -179,6 +181,9 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
     }
     
     func postSchedule(completion: @escaping () -> Void) {
+        guard !isPosting else { return }
+        isPosting = true
+        
         let body = SchedulePostRequest(
             description: description,
             startDate: formatDate(date: startDate, time: startTime),
@@ -193,7 +198,10 @@ final class AddScheduleViewModel: ObservableObject, TagSelectable {
                 object: nil
             )
             
-            completion()
+            DispatchQueue.main.async {
+                self.isPosting = false
+                completion()
+            }
         }
     }
 }

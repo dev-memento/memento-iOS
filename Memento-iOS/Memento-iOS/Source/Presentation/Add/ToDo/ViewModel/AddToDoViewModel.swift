@@ -64,6 +64,8 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
         didSet { updatePriorityValue() }
     }
     
+    @Published var isPosting: Bool = false
+    
     // MARK: - Picker State
     
     @Published var isStartDatePickerPresented: Bool = false
@@ -138,6 +140,9 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
     }
     
     func postToDo(completion: @escaping () -> Void) {
+        guard !isPosting else { return }
+        isPosting = true
+        
         let body = ToDoPostRequest(
             startDate: startDate.stringFromDate(with: "yyyy-MM-dd"),
             description: description,
@@ -153,7 +158,10 @@ final class AddToDoViewModel: ObservableObject, TagSelectable {
                 object: nil
             )
             
-            completion()
+            DispatchQueue.main.async {
+                self.isPosting = false
+                completion()
+            }
         }
     }
 }

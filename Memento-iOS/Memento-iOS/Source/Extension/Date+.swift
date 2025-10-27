@@ -65,7 +65,7 @@ extension Date {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US")
         formatter.timeZone = TimeZone.current
-
+        
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
         if let date = formatter.date(from: endDate) {
             return date.stringFromDate(with: "MMM d, yyyy  ha")
@@ -75,7 +75,7 @@ extension Date {
         if let date = formatter.date(from: endDate) {
             return date.stringFromDate(with: "MMM d, yyyy  ha")
         }
-
+        
         return endDate
     }
     
@@ -130,7 +130,7 @@ extension Date {
         return false
     }
     
-    /// post Schecule 을 위한 날짜 시간 결합
+    /// post Schedule 을 위한 날짜 시간 결합
     func combineDateAndTime(date: Date, time: Date) -> Date {
         let calendar = Calendar.current
         let components = calendar.dateComponents([.hour, .minute, .second], from: time)
@@ -140,5 +140,10 @@ extension Date {
             second: components.second ?? 0,
             of: date
         ) ?? date
+    }
+    
+    /// get Schedule 에서 받은 일정 시작/종료 날짜 문자열 형식
+    static func dateFromScheduleString(_ date: String) -> Date? {
+        return Date.dateFromString(date, format: "yyyy-MM-dd'T'HH:mm:ss.SSS") ?? Date.dateFromString(date, format: "yyyy-MM-dd'T'HH:mm:ss")
     }
 }

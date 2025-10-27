@@ -18,6 +18,7 @@ struct ToDoItem: Identifiable, Equatable, Hashable {
     var tagColor: String
     var toDoType: String
     
+    var completedAt: Date?
     
     init(from response: ToDoGetResponses) {
         self.id = response.id

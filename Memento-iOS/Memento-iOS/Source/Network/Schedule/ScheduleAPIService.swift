@@ -15,7 +15,6 @@ protocol ScheduleAPIServiceProtocol {
     func getSchedulesTotal(completion: @escaping (NetworkResult<ScheduleTotalResponseDTO>) -> Void)
     func getSchedulesAllDay(completion: @escaping (NetworkResult<ScheduleAllDayResponseDTO>) -> Void)
     func getSchedulesByDate(date: String, completion: @escaping (NetworkResult<ScheduleByDateResponseDTO>) -> Void)
-    func getSchedulesDetail(scheduleId: Int, completion: @escaping (NetworkResult<ScheduleDetailResponseDTO>) -> Void)
     
     func postSchedule(body: SchedulePostRequest, completion: @escaping (NetworkResult<Void>) -> Void)
     
@@ -28,11 +27,9 @@ extension ScheduleAPIServiceProtocol {
     typealias ScheduleTotalResponseDTO = BaseDTO<ScheduleTotalResponse>
     typealias ScheduleAllDayResponseDTO = BaseDTO<ScheduleAllDayResponse>
     typealias ScheduleByDateResponseDTO = BaseDTO<ScheduleTotalResponse> // 전체 일정 조회랑 같은 DTO
-    typealias ScheduleDetailResponseDTO = BaseDTO<ScheduleDetailResponse>
 }
 
 // MARK: - ScheduleAPIService
-// TODO: 공통 헬퍼 함수로 묶어서 중복 코드 제거
 
 final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
     
@@ -41,11 +38,14 @@ final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
         plugins: [MoyaPlugin.shared]
     )
     
-    // 전체 일정 조회
-    func getSchedulesTotal(completion: @escaping (NetworkResult<ScheduleTotalResponseDTO>) -> Void) {
-        provider.request(.getSchedulesTotal) { [weak self] result in
+    // 공통 요청 처리 메서드 (응답 데이터 있는 경우)
+    private func request<T: Decodable>(
+        _ target: ScheduleTargetType,
+        completion: @escaping (NetworkResult<T>) -> Void
+    ) {
+        provider.request(target) { [weak self] result in
             guard let self else { return }
-            let networkResult: NetworkResult<ScheduleTotalResponseDTO>
+            let networkResult: NetworkResult<T>
             
             switch result {
             case .success(let response):
@@ -53,8 +53,7 @@ final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
             case .failure(let error):
                 if let response = error.response {
                     networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
-                }
-                else {
+                } else {
                     networkResult = .networkFail
                 }
             }
@@ -62,137 +61,60 @@ final class ScheduleAPIService: BaseAPIService, ScheduleAPIServiceProtocol {
             print(networkResult.stateDescription)
             completion(networkResult)
         }
+    }
+    
+    // 공통 요청 처리 메서드 (응답 데이터 필요 없는 경우)
+    private func requestWithoutResponse(
+        _ target: ScheduleTargetType,
+        completion: @escaping (NetworkResult<Void>) -> Void
+    ) {
+        provider.request(target) { [weak self] result in
+            guard let self else { return }
+            let networkResult: NetworkResult<Void>
+            
+            switch result {
+            case .success(let response):
+                networkResult = self.fetchNetworkResult(statusCode: response.statusCode)
+            case .failure(let error):
+                if let response = error.response {
+                    networkResult = self.fetchNetworkResult(statusCode: response.statusCode)
+                } else {
+                    networkResult = .networkFail
+                }
+            }
+            
+            print(networkResult.stateDescription)
+            completion(networkResult)
+        }
+    }
+    
+    // 전체 일정 조회
+    func getSchedulesTotal(completion: @escaping (NetworkResult<ScheduleTotalResponseDTO>) -> Void) {
+        request(.getSchedulesTotal, completion: completion)
     }
     
     // All day 일정 조회
     func getSchedulesAllDay(completion: @escaping (NetworkResult<ScheduleAllDayResponseDTO>) -> Void) {
-        provider.request(.getSchedulesAllDay) { [weak self] result in
-            guard let self = self else { return }
-            let networkResult: NetworkResult<ScheduleAllDayResponseDTO>
-            
-            switch result {
-            case .success(let response):
-                networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
-            case .failure(let error):
-                if let response = error.response {
-                    networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
-                } else {
-                    networkResult = .networkFail
-                }
-            }
-            
-            print(networkResult.stateDescription)
-            completion(networkResult)
-        }
+        request(.getSchedulesAllDay, completion: completion)
     }
     
     // 특정 날짜 일정 조회
     func getSchedulesByDate(date: String, completion: @escaping (NetworkResult<ScheduleByDateResponseDTO>) -> Void) {
-        provider.request(.getSchedulesByDate(date: date)) { [weak self] result in
-            guard let self = self else { return }
-            let networkResult: NetworkResult<ScheduleByDateResponseDTO>
-            
-            switch result {
-            case .success(let response):
-                networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
-            case .failure(let error):
-                if let response = error.response {
-                    networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
-                } else {
-                    networkResult = .networkFail
-                }
-            }
-            
-            print(networkResult.stateDescription)
-            completion(networkResult)
-        }
-    }
-    
-    // 일정 상세 조회
-    func getSchedulesDetail(scheduleId: Int, completion: @escaping (NetworkResult<ScheduleDetailResponseDTO>) -> Void) {
-        provider.request(.getSchedulesDetail(scheduleId: scheduleId)) { [weak self] result in
-            guard let self = self else { return }
-            let networkResult: NetworkResult<ScheduleDetailResponseDTO>
-            
-            switch result {
-            case .success(let response):
-                networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
-            case .failure(let error):
-                if let response = error.response {
-                    networkResult = self.fetchNetworkResult(statusCode: response.statusCode, data: response.data)
-                } else {
-                    networkResult = .networkFail
-                }
-            }
-            
-            print(networkResult.stateDescription)
-            completion(networkResult)
-        }
+        request(.getSchedulesByDate(date: date), completion: completion)
     }
     
     // 일정 생성
     func postSchedule(body: SchedulePostRequest, completion: @escaping (NetworkResult<Void>) -> Void) {
-        provider.request(.postSchedule(body: body)) { [weak self] result in
-            guard let self = self else { return }
-            let networkResult: NetworkResult<Void>
-            
-            switch result {
-            case .success(let response):
-                networkResult = self.fetchNetworkResult(statusCode: response.statusCode)
-            case .failure(let error):
-                if let response = error.response {
-                    networkResult = self.fetchNetworkResult(statusCode: response.statusCode)
-                } else {
-                    networkResult = .networkFail
-                }
-            }
-            
-            print(networkResult.stateDescription)
-            completion(networkResult)
-        }
+        requestWithoutResponse(.postSchedule(body: body), completion: completion)
     }
     
     // 일정 삭제
     func deleteSchedule(scheduleId: Int, completion: @escaping (NetworkResult<Void>) -> Void) {
-        provider.request(.deleteSchedule(scheduleId: scheduleId)) { [weak self] result in
-            guard let self = self else { return }
-            let networkResult: NetworkResult<Void>
-            
-            switch result {
-            case .success(let response):
-                networkResult = self.fetchNetworkResult(statusCode: response.statusCode)
-            case .failure(let error):
-                if let response = error.response {
-                    networkResult = self.fetchNetworkResult(statusCode: response.statusCode)
-                } else {
-                    networkResult = .networkFail
-                }
-            }
-            
-            print(networkResult.stateDescription)
-            completion(networkResult)
-        }
+        requestWithoutResponse(.deleteSchedule(scheduleId: scheduleId), completion: completion)
     }
     
     // 일정 수정
     func updateSchedule(scheduleId: Int, body: SchedulePostRequest, completion: @escaping (NetworkResult<Void>) -> Void) {
-        provider.request(.updateSchedule(scheduleId: scheduleId, body: body)) { [weak self] result in
-            guard let self = self else { return }
-            let networkResult: NetworkResult<Void>
-            
-            switch result {
-            case .success(let response):
-                networkResult = self.fetchNetworkResult(statusCode: response.statusCode)
-            case .failure(let error):
-                if let response = error.response {
-                    networkResult = self.fetchNetworkResult(statusCode: response.statusCode)
-                } else {
-                    networkResult = .networkFail
-                }
-            }
-            
-            print(networkResult.stateDescription)
-            completion(networkResult)
-        }
+        requestWithoutResponse(.updateSchedule(scheduleId: scheduleId, body: body), completion: completion)
     }
 }

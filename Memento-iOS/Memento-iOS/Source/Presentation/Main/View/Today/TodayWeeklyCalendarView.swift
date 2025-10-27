@@ -18,13 +18,13 @@ struct TodayWeeklyCalendarView: View {
     @State private var isScheduleAlertPresented: Bool = false
     @State private var isSettingViewPresented = false
     
-    @State private var selectedToDo: ToDoItem? = nil
-    @State private var selectedSchedule: ScheduleItem? = nil
-    
     @State private var scrollTarget: Int? = nil
     @State private var userInteractionFlag: Bool = false
     
     @State private var floatingButtonPressed: Bool = false
+    
+    @State private var selectedToDo: ToDoItem? = nil
+    @State private var selectedSchedule: ScheduleItem? = nil
     
     var editScheduleAction: (ScheduleItem) -> Void
     var editToDoAction: (ToDoItem) -> Void
@@ -46,19 +46,8 @@ struct TodayWeeklyCalendarView: View {
                                                    scrollOffset: $viewModel.currentOffset,
                                                    content: { view in
                             LazyHStack(spacing: 0) {
-                                var visibleEvents: [MCalendarEventList] {
-                                    guard !viewModel.mEventDataSource.eventList.isEmpty,
-                                          let selectedIndex = viewModel.mEventDataSource.eventList.firstIndex(where: { $0.dateModel == viewModel.selectedDate })
-                                    else { return [] }
-                                    
-                                    let lowerBound = max(selectedIndex - 2, 0)
-                                    let upperBound = min(selectedIndex + 2, viewModel.mEventDataSource.eventList.count - 1)
-                                    
-                                    return Array(viewModel.mEventDataSource.eventList[lowerBound...upperBound])
-                                }
-                                
-                                ForEach(visibleEvents.indices, id: \.self) { index in
-                                    let item = visibleEvents[index]
+                                ForEach(viewModel.mEventDataSource.eventList.indices, id: \.self) { index in
+                                    let item = viewModel.mEventDataSource.eventList[index]
                                     
                                     dailyPageView(for: item)
                                         .frame(width: UIScreen.main.bounds.width)
@@ -71,9 +60,7 @@ struct TodayWeeklyCalendarView: View {
                             DispatchQueue.main.asyncAfter(deadline: .now()) {
                                 userInteractionFlag = true
                                 if let target = scrollTarget {
-                                    withAnimation {
-                                        proxy.scrollTo(target, anchor: .center)
-                                    }
+                                    proxy.scrollTo(target, anchor: .center)
                                 }
                             }
                         }
@@ -89,11 +76,11 @@ struct TodayWeeklyCalendarView: View {
                     updateScrollTarget()
                 }
                 .onAppear {
-                    viewModel.getAllEvents(useCache: !viewModel.isFirstFetch)
-                    viewModel.isFirstFetch = false
-                    viewModel.getSchedulesAllDay()
-                    updateScrollTarget()
                     viewModel.isInitialScrollDone = true
+                    viewModel.getAllEvents(useCache: !viewModel.isFirstFetch)
+                    viewModel.getSchedulesAllDay()
+                    viewModel.isFirstFetch = false
+                    updateScrollTarget()
                 }
                 .onReceive(NotificationCenter.default.publisher(for: Notification.Name("refreshSchedule"))) { _ in
                     viewModel.getSchedulesTotal(useCache: false)
@@ -207,6 +194,7 @@ struct TodayWeeklyCalendarView: View {
             VStack(spacing: 8) {
                 AllDayListView(items: viewModel.allDayDict[viewModel.selectedDate] ?? [])
                     .padding(.vertical, 4)
+                    .scrollContentBackground(.hidden)
                 
                 if !viewModel.todayItems.isEmpty {
                     TodayView(
@@ -275,11 +263,10 @@ struct TodayWeeklyCalendarView: View {
         }
     }
     
+    // 선택된 날짜를 스크롤 위치와 연결
     private func updateScrollTarget() {
-        self.scrollTarget = (viewModel.mCallendarDataSource.currentIndex * 7) + viewModel.selectedDate.weekday.index
+        let target = (viewModel.mCallendarDataSource.currentIndex * 7) + viewModel.selectedDate.weekday.index
         
-        if let scrollTarget {
-            self.viewModel.currentOffset.x = Double(scrollTarget) * UIScreen.main.bounds.width
-        }
+        self.scrollTarget = min(max(target, 0), viewModel.mEventDataSource.eventList.count - 1)
     }
 }

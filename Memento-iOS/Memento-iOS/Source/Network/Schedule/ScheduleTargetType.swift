@@ -13,7 +13,6 @@ enum ScheduleTargetType {
     case getSchedulesTotal // 전체 일정 조회
     case getSchedulesAllDay // All day 일정 조회
     case getSchedulesByDate(date: String) // 특정 날짜 일정 조회
-    case getSchedulesDetail(scheduleId: Int) // 일정 상세 조회
     
     case postSchedule(body: SchedulePostRequest) // 일정 생성
     
@@ -61,8 +60,7 @@ extension ScheduleTargetType: BaseTargetType {
             return utilPath.rawValue + "/total"
         case .getSchedulesAllDay:
             return utilPath.rawValue + "/all-days"
-        case .getSchedulesDetail(let scheduleId),
-                .deleteSchedule(let scheduleId),
+        case .deleteSchedule(let scheduleId),
                 .updateSchedule(let scheduleId, _):
             return utilPath.rawValue + "/\(scheduleId)"
         default:
