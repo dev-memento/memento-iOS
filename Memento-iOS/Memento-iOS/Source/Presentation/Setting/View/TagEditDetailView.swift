@@ -14,7 +14,6 @@ struct TagEditDetailView: View {
     
     @State var tag: TagItem
     @State private var originalTagId: Int?
-    @State private var showAlert = false
     @State private var showDeleteAlert = false
     @State private var alertMessage = ""
     
@@ -108,11 +107,6 @@ struct TagEditDetailView: View {
                 Spacer()
         }
         .overlay(deleteAlertView)
-        .alert("Alert", isPresented: $showAlert) {
-            Button("OK") {
-                if alertMessage.contains("success") { viewModel.navigateBack() }
-            }
-        } message: { Text(alertMessage) }
     }
     
     @ViewBuilder
@@ -146,8 +140,6 @@ struct TagEditDetailView: View {
                 } else {
                     DispatchQueue.main.async {
                         print("태그 생성 실패")
-                        alertMessage = "Failed to create tag."
-                        showAlert = true
                     }
                 }
             }
@@ -163,7 +155,6 @@ struct TagEditDetailView: View {
                         print("태그 수정 실패")
                         alertMessage = "Failed to update tag."
                     }
-                    showAlert = true
                 }
             }
         }
@@ -176,12 +167,9 @@ struct TagEditDetailView: View {
                 if success {
                     print("태그 삭제 성공")
                     viewModel.navigateBack()
-                    alertMessage = "Tag deleted successfully."
                 } else {
                     print("태그 삭제 실패")
-                    alertMessage = "Failed to delete tag."
                 }
-                showAlert = true
             }
         }
     }
