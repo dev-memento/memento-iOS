@@ -83,7 +83,7 @@ struct SettingView: View {
                     
                     if showLogoutAlert {
                         CustomAlertView(
-                            title: "Do you really want to logout?",
+                            title: "Would you like to Logout?",
                             message: nil,
                             cancelTitle: "Cancel",
                             confirmTitle: "Logout",
