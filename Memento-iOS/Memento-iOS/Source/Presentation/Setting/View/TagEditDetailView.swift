@@ -15,6 +15,7 @@ struct TagEditDetailView: View {
     @State var tag: TagItem
     @State private var originalTagId: Int?
     @State private var showDeleteAlert = false
+    @State private var showDuplicateAlert = false
     @State private var alertMessage = ""
     
     let tagColors = [Color.mementoRed, Color.mementoPink, Color.mementoOrange, Color.mementoYellow, Color.mementoLightGreen, Color.mementoMint, Color.mementoCyan, Color.mementoBlue, Color.mementoPurple, Color.gray05]
@@ -128,6 +129,7 @@ struct TagEditDetailView: View {
             Spacer()
         }
         .overlay(deleteAlertView)
+        .overlay(duplicateAlertView)
     }
     
     @ViewBuilder
@@ -146,8 +148,33 @@ struct TagEditDetailView: View {
         }
     }
     
+    @ViewBuilder
+    private var duplicateAlertView: some View {
+        if showDuplicateAlert {
+            SingleButtonAlertView(
+                title: "Tag name already exists.",
+                buttonTitle: "OK",
+                buttonAction: { showDuplicateAlert = false }
+            )
+            .padding(.horizontal, 32)
+            .preferredColorScheme(.dark)
+        }
+    }
+    
     private func saveOrUpdateTag() {
         guard !tag.title.isEmpty else { return }
+        
+        let savedTags = TagManager.shared.getSavedTags()
+        
+        let isDuplicate = savedTags.contains { savedTag in
+            savedTag.name == tag.title &&
+            (!isNew ? savedTag.id != originalTagId : true)
+        }
+        
+        if isDuplicate {
+            showDuplicateAlert = true
+            return
+        }
         
         let request = TagPostRequest(name: tag.title, hexCode: tag.colorHex)
         
