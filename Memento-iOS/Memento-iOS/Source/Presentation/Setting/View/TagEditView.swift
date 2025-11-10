@@ -30,6 +30,7 @@ struct TagEditView: View {
                     item: TagItem(
                         title: "Untitled",
                         color: Color.fromHex("#A9ADBB"),
+                        colorHex: "#A9ADBB",
                         isChevronVisible: false
                     )
                 )
@@ -39,6 +40,7 @@ struct TagEditView: View {
                     let tagItem = TagItem(
                         title: tag.name,
                         color: Color.fromHex(tag.colorCode),
+                        colorHex: tag.colorCode,
                         isChevronVisible: true
                     )
                     
