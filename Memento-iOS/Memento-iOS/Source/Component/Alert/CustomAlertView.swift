@@ -29,6 +29,8 @@ struct CustomAlertView: View {
                     .applyFont(.body_b_14)
                     .foregroundColor(Color.gray07)
                     .multilineTextAlignment(.center)
+            } else {
+                Spacer().frame(height: 2)
             }
             
             HStack(spacing: 8) {

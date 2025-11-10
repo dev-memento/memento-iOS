@@ -16,6 +16,7 @@ struct TagEditDetailView: View {
     @State private var originalTagId: Int?
     @State private var showDeleteAlert = false
     @State private var showDuplicateAlert = false
+    @State private var showUnsavedChangesAlert = false
     @State private var alertMessage = ""
     
     let tagColors = [Color.mementoRed, Color.mementoPink, Color.mementoOrange, Color.mementoYellow, Color.mementoLightGreen, Color.mementoMint, Color.mementoCyan, Color.mementoBlue, Color.mementoPurple, Color.gray05]
@@ -52,7 +53,13 @@ struct TagEditDetailView: View {
             showBackButton: true,
             showSkipButton: true,
             skipButtonTitle: "Done",
-            backButtonAction: { viewModel.navigateBack() },
+            backButtonAction: {
+                if hasUnsavedChanges() {
+                    showUnsavedChangesAlert = true
+                } else {
+                    viewModel.navigateBack()
+                }
+            },
             skipButtonAction: { saveOrUpdateTag() }
         )
         
@@ -130,6 +137,7 @@ struct TagEditDetailView: View {
         }
         .overlay(deleteAlertView)
         .overlay(duplicateAlertView)
+        .overlay(unsavedChangesAlertView)
     }
     
     @ViewBuilder
@@ -158,6 +166,37 @@ struct TagEditDetailView: View {
             )
             .padding(.horizontal, 32)
             .preferredColorScheme(.dark)
+        }
+    }
+    
+    @ViewBuilder
+    private var unsavedChangesAlertView: some View {
+        if showUnsavedChangesAlert {
+            CustomAlertView(
+                title: "Are you sure you want to discard \nthese changes?",
+                message: nil,
+                cancelTitle: "Keep Editing",
+                confirmTitle: "Discard Changes",
+                confirmAction: {
+                    showUnsavedChangesAlert = false
+                    viewModel.navigateBack()
+                },
+                cancelAction: {
+                    showUnsavedChangesAlert = false
+                }
+            )
+            .padding(.horizontal, 32)
+            .preferredColorScheme(.dark)
+        }
+    }
+    
+    private func hasUnsavedChanges() -> Bool {
+        if isNew {
+            return !tag.title.isEmpty || tag.colorHex != "#A9ADBB"
+        } else {
+            guard let originalId = originalTagId,
+                  let savedTag = TagManager.shared.getSavedTags().first(where: { $0.id == originalId }) else { return false }
+            return savedTag.name != tag.title || savedTag.colorCode != tag.colorHex
         }
     }
     
