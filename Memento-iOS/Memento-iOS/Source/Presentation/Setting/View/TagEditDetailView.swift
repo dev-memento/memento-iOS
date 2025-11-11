@@ -190,6 +190,7 @@ struct TagEditDetailView: View {
         }
     }
     
+    // 태그 생성 및 수정 중 변경 사항 있는지 판단
     private func hasUnsavedChanges() -> Bool {
         if isNew {
             return !tag.title.isEmpty || tag.colorHex != "#A9ADBB"
@@ -200,6 +201,7 @@ struct TagEditDetailView: View {
         }
     }
     
+    // 태그 생성 및 수정 (중복 이름 검사 + isNew로 분기 처리)
     private func saveOrUpdateTag() {
         guard !tag.title.isEmpty else { return }
         
@@ -247,6 +249,7 @@ struct TagEditDetailView: View {
         }
     }
     
+    // 태그 삭제
     private func deleteTag() {
         guard let tagId = originalTagId else { return }
         TagManager.shared.deleteTag(tagId: tagId) { success in
