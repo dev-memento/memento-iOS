@@ -14,21 +14,37 @@ struct TagEditDetailView: View {
     
     @State var tag: TagItem
     @State private var originalTagId: Int?
-    @State private var showAlert = false
     @State private var showDeleteAlert = false
+    @State private var showDuplicateAlert = false
+    @State private var showUnsavedChangesAlert = false
     @State private var alertMessage = ""
     
     let tagColors = [Color.mementoRed, Color.mementoPink, Color.mementoOrange, Color.mementoYellow, Color.mementoLightGreen, Color.mementoMint, Color.mementoCyan, Color.mementoBlue, Color.mementoPurple, Color.gray05]
     var isNew: Bool = false
     
     init(tag: TagItem?, isNew: Bool) {
-        self._tag = State(initialValue: tag ?? TagItem(title: "", color: .gray05, isChevronVisible: false))
-        self.isNew = isNew
+        var initialTag = TagItem(
+            title: "",
+            color: .gray05,
+            colorHex: "#A9ADBB",
+            isChevronVisible: false
+        )
         
         if let tagItem = tag, !isNew {
             let savedTags = TagManager.shared.getSavedTags()
-            self._originalTagId = State(initialValue: savedTags.first(where: { $0.name == tagItem.title })?.id)
+            if let savedTag = savedTags.first(where: { $0.name == tagItem.title }) {
+                initialTag = TagItem(
+                    title: tagItem.title,
+                    color: Color.fromHex(savedTag.colorCode),
+                    colorHex: savedTag.colorCode,
+                    isChevronVisible: false
+                )
+                self._originalTagId = State(initialValue: savedTag.id)
+            }
         }
+        
+        self._tag = State(initialValue: initialTag)
+        self.isNew = isNew
     }
     
     var body: some View {
@@ -37,82 +53,91 @@ struct TagEditDetailView: View {
             showBackButton: true,
             showSkipButton: true,
             skipButtonTitle: "Done",
-            backButtonAction: { viewModel.navigateBack() },
+            backButtonAction: {
+                if hasUnsavedChanges() {
+                    showUnsavedChangesAlert = true
+                } else {
+                    viewModel.navigateBack()
+                }
+            },
             skipButtonAction: { saveOrUpdateTag() }
         )
         
+        VStack(alignment: .leading) {
             VStack(alignment: .leading) {
-                VStack(alignment: .leading) {
-                    Text(SettingsTagViewText.tagName)
-                        .applyFont(.detail_r_12)
-                        .foregroundColor(.gray06)
-                        .padding(.top, 12)
-                        .padding(.horizontal, 16)
-                    
-                    ZStack(alignment: .leading) {
-                        if tag.title.isEmpty {
-                            Text(SettingsTagViewText.enterTagName)
-                                .foregroundColor(.gray07)
-                                .applyFont(.body_r_14)
-                        }
-                        TextField("", text: $tag.title)
-                            .tint(Color.mementoLightGreen)
-                            .foregroundColor(.gray03)
-                            .applyFont(.body_r_14)
-                            .autocorrectionDisabled(true)
-                    }
-                    .padding(.top, 9)
+                Text(SettingsTagViewText.tagName)
+                    .applyFont(.detail_r_12)
+                    .foregroundColor(.gray06)
+                    .padding(.top, 12)
                     .padding(.horizontal, 16)
-                    .frame(height: 20)
-
-                    Divider()
-                        .frame(height: 1)
-                        .background(Color.gray05)
-                        .padding(.horizontal, 12)
-                    
-                    Text(SettingsTagViewText.color)
-                        .applyFont(.detail_r_12)
-                        .foregroundColor(.gray06)
-                        .padding(.top, 30)
-                        .padding(.horizontal, 16)
-                    
-                    HStack(spacing: 13) {
-                        ForEach(tagColors, id: \.self) { color in
-                            Circle()
-                                .fill(color)
-                                .frame(width: 18, height: 18)
-                                .overlay(
-                                    Circle().strokeBorder(Color.white, lineWidth: tag.color == color ? 2 : 0)
-                                )
-                                .onTapGesture { tag.color = color }
-                        }
-                    }
-                    .padding(.top, 14)
-                    .padding(.bottom, 24)
-                    .padding(.horizontal, 19)
-                }
-                .background(RoundedRectangle(cornerRadius: 8).fill(Color.gray10))
-                .padding(.top, 26)
-                .padding(.horizontal, 20)
                 
-                if !isNew {
-                    Button { showDeleteAlert = true } label: {
-                        Text(SettingsTagViewText.deleteTag)
+                ZStack(alignment: .leading) {
+                    if tag.title.isEmpty {
+                        Text(SettingsTagViewText.enterTagName)
+                            .foregroundColor(.gray07)
                             .applyFont(.body_r_14)
-                            .foregroundColor(Color.mementoRed)
                     }
-                    .padding(.top, 20)
-                    .padding(.leading, 31)
+                    TextField("", text: $tag.title)
+                        .tint(Color.mementoLightGreen)
+                        .foregroundColor(.gray03)
+                        .applyFont(.body_r_14)
+                        .autocorrectionDisabled(true)
                 }
+                .padding(.top, 9)
+                .padding(.horizontal, 16)
+                .frame(height: 20)
                 
-                Spacer()
+                Divider()
+                    .frame(height: 1)
+                    .background(Color.gray05)
+                    .padding(.horizontal, 12)
+                
+                Text(SettingsTagViewText.color)
+                    .applyFont(.detail_r_12)
+                    .foregroundColor(.gray06)
+                    .padding(.top, 30)
+                    .padding(.horizontal, 16)
+                
+                HStack(spacing: 13) {
+                    ForEach(tagColors, id: \.self) { color in
+                        Circle()
+                            .fill(color)
+                            .frame(width: 18, height: 18)
+                            .overlay(
+                                Circle().strokeBorder(
+                                    Color.white,
+                                    lineWidth: tag.colorHex == colorToHex(color) ? 2 : 0
+                                )
+                            )
+                            .onTapGesture {
+                                tag.color = color
+                                tag.colorHex = colorToHex(color)
+                            }
+                    }
+                }
+                .padding(.top, 14)
+                .padding(.bottom, 24)
+                .padding(.horizontal, 19)
+            }
+            .background(RoundedRectangle(cornerRadius: 8).fill(Color.gray10))
+            .padding(.top, 26)
+            .padding(.horizontal, 20)
+            
+            if !isNew {
+                Button { showDeleteAlert = true } label: {
+                    Text(SettingsTagViewText.deleteTag)
+                        .applyFont(.body_r_14)
+                        .foregroundColor(Color.mementoRed)
+                }
+                .padding(.top, 20)
+                .padding(.leading, 31)
+            }
+            
+            Spacer()
         }
         .overlay(deleteAlertView)
-        .alert("Alert", isPresented: $showAlert) {
-            Button("OK") {
-                if alertMessage.contains("success") { viewModel.navigateBack() }
-            }
-        } message: { Text(alertMessage) }
+        .overlay(duplicateAlertView)
+        .overlay(unsavedChangesAlertView)
     }
     
     @ViewBuilder
@@ -131,10 +156,68 @@ struct TagEditDetailView: View {
         }
     }
     
+    @ViewBuilder
+    private var duplicateAlertView: some View {
+        if showDuplicateAlert {
+            SingleButtonAlertView(
+                title: "Tag name already exists.",
+                buttonTitle: "OK",
+                buttonAction: { showDuplicateAlert = false }
+            )
+            .padding(.horizontal, 32)
+            .preferredColorScheme(.dark)
+        }
+    }
+    
+    @ViewBuilder
+    private var unsavedChangesAlertView: some View {
+        if showUnsavedChangesAlert {
+            CustomAlertView(
+                title: "Are you sure you want to discard \nthese changes?",
+                message: nil,
+                cancelTitle: "Keep Editing",
+                confirmTitle: "Discard Changes",
+                confirmAction: {
+                    showUnsavedChangesAlert = false
+                    viewModel.navigateBack()
+                },
+                cancelAction: {
+                    showUnsavedChangesAlert = false
+                }
+            )
+            .padding(.horizontal, 32)
+            .preferredColorScheme(.dark)
+        }
+    }
+    
+    // 태그 생성 및 수정 중 변경 사항 있는지 판단
+    private func hasUnsavedChanges() -> Bool {
+        if isNew {
+            return !tag.title.isEmpty || tag.colorHex != "#A9ADBB"
+        } else {
+            guard let originalId = originalTagId,
+                  let savedTag = TagManager.shared.getSavedTags().first(where: { $0.id == originalId }) else { return false }
+            return savedTag.name != tag.title || savedTag.colorCode != tag.colorHex
+        }
+    }
+    
+    // 태그 생성 및 수정 (중복 이름 검사 + isNew로 분기 처리)
     private func saveOrUpdateTag() {
         guard !tag.title.isEmpty else { return }
         
-        let request = TagPostRequest(name: tag.title, hexCode: colorToHex(tag.color))
+        let savedTags = TagManager.shared.getSavedTags()
+        
+        let isDuplicate = savedTags.contains { savedTag in
+            savedTag.name == tag.title &&
+            (!isNew ? savedTag.id != originalTagId : true)
+        }
+        
+        if isDuplicate {
+            showDuplicateAlert = true
+            return
+        }
+        
+        let request = TagPostRequest(name: tag.title, hexCode: tag.colorHex)
         
         if isNew {
             TagManager.shared.createAndSaveTag(request: request) { response in
@@ -146,8 +229,6 @@ struct TagEditDetailView: View {
                 } else {
                     DispatchQueue.main.async {
                         print("태그 생성 실패")
-                        alertMessage = "Failed to create tag."
-                        showAlert = true
                     }
                 }
             }
@@ -163,12 +244,12 @@ struct TagEditDetailView: View {
                         print("태그 수정 실패")
                         alertMessage = "Failed to update tag."
                     }
-                    showAlert = true
                 }
             }
         }
     }
     
+    // 태그 삭제
     private func deleteTag() {
         guard let tagId = originalTagId else { return }
         TagManager.shared.deleteTag(tagId: tagId) { success in
@@ -176,12 +257,9 @@ struct TagEditDetailView: View {
                 if success {
                     print("태그 삭제 성공")
                     viewModel.navigateBack()
-                    alertMessage = "Tag deleted successfully."
                 } else {
                     print("태그 삭제 실패")
-                    alertMessage = "Failed to delete tag."
                 }
-                showAlert = true
             }
         }
     }
