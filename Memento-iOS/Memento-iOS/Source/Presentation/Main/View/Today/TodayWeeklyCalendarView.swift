@@ -91,7 +91,7 @@ struct TodayWeeklyCalendarView: View {
                 }
                 .background(Color.grayBlack)
                 
-                FloatingButton(floatingButtonPressed: $floatingButtonPressed)
+//                FloatingButton(floatingButtonPressed: $floatingButtonPressed)
                 
                 if floatingButtonPressed {
                     GeometryReader { geo in
